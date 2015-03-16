@@ -1,0 +1,52 @@
+CACHE MANIFEST
+# 2015-01-14 v1.0.32
+
+# Explicitly cached entries
+index.html
+style.css
+main.min.js
+game.xml
+_api/jquery.vibrate.min.js
+_api/jquery.vibrate.min.map
+
+
+FALLBACK:
+# The FALLBACK section below specifies that "offline.html" will be served in place of all files in the /html/ catalog, in case an internet connection cannot be established
+# /html/ /offline.html
+
+NETWORK:
+*
+
+# Additional resources to cache
+CACHE:
+_img/_dist/explosion.png
+_img/_dist/enemies/sectoid.png
+_img/_dist/laser.png
+_img/_dist/stars/star1.png
+_img/_dist/stars/star2.png
+_img/_dist/stars/star3.png
+_img/_dist/stars/star4.png
+_img/_dist/stars/star5.png
+_img/_dist/stars/star6.png
+_img/_dist/fighter/fighter.png
+_img/_dist/fighter/fighter_left1.png
+_img/_dist/fighter/fighter_left2.png
+_img/_dist/fighter/fighter_left3.png
+_img/_dist/fighter/fighter_left4.png
+_img/_dist/fighter/fighter_left5.png
+_img/_dist/fighter/fighter_right1.png
+_img/_dist/fighter/fighter_right2.png
+_img/_dist/fighter/fighter_right3.png
+_img/_dist/fighter/fighter_right4.png
+_img/_dist/fighter/fighter_right5.png
+_img/_dist/missile.png
+_img/_dist/background/level_1.jpg
+_img/_dist/enemies/_alienbase/alienbase1.png			
+_img/_dist/enemies/_alienbase/alienbase2.png	
+
+
+# Updating the cache
+#
+# Once an application is offline it remains cached until one of the following happens:
+# 	-The user clears their browser's data storage for your site.
+# 	-The manifest file (this file) is modified. Note: updating a file listed in the manifest doesn't mean the browser will re-cache that resource. The manifest file itself must be altered.
