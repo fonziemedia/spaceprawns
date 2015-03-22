@@ -2,8 +2,7 @@
 		function update(){
 			game.timer++;
 			game.seconds = game.timer/60 || 0;
-
-			console.log(game.seconds);	
+			// console.log(game.seconds);	
 
 			//////////////////////// 
 			// Init
@@ -44,79 +43,138 @@
 			}
 
 
+			/////////////////////////////////////////////////////////////////////////////////
+			// LEVEL 1
+			//
+			// enemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
+			// enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate)
+			////////////////////////////////////////////////////////////////////////////////
 
-			//////////////////////// 
-			// Enemies
-			// enemy(x, y, speed, direction, hull, image)
-			///////////////////////	
-
-			if (game.seconds > 1) {
-			    sectoidWave.update();
+			if (game.seconds == 1) {
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 0, true));
 			}
-			if (game.seconds > 5) {
-			    sectoidWave2.update();				
+			if (game.seconds == 3) {
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 0, true));		
+			}
+			if (game.seconds == 5) {
+			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 1000, 'miniboss', 24, 2));		
+			}
+
+			if (game.seconds == 7) {
+			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 1000, 'base', 22, 1));
+			}
+			if (game.seconds == 11) {
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 2, true));
+			}
+			if (game.seconds == 13) {
+			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 1000, 'base', 23, 1));				
 			}
 			if (game.seconds == 18) {
-			    game.enemyBases.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 1000, 22));
-				game.enemyBases[0].size = 170*dtSize;	
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 2, true));
 			}
-			if (game.seconds > 20) {
-			    sectoidWave3.update();
+			if (game.seconds == 22) {
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 2, true));
 			}
-			if (game.seconds == 30) {
-			    game.enemyBases.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 1000, 23));
-				game.enemyBases[0].size = 170*dtSize;	
+			if (game.seconds == 25) {
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 2, true));
 			}
-			if (game.seconds > 40) {
-			    sectoidWave5.update();
+			if (game.seconds == 28) {
+			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 10000, 27));
 			}
-			if (game.seconds > 50) {
-			    sectoidWave6.update();
-			}
-
-			if (game.seconds > 90) {
-			    sectoidWave3.update();
-			}
+			//boss(x, y, speed, direction, hull, image)
 
 
+			///////////////////////////////////
+			// Enemies
+			///////////////////////////////////
 
-
-			if(game.enemyBases.length > 0){
-				for (var c in game.enemyBases){
+			if(game.enemies.length > 0){
+				for (var c in game.enemies){
 
 					//projectiles collision
 					for(var f in playerShip.bullets){
-						if (Collision(game.enemyBases[c], playerShip.bullets[f]) && !game.enemyBases[c].dead){ //dead check avoids ghost scoring														
-							game.enemyBases[c].hit = true;							
-							game.enemyBases[c].hull -= playerShip.bullets[f].power;							
+						if (Collision(game.enemies[c], playerShip.bullets[f]) && !game.enemies[c].dead){ //dead check avoids ghost scoring														
+							game.enemies[c].hit = true;							
+							game.enemies[c].hull -= playerShip.bullets[f].power;							
 							// game.contextEnemies.clearRect(playerShip.bullets[f].x, playerShip.bullets[f].y, playerShip.bullets[f].size, playerShip.bullets[f].size*1.8);								
 							playerShip.bullets[f].dead = true;
 							playerShip.bullets.splice(f,1);
 						}
 					}
 
-					game.enemyBases[c].update();
-					game.enemyBases[c].draw();			
+					game.enemies[c].update();
+					game.enemies[c].draw();			
 
 
-					if(game.enemyBases[c].dead || game.enemyBases[c].y > game.height + game.enemyBases[c].size ||  game.enemyBases[c].x < -game.width*0.3 ||  game.enemyBases[c].x > game.width*1.3){					
-						if(game.enemyBases[c].dead){
-							game.contextEnemies.clearRect(game.enemyBases[c].x, game.enemyBases[c].y, game.enemyBases[c].size, game.enemyBases[c].size);
+					if(game.enemies[c].dead || game.enemies[c].y > game.height + game.enemies[c].size ||  game.enemies[c].x < -game.width*0.3 ||  game.enemies[c].x > game.width*1.3){					
+						if(game.enemies[c].dead){
+							game.contextEnemies.clearRect(game.enemies[c].x, game.enemies[c].y, game.enemies[c].size, game.enemies[c].size);
 							lootchance = Math.random();
 							if (lootchance < 0.05) {
-								this.loot.push(new loot(game.enemyBases[c].x, game.enemyBases[c].y));					
+								game.loot.push(new loot(game.enemies[c].x, game.enemies[c].y));					
 							}
 						}	
 
-						game.enemyBases.splice(c,1);				
+						game.enemies.splice(c,1);				
 					}
 
 				}
-			} 
+			}
+
+			///////////////////////////////////
+			// Waves
+			///////////////////////////////////
+
+			if(game.waves.length > 0){
+				for (var h in game.waves){
+
+					game.waves[h].update();
+
+					if(game.waves[h].over){					
+						game.waves.splice(h,1);				
+					}
+				}
+			}
+
+			///////////////////////////////////
+			// Loot
+			///////////////////////////////////
+
+			if (game.loot.length >= 1) {
+				for (var u in game.loot){
+					game.loot[u].update();
+					game.loot[u].draw();
+
+
+
+					if(game.loot[u].x > game.width + game.loot[u].size || game.loot[u].x < 0 - game.loot[u].size || game.loot[u].y > game.height + game.loot[u].size || game.loot[u].y < 0 - 30){
+						game.loot.splice(u,1);
+					}
+				}
+			}
+
+
 
 
 			///////////////////////////////////
-			// Collisions & Garbage collection
+			// Enemy Bullets
+			///////////////////////////////////
+
+			if (game.enemyBullets.length >= 1) {
+					for (var z in game.enemyBullets){
+						game.enemyBullets[z].update();
+						game.enemyBullets[z].draw();
+
+
+
+					if(game.enemyBullets[z].dead || game.enemyBullets[z].x > game.width + game.enemyBullets[z].size || game.enemyBullets[z].x < 0 - game.enemyBullets[z].size || game.enemyBullets[z].y > game.height + game.enemyBullets[z].size || game.enemyBullets[z].y < 0 - 30){
+						game.enemyBullets.splice(z,1);
+					}
+				}
+			}
+
+			///////////////////////////////////
+			// Game Explosions
 			///////////////////////////////////
 
 			if (game.explosions.length > 0) {

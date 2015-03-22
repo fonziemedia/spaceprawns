@@ -64,7 +64,8 @@
 		game.playerBullets = []; //Our proton torpedoes!
 		game.enemyBullets = []; //Enemy missiles!
 		game.enemies = []; //The InVaDeRs
-		game.enemyBases = [];
+		game.waves = [];
+		game.loot = [];
 		game.explosions = [];
 		
 		dt = 0; // defining dt globally
@@ -128,7 +129,7 @@
 			c1.attr('height', $(container).height()); //max height
 			c2.attr('height', $(container).height()); //max height
 			c3.attr('height', $(container).height()); //max height
-			c4.attr('height', $(container).height() * 0.1 ); //max height
+			c4.attr('height', $(container).height() * 0.2 ); //max height
 
 
 			if ($(container).width() < 1080) {

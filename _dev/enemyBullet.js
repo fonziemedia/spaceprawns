@@ -68,13 +68,13 @@ function enemyBullet(x, y, speed, direction, power, image) {
 		
 		if (!this.dead) {			
 
-			game.contextPlayer.save();
-			game.contextPlayer.translate(this.lastX, this.lastY);
-			game.contextPlayer.rotate(direction - Math.PI/2);
+			// game.contextPlayer.save();
+			// game.contextPlayer.translate(this.lastX, this.lastY);
+			// game.contextPlayer.rotate(direction - Math.PI/2);
 
-			game.contextPlayer.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
+			// game.contextPlayer.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
 
-			game.contextPlayer.restore();
+			// game.contextPlayer.restore();
 
 			game.contextPlayer.save();
 			game.contextPlayer.translate(this.x, this.y);

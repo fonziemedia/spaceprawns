@@ -50,5 +50,7 @@ node_modules/
 gruntfile.js
 npm-debug.log
 package.json
-invaders.bat
+invaders2.bat
 dploy.yaml
+*.sublime-project
+*.sublime-workspace

@@ -100,13 +100,11 @@
 			// game.enprojectiles = [];
 			// game.enemies = [];
 			playerShip.reset();
-			sectoidWave.reset();
-			sectoidWave2.reset();
-			sectoidWave3.reset();
-			sectoidWave4.reset();
-			sectoidWave5.reset();
-			sectoidWave6.reset();
-
+			game.enemies = [];
+			game.waves = [];			
+			game.enemyBullets = [];
+			game.loot = [];
+			game.timer = 0;
 
 			// for(var y = 0; y < game.level; y++) {	// y enemies vertically..
 			// 	for(var x = 0; x < game.level; x++){ // ..by x horizontally
@@ -132,7 +130,7 @@
 			// 	crashed: false					
 			// };
 			game.paused = false;
-			// scores();
+			// scores();loading
 
 		}
 
@@ -399,7 +397,11 @@
 			"_img/_dist/missile.png",
 			"_img/_dist/background/level_1.jpg",
 			"_img/_dist/enemies/_alienbase/alienbase1.png",			
-			"_img/_dist/enemies/_alienbase/alienbase2.png"			
+			"_img/_dist/enemies/_alienbase/alienbase2.png",			
+			"_img/_dist/enemies/_miniboss/floater.png",			
+			"_img/_dist/ui/energyBar.png",			
+			"_img/_dist/ui/energyPoint.png",			
+			"_img/_dist/enemies/_bigboss/sectoidBoss.png",			
 		]);
 		
 		checkImages(); //this function call starts our game

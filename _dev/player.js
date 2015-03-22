@@ -3,7 +3,7 @@ function player(hull, fireRate) {
 
 	this.x = game.width*0.46;
 	this.y = game.height*0.90;
-	this.speed = 400;
+	this.speed = 0;
 	this.direction = -Math.PI/2;
 	this.size = 100*dtSize;
 	this.hull = hull;
@@ -13,8 +13,6 @@ function player(hull, fireRate) {
 	this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;
-	this.deadTime = 60;
-	this.friction = 0;
 	this.bullets = [];
 	this.bulletTimer = fireRate-1;
 	this.bulletDivision = fireRate;
@@ -56,13 +54,13 @@ function player(hull, fireRate) {
 					distX = moveX - canvasX;
 					distY = moveY - canvasY;
 					
-					if (distX < 10 && distX > -10){this.x -= distX;}
-					else if (distX >= 10) {this.x -= this.speed*dt;}
-					else if (distX <= -10) {this.x += this.speed*dt;}
+					if (distX < 10 && distX > -10){this.speed = 400;this.x -= distX;}
+					else if (distX >= 10) {this.speed = 400;this.x -= this.speed*dt;}
+					else if (distX <= -10) {this.speed = 400;this.x += this.speed*dt;}
 
-					if (distY < 10 && distY > -10){this.y -= distY;}
-					else if (distY >= 10) {this.y -= this.speed*dt;}
-					else if (distY <= -10) {this.y += this.speed*dt;}
+					if (distY < 10 && distY > -10){this.speed = 400;this.y -= distY;}
+					else if (distY >= 10) {this.speed = 400;this.y -= this.speed*dt;}
+					else if (distY <= -10) {this.speed = 400;this.y += this.speed*dt;}
 
 				}
 
@@ -114,37 +112,41 @@ function player(hull, fireRate) {
 		//left
 		if(game.keys[37] || game.keys[65] && !(game.gameOver) && !(game.gameWon)){ //if key pressed..				
 			if(this.x > this.size/50){ // (keeping it within the boundaries of our canvas)
-				this.friction = 1;
-				this.direction = Math.PI;
+				this.speed = 400;
+				this.direction = Math.PI;				
 				this.image = 13;
 				this.rendered = false;
+				this.x -= this.speed*dt;
 			}
 		}
 		//right
-		else if(game.keys[39] || game.keys[68] && !(game.gameOver) && !(game.gameWon)){
+		if(game.keys[39] || game.keys[68] && !(game.gameOver) && !(game.gameWon)){
 			if(this.x <= game.width - this.size){
-				this.friction = 1;
+				this.speed = 400;
 				this.direction = 0;
 				this.image = 8;
 				this.rendered = false;
+				this.x += this.speed*dt;
 			}
 		}
-		else if(game.keys[38] || game.keys[87] && !(game.gameOver) && !(game.gameWon)){
+		if(game.keys[38] || game.keys[87] && !(game.gameOver) && !(game.gameWon)){
 			if(this.y > this.size/12){
-				this.friction = 1;
+				this.speed = 400;
 				this.direction = -Math.PI/2;
 				this.rendered = false;
+				this.y -= this.speed*dt;
 			}
 		}
-		else if(game.keys[40] || game.keys[83] && !(game.gameOver) && !(game.gameWon)){
+		if(game.keys[40] || game.keys[83] && !(game.gameOver) && !(game.gameWon)){
 			if(this.y <= game.height - this.size){
-				this.friction = 1;
+				this.speed = 400;
 				this.direction = Math.PI/2;
 				this.rendered = false;
+				this.y += this.speed*dt;
 			}	
 		}
 		else {
-			this.friction = 0;
+			this.speed = 0;
 		}
 
 
@@ -274,7 +276,6 @@ function player(hull, fireRate) {
 		this.hit = false;
 		this.hitTimer = 0; 
 		this.dead = false;
-		this.deadTime = 60;
 		this.friction = 0;
 		this.bullets = [];
 		this.laserLevel = 1;

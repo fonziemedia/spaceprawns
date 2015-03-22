@@ -402,7 +402,8 @@ var particle = function(x, y, speed, direction, grav) {
 		game.playerBullets = []; //Our proton torpedoes!
 		game.enemyBullets = []; //Enemy missiles!
 		game.enemies = []; //The InVaDeRs
-		game.enemyBases = [];
+		game.waves = [];
+		game.loot = [];
 		game.explosions = [];
 		
 		dt = 0; // defining dt globally
@@ -466,7 +467,7 @@ var particle = function(x, y, speed, direction, grav) {
 			c1.attr('height', $(container).height()); //max height
 			c2.attr('height', $(container).height()); //max height
 			c3.attr('height', $(container).height()); //max height
-			c4.attr('height', $(container).height() * 0.1 ); //max height
+			c4.attr('height', $(container).height() * 0.2 ); //max height
 
 
 			if ($(container).width() < 1080) {
@@ -652,7 +653,7 @@ function player(hull, fireRate) {
 
 	this.x = game.width*0.46;
 	this.y = game.height*0.90;
-	this.speed = 400;
+	this.speed = 0;
 	this.direction = -Math.PI/2;
 	this.size = 100*dtSize;
 	this.hull = hull;
@@ -662,8 +663,6 @@ function player(hull, fireRate) {
 	this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;
-	this.deadTime = 60;
-	this.friction = 0;
 	this.bullets = [];
 	this.bulletTimer = fireRate-1;
 	this.bulletDivision = fireRate;
@@ -705,13 +704,13 @@ function player(hull, fireRate) {
 					distX = moveX - canvasX;
 					distY = moveY - canvasY;
 					
-					if (distX < 10 && distX > -10){this.x -= distX;}
-					else if (distX >= 10) {this.x -= this.speed*dt;}
-					else if (distX <= -10) {this.x += this.speed*dt;}
+					if (distX < 10 && distX > -10){this.speed = 400;this.x -= distX;}
+					else if (distX >= 10) {this.speed = 400;this.x -= this.speed*dt;}
+					else if (distX <= -10) {this.speed = 400;this.x += this.speed*dt;}
 
-					if (distY < 10 && distY > -10){this.y -= distY;}
-					else if (distY >= 10) {this.y -= this.speed*dt;}
-					else if (distY <= -10) {this.y += this.speed*dt;}
+					if (distY < 10 && distY > -10){this.speed = 400;this.y -= distY;}
+					else if (distY >= 10) {this.speed = 400;this.y -= this.speed*dt;}
+					else if (distY <= -10) {this.speed = 400;this.y += this.speed*dt;}
 
 				}
 
@@ -763,37 +762,41 @@ function player(hull, fireRate) {
 		//left
 		if(game.keys[37] || game.keys[65] && !(game.gameOver) && !(game.gameWon)){ //if key pressed..				
 			if(this.x > this.size/50){ // (keeping it within the boundaries of our canvas)
-				this.friction = 1;
-				this.direction = Math.PI;
+				this.speed = 400;
+				this.direction = Math.PI;				
 				this.image = 13;
 				this.rendered = false;
+				this.x -= this.speed*dt;
 			}
 		}
 		//right
-		else if(game.keys[39] || game.keys[68] && !(game.gameOver) && !(game.gameWon)){
+		if(game.keys[39] || game.keys[68] && !(game.gameOver) && !(game.gameWon)){
 			if(this.x <= game.width - this.size){
-				this.friction = 1;
+				this.speed = 400;
 				this.direction = 0;
 				this.image = 8;
 				this.rendered = false;
+				this.x += this.speed*dt;
 			}
 		}
-		else if(game.keys[38] || game.keys[87] && !(game.gameOver) && !(game.gameWon)){
+		if(game.keys[38] || game.keys[87] && !(game.gameOver) && !(game.gameWon)){
 			if(this.y > this.size/12){
-				this.friction = 1;
+				this.speed = 400;
 				this.direction = -Math.PI/2;
 				this.rendered = false;
+				this.y -= this.speed*dt;
 			}
 		}
-		else if(game.keys[40] || game.keys[83] && !(game.gameOver) && !(game.gameWon)){
+		if(game.keys[40] || game.keys[83] && !(game.gameOver) && !(game.gameWon)){
 			if(this.y <= game.height - this.size){
-				this.friction = 1;
+				this.speed = 400;
 				this.direction = Math.PI/2;
 				this.rendered = false;
+				this.y += this.speed*dt;
 			}	
 		}
 		else {
-			this.friction = 0;
+			this.speed = 0;
 		}
 
 
@@ -923,7 +926,6 @@ function player(hull, fireRate) {
 		this.hit = false;
 		this.hitTimer = 0; 
 		this.dead = false;
-		this.deadTime = 60;
 		this.friction = 0;
 		this.bullets = [];
 		this.laserLevel = 1;
@@ -1019,18 +1021,37 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 
 playerBullet.prototype = Object.create(particle.prototype); // Creating a playerBullet.prototype object that inherits from particle.prototype.
 playerBullet.prototype.constructor = playerBullet; // Set the "constructor" property to refer to playerBullet
-function enemy(x, y, speed, direction, hull, image) {
+function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	particle.call(this, x, y, speed, direction);
 
-	this.size = 65*dtSize;
+	this.type = type;
+	switch (this.type){
+		case 'pawn':
+				this.size = 65*dtSize;
+			break;
+		case 'miniboss':
+				this.size = 120*dtSize;	
+			break;
+		case 'base':
+				this.size = 170*dtSize;
+				this.rotation = 0;	
+			break;
+	}
 	this.hull = hull;
 	this.image = image;
 	this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;
-	this.deadTime = 60;
+	this.bulletTimer = 1;
+	this.sheep = sheep || false;
+	this.fireRate = fireRate * 60; //bullets/sec
+
+	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
+
 
 	this.update = function() {
+		this.lastX = this.x;
+		this.lastY = this.y;
 		this.vx = Math.cos(direction) * (speed*dt);
 		this.vy = Math.sin(direction) * (speed*dt);		
 		this.handleSprings();
@@ -1051,68 +1072,212 @@ function enemy(x, y, speed, direction, hull, image) {
 
 		if (this.hull <= 0 ) {
 			this.dead = true;
-			// console.log(this.x);
-			// console.log(this.y);
-			// console.log(speed);
-			// console.log(direction);
-			game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size));
+
+			if(this.type == 'base'){				
+				game.explosions.push(new explosion(this.x-this.size/2, this.y-this.size/2, speed, direction, this.size));
+			}
+			else{
+				game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size));
+			}
 			if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;							
 			}
-			// scores();
 		}
 
-		// this.accelerate(3, 3);
+		if(this.fireRate !== 0){
+			this.bulletTimer++;
 
+			if (this.bulletTimer % this.bulletDivision == 1){
+				this.bulletTimer = 1;				
+				bulletX = (this.type == 'base') ? (this.x + this.size*0.42) - this.size/2 : this.x + this.size*0.42;
+				bulletY = (this.type == 'base') ? (this.y + this.size) - this.size/2 : this.y + this.size;
+				bulletDirection = this.angleTo(playerShip);
+				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 100, 20));			
+			}
+		}
+
+		if(this.type != 'base' )
+		{	
+		direction -= utils.randomRange(-0.05, 0.05);
+		}
 	};
 
 	this.draw = function() {
-		game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
-		if (!this.dead) {			
-			game.contextEnemies.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
+		if(this.type == 'base'){ //making bases rotate
+			//clear trails
+			game.contextEnemies.save();
+			game.contextEnemies.translate(this.lastX, this.lastY);
+			game.contextEnemies.rotate(this.rotation);
+			game.contextEnemies.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
+			game.contextEnemies.restore();
 
-			if (this.hit) {
-				this.hitTimer++;
-				var imgData = game.contextEnemies.getImageData(this.x, this.y, this.size, this.size);
+			if (!this.dead) {				
 
-				var d = imgData.data;
-			    for (var i = 0; i < d.length; i += 4) {
-			      var r = d[i];
-			      var g = d[i + 1];
-			      var b = d[i + 2];
-			      d[i] = d[i + 1] = d[i + 2] = 255;
-			    }
+				//set rotation speed
+				this.rotation += 0.01;
 
-				game.contextEnemies.putImageData(imgData, this.x, this.y);
+				//rotate canvas
+				game.contextEnemies.save();
+				game.contextEnemies.translate(this.x, this.y);
+				game.contextEnemies.rotate(this.rotation);
 
-				if (this.hitTimer > 4){
-					this.hit = false;
-					this.hitTimer = 0;
-				} 
+				//draw image
+				game.contextEnemies.drawImage(game.images[this.image], -this.size/2, -this.size/2, this.size, this.size);
+
+				game.contextEnemies.restore();
 			}
+		}
+		else {
+			game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
+			if (!this.dead) {
+				game.contextEnemies.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
+			}
+		}
+
+		if (this.hit) {
+			this.hitTimer++;
+			var imgData = (this.type == 'base') ? game.contextEnemies.getImageData(this.x-this.size/2, this.y-this.size/2, this.size, this.size) : game.contextEnemies.getImageData(this.x, this.y, this.size, this.size);
+
+			var d = imgData.data;
+		    for (var i = 0; i < d.length; i += 4) {
+		      var r = d[i];
+		      var g = d[i + 1];
+		      var b = d[i + 2];
+		      d[i] = d[i + 1] = d[i + 2] = 255;
+		    }
+
+		    if (this.type == 'base'){
+		   		game.contextEnemies.putImageData(imgData, this.x-this.size/2, this.y-this.size/2);
+		   	}
+		   	else{
+				game.contextEnemies.putImageData(imgData, this.x, this.y);
+			}
+
+			if (this.hitTimer > 4){
+				this.hit = false;
+				this.hitTimer = 0;
+			} 
 		}
 	};
 }
 
 enemy.prototype = Object.create(particle.prototype); // Creating a enemy.prototype object that inherits from particle.prototype.
 enemy.prototype.constructor = enemy; // Set the "constructor" property to refer to enemy
+function boss(x, y, speed, direction, hull, image) {
+	particle.call(this, x, y, speed, direction);
 
-// var wave = {}; //enemy wave
+	this.hull = hull;
+	this.image = image;
+	this.size = 300*dtSize;
+	this.hit = false;
+	this.hitTimer = 0; 
+	this.dead = false;
+	this.deadTime = 60;
+	this.bulletTimer1 = 1;
+	this.bulletTimer2 = 1;
+	this.bulletDivision1 = 50;
+	this.bulletDivision2 = 30;
+	this.fireRate = 0; //bullets/sec
+	// this.fireRate = fireRate * 60; //bullets/sec
 
-// wave.units = 0;
-// wave.started = false;
-// wave.finished = false;
-// wave.interval = 1;
-// wave.intervalDivision = 200;
-// wave.spawnTimer = 1;
-// wave.spawnDivision = 15;
-// wave.x = Math.random()*game.width;
 
-// var sectoidWave = [];
+	this.update = function() {
+		this.vx = Math.cos(direction) * (speed*dt);
+		this.vy = Math.sin(direction) * (speed*dt);		
+		this.handleSprings();
+		this.handleGravitations();
+		this.vx *= this.friction;
+		this.vy *= this.friction;
+		this.vy += this.gravity;
+		this.x += this.vx;
+		this.y += this.vy;
 
+		// player-boss collision
+		if (Collision(playerShip, this) && !this.dead && !game.gameOver){			
+			playerShip.hull -= this.hull;
+			playerShip.hit = true;			
+			this.hit = true;
+			this.hull -= playerShip.hull;
+		}
+
+		if (this.hull <= 0 ) {
+			this.dead = true;
+			game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size));			
+			if(game.soundStatus == "ON"){game.bossexplodeSound.play();}
+			if (!playerShip.crashed){
+				game.score++;
+				game.levelScore++;							
+			}
+		}
+
+
+			this.bulletTimer1++;
+			this.bulletTimer2++;
+
+			// (x, y, speed, direction, power, image)
+			if (this.bulletTimer1 % this.bulletDivision1 == 1){
+				this.bulletTimer1 = 1;				
+				bulletX = this.x + this.size*0.48;
+				bulletY = this.y + this.size;
+				bulletDirection = this.angleTo(playerShip);
+				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 100, 20));			
+			}
+		
+			// homing missiles, sort of
+			// this.bulletAngle = sectoidWave.units.length > 0 ? this.angleTo(sectoidWave.units[Math.floor(Math.random() * sectoidWave.units.length)]) : -Math.PI/2;
+			if (this.bulletTimer2 % this.bulletDivision2 == 1) {				
+				// if (gameUI.soundFx == "ON"){game.shootSound.play();}
+				this.bulletTimer2 = 1; //resetting our timer
+				bulletX = this.x + this.size*0.48;
+				bulletY = this.y + this.size;
+				bulletDirection = this.angleTo(playerShip);
+			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 150, Math.PI/2, 100, 2));
+			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 150, Math.PI/2, 100, 2));				
+			}
+
+		
+
+		if (this.y > game.height*0.1){
+			speed = 0;
+		}
+
+	};
+
+	this.draw = function() {
+		
+		game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
+		
+		if (!this.dead) {
+				game.contextEnemies.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
+		}		
+
+		if (this.hit) {
+			this.hitTimer++;
+			var imgData = game.contextEnemies.getImageData(this.x, this.y, this.size, this.size);
+
+			var d = imgData.data;
+		    for (var i = 0; i < d.length; i += 4) {
+		      var r = d[i];
+		      var g = d[i + 1];
+		      var b = d[i + 2];
+		      d[i] = d[i + 1] = d[i + 2] = 255;
+		    }
+			
+			game.contextEnemies.putImageData(imgData, this.x, this.y);
+
+			if (this.hitTimer > 4){
+				this.hit = false;
+				this.hitTimer = 0;
+			} 
+		}
+	};
+}
+
+boss.prototype = Object.create(particle.prototype); // Creating a boss.prototype object that inherits from particle.prototype.
+boss.prototype.constructor = boss; // Set the "constructor" property to refer to enemy
 function enemyBullet(x, y, speed, direction, power, image) {
 	particle.call(this, x, y, speed, direction);
 	
@@ -1183,13 +1348,13 @@ function enemyBullet(x, y, speed, direction, power, image) {
 		
 		if (!this.dead) {			
 
-			game.contextPlayer.save();
-			game.contextPlayer.translate(this.lastX, this.lastY);
-			game.contextPlayer.rotate(direction - Math.PI/2);
+			// game.contextPlayer.save();
+			// game.contextPlayer.translate(this.lastX, this.lastY);
+			// game.contextPlayer.rotate(direction - Math.PI/2);
 
-			game.contextPlayer.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
+			// game.contextPlayer.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
 
-			game.contextPlayer.restore();
+			// game.contextPlayer.restore();
 
 			game.contextPlayer.save();
 			game.contextPlayer.translate(this.x, this.y);
@@ -1272,48 +1437,39 @@ function loot(x, y) {
 loot.prototype = Object.create(particle.prototype); // Creating a loot.prototype object that inherits from particle.prototype.
 loot.prototype.constructor = loot; // Set the "constructor" property to refer to loot
 
-var enemyWave = function(race, fleetSize, speed, hull, nWaves, waveInterval, fireRate) {
+var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate) {
 	
+	this.side = side;
 	this.spawnedShips = 0;
 	this.race = race;
+	this.type = type;
 	this.fleetSize = fleetSize;
 	this.speed = speed;
 	this.hull = hull;
-	this.interval = 1;
-	this.intervalDivision = waveInterval;
+	this.fireRate = fireRate || 0;
 	this.spawnTimer = 1;
-	this.spawnDivisionSet = false;
-	this.waveCount = 0;
-	this.nWaves = nWaves;
-	this.started = false;
-	this.finished = false;
-
-	// FOR REFERENCE ONLY: Math.random()*(max-min+1)+min; //a random number between max and min
-	this.xVal = [Math.random()*((game.width*0.85)-(game.width*0.15)+1) + game.width*0.15, Math.random()*((-game.width*0.1)-(-game.width*0.3)+1) - game.width*0.3, Math.random()*((game.width*1.3)-(game.width*1.1)+1) + game.width*1.3];
-	this.randomX = Math.floor(Math.random() * this.xVal.length);
-	this.x = this.xVal[this.randomX];
-
-	if (this.x < 0 || this.x > game.width) {
-		this.y = Math.random()*((game.height*0.5)-(game.height*0.15)+1) + game.height*0.15;
-		if (this.x < 0){
+	this.spawnDivision = 15;
+	switch (this.side){
+		case 'top':
+			this.x = pos;
+			this.y = -game.height*0.1;
+			this.direction = Math.PI/2;
+			break;
+		case 'left':
+			this.x = -game.width*0.2;
+			this.y = pos;
 			this.direction = 0;
-		}
-		else if (this.x > game.width)
-		{
+			break;
+		case 'right':
+			this.x = game.width*1.2;
+			this.y = pos;
 			this.direction = Math.PI;
-		} 
+			break;
 	}
-	else {
-		this.y = -game.height*0.1;
-		this.direction = Math.PI/2;
-	}
-
-
-	this.units = [];
-	this.bullets = [];
-	this.bulletTimer = 1;
-	this.bulletDivision = fireRate || 99999;
-	this.loot = [];
+	this.over = false;
+	// this.bulletTimer = 1;
+	// this.bulletDivision = fireRate || 99999;
+	// this.loot = [];
 	
 
 
@@ -1323,177 +1479,24 @@ var enemyWave = function(race, fleetSize, speed, hull, nWaves, waveInterval, fir
 			this.spawnDivision = Math.round(700 * dt);
 			this.spawnDivisionSet = true;
 		}
-
-		if (!this.finished) {			
-			this.interval++;
-
-			// console.log (this.interval);
-			// console.log (this.interval % this.intervalDivision == 1);			
-
-			if (this.interval % this.intervalDivision == 1){   //this is our timer for enemies to change movement direction. If the division of these vars equals 0 then..
-				this.started = true;
-			}
-
-			if (this.started) {							
-				//this 1
+						
+			
+		this.spawnTimer++;
 				
-				this.spawnTimer++;
-				
-				if (this.spawnedShips <= this.fleetSize){
-					if (this.spawnTimer % this.spawnDivision == 1 & !this.finished){   
-						this.spawnTimer = 1;					
-						this.units.push(new enemy(this.x, this.y, this.speed, this.direction, this.hull, this.race));
-						this.spawnedShips++;
-					}
-				}
-
-				remainingEnemies = this.units.length;
-				remainingBullets = this.bullets.length;
-				
-				// console.log(remainingBullets);
-
-
-				if (this.units.length >= 1) {
-					this.bulletTimer++;
-				}
-
-				
-				// enemy bullets
-				//(x, y, speed, direction, power, image)				
-				pEn = (remainingEnemies < 2) ? 0 : Math.floor(Math.random()*((remainingEnemies-1)+1)); //a random number between 0 and the maximum array index (remainingEnemies-1)
-
-				if (this.bulletTimer % this.bulletDivision == 1 && remainingEnemies >= 1 && this.units[pEn].y < game.height - this.units[pEn].size && this.units[pEn].y > 0 + this.units[pEn].size){
-					this.bulletTimer = 1;
-					bulletX = this.units[pEn].x + this.units[pEn].size*0.42;
-					bulletY = this.units[pEn].y + this.units[pEn].size;
-					bulletDirection = this.units[pEn].angleTo(playerShip);
-
-					this.bullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 100, 20));			
-					
-				}
-
-				for(var m in this.units){
-
-					this.units[m].update();
-					this.units[m].draw();
-
-
-					//projectiles collision
-					for(var p in playerShip.bullets){
-						if(Collision(this.units[m], playerShip.bullets[p]) && !this.units[m].dead){ //dead check avoids ghost scoring														
-							this.units[m].hit = true;							
-							this.units[m].hull -= playerShip.bullets[p].power;							
-							// game.contextEnemies.clearRect(playerShip.bullets[p].x, playerShip.bullets[p].y, playerShip.bullets[p].size, playerShip.bullets[p].size*1.8);								
-							playerShip.bullets[p].dead = true;
-							playerShip.bullets.splice(p,1);
-						}
-					}				
-
-
-					if(!this.finished && this.units[m].dead || this.units[m].y > game.height + this.units[m].size ||  this.units[m].x < -game.width*0.3 ||  this.units[m].x > game.width*1.3){					
-						if(this.units[m].dead){
-							game.contextEnemies.clearRect(this.units[m].x, this.units[m].y, this.units[m].size, this.units[m].size);
-							lootchance = Math.random();
-							if (lootchance < 0.05) {
-								this.loot.push(new loot(this.units[m].x, this.units[m].y));					
-							}
-						}	
-
-						this.units.splice(m,1);				
-					}
-				}
-
-				if (this.spawnedShips >= this.fleetSize && remainingEnemies === 0 ) { //if all wave is gone
-					this.waveCount++;
-					this.started = false;
-					this.interval = 1;
-					this.spawnedShips = 0;	
-					this.randomX = Math.floor(Math.random() * this.xVal.length);
-					this.x = this.xVal[this.randomX];
-					if (this.x < 0 || this.x > game.width) {
-						this.y = Math.random()*((game.height*0.5)-(game.height*0.15)+1) + game.height*0.15;
-						if (this.x < 0){
-							this.direction = 0;
-						}
-						else if (this.x > game.width){
-							this.direction = Math.PI;
-						} 
-					}
-					else {
-						this.y = -game.height*0.1;
-						this.direction = Math.PI/2;
-					}			
-				}
-
-				if(this.waveCount >= this.nWaves) {
-					this.finished = true;
-				}
+		if (this.spawnedShips <= this.fleetSize){
+			if (this.spawnTimer % this.spawnDivision == 1){   
+				this.spawnTimer = 1;					
+				game.enemies.push(new enemy(this.x, this.y, this.speed, this.direction, this.hull, this.type, this.race, this.fireRate, true));
+				this.spawnedShips++;
 			}
 		}
 
-		if (this.bullets.length >= 1) {
-			for (var z in this.bullets){
-				this.bullets[z].update();
-				this.bullets[z].draw();
-
-
-
-				if(this.bullets[z].dead || this.bullets[z].x > game.width + this.bullets[z].size || this.bullets[z].x < 0 - this.bullets[z].size || this.bullets[z].y > game.height + this.bullets[z].size || this.bullets[z].y < 0 - 30){
-					this.bullets.splice(z,1);
-				}
-			}
+		if (this.spawnedShips == this.fleetSize){
+			this.over = true;
 		}
-
-		if (this.loot.length >= 1) {
-			for (var u in this.loot){
-				this.loot[u].update();
-				this.loot[u].draw();
-
-
-
-				if(this.loot[u].x > game.width + this.loot[u].size || this.loot[u].x < 0 - this.loot[u].size || this.loot[u].y > game.height + this.loot[u].size || this.loot[u].y < 0 - 30){
-					this.loot.splice(u,1);
-				}
-			}
-		}
-	};
-
-	this.reset = function() {
-		this.spawnedShips = 0;
-		this.waveCount = 0;
-		this.started = false;
-		this.finished = false;
-		this.randomX = Math.floor(Math.random() * this.xVal.length);
-		this.x = this.xVal[this.randomX];
-		if (this.x < 0 || this.x > game.width) {
-			this.y = Math.random()*((game.height*0.5)-(game.height*0.15)+1) + game.height*0.15;
-			if (this.x < 0){
-				this.direction = 0;
-			}
-			else if (this.x > game.width){
-				this.direction = Math.PI;
-			} 
-		}
-		else {
-			this.y = -game.height*0.1;
-			this.direction = Math.PI/2;
-		}	
-		this.units = [];
-		this.bullets = [];
-		this.bulletTimer = 1;
-		this.loot = [];
 	};
 	
 };
-
-
-// (race, fleetSize, speed, hull, nWaves, waveInterval, fireRate)
-var sectoidWave = new enemyWave(1, 7, 250, 100, 10, 300);
-var sectoidWave2 = new enemyWave(1, 4, 300, 100, 1, 300);
-var sectoidWave3 = new enemyWave(1, 3, 275, 200, 10, 300);
-var sectoidWave4 = new enemyWave(1, 6, 300, 200, 10, 300, 150);
-var sectoidWave5 = new enemyWave(1, 5, 275, 300, 10, 300, 150);
-var sectoidWave6 = new enemyWave(1, 8, 250, 300, 10, 300, 150);
 function ui() {
 
 	this.width = game.width;
@@ -1501,6 +1504,8 @@ function ui() {
 	this.textColor = "#FFD455";
 	this.font = "px helvetica";
 	this.fontSize = 15*dtSize;
+	this.energyBarSize = game.width*0.3;
+	this.energyPointSize = game.height*0.01;
 	this.hangarShipSize = game.height*0.03;
 
 	this.update = function() {
@@ -1515,17 +1520,19 @@ function ui() {
 		game.contextText.fillStyle = this.textColor;
 		game.contextText.font = this.fontSize + this.font;
 		game.contextText.clearRect(0, 0, this.width, this.height*1.5);
-		game.contextText.fillText("Level: " + this.level, this.width*0.02, this.height); //printing level
-		game.contextText.fillText("Score: " + this.score, this.width*0.15, this.height); //printing the score
-		// game.soundStatus = (game.sound) ? "ON" : "OFF";
+		game.contextText.fillText("S" + this.level, this.width*0.02, this.height); //printing level
+		game.contextText.fillText("Score: " + this.score, this.width*0.1, this.height); //printing the score
+
 		if (!navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-			game.contextText.fillText("Sound(F8): " + this.soundFx, this.width*0.35, this.height); //printing lives
+			game.contextText.fillText("Sound(F8): " + this.soundFx, this.width*0.25, this.height); //printing lives
 		}
-		game.contextText.fillText("Hull: " + this.hull, this.width*0.60, this.height); //printing the score
-		game.contextText.fillText("Hangar: ", this.width*0.80, this.height); 
+		game.contextText.drawImage(game.images[25], this.width*0.5, -this.height*0.1, this.energyBarSize, this.energyBarSize/4);
+		for (s = 0; s < this.hull; s++){	
+			game.contextText.drawImage(game.images[26], (this.width*0.545)+(s/10), this.height*0.32, this.energyPointSize, this.energyPointSize*2.2);
+		}
 		for (i = 0; i < this.hangar; i++){
 			//printing lives
-			game.contextText.drawImage(game.images[0], this.width*0.9 + (this.width * 0.03 * i) , this.height*0.3, this.hangarShipSize, this.hangarShipSize);
+			game.contextText.drawImage(game.images[0], this.width*0.82 + (this.width * 0.05 * i) , this.height*0.3, this.hangarShipSize, this.hangarShipSize);
 		}
 	};
 	
@@ -1619,8 +1626,7 @@ gameUI = new ui();
 		function update(){
 			game.timer++;
 			game.seconds = game.timer/60 || 0;
-
-			console.log(game.seconds);	
+			// console.log(game.seconds);	
 
 			//////////////////////// 
 			// Init
@@ -1661,79 +1667,138 @@ gameUI = new ui();
 			}
 
 
+			/////////////////////////////////////////////////////////////////////////////////
+			// LEVEL 1
+			//
+			// enemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
+			// enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate)
+			////////////////////////////////////////////////////////////////////////////////
 
-			//////////////////////// 
-			// Enemies
-			// enemy(x, y, speed, direction, hull, image)
-			///////////////////////	
-
-			if (game.seconds > 1) {
-			    sectoidWave.update();
+			if (game.seconds == 1) {
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 0, true));
 			}
-			if (game.seconds > 5) {
-			    sectoidWave2.update();				
+			if (game.seconds == 3) {
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 0, true));		
+			}
+			if (game.seconds == 5) {
+			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 1000, 'miniboss', 24, 2));		
+			}
+
+			if (game.seconds == 7) {
+			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 1000, 'base', 22, 1));
+			}
+			if (game.seconds == 11) {
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 2, true));
+			}
+			if (game.seconds == 13) {
+			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 1000, 'base', 23, 1));				
 			}
 			if (game.seconds == 18) {
-			    game.enemyBases.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 1000, 22));
-				game.enemyBases[0].size = 170*dtSize;	
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 2, true));
 			}
-			if (game.seconds > 20) {
-			    sectoidWave3.update();
+			if (game.seconds == 22) {
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 2, true));
 			}
-			if (game.seconds == 30) {
-			    game.enemyBases.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 1000, 23));
-				game.enemyBases[0].size = 170*dtSize;	
+			if (game.seconds == 25) {
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 2, true));
 			}
-			if (game.seconds > 40) {
-			    sectoidWave5.update();
+			if (game.seconds == 28) {
+			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 10000, 27));
 			}
-			if (game.seconds > 50) {
-			    sectoidWave6.update();
-			}
-
-			if (game.seconds > 90) {
-			    sectoidWave3.update();
-			}
+			//boss(x, y, speed, direction, hull, image)
 
 
+			///////////////////////////////////
+			// Enemies
+			///////////////////////////////////
 
-
-			if(game.enemyBases.length > 0){
-				for (var c in game.enemyBases){
+			if(game.enemies.length > 0){
+				for (var c in game.enemies){
 
 					//projectiles collision
 					for(var f in playerShip.bullets){
-						if (Collision(game.enemyBases[c], playerShip.bullets[f]) && !game.enemyBases[c].dead){ //dead check avoids ghost scoring														
-							game.enemyBases[c].hit = true;							
-							game.enemyBases[c].hull -= playerShip.bullets[f].power;							
+						if (Collision(game.enemies[c], playerShip.bullets[f]) && !game.enemies[c].dead){ //dead check avoids ghost scoring														
+							game.enemies[c].hit = true;							
+							game.enemies[c].hull -= playerShip.bullets[f].power;							
 							// game.contextEnemies.clearRect(playerShip.bullets[f].x, playerShip.bullets[f].y, playerShip.bullets[f].size, playerShip.bullets[f].size*1.8);								
 							playerShip.bullets[f].dead = true;
 							playerShip.bullets.splice(f,1);
 						}
 					}
 
-					game.enemyBases[c].update();
-					game.enemyBases[c].draw();			
+					game.enemies[c].update();
+					game.enemies[c].draw();			
 
 
-					if(game.enemyBases[c].dead || game.enemyBases[c].y > game.height + game.enemyBases[c].size ||  game.enemyBases[c].x < -game.width*0.3 ||  game.enemyBases[c].x > game.width*1.3){					
-						if(game.enemyBases[c].dead){
-							game.contextEnemies.clearRect(game.enemyBases[c].x, game.enemyBases[c].y, game.enemyBases[c].size, game.enemyBases[c].size);
+					if(game.enemies[c].dead || game.enemies[c].y > game.height + game.enemies[c].size ||  game.enemies[c].x < -game.width*0.3 ||  game.enemies[c].x > game.width*1.3){					
+						if(game.enemies[c].dead){
+							game.contextEnemies.clearRect(game.enemies[c].x, game.enemies[c].y, game.enemies[c].size, game.enemies[c].size);
 							lootchance = Math.random();
 							if (lootchance < 0.05) {
-								this.loot.push(new loot(game.enemyBases[c].x, game.enemyBases[c].y));					
+								game.loot.push(new loot(game.enemies[c].x, game.enemies[c].y));					
 							}
 						}	
 
-						game.enemyBases.splice(c,1);				
+						game.enemies.splice(c,1);				
 					}
 
 				}
-			} 
+			}
+
+			///////////////////////////////////
+			// Waves
+			///////////////////////////////////
+
+			if(game.waves.length > 0){
+				for (var h in game.waves){
+
+					game.waves[h].update();
+
+					if(game.waves[h].over){					
+						game.waves.splice(h,1);				
+					}
+				}
+			}
+
+			///////////////////////////////////
+			// Loot
+			///////////////////////////////////
+
+			if (game.loot.length >= 1) {
+				for (var u in game.loot){
+					game.loot[u].update();
+					game.loot[u].draw();
+
+
+
+					if(game.loot[u].x > game.width + game.loot[u].size || game.loot[u].x < 0 - game.loot[u].size || game.loot[u].y > game.height + game.loot[u].size || game.loot[u].y < 0 - 30){
+						game.loot.splice(u,1);
+					}
+				}
+			}
+
+
 
 
 			///////////////////////////////////
-			// Collisions & Garbage collection
+			// Enemy Bullets
+			///////////////////////////////////
+
+			if (game.enemyBullets.length >= 1) {
+					for (var z in game.enemyBullets){
+						game.enemyBullets[z].update();
+						game.enemyBullets[z].draw();
+
+
+
+					if(game.enemyBullets[z].dead || game.enemyBullets[z].x > game.width + game.enemyBullets[z].size || game.enemyBullets[z].x < 0 - game.enemyBullets[z].size || game.enemyBullets[z].y > game.height + game.enemyBullets[z].size || game.enemyBullets[z].y < 0 - 30){
+						game.enemyBullets.splice(z,1);
+					}
+				}
+			}
+
+			///////////////////////////////////
+			// Game Explosions
 			///////////////////////////////////
 
 			if (game.explosions.length > 0) {
@@ -1853,13 +1918,11 @@ gameUI = new ui();
 			// game.enprojectiles = [];
 			// game.enemies = [];
 			playerShip.reset();
-			sectoidWave.reset();
-			sectoidWave2.reset();
-			sectoidWave3.reset();
-			sectoidWave4.reset();
-			sectoidWave5.reset();
-			sectoidWave6.reset();
-
+			game.enemies = [];
+			game.waves = [];			
+			game.enemyBullets = [];
+			game.loot = [];
+			game.timer = 0;
 
 			// for(var y = 0; y < game.level; y++) {	// y enemies vertically..
 			// 	for(var x = 0; x < game.level; x++){ // ..by x horizontally
@@ -1885,7 +1948,7 @@ gameUI = new ui();
 			// 	crashed: false					
 			// };
 			game.paused = false;
-			// scores();
+			// scores();loading
 
 		}
 
@@ -2152,7 +2215,11 @@ gameUI = new ui();
 			"_img/_dist/missile.png",
 			"_img/_dist/background/level_1.jpg",
 			"_img/_dist/enemies/_alienbase/alienbase1.png",			
-			"_img/_dist/enemies/_alienbase/alienbase2.png"			
+			"_img/_dist/enemies/_alienbase/alienbase2.png",			
+			"_img/_dist/enemies/_miniboss/floater.png",			
+			"_img/_dist/ui/energyBar.png",			
+			"_img/_dist/ui/energyPoint.png",			
+			"_img/_dist/enemies/_bigboss/sectoidBoss.png",			
 		]);
 		
 		checkImages(); //this function call starts our game
