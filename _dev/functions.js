@@ -100,11 +100,12 @@
 			// game.enprojectiles = [];
 			// game.enemies = [];
 			playerShip.reset();
+			gameUI.update();
 			game.enemies = [];
 			game.waves = [];			
 			game.enemyBullets = [];
 			game.loot = [];
-			game.timer = 0;
+			game.timer = 0;			
 
 			// for(var y = 0; y < game.level; y++) {	// y enemies vertically..
 			// 	for(var x = 0; x < game.level; x++){ // ..by x horizontally

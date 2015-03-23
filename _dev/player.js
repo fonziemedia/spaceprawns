@@ -18,7 +18,7 @@ function player(hull, fireRate) {
 	this.bulletDivision = fireRate;
 	this.laserLevel = 1;
 	this.missileLevel = 0;
-	this.lives = 3;
+	this.lives = X_Lives;
 
 	// bulletspeed: X_BulletSpeed*game.height/1000,
 
@@ -280,7 +280,7 @@ function player(hull, fireRate) {
 		this.bullets = [];
 		this.laserLevel = 1;
 		this.missileLevel = 0;
-		this.lives = 3;
+		this.lives = (this.lives < 1) ? 3 : this.lives;
 	};
 }
 

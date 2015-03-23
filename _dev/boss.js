@@ -17,6 +17,7 @@ function boss(x, y, speed, direction, hull, image) {
 
 
 	this.update = function() {
+		this.bulletDirection = this.angleTo(playerShip);
 		this.vx = Math.cos(direction) * (speed*dt);
 		this.vy = Math.sin(direction) * (speed*dt);		
 		this.handleSprings();
@@ -52,10 +53,8 @@ function boss(x, y, speed, direction, hull, image) {
 			// (x, y, speed, direction, power, image)
 			if (this.bulletTimer1 % this.bulletDivision1 == 1){
 				this.bulletTimer1 = 1;				
-				bulletX = this.x + this.size*0.48;
-				bulletY = this.y + this.size;
-				bulletDirection = this.angleTo(playerShip);
-				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 100, 20));			
+				game.enemyBullets.push(new enemyBullet(this.x, this.y + this.size*0.6, 50, this.bulletDirection, 100, 20));			
+				game.enemyBullets.push(new enemyBullet(this.x + this.size, this.y + this.size*0.6, 50, this.bulletDirection, 100, 20));			
 			}
 		
 			// homing missiles, sort of
@@ -65,15 +64,24 @@ function boss(x, y, speed, direction, hull, image) {
 				this.bulletTimer2 = 1; //resetting our timer
 				bulletX = this.x + this.size*0.48;
 				bulletY = this.y + this.size;
-				bulletDirection = this.angleTo(playerShip);
-			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 150, Math.PI/2, 100, 2));
-			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 150, Math.PI/2, 100, 2));				
+			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 100, 2));
+			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 100, 2));				
 			}
 
 		
 
 		if (this.y > game.height*0.1){
 			speed = 0;
+			if (this.x > 0 && this.x <= game.width - this.size/4) {
+
+				if (this.x < playerShip.x){
+					this.x += 1;
+				}
+				else if (this.x > playerShip.x){
+					this.x -= 1;
+				}
+
+			}
 		}
 
 	};

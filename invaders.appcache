@@ -42,8 +42,11 @@ _img/_dist/fighter/fighter_right5.png
 _img/_dist/missile.png
 _img/_dist/background/level_1.jpg
 _img/_dist/enemies/_alienbase/alienbase1.png			
-_img/_dist/enemies/_alienbase/alienbase2.png	
-
+_img/_dist/enemies/_alienbase/alienbase2.png
+_img/_dist/enemies/_miniboss/floater.png			
+_img/_dist/ui/energyBar.png			
+_img/_dist/ui/energyPoint.png			
+_img/_dist/enemies/_bigboss/sectoidBoss.png
 
 # Updating the cache
 #

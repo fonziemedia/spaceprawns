@@ -8,7 +8,7 @@
 				game.paused = false;
 				game.start = false;
 				mouseIsDown = 0;				
-				// scores();				
+				gameUI.update();				
 			}
 			
 			//If Esc
@@ -21,7 +21,7 @@
 			if (game.keys[119]) {
 				game.sound = (game.sound) ? false : true;
 				game.keys[119] = false;
-				// scores();
+				gameUI.update();	
 			}
 
 			//game pause

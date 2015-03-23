@@ -6,9 +6,7 @@
 
 			//////////////////////// 
 			// Init
-			///////////////////////
-			
-			gameUI.update();					
+			///////////////////////							
 			playerShip.update();
 			game.contextPlayer.clearRect(0, 0, game.width, game.height); //clear trails
 			playerShip.draw();

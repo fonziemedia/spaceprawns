@@ -668,7 +668,7 @@ function player(hull, fireRate) {
 	this.bulletDivision = fireRate;
 	this.laserLevel = 1;
 	this.missileLevel = 0;
-	this.lives = 3;
+	this.lives = X_Lives;
 
 	// bulletspeed: X_BulletSpeed*game.height/1000,
 
@@ -930,7 +930,7 @@ function player(hull, fireRate) {
 		this.bullets = [];
 		this.laserLevel = 1;
 		this.missileLevel = 0;
-		this.lives = 3;
+		this.lives = (this.lives < 1) ? 3 : this.lives;
 	};
 }
 
@@ -1082,7 +1082,8 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}
 			if (!playerShip.crashed){
 				game.score++;
-				game.levelScore++;							
+				game.levelScore++;
+				gameUI.update();								
 			}
 		}
 
@@ -1185,6 +1186,7 @@ function boss(x, y, speed, direction, hull, image) {
 
 
 	this.update = function() {
+		this.bulletDirection = this.angleTo(playerShip);
 		this.vx = Math.cos(direction) * (speed*dt);
 		this.vy = Math.sin(direction) * (speed*dt);		
 		this.handleSprings();
@@ -1220,10 +1222,8 @@ function boss(x, y, speed, direction, hull, image) {
 			// (x, y, speed, direction, power, image)
 			if (this.bulletTimer1 % this.bulletDivision1 == 1){
 				this.bulletTimer1 = 1;				
-				bulletX = this.x + this.size*0.48;
-				bulletY = this.y + this.size;
-				bulletDirection = this.angleTo(playerShip);
-				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 100, 20));			
+				game.enemyBullets.push(new enemyBullet(this.x, this.y + this.size*0.6, 50, this.bulletDirection, 100, 20));			
+				game.enemyBullets.push(new enemyBullet(this.x + this.size, this.y + this.size*0.6, 50, this.bulletDirection, 100, 20));			
 			}
 		
 			// homing missiles, sort of
@@ -1233,15 +1233,24 @@ function boss(x, y, speed, direction, hull, image) {
 				this.bulletTimer2 = 1; //resetting our timer
 				bulletX = this.x + this.size*0.48;
 				bulletY = this.y + this.size;
-				bulletDirection = this.angleTo(playerShip);
-			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 150, Math.PI/2, 100, 2));
-			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 150, Math.PI/2, 100, 2));				
+			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 100, 2));
+			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 100, 2));				
 			}
 
 		
 
 		if (this.y > game.height*0.1){
 			speed = 0;
+			if (this.x > 0 && this.x <= game.width - this.size/4) {
+
+				if (this.x < playerShip.x){
+					this.x += 1;
+				}
+				else if (this.x > playerShip.x){
+					this.x -= 1;
+				}
+
+			}
 		}
 
 	};
@@ -1331,6 +1340,7 @@ function enemyBullet(x, y, speed, direction, power, image) {
 			// if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}							
 						// game.contextEnemies.clearRect(playerShip.bullets[p].x, playerShip.bullets[p].y, playerShip.bullets[p].size, playerShip.bullets[p].size*1.8);								
 			playerShip.hull -= this.power;
+			gameUI.update();	
 			playerShip.hit = true;	
 			// Xplode(playerShip.x, playerShip.y);
 			// playerShip.dead = true;
@@ -1549,7 +1559,7 @@ gameUI = new ui();
 				game.paused = false;
 				game.start = false;
 				mouseIsDown = 0;				
-				// scores();				
+				gameUI.update();				
 			}
 			
 			//If Esc
@@ -1562,7 +1572,7 @@ gameUI = new ui();
 			if (game.keys[119]) {
 				game.sound = (game.sound) ? false : true;
 				game.keys[119] = false;
-				// scores();
+				gameUI.update();	
 			}
 
 			//game pause
@@ -1630,9 +1640,7 @@ gameUI = new ui();
 
 			//////////////////////// 
 			// Init
-			///////////////////////
-			
-			gameUI.update();					
+			///////////////////////							
 			playerShip.update();
 			game.contextPlayer.clearRect(0, 0, game.width, game.height); //clear trails
 			playerShip.draw();
@@ -1918,11 +1926,12 @@ gameUI = new ui();
 			// game.enprojectiles = [];
 			// game.enemies = [];
 			playerShip.reset();
+			gameUI.update();
 			game.enemies = [];
 			game.waves = [];			
 			game.enemyBullets = [];
 			game.loot = [];
-			game.timer = 0;
+			game.timer = 0;			
 
 			// for(var y = 0; y < game.level; y++) {	// y enemies vertically..
 			// 	for(var x = 0; x < game.level; x++){ // ..by x horizontally

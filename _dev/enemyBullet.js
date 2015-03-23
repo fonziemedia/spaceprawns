@@ -51,6 +51,7 @@ function enemyBullet(x, y, speed, direction, power, image) {
 			// if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}							
 						// game.contextEnemies.clearRect(playerShip.bullets[p].x, playerShip.bullets[p].y, playerShip.bullets[p].size, playerShip.bullets[p].size*1.8);								
 			playerShip.hull -= this.power;
+			gameUI.update();	
 			playerShip.hit = true;	
 			// Xplode(playerShip.x, playerShip.y);
 			// playerShip.dead = true;

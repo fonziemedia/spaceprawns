@@ -59,7 +59,8 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}
 			if (!playerShip.crashed){
 				game.score++;
-				game.levelScore++;							
+				game.levelScore++;
+				gameUI.update();								
 			}
 		}
 
