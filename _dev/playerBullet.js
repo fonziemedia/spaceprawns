@@ -18,6 +18,7 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 	this.image = image;
 	this.friction = friction;
 	this.dtSet = false;
+	this.context = game.contextPlayer;
 
 	this.update = function(){ // Replacing the default 'update' method		
 		//setting this to make friction work with deltaTime (dt), check particle.js

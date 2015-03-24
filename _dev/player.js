@@ -19,17 +19,18 @@ function player(hull, fireRate) {
 	this.laserLevel = 1;
 	this.missileLevel = 0;
 	this.lives = X_Lives;
+	this.context = game.contextPlayer;
 
 	// bulletspeed: X_BulletSpeed*game.height/1000,
 
 	this.update = function() {
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
 		this.vy = Math.sin(this.direction) * (this.speed*dt);
-		this.handleSprings();
-		this.handleGravitations();
-		this.vx *= this.friction;
-		this.vy *= this.friction;
-		this.vy += this.gravity;
+		// this.handleSprings();
+		// this.handleGravitations();
+		// this.vx *= this.friction;
+		// this.vy *= this.friction;
+		// this.vy += this.gravity;
 		// this.x += this.vx;
 		// this.y += this.vy;
 
@@ -158,32 +159,32 @@ function player(hull, fireRate) {
 				// (x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame)
 				switch(this.laserLevel) {
 				    case 1:
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 100, 1, 2, 48, 11));
+				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
 				        break;
 				    case 2:
-				    	this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.25, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 100, 1, 2, 48, 11));
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.75, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 100, 1, 2, 48, 11));				
+				    	this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.25, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.75, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));				
 				        break;
 				    default:
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.25, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 100, 1, 2, 48, 11));
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 100, 1, 2, 48, 11));
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.75, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 100, 1, 2, 48, 11));				
+				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.25, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.75, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));				
 				 }
 
 				 switch(this.missileLevel) {
 				 	case 0:
 				 		break;
 				    case 1:
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 200, 1.03, 20, 64, 2));
+				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
 						break;
 				    case 2:
-				    	this.bullets.push( new playerBullet(playerShip.x, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 200, 1.03, 20, 64, 2));
-						this.bullets.push( new playerBullet(playerShip.x + playerShip.size, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 200, 1.03, 20, 64, 2));
+				    	this.bullets.push( new playerBullet(playerShip.x, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+						this.bullets.push( new playerBullet(playerShip.x + playerShip.size, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
 						break;
 				    default:
-				        this.bullets.push( new playerBullet(playerShip.x, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 200, 1.03, 20, 64, 2));
-						this.bullets.push( new playerBullet(playerShip.x + playerShip.size, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 200, 1.03, 20, 64, 2));
-						this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 200, 1.03, 20, 64, 2));										
+				        this.bullets.push( new playerBullet(playerShip.x, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+						this.bullets.push( new playerBullet(playerShip.x + playerShip.size, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+						this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));										
 				 }	
 
 				if (gameUI.soundFx == "ON"){game.shootSound.play();}
@@ -217,10 +218,7 @@ function player(hull, fireRate) {
 			PlayerDie();
 			this.lives -= 1;
 			this.hull = hull;
-		} else if (this.hull > 1000) {
-			this.hull = 1000;
 		}
-
 
 		this.vx = Math.cos(this.direction) * this.speed;
 		this.vy = Math.sin(this.direction) * this.speed;
@@ -288,4 +286,4 @@ player.prototype = Object.create(particle.prototype); // Creating a player.proto
 player.prototype.constructor = player; // Set the "constructor" property to refer to player
 
 
-playerShip = new player(1000, 15);
+playerShip = new player(10, 15);

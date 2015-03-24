@@ -540,25 +540,17 @@ function background(speed, image, section) {
 	this.width = game.width;
 	this.height = (game.width * (16 / 9)) * 4 ;
 	this.x = 0;
-	switch (this.section) {
-		case 0:
-		this.y = -(this.height-game.height);
-		break;
-		case 1:
-		this.y = -(this.height);
-		break;
-	}
-	
+	this.y = (this.section === 0) ? -(this.height-game.height) : this.y = -(this.height);
 	this.image = image;
 
 	this.update = function() {
 		this.vx = Math.cos(this.direction) * (speed*dt);
 		this.vy = Math.sin(this.direction) * (speed*dt);
-		this.handleSprings();
-		this.handleGravitations();
-		this.vx *= this.friction;
-		this.vy *= this.friction;
-		this.vy += this.gravity;
+		// this.handleSprings();
+		// this.handleGravitations();
+		// this.vx *= this.friction;
+		// this.vy *= this.friction;
+		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
 	};
@@ -605,9 +597,9 @@ function explosion(x, y, speed, direction, size) {
 		this.vy = Math.sin(direction) * (this.speed*dt);	
 		// this.handleSprings();
 		// this.handleGravitations();
-		this.vx *= this.friction;
-		this.vy *= this.friction;
-		this.vy += this.gravity;
+		// this.vx *= this.friction;
+		// this.vy *= this.friction;
+		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
 
@@ -669,17 +661,18 @@ function player(hull, fireRate) {
 	this.laserLevel = 1;
 	this.missileLevel = 0;
 	this.lives = X_Lives;
+	this.context = game.contextPlayer;
 
 	// bulletspeed: X_BulletSpeed*game.height/1000,
 
 	this.update = function() {
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
 		this.vy = Math.sin(this.direction) * (this.speed*dt);
-		this.handleSprings();
-		this.handleGravitations();
-		this.vx *= this.friction;
-		this.vy *= this.friction;
-		this.vy += this.gravity;
+		// this.handleSprings();
+		// this.handleGravitations();
+		// this.vx *= this.friction;
+		// this.vy *= this.friction;
+		// this.vy += this.gravity;
 		// this.x += this.vx;
 		// this.y += this.vy;
 
@@ -808,32 +801,32 @@ function player(hull, fireRate) {
 				// (x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame)
 				switch(this.laserLevel) {
 				    case 1:
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 100, 1, 2, 48, 11));
+				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
 				        break;
 				    case 2:
-				    	this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.25, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 100, 1, 2, 48, 11));
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.75, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 100, 1, 2, 48, 11));				
+				    	this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.25, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.75, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));				
 				        break;
 				    default:
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.25, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 100, 1, 2, 48, 11));
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 100, 1, 2, 48, 11));
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.75, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 100, 1, 2, 48, 11));				
+				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.25, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.75, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));				
 				 }
 
 				 switch(this.missileLevel) {
 				 	case 0:
 				 		break;
 				    case 1:
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 200, 1.03, 20, 64, 2));
+				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
 						break;
 				    case 2:
-				    	this.bullets.push( new playerBullet(playerShip.x, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 200, 1.03, 20, 64, 2));
-						this.bullets.push( new playerBullet(playerShip.x + playerShip.size, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 200, 1.03, 20, 64, 2));
+				    	this.bullets.push( new playerBullet(playerShip.x, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+						this.bullets.push( new playerBullet(playerShip.x + playerShip.size, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
 						break;
 				    default:
-				        this.bullets.push( new playerBullet(playerShip.x, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 200, 1.03, 20, 64, 2));
-						this.bullets.push( new playerBullet(playerShip.x + playerShip.size, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 200, 1.03, 20, 64, 2));
-						this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 200, 1.03, 20, 64, 2));										
+				        this.bullets.push( new playerBullet(playerShip.x, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+						this.bullets.push( new playerBullet(playerShip.x + playerShip.size, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+						this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));										
 				 }	
 
 				if (gameUI.soundFx == "ON"){game.shootSound.play();}
@@ -867,10 +860,7 @@ function player(hull, fireRate) {
 			PlayerDie();
 			this.lives -= 1;
 			this.hull = hull;
-		} else if (this.hull > 1000) {
-			this.hull = 1000;
 		}
-
 
 		this.vx = Math.cos(this.direction) * this.speed;
 		this.vy = Math.sin(this.direction) * this.speed;
@@ -938,7 +928,7 @@ player.prototype = Object.create(particle.prototype); // Creating a player.proto
 player.prototype.constructor = player; // Set the "constructor" property to refer to player
 
 
-playerShip = new player(1000, 15);
+playerShip = new player(10, 15);
 function playerBullet(x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame) {
 	particle.call(this, x, y, speed, direction);
 	
@@ -959,6 +949,7 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 	this.image = image;
 	this.friction = friction;
 	this.dtSet = false;
+	this.context = game.contextPlayer;
 
 	this.update = function(){ // Replacing the default 'update' method		
 		//setting this to make friction work with deltaTime (dt), check particle.js
@@ -1047,24 +1038,25 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.fireRate = fireRate * 60; //bullets/sec
 
 	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
-
+	this.context = game.contextEnemies;
 
 	this.update = function() {
 		this.lastX = this.x;
 		this.lastY = this.y;
 		this.vx = Math.cos(direction) * (speed*dt);
 		this.vy = Math.sin(direction) * (speed*dt);		
-		this.handleSprings();
-		this.handleGravitations();
-		this.vx *= this.friction;
-		this.vy *= this.friction;
-		this.vy += this.gravity;
+		// this.handleSprings();
+		// this.handleGravitations();
+		// this.vx *= this.friction;
+		// this.vy *= this.friction;
+		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
 
 		// player-enemy collision
 		if (Collision(playerShip, this) && !this.dead && !game.gameOver){			
 			playerShip.hull -= this.hull;
+			gameUI.updateEnergy();						
 			playerShip.hit = true;			
 			this.hit = true;
 			this.hull -= playerShip.hull;
@@ -1083,19 +1075,18 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;
-				gameUI.update();								
+				gameUI.updateScore();								
 			}
 		}
 
 		if(this.fireRate !== 0){
 			this.bulletTimer++;
-
 			if (this.bulletTimer % this.bulletDivision == 1){
 				this.bulletTimer = 1;				
 				bulletX = (this.type == 'base') ? (this.x + this.size*0.42) - this.size/2 : this.x + this.size*0.42;
 				bulletY = (this.type == 'base') ? (this.y + this.size) - this.size/2 : this.y + this.size;
 				bulletDirection = this.angleTo(playerShip);
-				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 100, 20));			
+				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 20));			
 			}
 		}
 
@@ -1183,17 +1174,18 @@ function boss(x, y, speed, direction, hull, image) {
 	this.bulletDivision2 = 30;
 	this.fireRate = 0; //bullets/sec
 	// this.fireRate = fireRate * 60; //bullets/sec
+	this.context = game.contextEnemies;
 
 
 	this.update = function() {
 		this.bulletDirection = this.angleTo(playerShip);
 		this.vx = Math.cos(direction) * (speed*dt);
 		this.vy = Math.sin(direction) * (speed*dt);		
-		this.handleSprings();
-		this.handleGravitations();
-		this.vx *= this.friction;
-		this.vy *= this.friction;
-		this.vy += this.gravity;
+		// this.handleSprings();
+		// this.handleGravitations();
+		// this.vx *= this.friction;
+		// this.vy *= this.friction;
+		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
 
@@ -1222,8 +1214,8 @@ function boss(x, y, speed, direction, hull, image) {
 			// (x, y, speed, direction, power, image)
 			if (this.bulletTimer1 % this.bulletDivision1 == 1){
 				this.bulletTimer1 = 1;				
-				game.enemyBullets.push(new enemyBullet(this.x, this.y + this.size*0.6, 50, this.bulletDirection, 100, 20));			
-				game.enemyBullets.push(new enemyBullet(this.x + this.size, this.y + this.size*0.6, 50, this.bulletDirection, 100, 20));			
+				game.enemyBullets.push(new enemyBullet(this.x, this.y + this.size*0.6, 50, this.bulletDirection, 1, 20));			
+				game.enemyBullets.push(new enemyBullet(this.x + this.size, this.y + this.size*0.6, 50, this.bulletDirection, 1, 20));			
 			}
 		
 			// homing missiles, sort of
@@ -1233,8 +1225,8 @@ function boss(x, y, speed, direction, hull, image) {
 				this.bulletTimer2 = 1; //resetting our timer
 				bulletX = this.x + this.size*0.48;
 				bulletY = this.y + this.size;
-			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 100, 2));
-			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 100, 2));				
+			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 1.5, 2));
+			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 1.5, 2));				
 			}
 
 		
@@ -1340,7 +1332,7 @@ function enemyBullet(x, y, speed, direction, power, image) {
 			// if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}							
 						// game.contextEnemies.clearRect(playerShip.bullets[p].x, playerShip.bullets[p].y, playerShip.bullets[p].size, playerShip.bullets[p].size*1.8);								
 			playerShip.hull -= this.power;
-			gameUI.update();	
+			gameUI.updateEnergy();	
 			playerShip.hit = true;	
 			// Xplode(playerShip.x, playerShip.y);
 			// playerShip.dead = true;
@@ -1410,11 +1402,11 @@ function loot(x, y) {
 	this.update = function() {
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
 		this.vy = Math.sin(this.direction) * (this.speed*dt);	
-		this.handleSprings();
-		this.handleGravitations();
-		this.vx *= this.friction;
-		this.vy *= this.friction;
-		this.vy += this.gravity;
+		// this.handleSprings();
+		// this.handleGravitations();
+		// this.vx *= this.friction;
+		// this.vy *= this.friction;
+		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
 
@@ -1422,7 +1414,13 @@ function loot(x, y) {
 		if (Collision(playerShip, this) && !this.dead && !game.gameOver){			
 			switch(this.type) {
 			    case 'health':
-			        playerShip.hull += 250;
+			    	if (this.hull <= 7.5) {
+			    		playerShip.hull += 2.5;
+					}
+					else {
+						playerShip.hull = 10;
+					}
+			        gameUI.updateEnergy();
 			        break;
 			    case 'laser':
 			        playerShip.laserLevel += 1;
@@ -1510,40 +1508,60 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 function ui() {
 
 	this.width = game.width;
-	this.height = game.height*0.025;
-	this.textColor = "#FFD455";
-	this.font = "px helvetica";
-	this.fontSize = 15*dtSize;
+	this.height = game.height*0.04;
 	this.energyBarSize = game.width*0.3;
 	this.energyPointSize = game.height*0.01;
 	this.hangarShipSize = game.height*0.03;
+	this.level = game.level;
+	game.contextText.fillStyle = "#FFD455";
+	game.contextText.font = 15*dtSize + 'px helvetica';
 
-	this.update = function() {
+	this.updateLevel = function() {
 		this.level = game.level;
+		game.contextText.clearRect(this.width*0.02, this.height*0.3, this.width*0.05, this.height*0.35); 
+		game.contextText.fillText("S" + this.level, this.width*0.02, this.height*0.6); //printing level
+	};
+
+	this.updateScore = function() {
 		this.score = game.score;
+		game.contextText.clearRect(this.width*0.1, this.height*0.3, this.width*0.12, this.height*0.35);  
+		game.contextText.fillText("Score: " + this.score, this.width*0.1, this.height*0.6); //printing the score
+	};
+
+	this.updateSound = function() {	
 		this.soundFx = game.sound ? "ON" : "OFF";
-		// this.music = game.music;
-		this.hangar = playerShip.lives;		
-		this.hull = playerShip.hull; 
-
-	
-		game.contextText.fillStyle = this.textColor;
-		game.contextText.font = this.fontSize + this.font;
-		game.contextText.clearRect(0, 0, this.width, this.height*1.5);
-		game.contextText.fillText("S" + this.level, this.width*0.02, this.height); //printing level
-		game.contextText.fillText("Score: " + this.score, this.width*0.1, this.height); //printing the score
-
+		// this.music = game.music;	
 		if (!navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-			game.contextText.fillText("Sound(F8): " + this.soundFx, this.width*0.25, this.height); //printing lives
+			game.contextText.clearRect(this.width*0.39, this.height*0.3, this.width*0.05, this.height*0.35); 
+			game.contextText.fillText("Sound(F8): " + this.soundFx, this.width*0.25, this.height*0.6);
 		}
-		game.contextText.drawImage(game.images[25], this.width*0.5, -this.height*0.1, this.energyBarSize, this.energyBarSize/4);
+	};
+
+	this.updateEnergy = function() {		
+		this.hull = playerShip.hull;
+		game.contextText.clearRect(this.width*0.555, this.height*0.27, this.width*0.205, this.height*0.34);				
 		for (s = 0; s < this.hull; s++){	
-			game.contextText.drawImage(game.images[26], (this.width*0.545)+(s/10), this.height*0.32, this.energyPointSize, this.energyPointSize*2.2);
+			game.contextText.drawImage(game.images[26], (this.width*0.545)+s*11, this.height*0.15, this.energyPointSize, this.energyPointSize*2.2);
 		}
+	};
+
+	this.updateHangar = function() {
+		this.hangar = playerShip.lives;
+		game.contextText.clearRect(this.width*0.83, this.height*0.35, this.width*0.13, this.height*0.58);		
 		for (i = 0; i < this.hangar; i++){
 			//printing lives
 			game.contextText.drawImage(game.images[0], this.width*0.82 + (this.width * 0.05 * i) , this.height*0.3, this.hangarShipSize, this.hangarShipSize);
 		}
+	};
+
+	this.updateAll = function() {
+		game.contextText.clearRect(0, 0, this.width, this.height*1.5);
+		game.contextText.drawImage(game.images[25], this.width*0.5, -this.height*0.1, this.energyBarSize, this.energyBarSize/4);
+		this.updateLevel();
+		this.updateScore();
+		this.updateSound();
+		this.updateEnergy();
+		this.updateHangar();		
 	};
 	
 }
@@ -1559,7 +1577,7 @@ gameUI = new ui();
 				game.paused = false;
 				game.start = false;
 				mouseIsDown = 0;				
-				gameUI.update();				
+				gameUI.updateAll();				
 			}
 			
 			//If Esc
@@ -1572,7 +1590,7 @@ gameUI = new ui();
 			if (game.keys[119]) {
 				game.sound = (game.sound) ? false : true;
 				game.keys[119] = false;
-				gameUI.update();	
+				gameUI.updateSound();	
 			}
 
 			//game pause
@@ -1683,35 +1701,35 @@ gameUI = new ui();
 			////////////////////////////////////////////////////////////////////////////////
 
 			if (game.seconds == 1) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 0, true));
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 0, true));
 			}
 			if (game.seconds == 3) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 0, true));		
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 0, true));		
 			}
 			if (game.seconds == 5) {
-			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 1000, 'miniboss', 24, 2));		
+			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));		
 			}
 
 			if (game.seconds == 7) {
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 1000, 'base', 22, 1));
+			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 22, 1));
 			}
 			if (game.seconds == 11) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 2, true));
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
 			}
 			if (game.seconds == 13) {
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 1000, 'base', 23, 1));				
+			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 23, 1));				
 			}
 			if (game.seconds == 18) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 2, true));
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
 			}
 			if (game.seconds == 22) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 2, true));
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
 			}
 			if (game.seconds == 25) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 50, 2, true));
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
 			}
 			if (game.seconds == 28) {
-			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 10000, 27));
+			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 100, 27));
 			}
 			//boss(x, y, speed, direction, hull, image)
 
@@ -1727,7 +1745,7 @@ gameUI = new ui();
 					for(var f in playerShip.bullets){
 						if (Collision(game.enemies[c], playerShip.bullets[f]) && !game.enemies[c].dead){ //dead check avoids ghost scoring														
 							game.enemies[c].hit = true;							
-							game.enemies[c].hull -= playerShip.bullets[f].power;							
+							game.enemies[c].hull -= playerShip.bullets[f].power;
 							// game.contextEnemies.clearRect(playerShip.bullets[f].x, playerShip.bullets[f].y, playerShip.bullets[f].size, playerShip.bullets[f].size*1.8);								
 							playerShip.bullets[f].dead = true;
 							playerShip.bullets.splice(f,1);
@@ -1742,7 +1760,7 @@ gameUI = new ui();
 						if(game.enemies[c].dead){
 							game.contextEnemies.clearRect(game.enemies[c].x, game.enemies[c].y, game.enemies[c].size, game.enemies[c].size);
 							lootchance = Math.random();
-							if (lootchance < 0.05) {
+							if (lootchance < 0.1) {
 								game.loot.push(new loot(game.enemies[c].x, game.enemies[c].y));					
 							}
 						}	
@@ -1926,7 +1944,7 @@ gameUI = new ui();
 			// game.enprojectiles = [];
 			// game.enemies = [];
 			playerShip.reset();
-			gameUI.update();
+			gameUI.updateAll();
 			game.enemies = [];
 			game.waves = [];			
 			game.enemyBullets = [];
@@ -2034,6 +2052,7 @@ gameUI = new ui();
 		// 	}
 
 		// }
+
 		
 		function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
 			return !(first.x > second.x + second.size ||
@@ -2041,6 +2060,16 @@ gameUI = new ui();
 				first.y > second.y + second.size ||
 				first.y + first.size < second.y);
 		}
+
+
+		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
+		// 	var imageData1 = first.context.getImageData(first.x, first.y, first.size, first.size);
+		// 	var imageData2 = second.context.getImageData(first.x, first.y, first.size, first.size);
+		// 		return !((first.x > second.x + second.size ||
+		// 		first.x + first.size < second.x ||
+		// 		first.y > second.y + second.size ||
+		// 		first.y + first.size < second.y) && (imageData1.data[3] === 0) && (imageData2.data[3] === 0));
+		// }
 
 		function PlayerDie(){
 			// if (game.soundStatus == "ON"){game.playerexplodeSound.play();}

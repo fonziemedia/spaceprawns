@@ -100,7 +100,7 @@
 			// game.enprojectiles = [];
 			// game.enemies = [];
 			playerShip.reset();
-			gameUI.update();
+			gameUI.updateAll();
 			game.enemies = [];
 			game.waves = [];			
 			game.enemyBullets = [];
@@ -208,6 +208,7 @@
 		// 	}
 
 		// }
+
 		
 		function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
 			return !(first.x > second.x + second.size ||
@@ -215,6 +216,16 @@
 				first.y > second.y + second.size ||
 				first.y + first.size < second.y);
 		}
+
+
+		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
+		// 	var imageData1 = first.context.getImageData(first.x, first.y, first.size, first.size);
+		// 	var imageData2 = second.context.getImageData(first.x, first.y, first.size, first.size);
+		// 		return !((first.x > second.x + second.size ||
+		// 		first.x + first.size < second.x ||
+		// 		first.y > second.y + second.size ||
+		// 		first.y + first.size < second.y) && (imageData1.data[3] === 0) && (imageData2.data[3] === 0));
+		// }
 
 		function PlayerDie(){
 			// if (game.soundStatus == "ON"){game.playerexplodeSound.play();}

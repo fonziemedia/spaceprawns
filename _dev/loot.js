@@ -23,11 +23,11 @@ function loot(x, y) {
 	this.update = function() {
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
 		this.vy = Math.sin(this.direction) * (this.speed*dt);	
-		this.handleSprings();
-		this.handleGravitations();
-		this.vx *= this.friction;
-		this.vy *= this.friction;
-		this.vy += this.gravity;
+		// this.handleSprings();
+		// this.handleGravitations();
+		// this.vx *= this.friction;
+		// this.vy *= this.friction;
+		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
 
@@ -35,7 +35,13 @@ function loot(x, y) {
 		if (Collision(playerShip, this) && !this.dead && !game.gameOver){			
 			switch(this.type) {
 			    case 'health':
-			        playerShip.hull += 250;
+			    	if (this.hull <= 7.5) {
+			    		playerShip.hull += 2.5;
+					}
+					else {
+						playerShip.hull = 10;
+					}
+			        gameUI.updateEnergy();
 			        break;
 			    case 'laser':
 			        playerShip.laserLevel += 1;

@@ -24,24 +24,25 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.fireRate = fireRate * 60; //bullets/sec
 
 	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
-
+	this.context = game.contextEnemies;
 
 	this.update = function() {
 		this.lastX = this.x;
 		this.lastY = this.y;
 		this.vx = Math.cos(direction) * (speed*dt);
 		this.vy = Math.sin(direction) * (speed*dt);		
-		this.handleSprings();
-		this.handleGravitations();
-		this.vx *= this.friction;
-		this.vy *= this.friction;
-		this.vy += this.gravity;
+		// this.handleSprings();
+		// this.handleGravitations();
+		// this.vx *= this.friction;
+		// this.vy *= this.friction;
+		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
 
 		// player-enemy collision
 		if (Collision(playerShip, this) && !this.dead && !game.gameOver){			
 			playerShip.hull -= this.hull;
+			gameUI.updateEnergy();						
 			playerShip.hit = true;			
 			this.hit = true;
 			this.hull -= playerShip.hull;
@@ -60,19 +61,18 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;
-				gameUI.update();								
+				gameUI.updateScore();								
 			}
 		}
 
 		if(this.fireRate !== 0){
 			this.bulletTimer++;
-
 			if (this.bulletTimer % this.bulletDivision == 1){
 				this.bulletTimer = 1;				
 				bulletX = (this.type == 'base') ? (this.x + this.size*0.42) - this.size/2 : this.x + this.size*0.42;
 				bulletY = (this.type == 'base') ? (this.y + this.size) - this.size/2 : this.y + this.size;
 				bulletDirection = this.angleTo(playerShip);
-				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 100, 20));			
+				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 20));			
 			}
 		}
 

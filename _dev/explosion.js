@@ -27,9 +27,9 @@ function explosion(x, y, speed, direction, size) {
 		this.vy = Math.sin(direction) * (this.speed*dt);	
 		// this.handleSprings();
 		// this.handleGravitations();
-		this.vx *= this.friction;
-		this.vy *= this.friction;
-		this.vy += this.gravity;
+		// this.vx *= this.friction;
+		// this.vy *= this.friction;
+		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
 
