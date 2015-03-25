@@ -407,6 +407,9 @@ var particle = function(x, y, speed, direction, grav) {
 		game.explosions = [];
 		
 		dt = 0; // defining dt globally
+		dtTimer = 0;		
+		dtArray = [];
+		timeThen = new Date().getTime();
 		
 		//====================== Game state ========================
 		
@@ -1652,6 +1655,29 @@ gameUI = new ui();
 		}
 		//====================== Main update function =================//		
 		function update(){
+			//obtaining an average deltaTime
+			if(dtTimer <= 30){
+
+				var timeNow = new Date().getTime();
+				var timeDiff = timeNow - (timeThen);
+				// console.log (timeDiff);
+	    		dtArray.push(timeDiff); // seconds since last frame
+	    		timeThen = timeNow;
+	    		dtTimer++;
+    		}
+
+    		if(dtTimer == 30){
+    			var dtSum = 0;
+    			for( var i = 0; i < dtArray.length-2; i++) {
+					dtSum += dtArray[i+2]; //+2 skips first values which might be deviant
+					console.log (dtSum);
+				}
+					dt = Math.round(dtSum / dtArray.length)/1000;					
+    		}	
+    		// console.log (dt);
+    		// console.log (timeNow);
+    		// console.log (timeThen);
+
 			game.timer++;
 			game.seconds = game.timer/60 || 0;
 			// console.log(game.seconds);	
@@ -1704,12 +1730,11 @@ gameUI = new ui();
 			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 0, true));
 			}
 			if (game.seconds == 3) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 0, true));		
+			    game.waves.push(new enemyWave('left', game.width*0.3, 1, 'pawn', 4, 300, 1, 0, true));		
 			}
 			if (game.seconds == 5) {
 			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));		
 			}
-
 			if (game.seconds == 7) {
 			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 22, 1));
 			}
@@ -1720,15 +1745,40 @@ gameUI = new ui();
 			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 23, 1));				
 			}
 			if (game.seconds == 18) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('right', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
 			}
 			if (game.seconds == 22) {
 			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
 			}
 			if (game.seconds == 25) {
+			    game.waves.push(new enemyWave('left', game.width*0.4, 1, 'pawn', 4, 300, 1, 2, true));
+			}
+			if (game.seconds == 27) {
+			    game.waves.push(new enemyWave('right', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
+			}
+			if (game.seconds == 30) {
 			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
 			}
-			if (game.seconds == 28) {
+			if (game.seconds == 33) {
+			    game.waves.push(new enemyWave('top', game.width*0.6, 1, 'pawn', 4, 300, 1, 2, true));
+			}
+			if (game.seconds == 35) {
+			    game.waves.push(new enemyWave('right', game.width*0.2, 1, 'pawn', 4, 300, 1, 2, true));
+			}
+			if (game.seconds == 37) {
+			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			}
+			if (game.seconds == 40) {
+			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			}
+			if (game.seconds == 42) {
+			    game.enemies.push(new enemy(game.width * 0.5, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			}
+			if (game.seconds == 45) {
+			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			}
+
+			if (game.seconds == 55) {
 			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 100, 27));
 			}
 			//boss(x, y, speed, direction, hull, image)
@@ -1747,7 +1797,7 @@ gameUI = new ui();
 							game.enemies[c].hit = true;							
 							game.enemies[c].hull -= playerShip.bullets[f].power;
 							// game.contextEnemies.clearRect(playerShip.bullets[f].x, playerShip.bullets[f].y, playerShip.bullets[f].size, playerShip.bullets[f].size*1.8);								
-							playerShip.bullets[f].dead = true;
+							// playerShip.bullets[f].dead = true;
 							playerShip.bullets.splice(f,1);
 						}
 					}
@@ -2171,20 +2221,9 @@ gameUI = new ui();
 			
 		// }
 
-		var timeThen;
 			
 		function loop(){ //the loop		
 			requestAnimFrame(loop);
-
-			var timeNow = new Date().getTime();
-    		dt = (timeNow - (timeThen || timeNow))/1000; // seconds since last frame
-    		
-    		timeThen = timeNow;
-
-    		// console.log (dt);
-    		// console.log (timeNow);
-    		// console.log (timeThen);
-
 			gameState();
 			if (!game.paused){
 			update();

@@ -327,20 +327,9 @@
 			
 		// }
 
-		var timeThen;
 			
 		function loop(){ //the loop		
 			requestAnimFrame(loop);
-
-			var timeNow = new Date().getTime();
-    		dt = (timeNow - (timeThen || timeNow))/1000; // seconds since last frame
-    		
-    		timeThen = timeNow;
-
-    		// console.log (dt);
-    		// console.log (timeNow);
-    		// console.log (timeThen);
-
 			gameState();
 			if (!game.paused){
 			update();

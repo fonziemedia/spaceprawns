@@ -69,6 +69,9 @@
 		game.explosions = [];
 		
 		dt = 0; // defining dt globally
+		dtTimer = 0;		
+		dtArray = [];
+		timeThen = new Date().getTime();
 		
 		//====================== Game state ========================
 		
