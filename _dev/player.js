@@ -97,7 +97,7 @@ function player(hull, fireRate) {
 
 				this.rendered = false;				
 				moveX = this.x + this.size*0.5; 	//second define of moveX as canvasX position
-				moveY = this.y + this.size*1.5; 	//second define of moveX as canvasX position
+				moveY = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? this.y + this.size*2 : this.y + this.size; 	//second define of moveX as canvasX position
 			
 			}
 			/*		console.log (canvasX)
@@ -187,7 +187,7 @@ function player(hull, fireRate) {
 						this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));										
 				 }	
 
-				if (gameUI.soundFx == "ON"){game.shootSound.play();}
+				if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				this.bulletTimer = 1; //resetting our timer
 			}
 		}
@@ -214,7 +214,7 @@ function player(hull, fireRate) {
 			// console.log(this.direction);
 			game.explosions.push(new explosion(this.x, this.y, this.speed*0.5, this.direction, this.size));
 			this.dead = true;
-			if (gameUI.soundFx == "ON"){game.playerexplodeSound.play();}
+			if (game.sound){game.sounds.push(new Audio("_sounds/blast.mp3"));}
 			PlayerDie();
 			this.lives -= 1;
 			this.hull = hull;
@@ -240,25 +240,25 @@ function player(hull, fireRate) {
 			game.contextPlayer.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //rendering
 
 			if (this.hit) {
-				this.hitTimer++;
+				// this.hitTimer++;
 				navigator.vibrate(30);
 
-				var imgData = game.contextPlayer.getImageData(this.x, this.y, this.size, this.size);
+				// var imgData = game.contextPlayer.getImageData(this.x, this.y, this.size, this.size);
 
-				var d = imgData.data;
-			    for (var i = 0; i < d.length; i += 4) {
-			      var r = d[i];
-			      var g = d[i + 1];
-			      var b = d[i + 2];
-			      d[i] = d[i + 1] = d[i + 2] = 255;
-			    }
+				// var d = imgData.data;
+			 //    for (var i = 0; i < d.length; i += 4) {
+			 //      var r = d[i];
+			 //      var g = d[i + 1];
+			 //      var b = d[i + 2];
+			 //      d[i] = d[i + 1] = d[i + 2] = 255;
+			 //    }
 
-				game.contextPlayer.putImageData(imgData, this.x, this.y);
+				// game.contextPlayer.putImageData(imgData, this.x, this.y);
 
-				if (this.hitTimer > 4){
-					this.hit = false;
-					this.hitTimer = 0;
-				}				 
+				// if (this.hitTimer > 4){
+				// 	this.hit = false;
+				// 	this.hitTimer = 0;
+				// }				 
 			}
 
 		}

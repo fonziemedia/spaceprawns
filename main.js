@@ -369,6 +369,7 @@ var particle = function(x, y, speed, direction, grav) {
 			$(xmldata).find('data').each(function(){
 				// SETTINGS
 				X_Sound = parseInt($(this).find('sound').text());
+				X_Music = parseInt($(this).find('music').text());
 				X_Level = parseInt($(this).find('level').text());
 				X_Lives = parseInt($(this).find('player-lives').text());
 				X_PlayerSpeed = parseInt($(this).find('player-speed').text());
@@ -410,6 +411,8 @@ var particle = function(x, y, speed, direction, grav) {
 		dtTimer = 0;		
 		dtArray = [];
 		timeThen = new Date().getTime();
+
+		// res = 4*5; //check the 4th index every 5 frames
 		
 		//====================== Game state ========================
 		
@@ -424,12 +427,15 @@ var particle = function(x, y, speed, direction, grav) {
 		//========================== Audio ==========================
 		
 		game.sound = X_Sound;	//on/off trigger
+		game.music = X_Music;	//on/off trigger
+		game.sounds = [];
+		game.music = [];
 
-		game.enemyexplodeSound = new Audio("_sounds/explosion.wav");
-		game.playerexplodeSound = new Audio("_sounds/blast.mp3");
-		game.shootSound = new Audio("_sounds/laser.wav");
-		game.deathSound = new Audio("_sounds/death.mp3");
-		game.winSound = new Audio("_sounds/victory.mp3");
+		// game.enemyexplodeSound = new Audio("_sounds/explosion.wav");
+		// game.playerexplodeSound = new Audio("_sounds/blast.mp3");
+		// game.shootSound = new Audio("_sounds/laser.wav");
+		// game.deathSound = new Audio("_sounds/death.mp3");
+		// game.winSound = new Audio("_sounds/victory.mp3");
 
 			
 		//======================== Images ========================		
@@ -742,7 +748,7 @@ function player(hull, fireRate) {
 
 				this.rendered = false;				
 				moveX = this.x + this.size*0.5; 	//second define of moveX as canvasX position
-				moveY = this.y + this.size*1.5; 	//second define of moveX as canvasX position
+				moveY = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? this.y + this.size*2 : this.y + this.size; 	//second define of moveX as canvasX position
 			
 			}
 			/*		console.log (canvasX)
@@ -832,7 +838,7 @@ function player(hull, fireRate) {
 						this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));										
 				 }	
 
-				if (gameUI.soundFx == "ON"){game.shootSound.play();}
+				if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				this.bulletTimer = 1; //resetting our timer
 			}
 		}
@@ -859,7 +865,7 @@ function player(hull, fireRate) {
 			// console.log(this.direction);
 			game.explosions.push(new explosion(this.x, this.y, this.speed*0.5, this.direction, this.size));
 			this.dead = true;
-			if (gameUI.soundFx == "ON"){game.playerexplodeSound.play();}
+			if (game.sound){game.sounds.push(new Audio("_sounds/blast.mp3"));}
 			PlayerDie();
 			this.lives -= 1;
 			this.hull = hull;
@@ -885,25 +891,25 @@ function player(hull, fireRate) {
 			game.contextPlayer.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //rendering
 
 			if (this.hit) {
-				this.hitTimer++;
+				// this.hitTimer++;
 				navigator.vibrate(30);
 
-				var imgData = game.contextPlayer.getImageData(this.x, this.y, this.size, this.size);
+				// var imgData = game.contextPlayer.getImageData(this.x, this.y, this.size, this.size);
 
-				var d = imgData.data;
-			    for (var i = 0; i < d.length; i += 4) {
-			      var r = d[i];
-			      var g = d[i + 1];
-			      var b = d[i + 2];
-			      d[i] = d[i + 1] = d[i + 2] = 255;
-			    }
+				// var d = imgData.data;
+			 //    for (var i = 0; i < d.length; i += 4) {
+			 //      var r = d[i];
+			 //      var g = d[i + 1];
+			 //      var b = d[i + 2];
+			 //      d[i] = d[i + 1] = d[i + 2] = 255;
+			 //    }
 
-				game.contextPlayer.putImageData(imgData, this.x, this.y);
+				// game.contextPlayer.putImageData(imgData, this.x, this.y);
 
-				if (this.hitTimer > 4){
-					this.hit = false;
-					this.hitTimer = 0;
-				}				 
+				// if (this.hitTimer > 4){
+				// 	this.hit = false;
+				// 	this.hitTimer = 0;
+				// }				 
 			}
 
 		}
@@ -1056,13 +1062,10 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		this.x += this.vx;
 		this.y += this.vy;
 
-		// player-enemy collision
-		if (Collision(playerShip, this) && !this.dead && !game.gameOver){			
-			playerShip.hull -= this.hull;
-			gameUI.updateEnergy();						
-			playerShip.hit = true;			
-			this.hit = true;
-			this.hull -= playerShip.hull;
+		if(this.hit && this.hull > 0 ){
+			if(game.sound){game.sounds.push(new Audio("_sounds/_sfx/hit.mp3"));}
+			//change image here		
+			this.hit = false;
 		}
 
 		if (this.hull <= 0 ) {
@@ -1074,7 +1077,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			else{
 				game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size));
 			}
-			if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}
+			if(game.sound){game.sounds.push(new Audio("_sounds/explosion.mp3"));}
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;
@@ -1102,12 +1105,12 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.draw = function() {
 		
 		if(this.type == 'base'){ //making bases rotate
-			//clear trails
-			game.contextEnemies.save();
-			game.contextEnemies.translate(this.lastX, this.lastY);
-			game.contextEnemies.rotate(this.rotation);
-			game.contextEnemies.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
-			game.contextEnemies.restore();
+			// //clear trails
+			// game.contextEnemies.save();
+			// game.contextEnemies.translate(this.lastX, this.lastY);
+			// game.contextEnemies.rotate(this.rotation);
+			// game.contextEnemies.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
+			// game.contextEnemies.restore();
 
 			if (!this.dead) {				
 
@@ -1126,36 +1129,36 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			}
 		}
 		else {
-			game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
+			// game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 			if (!this.dead) {
 				game.contextEnemies.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
 			}
 		}
 
-		if (this.hit) {
-			this.hitTimer++;
-			var imgData = (this.type == 'base') ? game.contextEnemies.getImageData(this.x-this.size/2, this.y-this.size/2, this.size, this.size) : game.contextEnemies.getImageData(this.x, this.y, this.size, this.size);
+		// if (this.hit) {
+		// 	this.hitTimer++;
+		// 	var imgData = (this.type == 'base') ? game.contextEnemies.getImageData(this.x-this.size/2, this.y-this.size/2, this.size, this.size) : game.contextEnemies.getImageData(this.x, this.y, this.size, this.size);
 
-			var d = imgData.data;
-		    for (var i = 0; i < d.length; i += 4) {
-		      var r = d[i];
-		      var g = d[i + 1];
-		      var b = d[i + 2];
-		      d[i] = d[i + 1] = d[i + 2] = 255;
-		    }
+		// 	var d = imgData.data;
+		//     for (var i = 0; i < d.length; i += 4) {
+		//       var r = d[i];
+		//       var g = d[i + 1];
+		//       var b = d[i + 2];
+		//       d[i] = d[i + 1] = d[i + 2] = 255;
+		//     }
 
-		    if (this.type == 'base'){
-		   		game.contextEnemies.putImageData(imgData, this.x-this.size/2, this.y-this.size/2);
-		   	}
-		   	else{
-				game.contextEnemies.putImageData(imgData, this.x, this.y);
-			}
+		//     if (this.type == 'base'){
+		//    		game.contextEnemies.putImageData(imgData, this.x-this.size/2, this.y-this.size/2);
+		//    	}
+		//    	else{
+		// 		game.contextEnemies.putImageData(imgData, this.x, this.y);
+		// 	}
 
-			if (this.hitTimer > 4){
-				this.hit = false;
-				this.hitTimer = 0;
-			} 
-		}
+		// 	if (this.hitTimer > 4){
+		// 		this.hit = false;
+		// 		this.hitTimer = 0;
+		// 	} 
+		// }
 	};
 }
 
@@ -1166,7 +1169,7 @@ function boss(x, y, speed, direction, hull, image) {
 
 	this.hull = hull;
 	this.image = image;
-	this.size = 300*dtSize;
+	this.size = 200*dtSize;
 	this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;
@@ -1192,6 +1195,13 @@ function boss(x, y, speed, direction, hull, image) {
 		this.x += this.vx;
 		this.y += this.vy;
 
+
+		if(this.hit && this.hull > 0 ){
+			if(game.sound){game.sounds.push(new Audio("_sounds/_sfx/hit.mp3"));}
+			//change image here		
+			this.hit = false;
+		}
+
 		// player-boss collision
 		if (Collision(playerShip, this) && !this.dead && !game.gameOver){			
 			playerShip.hull -= this.hull;
@@ -1203,7 +1213,7 @@ function boss(x, y, speed, direction, hull, image) {
 		if (this.hull <= 0 ) {
 			this.dead = true;
 			game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size));			
-			if(game.soundStatus == "ON"){game.bossexplodeSound.play();}
+			if(game.sound){game.sounds.push(new Audio("_sounds/blast.mp3"));}
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;							
@@ -1224,7 +1234,7 @@ function boss(x, y, speed, direction, hull, image) {
 			// homing missiles, sort of
 			// this.bulletAngle = sectoidWave.units.length > 0 ? this.angleTo(sectoidWave.units[Math.floor(Math.random() * sectoidWave.units.length)]) : -Math.PI/2;
 			if (this.bulletTimer2 % this.bulletDivision2 == 1) {				
-				// if (gameUI.soundFx == "ON"){game.shootSound.play();}
+				// if (game.sound){game.shootSound.play();}
 				this.bulletTimer2 = 1; //resetting our timer
 				bulletX = this.x + this.size*0.48;
 				bulletY = this.y + this.size;
@@ -1258,25 +1268,25 @@ function boss(x, y, speed, direction, hull, image) {
 				game.contextEnemies.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
 		}		
 
-		if (this.hit) {
-			this.hitTimer++;
-			var imgData = game.contextEnemies.getImageData(this.x, this.y, this.size, this.size);
+		// if (this.hit) {
+		// 	this.hitTimer++;
+		// 	var imgData = game.contextEnemies.getImageData(this.x, this.y, this.size, this.size);
 
-			var d = imgData.data;
-		    for (var i = 0; i < d.length; i += 4) {
-		      var r = d[i];
-		      var g = d[i + 1];
-		      var b = d[i + 2];
-		      d[i] = d[i + 1] = d[i + 2] = 255;
-		    }
+		// 	var d = imgData.data;
+		//     for (var i = 0; i < d.length; i += 4) {
+		//       var r = d[i];
+		//       var g = d[i + 1];
+		//       var b = d[i + 2];
+		//       d[i] = d[i + 1] = d[i + 2] = 255;
+		//     }
 			
-			game.contextEnemies.putImageData(imgData, this.x, this.y);
+		// 	game.contextEnemies.putImageData(imgData, this.x, this.y);
 
-			if (this.hitTimer > 4){
-				this.hit = false;
-				this.hitTimer = 0;
-			} 
-		}
+		// 	if (this.hitTimer > 4){
+		// 		this.hit = false;
+		// 		this.hitTimer = 0;
+		// 	} 
+		// }
 	};
 }
 
@@ -1302,6 +1312,7 @@ function enemyBullet(x, y, speed, direction, power, image) {
 	this.image = image;
 	this.friction = 1.02;
 	this.dtSet = false;
+	this.context = game.contextPlayer;
 
 	this.update = function(){ // Replacing the default 'update' method
 		if (dt !== 0 && !this.dtSet){
@@ -1329,22 +1340,6 @@ function enemyBullet(x, y, speed, direction, power, image) {
 
 		this.spriteRow = Math.floor(this.animationSequence[this.currentFrame] / this.fpr);
 		this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
-
-
-		if(Collision(this, playerShip) && !game.gameOver){ //
-			// if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}							
-						// game.contextEnemies.clearRect(playerShip.bullets[p].x, playerShip.bullets[p].y, playerShip.bullets[p].size, playerShip.bullets[p].size*1.8);								
-			playerShip.hull -= this.power;
-			gameUI.updateEnergy();	
-			playerShip.hit = true;	
-			// Xplode(playerShip.x, playerShip.y);
-			// playerShip.dead = true;
-			// 		game.contextPlayer.clearRect(game.player.x, game.player.y, game.player.size, game.player.size);
-			// 		Xplode(game.player.x, game.player.y);
-					// PlayerDie();
-			// 	}
-			this.dead = true;
-		}
 
 	};
 	
@@ -1401,6 +1396,7 @@ function loot(x, y) {
     case 'missile':
         this.image = 20;
 	}
+	this.context = game.contextPlayer;
 
 	this.update = function() {
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
@@ -1414,7 +1410,7 @@ function loot(x, y) {
 		this.y += this.vy;
 
 		// player-loot collision
-		if (Collision(playerShip, this) && !this.dead && !game.gameOver){			
+		if (Collision(this, playerShip) && !this.dead && !game.gameOver){			
 			switch(this.type) {
 			    case 'health':
 			    	if (this.hull <= 7.5) {
@@ -1431,16 +1427,17 @@ function loot(x, y) {
 			    case 'missile':
 			        playerShip.missileLevel += 1;
 			}
+			if(game.sound){game.sounds.push(new Audio("_sounds/_sfx/loot_powerUp.mp3"));}
 			this.dead = true;
 		}
 
 	};
 
 	this.draw = function() {
-		game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
+		game.contextPlayer.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
 		if (!this.dead) {			
-			game.contextEnemies.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render			
+			game.contextPlayer.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render			
 		}
 	};
 }
@@ -1580,19 +1577,21 @@ gameUI = new ui();
 				game.paused = false;
 				game.start = false;
 				mouseIsDown = 0;				
-				gameUI.updateAll();				
+				gameUI.updateAll();	
+				if(game.music && game.music.length < 1){game.music.push(new Audio("_sounds/_lvl1/tune1.mp3"));}			
 			}
 			
 			//If Esc
 			if (game.keys[27]) {
 				game.lives = 0;
-				resetGame();
+				resetGame();				
 			}
 
 			//game sound
 			if (game.keys[119]) {
 				game.sound = (game.sound) ? false : true;
 				game.keys[119] = false;
+				// if(game.music && game.music.length < 1){game.music.push(new Audio("_sounds/_lvl1/tune1.mp3"));} //CHANGE SOUND TO MUSIC LATER
 				gameUI.updateSound();	
 			}
 
@@ -1685,10 +1684,10 @@ gameUI = new ui();
 			//////////////////////// 
 			// Init
 			///////////////////////							
-			playerShip.update();
 			game.contextPlayer.clearRect(0, 0, game.width, game.height); //clear trails
+			playerShip.update();
 			playerShip.draw();
-
+			game.contextEnemies.clearRect(0, 0, game.width, game.height); //clear trails
 
 			//////////////////////// 
 			// Background
@@ -1742,6 +1741,7 @@ gameUI = new ui();
 			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
 			}
 			if (game.seconds == 13) {
+				if(game.sound){game.music.push(new Audio("_sounds/_lvl1/tune2.mp3"));}
 			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 23, 1));				
 			}
 			if (game.seconds == 18) {
@@ -1779,6 +1779,7 @@ gameUI = new ui();
 			}
 
 			if (game.seconds == 55) {
+				if(game.sound){game.music.push(new Audio("_sounds/_lvl1/boss.mp3"));}
 			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 100, 27));
 			}
 			//boss(x, y, speed, direction, hull, image)
@@ -1789,35 +1790,49 @@ gameUI = new ui();
 			///////////////////////////////////
 
 			if(game.enemies.length > 0){
+				
 				for (var c in game.enemies){
+					game.enemies[c].update();
+					game.enemies[c].draw();
+				}
 
+				for (var j in game.enemies){
 					//projectiles collision
 					for(var f in playerShip.bullets){
-						if (Collision(game.enemies[c], playerShip.bullets[f]) && !game.enemies[c].dead){ //dead check avoids ghost scoring														
-							game.enemies[c].hit = true;							
-							game.enemies[c].hull -= playerShip.bullets[f].power;
+						if (Collision(game.enemies[j], playerShip.bullets[f]) && !game.enemies[j].dead){ //dead check avoids ghost scoring														
+							game.enemies[j].hit = true;							
+							game.enemies[j].hull -= playerShip.bullets[f].power;
 							// game.contextEnemies.clearRect(playerShip.bullets[f].x, playerShip.bullets[f].y, playerShip.bullets[f].size, playerShip.bullets[f].size*1.8);								
 							// playerShip.bullets[f].dead = true;
 							playerShip.bullets.splice(f,1);
 						}
 					}
+				}
 
-					game.enemies[c].update();
-					game.enemies[c].draw();			
+				for (var t in game.enemies){					
+					// player-enemy collision
+					if (Collision(game.enemies[t], playerShip) && !game.enemies[t].dead && !game.gameOver){			
+						playerShip.hull -= game.enemies[t].hull;
+						gameUI.updateEnergy();						
+						playerShip.hit = true;			
+						game.enemies[t].hit = true;			
+						game.enemies[t].hull -= playerShip.hull;
+					}	
+				}
 
 
-					if(game.enemies[c].dead || game.enemies[c].y > game.height + game.enemies[c].size ||  game.enemies[c].x < -game.width*0.3 ||  game.enemies[c].x > game.width*1.3){					
-						if(game.enemies[c].dead){
-							game.contextEnemies.clearRect(game.enemies[c].x, game.enemies[c].y, game.enemies[c].size, game.enemies[c].size);
+				for (var o in game.enemies){
+					if(game.enemies[o].dead || game.enemies[o].y > game.height + game.enemies[o].size ||  game.enemies[o].x < -game.width*0.3 ||  game.enemies[o].x > game.width*1.3){					
+						if(game.enemies[o].dead){
+							// game.contextEnemies.clearRect(game.enemies[o].x, game.enemies[o].y, game.enemies[o].size, game.enemies[o].size);
 							lootchance = Math.random();
-							if (lootchance < 0.1) {
-								game.loot.push(new loot(game.enemies[c].x, game.enemies[c].y));					
+							if (lootchance < 0.5) {
+								game.loot.push(new loot(game.enemies[o].x, game.enemies[o].y));					
 							}
 						}	
 
-						game.enemies.splice(c,1);				
+						game.enemies.splice(o,1);				
 					}
-
 				}
 			}
 
@@ -1847,7 +1862,7 @@ gameUI = new ui();
 
 
 
-					if(game.loot[u].x > game.width + game.loot[u].size || game.loot[u].x < 0 - game.loot[u].size || game.loot[u].y > game.height + game.loot[u].size || game.loot[u].y < 0 - 30){
+					if(game.loot[u].dead || game.loot[u].x > game.width + game.loot[u].size || game.loot[u].x < 0 - game.loot[u].size || game.loot[u].y > game.height + game.loot[u].size || game.loot[u].y < 0 - 30){
 						game.loot.splice(u,1);
 					}
 				}
@@ -1861,11 +1876,25 @@ gameUI = new ui();
 			///////////////////////////////////
 
 			if (game.enemyBullets.length >= 1) {
-					for (var z in game.enemyBullets){
-						game.enemyBullets[z].update();
-						game.enemyBullets[z].draw();
+				for (var z in game.enemyBullets){
+					game.enemyBullets[z].update();
+					game.enemyBullets[z].draw();
 
 
+					if(Collision(game.enemyBullets[z], playerShip) && !game.gameOver){ //
+						// if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}							
+									// game.contextEnemies.clearRect(playerShip.bullets[p].x, playerShip.bullets[p].y, playerShip.bullets[p].size, playerShip.bullets[p].size*1.8);								
+						playerShip.hull -= game.enemyBullets[z].power;
+						gameUI.updateEnergy();	
+						playerShip.hit = true;	
+						// Xplode(playerShip.x, playerShip.y);
+						// playerShip.dead = true;
+						// 		game.contextPlayer.clearRect(game.player.x, game.player.y, game.player.size, game.player.size);
+						// 		Xplode(game.player.x, game.player.y);
+								// PlayerDie();
+						// 	}
+						game.enemyBullets[z].dead = true;
+					}
 
 					if(game.enemyBullets[z].dead || game.enemyBullets[z].x > game.width + game.enemyBullets[z].size || game.enemyBullets[z].x < 0 - game.enemyBullets[z].size || game.enemyBullets[z].y > game.height + game.enemyBullets[z].size || game.enemyBullets[z].y < 0 - 30){
 						game.enemyBullets.splice(z,1);
@@ -1889,6 +1918,30 @@ gameUI = new ui();
 					if (game.explosions[p].currentFrame == 19){
 						game.explosions.splice(p,1);
 					}
+				}
+			}
+
+			///////////////////////////////////
+			// Game Sounds
+			///////////////////////////////////
+
+			if (game.sounds.length > 0) {
+				for(var s in game.sounds){
+
+					game.sounds[s].play();
+
+					game.sounds[s].addEventListener("ended", game.sounds.splice(s,1));
+
+				}
+			}	
+
+			if (game.music.length > 0) {
+				for(var q in game.music){
+
+					game.music[q].play();
+					game.music[q].loop = true;					
+					// game.music[q].addEventListener("ended", game.music.splice(q,1));
+
 				}
 			}			
 		}	
@@ -1999,7 +2052,16 @@ gameUI = new ui();
 			game.waves = [];			
 			game.enemyBullets = [];
 			game.loot = [];
-			game.timer = 0;			
+			game.timer = 0;		
+			game.sounds = [];
+
+			for(var g in game.music){
+					game.music[g].pause();
+					game.music[g].loop = false;					
+					// game.music[q].addEventListener("ended", game.music.splice(q,1));
+					game.music.splice(g,1);
+			}
+			if(game.sound && game.music.length < 1){game.music.push(new Audio("_sounds/_lvl1/tune1.mp3"));}			
 
 			// for(var y = 0; y < game.level; y++) {	// y enemies vertically..
 			// 	for(var x = 0; x < game.level; x++){ // ..by x horizontally
@@ -2103,13 +2165,73 @@ gameUI = new ui();
 
 		// }
 
-		
+
 		function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
-			return !(first.x > second.x + second.size ||
+			
+			if (!(first.x > second.x + second.size ||
 				first.x + first.size < second.x ||
 				first.y > second.y + second.size ||
-				first.y + first.size < second.y);
+				first.y + first.size < second.y)) {
+
+				Cx = first.x < second.x ? second.x : first.x;
+				Cy = first.y < second.y ? second.y : first.y;
+				CX = first.x + first.size < second.x + second.size ? first.x + first.size : second.x + second.size;
+				CY = first.y + first.size < second.y + second.size ? first.y + first.size : second.y + second.size;
+				
+				iFirst = first.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
+				iSecond = second.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
+
+				var res = 4; //check the 4th index every 5 frames
+				// var length = iFirst.data.length >= iSecond.data.length ? iFirst.data.length : iSecond.data.length;
+				var length = iFirst.data.length;
+
+
+				for (var i = 0 ; i < length; i+= res) {
+					return !(iFirst.data[i] === 0 && iSecond.data[i] === 0);
+						// console.log('false');
+						// // console.log(length);
+						// return false;					
+					// }
+					// else{
+					// 	console.log('true');
+					// 	return true;
+					// }
+				}
+				// first.context.clearRect(Cx, Cy, CX-Cx, CY-Cy);
+				// second.context.clearRect(Cx, Cy, CX-Cx, CY-Cy);
+			}
+
 		}
+
+
+
+
+		// 	var firstData = first.ctx.getImageData(first.x, first.y, first.size, first.size);
+		// 	var secondData = second.ctx.getImageData(second.x, second.y, second.size, second.size);
+		// 	//note these Data arrays won't be the same size so you need to check which is greater
+		// 	var res = 4*5; //check the 4th index every 5 frames
+		// 	var data = firstData.data;
+		// 	var lenght = data.lenght;
+
+		// 	for (var i = 0 ; i < lenght; i+= res) {
+		// 		if (!firstData.data[i+3] || !secondData.data[i+3]){
+		// 			console.log('false');
+		// 			return false;					
+		// 		}
+		// 		else{
+		// 			console.log('true');
+		// 			return true;
+		// 		}
+		// 	}
+		// }
+
+		
+		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
+		// 	return !(first.x > second.x + second.size ||
+		// 		first.x + first.size < second.x ||
+		// 		first.y > second.y + second.size ||
+		// 		first.y + first.size < second.y);
+		// }
 
 
 		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
@@ -2155,7 +2277,7 @@ gameUI = new ui();
 					}
 
 					if (game.soundStatus == "ON") {
-						game.deathSound.play();
+						game.sounds.push(new Audio("_sounds/death.mp3"));
 					}
 
 					game.levelScore = 0;

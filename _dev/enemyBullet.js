@@ -18,6 +18,7 @@ function enemyBullet(x, y, speed, direction, power, image) {
 	this.image = image;
 	this.friction = 1.02;
 	this.dtSet = false;
+	this.context = game.contextPlayer;
 
 	this.update = function(){ // Replacing the default 'update' method
 		if (dt !== 0 && !this.dtSet){
@@ -45,22 +46,6 @@ function enemyBullet(x, y, speed, direction, power, image) {
 
 		this.spriteRow = Math.floor(this.animationSequence[this.currentFrame] / this.fpr);
 		this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
-
-
-		if(Collision(this, playerShip) && !game.gameOver){ //
-			// if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}							
-						// game.contextEnemies.clearRect(playerShip.bullets[p].x, playerShip.bullets[p].y, playerShip.bullets[p].size, playerShip.bullets[p].size*1.8);								
-			playerShip.hull -= this.power;
-			gameUI.updateEnergy();	
-			playerShip.hit = true;	
-			// Xplode(playerShip.x, playerShip.y);
-			// playerShip.dead = true;
-			// 		game.contextPlayer.clearRect(game.player.x, game.player.y, game.player.size, game.player.size);
-			// 		Xplode(game.player.x, game.player.y);
-					// PlayerDie();
-			// 	}
-			this.dead = true;
-		}
 
 	};
 	

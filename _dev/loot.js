@@ -19,6 +19,7 @@ function loot(x, y) {
     case 'missile':
         this.image = 20;
 	}
+	this.context = game.contextPlayer;
 
 	this.update = function() {
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
@@ -32,7 +33,7 @@ function loot(x, y) {
 		this.y += this.vy;
 
 		// player-loot collision
-		if (Collision(playerShip, this) && !this.dead && !game.gameOver){			
+		if (Collision(this, playerShip) && !this.dead && !game.gameOver){			
 			switch(this.type) {
 			    case 'health':
 			    	if (this.hull <= 7.5) {
@@ -49,16 +50,17 @@ function loot(x, y) {
 			    case 'missile':
 			        playerShip.missileLevel += 1;
 			}
+			if(game.sound){game.sounds.push(new Audio("_sounds/_sfx/loot_powerUp.mp3"));}
 			this.dead = true;
 		}
 
 	};
 
 	this.draw = function() {
-		game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
+		game.contextPlayer.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
 		if (!this.dead) {			
-			game.contextEnemies.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render			
+			game.contextPlayer.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render			
 		}
 	};
 }

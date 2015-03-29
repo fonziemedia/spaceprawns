@@ -31,6 +31,7 @@
 			$(xmldata).find('data').each(function(){
 				// SETTINGS
 				X_Sound = parseInt($(this).find('sound').text());
+				X_Music = parseInt($(this).find('music').text());
 				X_Level = parseInt($(this).find('level').text());
 				X_Lives = parseInt($(this).find('player-lives').text());
 				X_PlayerSpeed = parseInt($(this).find('player-speed').text());
@@ -72,6 +73,8 @@
 		dtTimer = 0;		
 		dtArray = [];
 		timeThen = new Date().getTime();
+
+		// res = 4*5; //check the 4th index every 5 frames
 		
 		//====================== Game state ========================
 		
@@ -86,12 +89,15 @@
 		//========================== Audio ==========================
 		
 		game.sound = X_Sound;	//on/off trigger
+		game.music = X_Music;	//on/off trigger
+		game.sounds = [];
+		game.music = [];
 
-		game.enemyexplodeSound = new Audio("_sounds/explosion.wav");
-		game.playerexplodeSound = new Audio("_sounds/blast.mp3");
-		game.shootSound = new Audio("_sounds/laser.wav");
-		game.deathSound = new Audio("_sounds/death.mp3");
-		game.winSound = new Audio("_sounds/victory.mp3");
+		// game.enemyexplodeSound = new Audio("_sounds/explosion.wav");
+		// game.playerexplodeSound = new Audio("_sounds/blast.mp3");
+		// game.shootSound = new Audio("_sounds/laser.wav");
+		// game.deathSound = new Audio("_sounds/death.mp3");
+		// game.winSound = new Audio("_sounds/victory.mp3");
 
 			
 		//======================== Images ========================		

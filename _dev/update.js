@@ -30,10 +30,10 @@
 			//////////////////////// 
 			// Init
 			///////////////////////							
-			playerShip.update();
 			game.contextPlayer.clearRect(0, 0, game.width, game.height); //clear trails
+			playerShip.update();
 			playerShip.draw();
-
+			game.contextEnemies.clearRect(0, 0, game.width, game.height); //clear trails
 
 			//////////////////////// 
 			// Background
@@ -87,6 +87,7 @@
 			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
 			}
 			if (game.seconds == 13) {
+				if(game.sound){game.music.push(new Audio("_sounds/_lvl1/tune2.mp3"));}
 			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 23, 1));				
 			}
 			if (game.seconds == 18) {
@@ -124,6 +125,7 @@
 			}
 
 			if (game.seconds == 55) {
+				if(game.sound){game.music.push(new Audio("_sounds/_lvl1/boss.mp3"));}
 			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 100, 27));
 			}
 			//boss(x, y, speed, direction, hull, image)
@@ -134,35 +136,49 @@
 			///////////////////////////////////
 
 			if(game.enemies.length > 0){
+				
 				for (var c in game.enemies){
+					game.enemies[c].update();
+					game.enemies[c].draw();
+				}
 
+				for (var j in game.enemies){
 					//projectiles collision
 					for(var f in playerShip.bullets){
-						if (Collision(game.enemies[c], playerShip.bullets[f]) && !game.enemies[c].dead){ //dead check avoids ghost scoring														
-							game.enemies[c].hit = true;							
-							game.enemies[c].hull -= playerShip.bullets[f].power;
+						if (Collision(game.enemies[j], playerShip.bullets[f]) && !game.enemies[j].dead){ //dead check avoids ghost scoring														
+							game.enemies[j].hit = true;							
+							game.enemies[j].hull -= playerShip.bullets[f].power;
 							// game.contextEnemies.clearRect(playerShip.bullets[f].x, playerShip.bullets[f].y, playerShip.bullets[f].size, playerShip.bullets[f].size*1.8);								
 							// playerShip.bullets[f].dead = true;
 							playerShip.bullets.splice(f,1);
 						}
 					}
+				}
 
-					game.enemies[c].update();
-					game.enemies[c].draw();			
+				for (var t in game.enemies){					
+					// player-enemy collision
+					if (Collision(game.enemies[t], playerShip) && !game.enemies[t].dead && !game.gameOver){			
+						playerShip.hull -= game.enemies[t].hull;
+						gameUI.updateEnergy();						
+						playerShip.hit = true;			
+						game.enemies[t].hit = true;			
+						game.enemies[t].hull -= playerShip.hull;
+					}	
+				}
 
 
-					if(game.enemies[c].dead || game.enemies[c].y > game.height + game.enemies[c].size ||  game.enemies[c].x < -game.width*0.3 ||  game.enemies[c].x > game.width*1.3){					
-						if(game.enemies[c].dead){
-							game.contextEnemies.clearRect(game.enemies[c].x, game.enemies[c].y, game.enemies[c].size, game.enemies[c].size);
+				for (var o in game.enemies){
+					if(game.enemies[o].dead || game.enemies[o].y > game.height + game.enemies[o].size ||  game.enemies[o].x < -game.width*0.3 ||  game.enemies[o].x > game.width*1.3){					
+						if(game.enemies[o].dead){
+							// game.contextEnemies.clearRect(game.enemies[o].x, game.enemies[o].y, game.enemies[o].size, game.enemies[o].size);
 							lootchance = Math.random();
-							if (lootchance < 0.1) {
-								game.loot.push(new loot(game.enemies[c].x, game.enemies[c].y));					
+							if (lootchance < 0.5) {
+								game.loot.push(new loot(game.enemies[o].x, game.enemies[o].y));					
 							}
 						}	
 
-						game.enemies.splice(c,1);				
+						game.enemies.splice(o,1);				
 					}
-
 				}
 			}
 
@@ -192,7 +208,7 @@
 
 
 
-					if(game.loot[u].x > game.width + game.loot[u].size || game.loot[u].x < 0 - game.loot[u].size || game.loot[u].y > game.height + game.loot[u].size || game.loot[u].y < 0 - 30){
+					if(game.loot[u].dead || game.loot[u].x > game.width + game.loot[u].size || game.loot[u].x < 0 - game.loot[u].size || game.loot[u].y > game.height + game.loot[u].size || game.loot[u].y < 0 - 30){
 						game.loot.splice(u,1);
 					}
 				}
@@ -206,11 +222,25 @@
 			///////////////////////////////////
 
 			if (game.enemyBullets.length >= 1) {
-					for (var z in game.enemyBullets){
-						game.enemyBullets[z].update();
-						game.enemyBullets[z].draw();
+				for (var z in game.enemyBullets){
+					game.enemyBullets[z].update();
+					game.enemyBullets[z].draw();
 
 
+					if(Collision(game.enemyBullets[z], playerShip) && !game.gameOver){ //
+						// if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}							
+									// game.contextEnemies.clearRect(playerShip.bullets[p].x, playerShip.bullets[p].y, playerShip.bullets[p].size, playerShip.bullets[p].size*1.8);								
+						playerShip.hull -= game.enemyBullets[z].power;
+						gameUI.updateEnergy();	
+						playerShip.hit = true;	
+						// Xplode(playerShip.x, playerShip.y);
+						// playerShip.dead = true;
+						// 		game.contextPlayer.clearRect(game.player.x, game.player.y, game.player.size, game.player.size);
+						// 		Xplode(game.player.x, game.player.y);
+								// PlayerDie();
+						// 	}
+						game.enemyBullets[z].dead = true;
+					}
 
 					if(game.enemyBullets[z].dead || game.enemyBullets[z].x > game.width + game.enemyBullets[z].size || game.enemyBullets[z].x < 0 - game.enemyBullets[z].size || game.enemyBullets[z].y > game.height + game.enemyBullets[z].size || game.enemyBullets[z].y < 0 - 30){
 						game.enemyBullets.splice(z,1);
@@ -234,6 +264,30 @@
 					if (game.explosions[p].currentFrame == 19){
 						game.explosions.splice(p,1);
 					}
+				}
+			}
+
+			///////////////////////////////////
+			// Game Sounds
+			///////////////////////////////////
+
+			if (game.sounds.length > 0) {
+				for(var s in game.sounds){
+
+					game.sounds[s].play();
+
+					game.sounds[s].addEventListener("ended", game.sounds.splice(s,1));
+
+				}
+			}	
+
+			if (game.music.length > 0) {
+				for(var q in game.music){
+
+					game.music[q].play();
+					game.music[q].loop = true;					
+					// game.music[q].addEventListener("ended", game.music.splice(q,1));
+
 				}
 			}			
 		}	

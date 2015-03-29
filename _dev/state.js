@@ -8,19 +8,21 @@
 				game.paused = false;
 				game.start = false;
 				mouseIsDown = 0;				
-				gameUI.updateAll();				
+				gameUI.updateAll();	
+				if(game.music && game.music.length < 1){game.music.push(new Audio("_sounds/_lvl1/tune1.mp3"));}			
 			}
 			
 			//If Esc
 			if (game.keys[27]) {
 				game.lives = 0;
-				resetGame();
+				resetGame();				
 			}
 
 			//game sound
 			if (game.keys[119]) {
 				game.sound = (game.sound) ? false : true;
 				game.keys[119] = false;
+				// if(game.music && game.music.length < 1){game.music.push(new Audio("_sounds/_lvl1/tune1.mp3"));} //CHANGE SOUND TO MUSIC LATER
 				gameUI.updateSound();	
 			}
 

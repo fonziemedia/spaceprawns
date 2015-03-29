@@ -3,7 +3,7 @@ function boss(x, y, speed, direction, hull, image) {
 
 	this.hull = hull;
 	this.image = image;
-	this.size = 300*dtSize;
+	this.size = 200*dtSize;
 	this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;
@@ -29,6 +29,13 @@ function boss(x, y, speed, direction, hull, image) {
 		this.x += this.vx;
 		this.y += this.vy;
 
+
+		if(this.hit && this.hull > 0 ){
+			if(game.sound){game.sounds.push(new Audio("_sounds/_sfx/hit.mp3"));}
+			//change image here		
+			this.hit = false;
+		}
+
 		// player-boss collision
 		if (Collision(playerShip, this) && !this.dead && !game.gameOver){			
 			playerShip.hull -= this.hull;
@@ -40,7 +47,7 @@ function boss(x, y, speed, direction, hull, image) {
 		if (this.hull <= 0 ) {
 			this.dead = true;
 			game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size));			
-			if(game.soundStatus == "ON"){game.bossexplodeSound.play();}
+			if(game.sound){game.sounds.push(new Audio("_sounds/blast.mp3"));}
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;							
@@ -61,7 +68,7 @@ function boss(x, y, speed, direction, hull, image) {
 			// homing missiles, sort of
 			// this.bulletAngle = sectoidWave.units.length > 0 ? this.angleTo(sectoidWave.units[Math.floor(Math.random() * sectoidWave.units.length)]) : -Math.PI/2;
 			if (this.bulletTimer2 % this.bulletDivision2 == 1) {				
-				// if (gameUI.soundFx == "ON"){game.shootSound.play();}
+				// if (game.sound){game.shootSound.play();}
 				this.bulletTimer2 = 1; //resetting our timer
 				bulletX = this.x + this.size*0.48;
 				bulletY = this.y + this.size;
@@ -95,25 +102,25 @@ function boss(x, y, speed, direction, hull, image) {
 				game.contextEnemies.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
 		}		
 
-		if (this.hit) {
-			this.hitTimer++;
-			var imgData = game.contextEnemies.getImageData(this.x, this.y, this.size, this.size);
+		// if (this.hit) {
+		// 	this.hitTimer++;
+		// 	var imgData = game.contextEnemies.getImageData(this.x, this.y, this.size, this.size);
 
-			var d = imgData.data;
-		    for (var i = 0; i < d.length; i += 4) {
-		      var r = d[i];
-		      var g = d[i + 1];
-		      var b = d[i + 2];
-		      d[i] = d[i + 1] = d[i + 2] = 255;
-		    }
+		// 	var d = imgData.data;
+		//     for (var i = 0; i < d.length; i += 4) {
+		//       var r = d[i];
+		//       var g = d[i + 1];
+		//       var b = d[i + 2];
+		//       d[i] = d[i + 1] = d[i + 2] = 255;
+		//     }
 			
-			game.contextEnemies.putImageData(imgData, this.x, this.y);
+		// 	game.contextEnemies.putImageData(imgData, this.x, this.y);
 
-			if (this.hitTimer > 4){
-				this.hit = false;
-				this.hitTimer = 0;
-			} 
-		}
+		// 	if (this.hitTimer > 4){
+		// 		this.hit = false;
+		// 		this.hitTimer = 0;
+		// 	} 
+		// }
 	};
 }
 

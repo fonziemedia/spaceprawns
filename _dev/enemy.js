@@ -39,13 +39,10 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		this.x += this.vx;
 		this.y += this.vy;
 
-		// player-enemy collision
-		if (Collision(playerShip, this) && !this.dead && !game.gameOver){			
-			playerShip.hull -= this.hull;
-			gameUI.updateEnergy();						
-			playerShip.hit = true;			
-			this.hit = true;
-			this.hull -= playerShip.hull;
+		if(this.hit && this.hull > 0 ){
+			if(game.sound){game.sounds.push(new Audio("_sounds/_sfx/hit.mp3"));}
+			//change image here		
+			this.hit = false;
 		}
 
 		if (this.hull <= 0 ) {
@@ -57,7 +54,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			else{
 				game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size));
 			}
-			if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}
+			if(game.sound){game.sounds.push(new Audio("_sounds/explosion.mp3"));}
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;
@@ -85,12 +82,12 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.draw = function() {
 		
 		if(this.type == 'base'){ //making bases rotate
-			//clear trails
-			game.contextEnemies.save();
-			game.contextEnemies.translate(this.lastX, this.lastY);
-			game.contextEnemies.rotate(this.rotation);
-			game.contextEnemies.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
-			game.contextEnemies.restore();
+			// //clear trails
+			// game.contextEnemies.save();
+			// game.contextEnemies.translate(this.lastX, this.lastY);
+			// game.contextEnemies.rotate(this.rotation);
+			// game.contextEnemies.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
+			// game.contextEnemies.restore();
 
 			if (!this.dead) {				
 
@@ -109,36 +106,36 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			}
 		}
 		else {
-			game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
+			// game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 			if (!this.dead) {
 				game.contextEnemies.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
 			}
 		}
 
-		if (this.hit) {
-			this.hitTimer++;
-			var imgData = (this.type == 'base') ? game.contextEnemies.getImageData(this.x-this.size/2, this.y-this.size/2, this.size, this.size) : game.contextEnemies.getImageData(this.x, this.y, this.size, this.size);
+		// if (this.hit) {
+		// 	this.hitTimer++;
+		// 	var imgData = (this.type == 'base') ? game.contextEnemies.getImageData(this.x-this.size/2, this.y-this.size/2, this.size, this.size) : game.contextEnemies.getImageData(this.x, this.y, this.size, this.size);
 
-			var d = imgData.data;
-		    for (var i = 0; i < d.length; i += 4) {
-		      var r = d[i];
-		      var g = d[i + 1];
-		      var b = d[i + 2];
-		      d[i] = d[i + 1] = d[i + 2] = 255;
-		    }
+		// 	var d = imgData.data;
+		//     for (var i = 0; i < d.length; i += 4) {
+		//       var r = d[i];
+		//       var g = d[i + 1];
+		//       var b = d[i + 2];
+		//       d[i] = d[i + 1] = d[i + 2] = 255;
+		//     }
 
-		    if (this.type == 'base'){
-		   		game.contextEnemies.putImageData(imgData, this.x-this.size/2, this.y-this.size/2);
-		   	}
-		   	else{
-				game.contextEnemies.putImageData(imgData, this.x, this.y);
-			}
+		//     if (this.type == 'base'){
+		//    		game.contextEnemies.putImageData(imgData, this.x-this.size/2, this.y-this.size/2);
+		//    	}
+		//    	else{
+		// 		game.contextEnemies.putImageData(imgData, this.x, this.y);
+		// 	}
 
-			if (this.hitTimer > 4){
-				this.hit = false;
-				this.hitTimer = 0;
-			} 
-		}
+		// 	if (this.hitTimer > 4){
+		// 		this.hit = false;
+		// 		this.hitTimer = 0;
+		// 	} 
+		// }
 	};
 }
 
