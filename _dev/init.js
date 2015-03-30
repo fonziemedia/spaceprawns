@@ -106,7 +106,7 @@
 		game.doneImages  = 0; // will contain how many images have been loaded
 		game.requiredImages = 0; // will contain how many images should be loaded
 		// game.font = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? "Helvetica" : "Monaco";
-		game.res = 4; //check the 4th index every 5 frames
+		game.res = 4*100; //check the 4th index every 5 frames
 
 		
 		//====================== Canvases + Images + responsiveness  ============================

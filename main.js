@@ -444,7 +444,7 @@ var particle = function(x, y, speed, direction, grav) {
 		game.doneImages  = 0; // will contain how many images have been loaded
 		game.requiredImages = 0; // will contain how many images should be loaded
 		// game.font = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? "Helvetica" : "Monaco";
-		game.res = 4; //check the 4th index every 5 frames
+		game.res = 4*100; //check the 4th index every 5 frames
 
 		
 		//====================== Canvases + Images + responsiveness  ============================
@@ -1871,7 +1871,7 @@ gameUI = new ui();
 						if(game.enemies[o].dead){
 							// game.contextEnemies.clearRect(game.enemies[o].x, game.enemies[o].y, game.enemies[o].size, game.enemies[o].size);
 							lootchance = Math.random();
-							if (lootchance < 0.1) {
+							if (lootchance < 0.05) {
 								game.loot.push(new loot(game.enemies[o].x, game.enemies[o].y));					
 							}
 						}	
