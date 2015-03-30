@@ -159,52 +159,44 @@ function player(hull, fireRate) {
 				// (x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame)
 				switch(this.laserLevel) {
 				    case 1:
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				        break;
 				    case 2:
-				    	this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.25, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.75, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));				
+				    	game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));				
+				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
+				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				        break;
 				    default:
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.25, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.75, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));				
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
+				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}				
+				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				 }
 
 				 switch(this.missileLevel) {
 				 	case 0:
 				 		break;
 				    case 1:
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
 						break;
 				    case 2:
-				    	this.bullets.push( new playerBullet(playerShip.x, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
-						this.bullets.push( new playerBullet(playerShip.x + playerShip.size, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+				    	game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
 						break;
 				    default:
-				        this.bullets.push( new playerBullet(playerShip.x, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
-						this.bullets.push( new playerBullet(playerShip.x + playerShip.size, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
-						this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));										
-				 }	
-
-				if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
+				        game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+						game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));										
+				 }				
 				this.bulletTimer = 1; //resetting our timer
 			}
 		}
 		else {
 			this.bulletTimer = fireRate-1;
-		}
-
-		
-		if (this.bullets.length >= 1) {
-			for(var k in this.bullets){
-				
-				this.bullets[k].update();		
-
-				if(this.bullets.dead || this.bullets[k].x > game.width + this.bullets[k].size || this.bullets[k].x < 0 - this.bullets[k].size || this.bullets[k].y > game.height + this.bullets[k].size || this.bullets[k].y < 0 - 30){
-					this.bullets.splice(k,1);
-				}
-			}
 		}
 
 		if (this.hull <= 0) {
@@ -231,16 +223,13 @@ function player(hull, fireRate) {
 
 	this.draw = function() {
 
-		for(var k in this.bullets){
-			this.bullets[k].draw();
-		}
 
 		if(!this.dead){		
 			
 			game.contextPlayer.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //rendering
 
 			if (this.hit) {
-				// this.hitTimer++;
+				this.hitTimer++;
 				navigator.vibrate(30);
 
 				// var imgData = game.contextPlayer.getImageData(this.x, this.y, this.size, this.size);
@@ -255,17 +244,17 @@ function player(hull, fireRate) {
 
 				// game.contextPlayer.putImageData(imgData, this.x, this.y);
 
-				// if (this.hitTimer > 4){
-				// 	this.hit = false;
-				// 	this.hitTimer = 0;
-				// }				 
+				if (this.hitTimer > 4){
+					this.hit = false;
+					this.hitTimer = 0;
+				}				 
 			}
 
 		}
 	};
 
 	this.reset = function() {
-		playerShip.dead = false;
+		this.dead = false;
 		this.x = game.width*0.46;
 		this.y = game.height*0.90;
 		this.image = 0;
@@ -286,4 +275,4 @@ player.prototype = Object.create(particle.prototype); // Creating a player.proto
 player.prototype.constructor = player; // Set the "constructor" property to refer to player
 
 
-playerShip = new player(10, 15);
+playerShip = new player(10, 20);

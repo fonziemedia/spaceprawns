@@ -429,7 +429,7 @@ var particle = function(x, y, speed, direction, grav) {
 		game.sound = X_Sound;	//on/off trigger
 		game.music = X_Music;	//on/off trigger
 		game.sounds = [];
-		game.music = [];
+		game.songs = [];
 
 		// game.enemyexplodeSound = new Audio("_sounds/explosion.wav");
 		// game.playerexplodeSound = new Audio("_sounds/blast.mp3");
@@ -443,7 +443,8 @@ var particle = function(x, y, speed, direction, grav) {
 		game.images = [];
 		game.doneImages  = 0; // will contain how many images have been loaded
 		game.requiredImages = 0; // will contain how many images should be loaded
-		// game.font = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? "Helvetica" : "Monaco";	
+		// game.font = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? "Helvetica" : "Monaco";
+		game.res = 4; //check the 4th index every 5 frames
 
 		
 		//====================== Canvases + Images + responsiveness  ============================
@@ -810,52 +811,44 @@ function player(hull, fireRate) {
 				// (x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame)
 				switch(this.laserLevel) {
 				    case 1:
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				        break;
 				    case 2:
-				    	this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.25, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.75, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));				
+				    	game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));				
+				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
+				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				        break;
 				    default:
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.25, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.75, playerShip.y - playerShip.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));				
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
+				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}				
+				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				 }
 
 				 switch(this.missileLevel) {
 				 	case 0:
 				 		break;
 				    case 1:
-				        this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
 						break;
 				    case 2:
-				    	this.bullets.push( new playerBullet(playerShip.x, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
-						this.bullets.push( new playerBullet(playerShip.x + playerShip.size, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+				    	game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
 						break;
 				    default:
-				        this.bullets.push( new playerBullet(playerShip.x, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
-						this.bullets.push( new playerBullet(playerShip.x + playerShip.size, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
-						this.bullets.push( new playerBullet(playerShip.x + playerShip.size*0.5, playerShip.y + playerShip.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));										
-				 }	
-
-				if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
+				        game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+						game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));										
+				 }				
 				this.bulletTimer = 1; //resetting our timer
 			}
 		}
 		else {
 			this.bulletTimer = fireRate-1;
-		}
-
-		
-		if (this.bullets.length >= 1) {
-			for(var k in this.bullets){
-				
-				this.bullets[k].update();		
-
-				if(this.bullets.dead || this.bullets[k].x > game.width + this.bullets[k].size || this.bullets[k].x < 0 - this.bullets[k].size || this.bullets[k].y > game.height + this.bullets[k].size || this.bullets[k].y < 0 - 30){
-					this.bullets.splice(k,1);
-				}
-			}
 		}
 
 		if (this.hull <= 0) {
@@ -882,16 +875,13 @@ function player(hull, fireRate) {
 
 	this.draw = function() {
 
-		for(var k in this.bullets){
-			this.bullets[k].draw();
-		}
 
 		if(!this.dead){		
 			
 			game.contextPlayer.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //rendering
 
 			if (this.hit) {
-				// this.hitTimer++;
+				this.hitTimer++;
 				navigator.vibrate(30);
 
 				// var imgData = game.contextPlayer.getImageData(this.x, this.y, this.size, this.size);
@@ -906,17 +896,17 @@ function player(hull, fireRate) {
 
 				// game.contextPlayer.putImageData(imgData, this.x, this.y);
 
-				// if (this.hitTimer > 4){
-				// 	this.hit = false;
-				// 	this.hitTimer = 0;
-				// }				 
+				if (this.hitTimer > 4){
+					this.hit = false;
+					this.hitTimer = 0;
+				}				 
 			}
 
 		}
 	};
 
 	this.reset = function() {
-		playerShip.dead = false;
+		this.dead = false;
 		this.x = game.width*0.46;
 		this.y = game.height*0.90;
 		this.image = 0;
@@ -937,7 +927,7 @@ player.prototype = Object.create(particle.prototype); // Creating a player.proto
 player.prototype.constructor = player; // Set the "constructor" property to refer to player
 
 
-playerShip = new player(10, 15);
+playerShip = new player(10, 20);
 function playerBullet(x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame) {
 	particle.call(this, x, y, speed, direction);
 	
@@ -987,7 +977,6 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 
 		this.spriteRow = Math.floor(this.animationSequence[this.currentFrame] / this.fpr);
 		this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
-
 	};
 	
 	this.draw = function() {		
@@ -1578,22 +1567,51 @@ gameUI = new ui();
 				game.start = false;
 				mouseIsDown = 0;				
 				gameUI.updateAll();	
-				if(game.music && game.music.length < 1){game.music.push(new Audio("_sounds/_lvl1/tune1.mp3"));}			
+				if(game.music && game.songs.length < 1){
+					game.songs.push(new Audio("_sounds/_lvl1/tune1.mp3"));
+					game.songs[0].play();
+					game.songs[0].loop = true;				
+					// game.music[q].addEventListener("ended", game.music.splice(q,1));
+				}				
 			}
 			
 			//If Esc
 			if (game.keys[27]) {
 				game.lives = 0;
-				resetGame();				
+				resetGame();	
+				game.keys[27] = false;			
 			}
 
 			//game sound
-			if (game.keys[119]) {
+			if (game.keys[119]) {				
 				game.sound = (game.sound) ? false : true;
-				game.keys[119] = false;
-				// if(game.music && game.music.length < 1){game.music.push(new Audio("_sounds/_lvl1/tune1.mp3"));} //CHANGE SOUND TO MUSIC LATER
 				gameUI.updateSound();	
+				game.keys[119] = false;
 			}
+
+			if (game.keys[120]) {
+				game.music = (game.music) ? false : true;
+				gameUI.updateSound();
+				game.keys[120] = false;	
+
+
+
+				if (game.songs.length > 0) {
+					for(var g in game.songs){
+						game.songs[g].pause();
+					}
+					game.songs = [];
+				}
+				else if (game.songs.length < 1) {
+						game.songs.push(new Audio("_sounds/_lvl1/tune1.mp3"));
+						for(var w in game.songs){
+							game.songs[w].play();
+							game.songs[w].loop = true;					
+							// game.music[q].addEventListener("ended", game.music.splice(q,1));
+						}
+				}
+			}
+
 
 			//game pause
 			if ((game.keys[80]) && !(game.gameWon) && !(game.gameOver)) {
@@ -1669,7 +1687,7 @@ gameUI = new ui();
     			var dtSum = 0;
     			for( var i = 0; i < dtArray.length-2; i++) {
 					dtSum += dtArray[i+2]; //+2 skips first values which might be deviant
-					console.log (dtSum);
+					// console.log (dtSum);
 				}
 					dt = Math.round(dtSum / dtArray.length)/1000;					
     		}	
@@ -1741,7 +1759,11 @@ gameUI = new ui();
 			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
 			}
 			if (game.seconds == 13) {
-				if(game.sound){game.music.push(new Audio("_sounds/_lvl1/tune2.mp3"));}
+				if(game.music){
+					game.songs.push(new Audio("_sounds/_lvl1/tune2.mp3"));				
+					game.songs[1].play();
+					game.songs[1].loop = true;
+				}
 			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 23, 1));				
 			}
 			if (game.seconds == 18) {
@@ -1779,17 +1801,35 @@ gameUI = new ui();
 			}
 
 			if (game.seconds == 55) {
-				if(game.sound){game.music.push(new Audio("_sounds/_lvl1/boss.mp3"));}
+				if (game.music) {
+					game.songs.push(new Audio("_sounds/_lvl1/boss.mp3"));
+					game.songs[2].play();
+				}
 			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 100, 27));
 			}
 			//boss(x, y, speed, direction, hull, image)
 
+			///////////////////////////////////
+			// Player bullets
+			///////////////////////////////////
+			if (game.playerBullets.length >= 1) {
+				for (var k in game.playerBullets){
+					
+					if (!game.playerBullets[k].dead) {
+						game.playerBullets[k].update();					
+						game.playerBullets[k].draw();
+					}
+					else  if (game.playerBullets.dead || game.playerBullets[k].x > game.width + game.playerBullets[k].size || game.playerBullets[k].x < 0 - game.playerBullets[k].size || game.playerBullets[k].y > game.height + game.playerBullets[k].size || game.playerBullets[k].y < 0 - 30){
+						game.playerBullets.splice(k,1);
+					}
+				}
+			}
 
 			///////////////////////////////////
 			// Enemies
 			///////////////////////////////////
 
-			if(game.enemies.length > 0){
+			if (game.enemies.length > 0){
 				
 				for (var c in game.enemies){
 					game.enemies[c].update();
@@ -1798,13 +1838,18 @@ gameUI = new ui();
 
 				for (var j in game.enemies){
 					//projectiles collision
-					for(var f in playerShip.bullets){
-						if (Collision(game.enemies[j], playerShip.bullets[f]) && !game.enemies[j].dead){ //dead check avoids ghost scoring														
-							game.enemies[j].hit = true;							
-							game.enemies[j].hull -= playerShip.bullets[f].power;
-							// game.contextEnemies.clearRect(playerShip.bullets[f].x, playerShip.bullets[f].y, playerShip.bullets[f].size, playerShip.bullets[f].size*1.8);								
-							// playerShip.bullets[f].dead = true;
-							playerShip.bullets.splice(f,1);
+					if (game.playerBullets.length >= 1){
+						for (var f in game.playerBullets){
+							if (Collision(game.enemies[j], game.playerBullets[f]) && !game.enemies[j].dead){ //dead check avoids ghost scoring														
+								game.enemies[j].hit = true;	
+								game.enemies[j].hull -= game.playerBullets[f].power;
+								// game.contextEnemies.clearRect(game.playerBullets[f].x, game.playerBullets[f].y, game.playerBullets[f].size, game.playerBullets[f].size*1.8);								
+								if(game.enemies[j].hull > 0) {
+									game.explosions.push(new explosion(game.playerBullets[f].x, game.playerBullets[f].y, 0, 1, game.playerBullets[f].size*0.3));
+								}
+								game.playerBullets[f].dead = true;
+								// game.playerBullets.splice(f,1);
+							}
 						}
 					}
 				}
@@ -1826,7 +1871,7 @@ gameUI = new ui();
 						if(game.enemies[o].dead){
 							// game.contextEnemies.clearRect(game.enemies[o].x, game.enemies[o].y, game.enemies[o].size, game.enemies[o].size);
 							lootchance = Math.random();
-							if (lootchance < 0.5) {
+							if (lootchance < 0.1) {
 								game.loot.push(new loot(game.enemies[o].x, game.enemies[o].y));					
 							}
 						}	
@@ -1840,7 +1885,7 @@ gameUI = new ui();
 			// Waves
 			///////////////////////////////////
 
-			if(game.waves.length > 0){
+			if (game.waves.length > 0){
 				for (var h in game.waves){
 
 					game.waves[h].update();
@@ -1881,9 +1926,9 @@ gameUI = new ui();
 					game.enemyBullets[z].draw();
 
 
-					if(Collision(game.enemyBullets[z], playerShip) && !game.gameOver){ //
+					if (Collision(game.enemyBullets[z], playerShip) && !game.gameOver){ //
 						// if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}							
-									// game.contextEnemies.clearRect(playerShip.bullets[p].x, playerShip.bullets[p].y, playerShip.bullets[p].size, playerShip.bullets[p].size*1.8);								
+									// game.contextEnemies.clearRect(game.playerBullets[p].x, game.playerBullets[p].y, game.playerBullets[p].size, game.playerBullets[p].size*1.8);								
 						playerShip.hull -= game.enemyBullets[z].power;
 						gameUI.updateEnergy();	
 						playerShip.hit = true;	
@@ -1929,18 +1974,7 @@ gameUI = new ui();
 				for(var s in game.sounds){
 
 					game.sounds[s].play();
-
 					game.sounds[s].addEventListener("ended", game.sounds.splice(s,1));
-
-				}
-			}	
-
-			if (game.music.length > 0) {
-				for(var q in game.music){
-
-					game.music[q].play();
-					game.music[q].loop = true;					
-					// game.music[q].addEventListener("ended", game.music.splice(q,1));
 
 				}
 			}			
@@ -2055,13 +2089,17 @@ gameUI = new ui();
 			game.timer = 0;		
 			game.sounds = [];
 
-			for(var g in game.music){
-					game.music[g].pause();
-					game.music[g].loop = false;					
-					// game.music[q].addEventListener("ended", game.music.splice(q,1));
-					game.music.splice(g,1);
+			for(var g in game.songs){
+					game.songs[g].pause();
 			}
-			if(game.sound && game.music.length < 1){game.music.push(new Audio("_sounds/_lvl1/tune1.mp3"));}			
+			game.songs = [];
+
+			if (game.music){
+				game.songs.push(new Audio("_sounds/_lvl1/tune1.mp3"));
+				game.songs[0].play();
+				game.songs[0].loop = true;	
+			}
+
 
 			// for(var y = 0; y < game.level; y++) {	// y enemies vertically..
 			// 	for(var x = 0; x < game.level; x++){ // ..by x horizontally
@@ -2168,62 +2206,28 @@ gameUI = new ui();
 
 		function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
 			
-			if (!(first.x > second.x + second.size ||
-				first.x + first.size < second.x ||
-				first.y > second.y + second.size ||
-				first.y + first.size < second.y)) {
+			if (!(first.x + first.size < second.x || second.x + second.size < first.x || first.y + first.size < second.y || second.y + second.size < first.y)) {
 
 				Cx = first.x < second.x ? second.x : first.x;
 				Cy = first.y < second.y ? second.y : first.y;
 				CX = first.x + first.size < second.x + second.size ? first.x + first.size : second.x + second.size;
 				CY = first.y + first.size < second.y + second.size ? first.y + first.size : second.y + second.size;
-				
+
 				iFirst = first.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
 				iSecond = second.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
 
-				var res = 4; //check the 4th index every 5 frames
-				// var length = iFirst.data.length >= iSecond.data.length ? iFirst.data.length : iSecond.data.length;
 				var length = iFirst.data.length;
 
-
-				for (var i = 0 ; i < length; i+= res) {
-					return !(iFirst.data[i] === 0 && iSecond.data[i] === 0);
-						// console.log('false');
-						// // console.log(length);
-						// return false;					
-					// }
-					// else{
-					// 	console.log('true');
-					// 	return true;
-					// }
+				for (var i = 0 ; i < length; i+= game.res) {
+					// return !(!iFirst.data[i] || !iSecond.data[i]);
+					if (iFirst.data[i] > 0 && iSecond.data[i] > 0)
+					{						
+						return true;
+					}
 				}
-				// first.context.clearRect(Cx, Cy, CX-Cx, CY-Cy);
-				// second.context.clearRect(Cx, Cy, CX-Cx, CY-Cy);
-			}
-
+			}			
+			return false;			
 		}
-
-
-
-
-		// 	var firstData = first.ctx.getImageData(first.x, first.y, first.size, first.size);
-		// 	var secondData = second.ctx.getImageData(second.x, second.y, second.size, second.size);
-		// 	//note these Data arrays won't be the same size so you need to check which is greater
-		// 	var res = 4*5; //check the 4th index every 5 frames
-		// 	var data = firstData.data;
-		// 	var lenght = data.lenght;
-
-		// 	for (var i = 0 ; i < lenght; i+= res) {
-		// 		if (!firstData.data[i+3] || !secondData.data[i+3]){
-		// 			console.log('false');
-		// 			return false;					
-		// 		}
-		// 		else{
-		// 			console.log('true');
-		// 			return true;
-		// 		}
-		// 	}
-		// }
 
 		
 		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
@@ -2233,15 +2237,6 @@ gameUI = new ui();
 		// 		first.y + first.size < second.y);
 		// }
 
-
-		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
-		// 	var imageData1 = first.context.getImageData(first.x, first.y, first.size, first.size);
-		// 	var imageData2 = second.context.getImageData(first.x, first.y, first.size, first.size);
-		// 		return !((first.x > second.x + second.size ||
-		// 		first.x + first.size < second.x ||
-		// 		first.y > second.y + second.size ||
-		// 		first.y + first.size < second.y) && (imageData1.data[3] === 0) && (imageData2.data[3] === 0));
-		// }
 
 		function PlayerDie(){
 			// if (game.soundStatus == "ON"){game.playerexplodeSound.play();}

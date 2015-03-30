@@ -47,7 +47,6 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 
 		this.spriteRow = Math.floor(this.animationSequence[this.currentFrame] / this.fpr);
 		this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
-
 	};
 	
 	this.draw = function() {		

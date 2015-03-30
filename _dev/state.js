@@ -9,22 +9,51 @@
 				game.start = false;
 				mouseIsDown = 0;				
 				gameUI.updateAll();	
-				if(game.music && game.music.length < 1){game.music.push(new Audio("_sounds/_lvl1/tune1.mp3"));}			
+				if(game.music && game.songs.length < 1){
+					game.songs.push(new Audio("_sounds/_lvl1/tune1.mp3"));
+					game.songs[0].play();
+					game.songs[0].loop = true;				
+					// game.music[q].addEventListener("ended", game.music.splice(q,1));
+				}				
 			}
 			
 			//If Esc
 			if (game.keys[27]) {
 				game.lives = 0;
-				resetGame();				
+				resetGame();	
+				game.keys[27] = false;			
 			}
 
 			//game sound
-			if (game.keys[119]) {
+			if (game.keys[119]) {				
 				game.sound = (game.sound) ? false : true;
-				game.keys[119] = false;
-				// if(game.music && game.music.length < 1){game.music.push(new Audio("_sounds/_lvl1/tune1.mp3"));} //CHANGE SOUND TO MUSIC LATER
 				gameUI.updateSound();	
+				game.keys[119] = false;
 			}
+
+			if (game.keys[120]) {
+				game.music = (game.music) ? false : true;
+				gameUI.updateSound();
+				game.keys[120] = false;	
+
+
+
+				if (game.songs.length > 0) {
+					for(var g in game.songs){
+						game.songs[g].pause();
+					}
+					game.songs = [];
+				}
+				else if (game.songs.length < 1) {
+						game.songs.push(new Audio("_sounds/_lvl1/tune1.mp3"));
+						for(var w in game.songs){
+							game.songs[w].play();
+							game.songs[w].loop = true;					
+							// game.music[q].addEventListener("ended", game.music.splice(q,1));
+						}
+				}
+			}
+
 
 			//game pause
 			if ((game.keys[80]) && !(game.gameWon) && !(game.gameOver)) {

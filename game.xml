@@ -2,8 +2,8 @@
 <game>
 	<data>
 		<settings>
-			<sound type="int">1</sound>
-			<music type="int">1</music>
+			<sound type="int">0</sound>
+			<music type="int">0</music>
 			<level type="int">0</level>
 			<player-lives type="int">3</player-lives>
 			<player-speed type="int">5</player-speed>

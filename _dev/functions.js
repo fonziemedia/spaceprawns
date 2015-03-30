@@ -108,13 +108,17 @@
 			game.timer = 0;		
 			game.sounds = [];
 
-			for(var g in game.music){
-					game.music[g].pause();
-					game.music[g].loop = false;					
-					// game.music[q].addEventListener("ended", game.music.splice(q,1));
-					game.music.splice(g,1);
+			for(var g in game.songs){
+					game.songs[g].pause();
 			}
-			if(game.sound && game.music.length < 1){game.music.push(new Audio("_sounds/_lvl1/tune1.mp3"));}			
+			game.songs = [];
+
+			if (game.music){
+				game.songs.push(new Audio("_sounds/_lvl1/tune1.mp3"));
+				game.songs[0].play();
+				game.songs[0].loop = true;	
+			}
+
 
 			// for(var y = 0; y < game.level; y++) {	// y enemies vertically..
 			// 	for(var x = 0; x < game.level; x++){ // ..by x horizontally
@@ -221,62 +225,28 @@
 
 		function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
 			
-			if (!(first.x > second.x + second.size ||
-				first.x + first.size < second.x ||
-				first.y > second.y + second.size ||
-				first.y + first.size < second.y)) {
+			if (!(first.x + first.size < second.x || second.x + second.size < first.x || first.y + first.size < second.y || second.y + second.size < first.y)) {
 
 				Cx = first.x < second.x ? second.x : first.x;
 				Cy = first.y < second.y ? second.y : first.y;
 				CX = first.x + first.size < second.x + second.size ? first.x + first.size : second.x + second.size;
 				CY = first.y + first.size < second.y + second.size ? first.y + first.size : second.y + second.size;
-				
+
 				iFirst = first.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
 				iSecond = second.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
 
-				var res = 4; //check the 4th index every 5 frames
-				// var length = iFirst.data.length >= iSecond.data.length ? iFirst.data.length : iSecond.data.length;
 				var length = iFirst.data.length;
 
-
-				for (var i = 0 ; i < length; i+= res) {
-					return !(iFirst.data[i] === 0 && iSecond.data[i] === 0);
-						// console.log('false');
-						// // console.log(length);
-						// return false;					
-					// }
-					// else{
-					// 	console.log('true');
-					// 	return true;
-					// }
+				for (var i = 0 ; i < length; i+= game.res) {
+					// return !(!iFirst.data[i] || !iSecond.data[i]);
+					if (iFirst.data[i] > 0 && iSecond.data[i] > 0)
+					{						
+						return true;
+					}
 				}
-				// first.context.clearRect(Cx, Cy, CX-Cx, CY-Cy);
-				// second.context.clearRect(Cx, Cy, CX-Cx, CY-Cy);
-			}
-
+			}			
+			return false;			
 		}
-
-
-
-
-		// 	var firstData = first.ctx.getImageData(first.x, first.y, first.size, first.size);
-		// 	var secondData = second.ctx.getImageData(second.x, second.y, second.size, second.size);
-		// 	//note these Data arrays won't be the same size so you need to check which is greater
-		// 	var res = 4*5; //check the 4th index every 5 frames
-		// 	var data = firstData.data;
-		// 	var lenght = data.lenght;
-
-		// 	for (var i = 0 ; i < lenght; i+= res) {
-		// 		if (!firstData.data[i+3] || !secondData.data[i+3]){
-		// 			console.log('false');
-		// 			return false;					
-		// 		}
-		// 		else{
-		// 			console.log('true');
-		// 			return true;
-		// 		}
-		// 	}
-		// }
 
 		
 		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
@@ -286,15 +256,6 @@
 		// 		first.y + first.size < second.y);
 		// }
 
-
-		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
-		// 	var imageData1 = first.context.getImageData(first.x, first.y, first.size, first.size);
-		// 	var imageData2 = second.context.getImageData(first.x, first.y, first.size, first.size);
-		// 		return !((first.x > second.x + second.size ||
-		// 		first.x + first.size < second.x ||
-		// 		first.y > second.y + second.size ||
-		// 		first.y + first.size < second.y) && (imageData1.data[3] === 0) && (imageData2.data[3] === 0));
-		// }
 
 		function PlayerDie(){
 			// if (game.soundStatus == "ON"){game.playerexplodeSound.play();}

@@ -91,7 +91,7 @@
 		game.sound = X_Sound;	//on/off trigger
 		game.music = X_Music;	//on/off trigger
 		game.sounds = [];
-		game.music = [];
+		game.songs = [];
 
 		// game.enemyexplodeSound = new Audio("_sounds/explosion.wav");
 		// game.playerexplodeSound = new Audio("_sounds/blast.mp3");
@@ -105,7 +105,8 @@
 		game.images = [];
 		game.doneImages  = 0; // will contain how many images have been loaded
 		game.requiredImages = 0; // will contain how many images should be loaded
-		// game.font = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? "Helvetica" : "Monaco";	
+		// game.font = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? "Helvetica" : "Monaco";
+		game.res = 4; //check the 4th index every 5 frames
 
 		
 		//====================== Canvases + Images + responsiveness  ============================
