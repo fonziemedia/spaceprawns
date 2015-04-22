@@ -56,10 +56,19 @@
 		/*GAME VARS*/
 
 		var game = {}; //this is a global var which will contain other game vars
-		game.stars = []; //this is an array which will contain our stars info: position in space and size		
+		game.stars = []; //this is an array which will contain our stars info: position in space and size
+		game.faded = true;
+		game.backgroundFaded = true;
+		game.enemiesFaded = true;
+		game.playerFaded = true;
+		game.textFaded = true;
+		game.background = [];		
 		game.score = 0; //the game score
 		game.levelScore = 0; //the score for each level
 		game.level = X_Level; //starting at level X...
+		game.bossDead = false;
+		game.levelComplete = false;
+		game.levelUpTimer = 0;
 		game.lives = X_Lives; //with X ships (lives)
 		game.keys = []; //the keyboard array
 		game.playerBullets = []; //Our proton torpedoes!
@@ -78,8 +87,11 @@
 		
 		//====================== Game state ========================
 		
-		game.start = true;
+		game.start = true;		
+		game.lvlIntro = true;
+		game.lvlStart = false;
 		game.paused = true;
+		game.escaped = false;
 		game.gameWon = false;
 		game.gameOver = false;
 		game.delayTimer = 0;
@@ -106,7 +118,7 @@
 		game.doneImages  = 0; // will contain how many images have been loaded
 		game.requiredImages = 0; // will contain how many images should be loaded
 		// game.font = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? "Helvetica" : "Monaco";
-		game.res = 4*100; //check the 4th index every 5 frames
+		// game.res = 4*500; //check the 4th index every 5 frames
 
 		
 		//====================== Canvases + Images + responsiveness  ============================
@@ -115,7 +127,6 @@
 		game.contextEnemies = document.getElementById("enemiesCanvas").getContext("2d");
 		game.contextPlayer = document.getElementById("playerCanvas").getContext("2d");
 		game.contextText = document.getElementById("textCanvas").getContext("2d");
-				
 
 		//making our canvases dynamically resize according to the size of the browser window
 			
@@ -139,28 +150,31 @@
 			c1.attr('height', $(container).height()); //max height
 			c2.attr('height', $(container).height()); //max height
 			c3.attr('height', $(container).height()); //max height
-			c4.attr('height', $(container).height() * 0.2 ); //max height
+			c4.attr('height', $(container).height()); //max height
 
+			if ($(container).width() < 1080)
+			{
+				c1.attr('width', $(container).width()); //max width
+				c2.attr('width', $(container).width()); //max width
+				c3.attr('width', $(container).width()); //max width
+				c4.attr('width', $(container).width()); //max width
 
-			if ($(container).width() < 1080) {
-			c1.attr('width', $(container).width()); //max width
-			c2.attr('width', $(container).width()); //max width
-			c3.attr('width', $(container).width()); //max width
-			c4.attr('width', $(container).width()); //max width
-			game.width = $(container).width();
-
+				game.width = $(container).width();
 			}
 			else {
-			var widthProp = $(container).height() * 9 / 16;
-			c1.attr('width', widthProp); //max width
-			c2.attr('width', widthProp); //max width
-			c3.attr('width', widthProp); //max width
-			c4.attr('width', widthProp); //max width
-			c1.css({"left": ($(container).width()-widthProp)*0.5});
-			c2.css({"left": ($(container).width()-widthProp)*0.5});
-			c3.css({"left": ($(container).width()-widthProp)*0.5});
-			c4.css({"left": ($(container).width()-widthProp)*0.5});
-			game.width = widthProp;
+				var widthProp = $(container).height() * 9 / 16;
+
+				c1.attr('width', widthProp); //max width
+				c2.attr('width', widthProp); //max width
+				c3.attr('width', widthProp); //max width
+				c4.attr('width', widthProp); //max width
+
+				c1.css({"left": ($(container).width()-widthProp)*0.5});
+				c2.css({"left": ($(container).width()-widthProp)*0.5});
+				c3.css({"left": ($(container).width()-widthProp)*0.5});
+				c4.css({"left": ($(container).width()-widthProp)*0.5});
+
+				game.width = widthProp;
 			}
 
 			 //we'll use width and height to limit the game to our canvas size
@@ -195,12 +209,12 @@
 			game.enshootTimer = game.enfullShootTimer;
 
 			//=========================== Game loading Screen =================================== 	
-			game.contextBackground.font = "bold " + game.width*0.08 + "px " + game.font; 
-			game.contextBackground.fillStyle = "white";
-			game.contextBackground.fillText("Loading...", game.width*0.30, game.height*0.47);
+			game.contextText.font = "bold " + game.width*0.08 + "px " + game.font; 
+			game.contextText.fillStyle = "white";
+			game.contextText.fillText("Loading...", game.width*0.30, game.height*0.47);
 		}
 
 		//Initial call 
 		respondCanvas();
-		
+
 	// jshint ignore:line

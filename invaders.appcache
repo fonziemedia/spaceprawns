@@ -19,6 +19,7 @@ NETWORK:
 
 # Additional resources to cache
 CACHE:
+#GFX
 _img/_dist/explosion.png
 _img/_dist/enemies/sectoid.png
 _img/_dist/laser.png
@@ -47,6 +48,16 @@ _img/_dist/enemies/_miniboss/floater.png
 _img/_dist/ui/energyBar.png			
 _img/_dist/ui/energyPoint.png			
 _img/_dist/enemies/_bigboss/sectoidBoss.png
+#SOUND
+_sounds/_sfx/hit.mp3
+_sounds/_sfx/laser.wav
+_sounds/_sfx/loot_powerUp.mp3
+_sounds/_lvl1/boss.mp3
+_sounds/_lvl1/tune1.mp3
+_sounds/_lvl1/tune2.mp3
+
+
+
 
 # Updating the cache
 #

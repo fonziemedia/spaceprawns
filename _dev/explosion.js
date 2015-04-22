@@ -18,7 +18,7 @@ function explosion(x, y, speed, direction, size) {
 	this.currentFrame = 0;        // the current frame to draw
 	this.counter = 0;
 	this.fpr = Math.floor(game.images[this.image].width / this.frameWidth);
-
+	this.ctx = game.contextPlayer;
 
 	// if (game.soundStatus == "ON"){game.enemyexplodeSound.play();}
 
@@ -53,10 +53,10 @@ function explosion(x, y, speed, direction, size) {
 	};
 
 	this.draw = function() {
-		// game.contextPlayer.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
+		// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
 		if (this.currentFrame <= 19){
-			game.contextPlayer.drawImage(
+			this.ctx.drawImage(
 				game.images[this.image],
 				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
 				this.frameWidth, this.frameHeight,

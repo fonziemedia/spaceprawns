@@ -6,25 +6,30 @@ function ui() {
 	this.energyPointSize = game.height*0.01;
 	this.hangarShipSize = game.height*0.03;
 	this.level = game.level;
-	game.contextText.fillStyle = "#FFD455";
-	game.contextText.font = 15*dtSize + 'px helvetica';
 
 	this.updateLevel = function() {
 		this.level = game.level;
+		game.contextText.fillStyle = "#FFD455";
+		game.contextText.font = 15*dtSize + 'px helvetica';
 		game.contextText.clearRect(this.width*0.02, this.height*0.3, this.width*0.05, this.height*0.35); 
 		game.contextText.fillText("S" + this.level, this.width*0.02, this.height*0.6); //printing level
 	};
 
 	this.updateScore = function() {
 		this.score = game.score;
+		game.contextText.fillStyle = "#FFD455";
+		game.contextText.font = 15*dtSize + 'px helvetica';
 		game.contextText.clearRect(this.width*0.1, this.height*0.3, this.width*0.12, this.height*0.35);  
 		game.contextText.fillText("Score: " + this.score, this.width*0.1, this.height*0.6); //printing the score
 	};
 
 	this.updateSound = function() {	
 		this.soundFx = game.sound ? "ON" : "OFF";
-		// this.music = game.music;	
+		// this.music = game.music;			
+
 		if (!navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
+			game.contextText.fillStyle = "#FFD455";
+			game.contextText.font = 15*dtSize + 'px helvetica';
 			game.contextText.clearRect(this.width*0.39, this.height*0.3, this.width*0.05, this.height*0.35); 
 			game.contextText.fillText("Sound(F8): " + this.soundFx, this.width*0.25, this.height*0.6);
 		}

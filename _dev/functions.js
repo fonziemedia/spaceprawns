@@ -21,7 +21,7 @@
  
 
 		function initInput() {
-        canvas = document.getElementById("playerCanvas");
+        canvas = document.getElementById("textCanvas");
         ctx = canvas.getContext("2d");
 		         
         canvas.addEventListener("mousedown",mouseDown, false);
@@ -37,39 +37,50 @@
 		}
 		
 		
-		function mouseUp() {
-			mouseIsDown = 0;
-			mouseXY();
+		function mouseUp(e) {
+			if (e) {
+				e.preventDefault();
+				mouseIsDown = 0;
+				mouseXY();
+			}
 		}
 		 
-		function touchUp() {
-			mouseIsDown = 0;
+		function touchUp(e) {
+			if (e) {
+				e.preventDefault();
+				mouseIsDown = 0;
+			}
 		}
 		 
-		function mouseDown() {
-			mouseIsDown = 1;
-			mouseXY();
+		function mouseDown(e) {
+			if (e) {
+				e.preventDefault();
+				mouseIsDown = 1;
+				mouseXY();
+			}
 		}
 		  
-		function touchDown() {
-			mouseIsDown = 1;
-			touchXY();
+		function touchDown(e) {
+			if (e) {
+				e.preventDefault();
+				mouseIsDown = 1;
+				touchXY();
+			}
 		}
 		
 		function mouseXY(e) {
 			if (e) {
 				e.preventDefault();
-			canvasX = e.pageX - canvas.offsetLeft;
-			canvasY = e.pageY - canvas.offsetTop;
-			//showPos();
+				canvasX = e.pageX - canvas.offsetLeft;
+				canvasY = e.pageY - canvas.offsetTop;
 			}
 		}
 		 
 		function touchXY(e) {
 			if (e) {
 				e.preventDefault();
-			canvasX = e.targetTouches[0].pageX - canvas.offsetLeft;
-			canvasY = e.targetTouches[0].pageY - canvas.offsetTop;
+				canvasX = e.targetTouches[0].pageX - canvas.offsetLeft;
+				canvasY = e.targetTouches[0].pageY - canvas.offsetTop;
 			}
 		}
 				
@@ -83,28 +94,37 @@
 		// 		});
 		// 	}
 		// }
-		
+
 		function resetGame(){
+			gameLights.off('all');
+			gameTransition.reset();
 			mouseIsDown = 0;
 			game.gameOver = false; 
-			game.gameWon = false;					
+			game.gameWon = false;
+			game.level = game.lvlIntro ? game.level : 1 ;
+			game.bossDead = false;
+			game.levelComplete = false;
+			game.lvlStart = false;
+			game.lvlIntro = true;
+			game.levelUpTimer = 0;					
 			// game.downCount = 1;
 			// game.left = false;
 			// game.down = false;
 			// game.enshootTimer = game.enfullShootTimer;
-			game.contextBackground.clearRect(1, 1, game.width, game.height); 
-			game.contextPlayer.clearRect(1, 1, game.width, game.height); 
-			game.contextEnemies.clearRect(1, 1, game.width, game.height); 
-			game.contextText.clearRect(1, 1, game.width, game.height); 
+			game.contextBackground.clearRect(0, 0, game.width, game.height); 
+			game.contextPlayer.clearRect(0, 0, game.width, game.height); 
+			game.contextEnemies.clearRect(0, 0, game.width, game.height); 
+			game.contextText.clearRect(0, 0, game.width, game.height); 
 			// game.projectiles = [];
 			// game.enprojectiles = [];
-			// game.enemies = [];
+			// game.enemies = [];							
 			playerShip.reset();
 			gameUI.updateAll();
 			game.enemies = [];
 			game.waves = [];			
 			game.enemyBullets = [];
 			game.loot = [];
+			game.delayTimer = 0;
 			game.timer = 0;		
 			game.sounds = [];
 
@@ -144,7 +164,7 @@
 			// 	crashed: false					
 			// };
 			game.paused = false;
-			// scores();loading
+			// scores();
 
 		}
 
@@ -223,96 +243,298 @@
 		// }
 
 
-		function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
+		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
 			
-			if (!(first.x + first.size < second.x || second.x + second.size < first.x || first.y + first.size < second.y || second.y + second.size < first.y)) {
+		// 	if (!(first.x + first.size < second.x || second.x + second.size < first.x || first.y + first.size < second.y || second.y + second.size < first.y)) {
 
-				Cx = first.x < second.x ? second.x : first.x;
-				Cy = first.y < second.y ? second.y : first.y;
-				CX = first.x + first.size < second.x + second.size ? first.x + first.size : second.x + second.size;
-				CY = first.y + first.size < second.y + second.size ? first.y + first.size : second.y + second.size;
+		// 		Cx = first.x < second.x ? second.x : first.x;
+		// 		Cy = first.y < second.y ? second.y : first.y;
+		// 		CX = first.x + first.size < second.x + second.size ? first.x + first.size : second.x + second.size;
+		// 		CY = first.y + first.size < second.y + second.size ? first.y + first.size : second.y + second.size;
 
-				iFirst = first.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
-				iSecond = second.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
+		// 		iFirst = first.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
+		// 		iSecond = second.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
 
-				var length = iFirst.data.length;
+		// 		var length = iFirst.data.length;
 
-				for (var i = 0 ; i < length; i+= game.res) {
-					// return !(!iFirst.data[i] || !iSecond.data[i]);
-					if (iFirst.data[i] > 0 && iSecond.data[i] > 0)
-					{						
-						return true;
-					}
-				}
-			}			
-			return false;			
-		}
+		// 		for (var i = 0 ; i < length; i+= game.res) {
+		// 			// return !(!iFirst.data[i] || !iSecond.data[i]);
+		// 			if (iFirst.data[i] > 0 && iSecond.data[i] > 0)
+		// 			{	
+		// 				// console.log('true1');
+		// 				return true;
+						
+		// 			}
+		// 		}
+		// 		console.log(iFirst.data.length);
+		// 	}
+		// 	// console.log('false');			
+		// 	return false;			
+		// }
 
 		
-		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
-		// 	return !(first.x > second.x + second.size ||
-		// 		first.x + first.size < second.x ||
-		// 		first.y > second.y + second.size ||
-		// 		first.y + first.size < second.y);
+		function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
+			return !(first.x > second.x + second.size ||
+				first.x + first.size < second.x ||
+				first.y > second.y + second.size ||
+				first.y + first.size < second.y);
+		}
+
+
+		// function PlayerDie()
+		// {
+		// 	if (game.soundStatus == "ON"){game.playerexplodeSound.play();}
+		// 	game.player.crashed = true;
+		// 	game.gameOver = true;
+		// 	game.paused = true;
+		// 	game.lives--;
+		// 	game.score = game.score - game.levelScore;
+		// 	scores();
+		// 	game.contextPlayer.font = "bold " + game.width*0.08 + "px " + game.font;
+		// 	game.contextPlayer.fillStyle = "#FF7F00";
+		// 	game.contextPlayer.fillText("Game Over", game.width*0.30, game.height*0.42);
+		// 	game.contextPlayer.font = "bold " + game.width*0.06 + "px " + game.font;
+		// 	game.contextPlayer.fillText(game.score + " enemy ships destroyed", game.width*0.19, game.height*0.52);
+		// 	game.contextPlayer.font = "bold " + game.width*0.04 + "px " + game.font;
+		// 	game.contextPlayer.fillStyle = "white";
+		// 	if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
+		// 		game.contextPlayer.fillText("Tap screen to restart", game.width*0.30, game.height*0.62);
+		// 	} else {
+		// 		game.contextPlayer.fillText("Press Enter or LMB to restart", game.width*0.23, game.height*0.62);
+		// 	}
+
+		// 	message('Game Over', 1,  'Helvetica', game.width*0.06, '#FFD455', 'bold'); 
+		// 	message(game.score + ' enemy ships destroyed', 2, 'Helvetica', game.width*0.05, '#FFD455', 'bold');
+		// 	if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
+		// 	message('Tap screen to restart', 3, 'Helvetica', game.width*0.04, 'white', 'bold'); 
+		// 	} else {
+		// 	message('Press ENTER or LMB to restart', 3, 'Helvetica', game.width*0.04, 'white', 'bold');
+		// 	}
+
+		// 	if (game.soundStatus == "ON") {
+		// 		game.sounds.push(new Audio("_sounds/death.mp3"));
+		// 	}
+
+		// 	game.levelScore = 0;
+		// 	playerShip.lives = 3;
+
 		// }
 
 
-		function PlayerDie(){
-			// if (game.soundStatus == "ON"){game.playerexplodeSound.play();}
-			// game.player.crashed = true;
-			game.gameOver = true;
-			game.lives--;
-			game.score = game.score - game.levelScore;
-			// scores();
-			setTimeout(function(){
-				game.paused = true;
-				mouseIsDown = 0;
+		// function fade(light, ctx) //game transitions
+		// {			
+		// 	light = light;
+		// 	ctx = ctx;
 
-				if (game.gameOver && game.paused && game.lives < 1){
-					// game.contextPlayer.font = "bold " + game.width*0.08 + "px " + game.font;
-					// game.contextPlayer.fillStyle = "#FF7F00";
-					// game.contextPlayer.fillText("Game Over", game.width*0.30, game.height*0.42);
-					// game.contextPlayer.font = "bold " + game.width*0.06 + "px " + game.font;
-					// game.contextPlayer.fillText(game.score + " enemy ships destroyed", game.width*0.19, game.height*0.52);
-					// game.contextPlayer.font = "bold " + game.width*0.04 + "px " + game.font;
-					// game.contextPlayer.fillStyle = "white";
-					// if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-					// 	game.contextPlayer.fillText("Tap screen to restart", game.width*0.30, game.height*0.62);
-					// } else {
-					// 	game.contextPlayer.fillText("Press Enter or LMB to restart", game.width*0.23, game.height*0.62);
-					// }
+		// 	if (light === 'in')
+		// 	{
+		// 		switch (ctx)
+		// 		{					
+		// 			case 'background':
+		// 				if (game.backgroundAlpha < 1)
+		// 				{				
+		// 					game.backgroundAlpha += game.alphaDelta;
+		// 				}
+		// 				else if (game.backgroundAlpha >= 1)
+		// 				{
+		// 					game.contextBackground.globalAlpha = 1;
+		// 					game.backgroundFaded = false;
+		// 				}
 
-					message('Game Over', 1,  'Helvetica', game.width*0.06, '#FFD455', 'bold'); 
-					message(game.score + ' enemy ships destroyed', 2, 'Helvetica', game.width*0.05, '#FFD455', 'bold');
-					if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-					message('Tap screen to restart', 3, 'Helvetica', game.width*0.04, 'white', 'bold'); 
-					} else {
-					message('Press ENTER or LMB to restart', 3, 'Helvetica', game.width*0.04, 'white', 'bold');
-					}
+		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;												
+		// 			break;
+		
+		// 			case 'enemies':
+		// 				if (game.enemiesAlpha < 1)
+		// 				{				
+		// 					game.enemiesAlpha += game.alphaDelta;
+		// 				}
+		// 				else if (game.enemiesApha >= 1)
+		// 				{
+		// 					game.contextEnemies.globalAlpha = 1;
+		// 					game.enemiesFaded = false;
+		// 				}
 
-					if (game.soundStatus == "ON") {
-						game.sounds.push(new Audio("_sounds/death.mp3"));
-					}
+		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;	
+		// 			break;
+				
+		// 			case 'player':
+		// 				if (game.playerAlpha < 1)
+		// 				{				
+		// 					game.playerAlpha += game.alphaDelta;
+		// 				}
+		// 				else if (game.playerAlpha >= 1)
+		// 				{
+		// 					game.contextPlayer.globalAlpha = 1;
+		// 					game.playerFaded = false;
+		// 				}
 
-					game.levelScore = 0;
+		// 				game.contextPlayer.globalAlpha = game.playerAlpha;						
+		// 			break;
+				
+		// 			case 'text':
+		// 			if (game.textAlpha < 1)
+		// 				{				
+		// 					game.textAlpha += game.alphaDelta;
+		// 				}
+		// 				else if (game.textAlpha >= 1)
+		// 				{
+		// 					game.contextText.globalAlpha = 1;
+		// 					game.textFaded = false;
+		// 				}
 
-				}
+		// 				game.contextText.globalAlpha = game.textAlpha;	
+		// 			break;
 
-			if (game.gameOver && game.paused && game.lives >= 1){
-				message('Your ship has been destroyed!', 1,  'Helvetica', game.width*0.06, '#FFD455', 'bold'); 
-				message(game.lives + ' ships left', 2, 'Helvetica', game.width*0.05, '#FFD455', 'bold');
-				if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-					message('Tap screen to continue', 3, 'Helvetica', game.width*0.04, 'white', 'bold'); 
-				} else {
-					message('Press ENTER or LMB to continue', 3, 'Helvetica', game.width*0.04, 'white', 'bold');
-				}
+		// 			case 'all':	
+		// 				if (game.backgroundAlpha < 1 || game.enemiesAlpha < 1 || game.playerAlpha < 1 || game.textAlpha < 1 )
+		// 				{	
+		// 					game.backgroundAlpha += game.alphaDelta;
+		// 					game.enemiesAlpha += game.alphaDelta;
+		// 					game.playerAlpha += game.alphaDelta;			
+		// 					game.textAlpha += game.alphaDelta;
+		// 				}
+		// 				else if (game.backgroundAlpha >= 1 && game.enemiesAlpha >= 1 && game.playerAlpha >= 1 && game.textAlpha >= 1)
+		// 				{
+		// 					game.contextBackground.globalAlpha = 1;
+		// 					game.contextEnemies.globalAlpha = 1;
+		// 					game.contextPlayer.globalAlpha = 1;
+		// 					game.contextText.globalAlpha = 1;
+		// 					game.textFaded = false;
+		// 					game.enemiesFaded = false;
+		// 					game.playerFaded = false;
+		// 					game.textFaded = false;
+		// 					game.faded = false;
+		// 				}
 
-				game.levelScore = 0;
-			}
+		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;
+		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;
+		// 				game.contextPlayer.globalAlpha = game.playerAlpha;
+		// 				game.contextText.globalAlpha = game.textAlpha;
+		// 			break;
+		// 		}				 
+		// 	}		
+		// 	if (light === 'out')
+		// 	{
+		// 		switch (ctx)
+		// 		{					
+		// 			case 'background':
+		// 				if (game.backgroundAlpha > 0)
+		// 				{				
+		// 					game.backgroundAlpha -= game.alphaDelta;
+		// 				}
+		// 				else if (game.backgroundAlpha <= 0)
+		// 				{
+		// 					game.contextBackground.globalAlpha = 0;
+		// 					game.backgroundFaded = true;
+		// 				}
+
+		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;													
+		// 			break;
+		
+		// 			case 'enemies':
+		// 				if (game.enemiesAlpha > 0)
+		// 				{				
+		// 					game.enemiesAlpha -= game.alphaDelta;
+		// 				}
+		// 				else if (game.enemiesApha <= 0)
+		// 				{
+		// 					game.contextEnemies.globalAlpha = 0;
+		// 					game.enemiesFaded = true;
+		// 				}
+
+		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;		
+		// 			break;
+				
+		// 			case 'player':
+		// 				if (game.playerAlpha > 0)
+		// 				{				
+		// 					game.playerAlpha -= game.alphaDelta;
+		// 				}
+		// 				else if (game.playerAlpha <= 0)
+		// 				{
+		// 					game.contextPlayer.globalAlpha = 0;
+		// 					game.playerFaded = true;
+		// 				}
+
+		// 				game.contextPlayer.globalAlpha = game.playerAlpha;						
+		// 			break;
+				
+		// 			case 'text':
+		// 				if (game.textAlpha > 0)
+		// 				{				
+		// 					game.textAlpha -= game.alphaDelta;
+		// 				}
+		// 				else if (game.textAlpha <= 0)
+		// 				{
+		// 					game.contextText.globalAlpha = 0;
+		// 					game.textFaded = true;
+		// 				}
+
+		// 				game.contextText.globalAlpha = game.textAlpha;
+		// 			break;
+
+		// 			case 'all':	
+		// 				if (game.backgroundAlpha > 0 || game.enemiesAlpha > 0 || game.playerAlpha > 0 || game.textAlpha > 0 )
+		// 				{	
+		// 					game.backgroundAlpha -= game.alphaDelta;
+		// 					game.enemiesAlpha -= game.alphaDelta;
+		// 					game.playerAlpha -= game.alphaDelta;			
+		// 					game.textAlpha -= game.alphaDelta;
+		// 				}
+		// 				else if (game.backgroundAlpha <= 0 && game.enemiesAlpha <= 0 && game.playerAlpha <= 0 && game.textAlpha <= 0)
+		// 				{
+		// 					game.contextBackground.globalAlpha = 0;
+		// 					game.contextEnemies.globalAlpha = 0;
+		// 					game.contextPlayer.globalAlpha = 0;
+		// 					game.contextText.globalAlpha = 0;
+		// 					game.textFaded = true;
+		// 					game.enemiesFaded = true;
+		// 					game.playerFaded = true;
+		// 					game.textFaded = true;
+		// 					game.faded = true;
+		// 				}
+
+		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;
+		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;
+		// 				game.contextPlayer.globalAlpha = game.playerAlpha;
+		// 				game.contextText.globalAlpha = game.textAlpha;
+		// 			break;
+		// 		}	
+		// 	}	
+		// }		
+
+			// if (ctx == 'all')
+			// {
+		 //    	game.contextBackground.globalAlpha = game.alpha;
+			// 	game.contextEnemies.globalAlpha = game.alpha;
+			// 	game.contextPlayer.globalAlpha = game.alpha;
+			// 	game.contextText.globalAlpha = game.alpha;
+			// }
+			// else
+			// {
+			// 	switch (ctx)
+			// 	{
+			// 		case 'background':
+			// 		game.contextBackground.globalAlpha = game.backgroundAlpha;
+			// 		break;
+		
+			// 		case 'enemies':
+			// 		game.contextEnemies.globalAlpha = game.enemiesAlpha;
+			// 		break;
+				
+			// 		case 'player':
+			// 		game.contextPlayer.globalAlpha = game.playerAlpha;
+			// 		break;
+				
+			// 		case 'text':
+			// 		game.contextText.globalAlpha = game.textAlpha;
+			// 		break;
+			// 	}
+			// }
+		 
 
 
-			}, 1000);
-		}
 
 		//messages
 		function message(message, row, font, fontSize, fontColor, fontWeight) {
@@ -337,9 +559,9 @@
 			// console.log (textLength);
 
 
-			game.contextPlayer.font = fontWeight + " " + fontSize + "px " + font;				
-			game.contextPlayer.fillStyle = fontColor;
-			game.contextPlayer.fillText(text, x, y);	
+			game.contextText.font = fontWeight + " " + fontSize + "px " + font;				
+			game.contextText.fillStyle = fontColor;
+			game.contextText.fillText(text, x, y);	
 		}
 
 		// //Init	
@@ -383,19 +605,7 @@
 
 		function checkImages(){	//checking if all images have been loaded. Once all loaded run init
 			if(game.doneImages >= game.requiredImages){
-				game.contextBackground.clearRect(0, 0, game.width, game.height);
-				game.contextBackground.font = "bold " + game.width*0.11 + "px " + game.font; //Intro screen
-				game.contextBackground.fillStyle = "purple";				
-				game.contextBackground.fillText(X_Title, game.width*0.2, game.height*0.40);
-				game.contextBackground.font = "bold " + game.width*0.04 + "px " + game.font; 
-				game.contextBackground.fillStyle = "#FFD455";
-				game.contextBackground.fillText(X_Subtitle, game.width*0.1, game.height*0.55);
-				game.contextBackground.fillStyle = "white";
-				if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-					game.contextBackground.fillText(X_mb_Start, game.width*0.25, game.height*0.65);
-				} else {
-					game.contextBackground.fillText(X_dt_Start, game.width*0.1, game.height*0.70);
-				}
+				gameText.gameIntro();
 				loop(); //LOoP CALL!!!
 			}else{
 				setTimeout(function(){

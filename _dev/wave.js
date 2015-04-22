@@ -9,7 +9,7 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 	this.hull = hull;
 	this.fireRate = fireRate || 0;
 	this.spawnTimer = 1;
-	this.spawnDivision = 15;
+	this.spawnDivision = Math.round(1500 * dt);
 	switch (this.side){
 		case 'top':
 			this.x = pos;
@@ -36,10 +36,10 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 
 	this.update = function() {
 					
-		if (dt !== 0 && !this.spawnDivisionSet){
-			this.spawnDivision = Math.round(700 * dt);
-			this.spawnDivisionSet = true;
-		}
+		// if (dt !== 0 && !this.spawnDivisionSet){
+		// 	this.spawnDivision = Math.round(700 * dt);
+		// 	this.spawnDivisionSet = true;
+		// }
 						
 			
 		this.spawnTimer++;

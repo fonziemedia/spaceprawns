@@ -32,5 +32,3 @@ function background(speed, image, section) {
 
 background.prototype = Object.create(particle.prototype); // Creating a background.prototype object that inherits from particle.prototype.
 background.prototype.constructor = background; // Set the "constructor" property to refer to background
-
-level1Bg = [];

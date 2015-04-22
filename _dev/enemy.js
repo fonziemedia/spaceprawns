@@ -24,13 +24,17 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.fireRate = fireRate * 60; //bullets/sec
 
 	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
-	this.context = game.contextEnemies;
+	this.ctx = game.contextEnemies;
+	this.inCanvas = false;
+	this.speed = speed;
+	this.direction = direction;
+	this.collided = false;
 
 	this.update = function() {
-		this.lastX = this.x;
-		this.lastY = this.y;
-		this.vx = Math.cos(direction) * (speed*dt);
-		this.vy = Math.sin(direction) * (speed*dt);		
+		// this.lastX = this.x;
+		// this.lastY = this.y;
+		this.vx = Math.cos(this.direction) * (this.speed*dt);
+		this.vy = Math.sin(this.direction) * (this.speed*dt);		
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;
@@ -38,6 +42,29 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
+
+		//check if it got inside canvas
+		// if (this.type == 'miniboss')
+		// {
+		// 	if (this.x >= this.size*0.2 || this.x <= game.width - this.size*0.2 || this.y >= this.size || this.y <= game.height - this.size*0.2)
+		// 	{
+		// 		this.inCanvas = true;
+		// 	}
+
+		// 	//once in canvas start controlling bondaries
+		// 	if (this.inCanvas)
+		// 	{
+		// 		if (this.x < this.size*0.5 || this.x > game.width - this.size*0.5 || this.y < this.size*0.5)
+		// 		{
+		// 			//go right
+		// 			this.direction = -this.direction;	
+		// 		}
+		// 	}
+		// 	else
+		// 	{
+		// 		this.direction = Math.PI/2;
+		// 	}
+		// }
 
 		if(this.hit && this.hull > 0 ){
 			if(game.sound){game.sounds.push(new Audio("_sounds/_sfx/hit.mp3"));}
@@ -48,13 +75,9 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		if (this.hull <= 0 ) {
 			this.dead = true;
 
-			if(this.type == 'base'){				
-				game.explosions.push(new explosion(this.x-this.size/2, this.y-this.size/2, speed, direction, this.size));
-			}
-			else{
-				game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size));
-			}
+			game.explosions.push(new explosion(this.x, this.y, this.speed, this.direction, this.size));			
 			if(game.sound){game.sounds.push(new Audio("_sounds/explosion.mp3"));}
+
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;
@@ -66,8 +89,8 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			this.bulletTimer++;
 			if (this.bulletTimer % this.bulletDivision == 1){
 				this.bulletTimer = 1;				
-				bulletX = (this.type == 'base') ? (this.x + this.size*0.42) - this.size/2 : this.x + this.size*0.42;
-				bulletY = (this.type == 'base') ? (this.y + this.size) - this.size/2 : this.y + this.size;
+				bulletX = this.x + this.size*0.42;
+				bulletY = this.y + this.size;
 				bulletDirection = this.angleTo(playerShip);
 				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 20));			
 			}
@@ -75,7 +98,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 
 		if(this.type != 'base' )
 		{	
-		direction -= utils.randomRange(-0.05, 0.05);
+		this.direction -= utils.randomRange(-0.05, 0.05);
 		}
 	};
 
@@ -83,32 +106,32 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		
 		if(this.type == 'base'){ //making bases rotate
 			// //clear trails
-			// game.contextEnemies.save();
-			// game.contextEnemies.translate(this.lastX, this.lastY);
-			// game.contextEnemies.rotate(this.rotation);
-			// game.contextEnemies.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
-			// game.contextEnemies.restore();
+			// this.ctx.save();
+			// this.ctx.translate(this.lastX, this.lastY);
+			// this.ctx.rotate(this.rotation);
+			// this.ctx.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
+			// this.ctx.restore();
 
 			if (!this.dead) {				
 
-				//set rotation speed
+				//set rotation this.speed
 				this.rotation += 0.01;
 
 				//rotate canvas
-				game.contextEnemies.save();
-				game.contextEnemies.translate(this.x, this.y);
-				game.contextEnemies.rotate(this.rotation);
+				this.ctx.save();
+				this.ctx.translate(this.x + this.size * 0.5, this.y + this.size * 0.5);
+				this.ctx.rotate(this.rotation);
 
 				//draw image
-				game.contextEnemies.drawImage(game.images[this.image], -this.size/2, -this.size/2, this.size, this.size);
+				this.ctx.drawImage(game.images[this.image], -this.size * 0.5, -this.size * 0.5, this.size, this.size);
 
-				game.contextEnemies.restore();
+				this.ctx.restore();
 			}
 		}
 		else {
-			// game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
+			// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 			if (!this.dead) {
-				game.contextEnemies.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
+				this.ctx.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
 			}
 		}
 

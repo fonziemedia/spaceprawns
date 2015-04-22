@@ -7,7 +7,7 @@ function boss(x, y, speed, direction, hull, image) {
 	this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;
-	this.deadTime = 60;
+	this.deadTimer = 0;
 	this.bulletTimer1 = 1;
 	this.bulletTimer2 = 1;
 	this.bulletDivision1 = 50;
@@ -45,12 +45,14 @@ function boss(x, y, speed, direction, hull, image) {
 		}
 
 		if (this.hull <= 0 ) {
-			this.dead = true;
 			game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size));			
-			if(game.sound){game.sounds.push(new Audio("_sounds/blast.mp3"));}
+			if (game.sound){game.sounds.push(new Audio("_sounds/blast.mp3"));}			
+			if (game.music){game.songs.push(new Audio("_sounds/victory.mp3"));}
 			if (!playerShip.crashed){
 				game.score++;
-				game.levelScore++;							
+				game.levelScore++;	
+				game.bossDead = true;
+				this.dead = true;						
 			}
 		}
 

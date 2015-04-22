@@ -1,11 +1,14 @@
 		//====================== Main update function =================//		
 		function update(){
+			//////////////////////// 
+			// Init
+			///////////////////////	
+
 			//obtaining an average deltaTime
 			if(dtTimer <= 30){
 
 				var timeNow = new Date().getTime();
 				var timeDiff = timeNow - (timeThen);
-				// console.log (timeDiff);
 	    		dtArray.push(timeDiff); // seconds since last frame
 	    		timeThen = timeNow;
 	    		dtTimer++;
@@ -19,21 +22,18 @@
 				}
 					dt = Math.round(dtSum / dtArray.length)/1000;					
     		}	
-    		// console.log (dt);
-    		// console.log (timeNow);
-    		// console.log (timeThen);
 
+    		//game time
 			game.timer++;
 			game.seconds = game.timer/60 || 0;
-			// console.log(game.seconds);	
+			// console.log(game.seconds);
 
-			//////////////////////// 
-			// Init
-			///////////////////////							
+
+			game.contextEnemies.clearRect(0, 0, game.width, game.height); //clear trails						
 			game.contextPlayer.clearRect(0, 0, game.width, game.height); //clear trails
 			playerShip.update();
 			playerShip.draw();
-			game.contextEnemies.clearRect(0, 0, game.width, game.height); //clear trails
+
 
 			//////////////////////// 
 			// Background
@@ -42,100 +42,74 @@
 			// addStars(1);		
 
 			game.contextBackground.clearRect(0, 0, game.width, game.height); //clear trails
+			
 
-			if (level1Bg.length < 1){			
-				level1Bg.push(new background(150, 21, 0));			
+			if (game.background.length < 1)
+			{
+				bgImage = 20 + game.level; //the image before all background images, these need to be consecutive in order for this to work			
+				game.background.push(new background(150, bgImage, 0));			
 			}
 
-			for (var b in level1Bg){
+			for (var b in game.background)
+			{
+				if (game.background[b].y > -game.height*0.02 && game.background.length < 2){
 
-				if (level1Bg[b].y > -game.height*0.02 && level1Bg.length < 2){
-
-					level1Bg.push(new background(150, 21, 1));				
+					game.background.push(new background(150, bgImage, 1));				
 				}
 
-				if (level1Bg[b].y > game.height){
-					level1Bg.splice(b, 1);
+				if (game.background[b].y > game.height){
+					game.background.splice(b, 1);
 				}
 
-				
-				level1Bg[b].update();			
-				level1Bg[b].draw();
+				game.background[b].update();			
+				game.background[b].draw();				
 			}
 
 
 			/////////////////////////////////////////////////////////////////////////////////
-			// LEVEL 1
-			//
-			// enemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
-			// enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate)
+			// LEVELS
 			////////////////////////////////////////////////////////////////////////////////
 
-			if (game.seconds == 1) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 0, true));
-			}
-			if (game.seconds == 3) {
-			    game.waves.push(new enemyWave('left', game.width*0.3, 1, 'pawn', 4, 300, 1, 0, true));		
-			}
-			if (game.seconds == 5) {
-			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));		
-			}
-			if (game.seconds == 7) {
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 22, 1));
-			}
-			if (game.seconds == 11) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 13) {
-				if(game.music){
-					game.songs.push(new Audio("_sounds/_lvl1/tune2.mp3"));				
-					game.songs[1].play();
-					game.songs[1].loop = true;
+			if (game.level == 1) { lvl1(); }
+			else if (game.level == 2) { lvl1(); }
+			else if (game.level == 3) { lvl3(); }
+
+
+			//level finished
+			if (game.bossDead && game.levelUpTimer <= 100) 
+			{
+				//waiting a few secs before any action
+				game.levelUpTimer++; 
+
+				if (game.levelUpTimer == 100) 
+				{
+					game.levelComplete = true;
+					mouseIsDown = 0;					
 				}
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 23, 1));				
-			}
-			if (game.seconds == 18) {
-			    game.waves.push(new enemyWave('right', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 22) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 25) {
-			    game.waves.push(new enemyWave('left', game.width*0.4, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 27) {
-			    game.waves.push(new enemyWave('right', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 30) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 33) {
-			    game.waves.push(new enemyWave('top', game.width*0.6, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 35) {
-			    game.waves.push(new enemyWave('right', game.width*0.2, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 37) {
-			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
-			}
-			if (game.seconds == 40) {
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
-			}
-			if (game.seconds == 42) {
-			    game.enemies.push(new enemy(game.width * 0.5, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
-			}
-			if (game.seconds == 45) {
-			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
 			}
 
-			if (game.seconds == 55) {
-				if (game.music) {
-					game.songs.push(new Audio("_sounds/_lvl1/boss.mp3"));
-					game.songs[2].play();
-				}
-			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 100, 27));
+			/////////////////////////////////////////////////////////////////////////////////
+			// TRANSITIONS
+			////////////////////////////////////////////////////////////////////////////////
+			
+			if (game.lvlIntro)
+			{
+				gameTransition.lvlIntro();
 			}
-			//boss(x, y, speed, direction, hull, image)
+			else if (game.lvlStart)
+			{
+				gameTransition.lvlStart();
+			}
+			else if (game.levelComplete)
+			{
+				gameTransition.lvlComplete();
+			}
+			else if (game.gameOver)
+			{
+				gameTransition.gameOver();
+			}
+	
+			
 
 			///////////////////////////////////
 			// Player bullets
@@ -147,11 +121,17 @@
 						game.playerBullets[k].update();					
 						game.playerBullets[k].draw();
 					}
-					else  if (game.playerBullets.dead || game.playerBullets[k].x > game.width + game.playerBullets[k].size || game.playerBullets[k].x < 0 - game.playerBullets[k].size || game.playerBullets[k].y > game.height + game.playerBullets[k].size || game.playerBullets[k].y < 0 - 30){
+					
+					if (game.playerBullets[k].dead || game.playerBullets[k].x > game.width + game.playerBullets[k].size || game.playerBullets[k].x < 0 - game.playerBullets[k].size || game.playerBullets[k].y > game.height + game.playerBullets[k].size || game.playerBullets[k].y < 0 - 30){
 						game.playerBullets.splice(k,1);
 					}
 				}
 			}
+
+			// console.log(game.playerBullets.length);
+			// console.log(game.enemyBullets.length);
+			// console.log(game.enemies.length);
+
 
 			///////////////////////////////////
 			// Enemies
@@ -164,16 +144,16 @@
 					game.enemies[c].draw();
 				}
 
-				for (var j in game.enemies){
+				if (game.playerBullets.length >= 1){				
 					//projectiles collision
-					if (game.playerBullets.length >= 1){
+					for (var j in game.enemies){
 						for (var f in game.playerBullets){
 							if (Collision(game.enemies[j], game.playerBullets[f]) && !game.enemies[j].dead){ //dead check avoids ghost scoring														
 								game.enemies[j].hit = true;	
 								game.enemies[j].hull -= game.playerBullets[f].power;
 								// game.contextEnemies.clearRect(game.playerBullets[f].x, game.playerBullets[f].y, game.playerBullets[f].size, game.playerBullets[f].size*1.8);								
 								if(game.enemies[j].hull > 0) {
-									game.explosions.push(new explosion(game.playerBullets[f].x, game.playerBullets[f].y, 0, 1, game.playerBullets[f].size*0.3));
+									game.explosions.push(new explosion(game.enemies[j].x + game.enemies[j].size*0.5, game.enemies[j].y + game.enemies[j].size*0.5, 0, 1, game.enemies[j].size*0.25));
 								}
 								game.playerBullets[f].dead = true;
 								// game.playerBullets.splice(f,1);
@@ -182,9 +162,107 @@
 					}
 				}
 
+				// AI // pathfinding 
+				// for (var w in game.enemies){														
+				// 	for (var m in game.enemies){
+				// 		if (m != w) {
+				// 		// for (var w = 0; w <= game.enemies.length; w++) {												
+				// 			if (Collision(game.enemies[m], game.enemies[w]) && !game.enemies[m].collided && !game.enemies[w].collided && (game.enemies[m].y > game.enemies[m].size || game.enemies[w] > game.enemies[w].size))
+				// 			{
+				// 				game.enemies[m].collided = true;
+				// 				game.enemies[w].collided = true;
+
+				// 				if (game.enemies[m].collided && game.enemies[w].collided)
+				// 				{
+
+				// 					if (game.enemies[m].type == 'base' && game.enemies[w].type !== 'base')
+				// 					{
+				// 						game.enemies[w].direction = game.enemies[w].direction - Math.PI/8;
+				// 						// game.enemies[m].collided = false;
+				// 						// game.enemies[w].collided = false;
+				// 						// game.enemies[m].speed = game.enemies[w].speed;
+				// 					}
+				// 					else if (game.enemies[w].type == 'base' && game.enemies[m].type !== 'base')
+				// 					{
+				// 						game.enemies[m].direction = game.enemies[m].direction - Math.PI/8;
+				// 						// game.enemies[m].collided = false;
+				// 						// game.enemies[w].collided = false;
+				// 						// game.enemies[m].speed = game.enemies[w].speed;
+				// 					}								
+				// 					else if (game.enemies[m].type == 'miniboss' && game.enemies[w].type !== 'miniboss' && game.enemies[w].type !== 'base')
+				// 					{
+				// 						game.enemies[m].direction = game.enemies[w].direction - Math.PI/10;
+				// 						game.enemies[w].direction += Math.PI/2;
+				// 						// game.enemies[m].collided = false;
+				// 						// game.enemies[w].collided = false;
+				// 						// game.enemies[m].speed = game.enemies[w].speed;
+				// 					}
+				// 					else if (game.enemies[w].type == 'miniboss' && game.enemies[m].type !== 'miniboss' && game.enemies[w].type !== 'base')
+				// 					{
+				// 						game.enemies[m].direction = game.enemies[w].direction - Math.PI/10;
+				// 						game.enemies[w].direction += Math.PI/2;
+				// 						// game.enemies[m].collided = false;
+				// 						// game.enemies[w].collided = false;
+				// 						// game.enemies[w].speed = game.enemies[m].speed;
+				// 						// game.enemies[m].speed = game.enemies[w].speed;
+				// 					}
+				// 					else {
+				// 						game.enemies[m].direction = game.enemies[w].direction - Math.PI/10;
+				// 						game.enemies[w].direction += Math.PI/2;
+				// 						// game.enemies[m].speed += 5;
+				// 						// game.enemies[m].collided = false;
+				// 						// game.enemies[w].collided = false;
+				// 					}								
+				// 				}
+
+				// 				// game.enemies[w].direction = game.enemies[m].direction + Math.PI;
+				// 				// game.enemies[w].speed = game.enemies[w].speed/2;
+				// 				// console.log ('collision!');
+				// 			}
+				// 			else if (game.enemies[m].type !== 'base' && game.enemies[w].type !== 'base') {
+				// 				game.enemies[m].direction -= utils.randomRange(-0.05, 0.05);
+				// 				game.enemies[m].collided = false;
+				// 				game.enemies[w].collided = false;
+				// 				// game.enemies[w].direction -= utils.randomRange(-0.05, 0.05);
+				// 				// game.enemies[m].speed = game.enemies[m].speed;
+				// 				// game.enemies[w].speed = game.enemies[w].speed;
+				// 			}
+				// 			else
+				// 			{
+				// 				game.enemies[m].collided = false;
+				// 				game.enemies[w].collided = false;
+				// 			}
+				// 			// else if (game.enemies[m].collided && game.enemies[w].collided)
+				// 			// {
+				// 			// 	if (game.enemies[m].type !== 'base' || game.enemies[w].type !== 'base')
+				// 			// 	{
+				// 			// 		game.enemies[m].speed = game.enemies[m].speed;
+				// 			// 		game.enemies[w].speed = game.enemies[w].speed;
+				// 			// 	}
+				// 			// 	else if (game.enemies[m].type == 'base')
+				// 			// 	{
+				// 			// 		game.enemies[w].direction = -game.enemies[w].direction;
+				// 			// 		// game.enemies[m].speed = game.enemies[w].speed;
+				// 			// 	}
+				// 			// 	else if (game.enemies[w].type == 'base')
+				// 			// 	{
+				// 			// 		game.enemies[m].direction = -game.enemies[m].direction/2;
+				// 			// 	}								
+				// 			// 	game.enemies[m].collided = false;
+				// 			// 	game.enemies[w].collided = false;
+				// 			// }
+				// 			// else
+				// 			// {
+
+				// 			// }
+				// 		}
+				// 		// }
+				// 	}	
+				// }
+
 				for (var t in game.enemies){					
 					// player-enemy collision
-					if (Collision(game.enemies[t], playerShip) && !game.enemies[t].dead && !game.gameOver){			
+					if (Collision(game.enemies[t], playerShip) && !game.enemies[t].dead && !playerShip.imune && !game.gameOver){			
 						playerShip.hull -= game.enemies[t].hull;
 						gameUI.updateEnergy();						
 						playerShip.hit = true;			
@@ -254,7 +332,7 @@
 					game.enemyBullets[z].draw();
 
 
-					if (Collision(game.enemyBullets[z], playerShip) && !game.gameOver){ //
+					if (Collision(game.enemyBullets[z], playerShip) && !playerShip.imune && !game.gameOver){ //
 						// if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}							
 									// game.contextEnemies.clearRect(game.playerBullets[p].x, game.playerBullets[p].y, game.playerBullets[p].size, game.playerBullets[p].size*1.8);								
 						playerShip.hull -= game.enemyBullets[z].power;

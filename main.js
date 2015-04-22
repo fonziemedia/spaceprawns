@@ -394,10 +394,19 @@ var particle = function(x, y, speed, direction, grav) {
 		/*GAME VARS*/
 
 		var game = {}; //this is a global var which will contain other game vars
-		game.stars = []; //this is an array which will contain our stars info: position in space and size		
+		game.stars = []; //this is an array which will contain our stars info: position in space and size
+		game.faded = true;
+		game.backgroundFaded = true;
+		game.enemiesFaded = true;
+		game.playerFaded = true;
+		game.textFaded = true;
+		game.background = [];		
 		game.score = 0; //the game score
 		game.levelScore = 0; //the score for each level
 		game.level = X_Level; //starting at level X...
+		game.bossDead = false;
+		game.levelComplete = false;
+		game.levelUpTimer = 0;
 		game.lives = X_Lives; //with X ships (lives)
 		game.keys = []; //the keyboard array
 		game.playerBullets = []; //Our proton torpedoes!
@@ -416,8 +425,11 @@ var particle = function(x, y, speed, direction, grav) {
 		
 		//====================== Game state ========================
 		
-		game.start = true;
+		game.start = true;		
+		game.lvlIntro = true;
+		game.lvlStart = false;
 		game.paused = true;
+		game.escaped = false;
 		game.gameWon = false;
 		game.gameOver = false;
 		game.delayTimer = 0;
@@ -444,7 +456,7 @@ var particle = function(x, y, speed, direction, grav) {
 		game.doneImages  = 0; // will contain how many images have been loaded
 		game.requiredImages = 0; // will contain how many images should be loaded
 		// game.font = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? "Helvetica" : "Monaco";
-		game.res = 4*100; //check the 4th index every 5 frames
+		// game.res = 4*500; //check the 4th index every 5 frames
 
 		
 		//====================== Canvases + Images + responsiveness  ============================
@@ -453,7 +465,6 @@ var particle = function(x, y, speed, direction, grav) {
 		game.contextEnemies = document.getElementById("enemiesCanvas").getContext("2d");
 		game.contextPlayer = document.getElementById("playerCanvas").getContext("2d");
 		game.contextText = document.getElementById("textCanvas").getContext("2d");
-				
 
 		//making our canvases dynamically resize according to the size of the browser window
 			
@@ -477,28 +488,31 @@ var particle = function(x, y, speed, direction, grav) {
 			c1.attr('height', $(container).height()); //max height
 			c2.attr('height', $(container).height()); //max height
 			c3.attr('height', $(container).height()); //max height
-			c4.attr('height', $(container).height() * 0.2 ); //max height
+			c4.attr('height', $(container).height()); //max height
 
+			if ($(container).width() < 1080)
+			{
+				c1.attr('width', $(container).width()); //max width
+				c2.attr('width', $(container).width()); //max width
+				c3.attr('width', $(container).width()); //max width
+				c4.attr('width', $(container).width()); //max width
 
-			if ($(container).width() < 1080) {
-			c1.attr('width', $(container).width()); //max width
-			c2.attr('width', $(container).width()); //max width
-			c3.attr('width', $(container).width()); //max width
-			c4.attr('width', $(container).width()); //max width
-			game.width = $(container).width();
-
+				game.width = $(container).width();
 			}
 			else {
-			var widthProp = $(container).height() * 9 / 16;
-			c1.attr('width', widthProp); //max width
-			c2.attr('width', widthProp); //max width
-			c3.attr('width', widthProp); //max width
-			c4.attr('width', widthProp); //max width
-			c1.css({"left": ($(container).width()-widthProp)*0.5});
-			c2.css({"left": ($(container).width()-widthProp)*0.5});
-			c3.css({"left": ($(container).width()-widthProp)*0.5});
-			c4.css({"left": ($(container).width()-widthProp)*0.5});
-			game.width = widthProp;
+				var widthProp = $(container).height() * 9 / 16;
+
+				c1.attr('width', widthProp); //max width
+				c2.attr('width', widthProp); //max width
+				c3.attr('width', widthProp); //max width
+				c4.attr('width', widthProp); //max width
+
+				c1.css({"left": ($(container).width()-widthProp)*0.5});
+				c2.css({"left": ($(container).width()-widthProp)*0.5});
+				c3.css({"left": ($(container).width()-widthProp)*0.5});
+				c4.css({"left": ($(container).width()-widthProp)*0.5});
+
+				game.width = widthProp;
 			}
 
 			 //we'll use width and height to limit the game to our canvas size
@@ -533,14 +547,14 @@ var particle = function(x, y, speed, direction, grav) {
 			game.enshootTimer = game.enfullShootTimer;
 
 			//=========================== Game loading Screen =================================== 	
-			game.contextBackground.font = "bold " + game.width*0.08 + "px " + game.font; 
-			game.contextBackground.fillStyle = "white";
-			game.contextBackground.fillText("Loading...", game.width*0.30, game.height*0.47);
+			game.contextText.font = "bold " + game.width*0.08 + "px " + game.font; 
+			game.contextText.fillStyle = "white";
+			game.contextText.fillText("Loading...", game.width*0.30, game.height*0.47);
 		}
 
 		//Initial call 
 		respondCanvas();
-		
+
 	// jshint ignore:line
 function background(speed, image, section) {
 	particle.call(this, speed);
@@ -576,8 +590,6 @@ function background(speed, image, section) {
 
 background.prototype = Object.create(particle.prototype); // Creating a background.prototype object that inherits from particle.prototype.
 background.prototype.constructor = background; // Set the "constructor" property to refer to background
-
-level1Bg = [];
 function explosion(x, y, speed, direction, size) {
 	particle.call(this, x, y, speed, direction);
 
@@ -598,7 +610,7 @@ function explosion(x, y, speed, direction, size) {
 	this.currentFrame = 0;        // the current frame to draw
 	this.counter = 0;
 	this.fpr = Math.floor(game.images[this.image].width / this.frameWidth);
-
+	this.ctx = game.contextPlayer;
 
 	// if (game.soundStatus == "ON"){game.enemyexplodeSound.play();}
 
@@ -633,10 +645,10 @@ function explosion(x, y, speed, direction, size) {
 	};
 
 	this.draw = function() {
-		// game.contextPlayer.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
+		// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
 		if (this.currentFrame <= 19){
-			game.contextPlayer.drawImage(
+			this.ctx.drawImage(
 				game.images[this.image],
 				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
 				this.frameWidth, this.frameHeight,
@@ -656,6 +668,7 @@ function player(hull, fireRate) {
 	this.x = game.width*0.46;
 	this.y = game.height*0.90;
 	this.speed = 0;
+	this.maxSpeed = 400;
 	this.direction = -Math.PI/2;
 	this.size = 100*dtSize;
 	this.hull = hull;
@@ -663,21 +676,26 @@ function player(hull, fireRate) {
 	this.image = 0;
 	this.rendered = false;
 	this.hit = false;
-	this.hitTimer = 0; 
+	this.hitTimer = 0;
+	this.imune = false;
+	this.imuneTimer = 0;
 	this.dead = false;
+	this.deadTimer = 0;
 	this.bullets = [];
-	this.bulletTimer = fireRate-1;
+	this.bulletTimer = 1;
 	this.bulletDivision = fireRate;
 	this.laserLevel = 1;
 	this.missileLevel = 0;
 	this.lives = X_Lives;
-	this.context = game.contextPlayer;
+	this.ctx = game.contextPlayer;
+	this.incline = [game.width*0.004, game.width*0.008, game.width*0.010, game.width*0.012];
+	this.steering = game.width * 0.08; //ship drag radius
 
 	// bulletspeed: X_BulletSpeed*game.height/1000,
 
 	this.update = function() {
-		this.vx = Math.cos(this.direction) * (this.speed*dt);
-		this.vy = Math.sin(this.direction) * (this.speed*dt);
+		// this.vx = Math.cos(this.direction) * (this.speed*dt);
+		// this.vy = Math.sin(this.direction) * (this.speed*dt);
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;
@@ -686,34 +704,46 @@ function player(hull, fireRate) {
 		// this.x += this.vx;
 		// this.y += this.vy;
 
-		if (mouseIsDown && !(game.paused) && !(game.gameOver) && !(game.gameWon)) {
+		//////////////////////////////
+		//	Mouse and Touch controls
+		/////////////////////////////
 
+		if (mouseIsDown && !game.levelComplete && !game.paused && !game.gameOver && !game.gameWon) {
+
+			//defining the boundaries	
+			if((canvasX > (this.size*0.25) && canvasX <= (game.width - this.size*0.25)) && (canvasY > this.size) && canvasY <= (game.height - this.size*0.16)) {			
 				
-			if((canvasX > (this.size/4) && canvasX <= (game.width - this.size/4)) && (canvasY > this.size) && canvasY <= (game.height - this.size/6)) {			
-			
-				moveRight1 = (canvasX > moveX && canvasX <= moveX + 2) ? true : false;
-				moveRight2 = (canvasX > moveX + 2 && canvasX <= moveX + 4) ? true : false;
-				moveRight3 = (canvasX > moveX + 4 && canvasX <= moveX + 6) ? true : false;
-				moveRight4 = (canvasX > moveX + 6 && canvasX <= moveX + 8) ? true : false;
-				moveRight5 = (canvasX > moveX + 8) ? true : false;
+				moveRight1 = (canvasX > moveX && canvasX <= moveX + this.incline[0]) ? true : false;
+				moveRight2 = (canvasX > moveX + this.incline[0] && canvasX <= moveX + this.incline[1]) ? true : false;
+				moveRight3 = (canvasX > moveX + this.incline[1] && canvasX <= moveX + this.incline[2]) ? true : false;
+				moveRight4 = (canvasX > moveX + this.incline[2] && canvasX <= moveX + this.incline[3]) ? true : false;
+				moveRight5 = (canvasX > moveX + this.incline[3]) ? true : false;
 
-				moveLeft1 = (canvasX < moveX && canvasX >= moveX -2) ? true : false;
-				moveLeft2 = (canvasX < moveX - 2 && canvasX >= moveX -4) ? true : false;
-				moveLeft3 = (canvasX < moveX - 4 && canvasX >= moveX -6) ? true : false;
-				moveLeft4 = (canvasX < moveX - 6 && canvasX >= moveX -8) ? true : false;
-				moveLeft5 = (canvasX < moveX - 8) ? true : false;
-
+				moveLeft1 = (canvasX < moveX && canvasX >= moveX -this.incline[0]) ? true : false;
+				moveLeft2 = (canvasX < moveX - this.incline[0] && canvasX >= moveX -this.incline[1]) ? true : false;
+				moveLeft3 = (canvasX < moveX - this.incline[1] && canvasX >= moveX -this.incline[2]) ? true : false;
+				moveLeft4 = (canvasX < moveX - this.incline[2] && canvasX >= moveX -this.incline[3]) ? true : false;
+				moveLeft5 = (canvasX < moveX - this.incline[3]) ? true : false;
+				
+				//making it move to touch or click point
 				if (canvasX != moveX || canvasY != moveY) {
+					//the distance between the current ship pos and the user touch/click pos
 					distX = moveX - canvasX;
 					distY = moveY - canvasY;
 					
-					if (distX < 10 && distX > -10){this.speed = 400;this.x -= distX;}
-					else if (distX >= 10) {this.speed = 400;this.x -= this.speed*dt;}
-					else if (distX <= -10) {this.speed = 400;this.x += this.speed*dt;}
+					// if xy touch position is greater than the ships steering radius (approx 10px) make the ship move to touch point, else teleport to touch point (magnet effect)
+					// this gives a smooth steering experience while avoiding cheating (teleportation)
+					if (distX < this.steering && distX > -this.steering){this.speed = this.maxSpeed;this.x -= distX;}
+					if (distX >= this.steering) {this.speed = this.maxSpeed;this.x -= this.speed*dt;}
+					if (distX <= -this.steering) {this.speed = this.maxSpeed;this.x += this.speed*dt;}
 
-					if (distY < 10 && distY > -10){this.speed = 400;this.y -= distY;}
-					else if (distY >= 10) {this.speed = 400;this.y -= this.speed*dt;}
-					else if (distY <= -10) {this.speed = 400;this.y += this.speed*dt;}
+					if (distY < this.steering && distY > -this.steering){this.speed = this.maxSpeed;this.y -= distY;}
+					if (distY >= this.steering) {this.speed = this.maxSpeed;this.y -= this.speed*dt;}
+					if (distY <= -this.steering) {this.speed = this.maxSpeed;this.y += this.speed*dt;}
+
+					// this.speed = this.maxSpeed;
+					// this.x -= distX;
+					// this.y -= distY;
 
 				}
 
@@ -744,28 +774,31 @@ function player(hull, fireRate) {
 				} else if (moveLeft5) {
 					this.image = 13;
 				} else {
-				 this.image = 0;	
+					this.image = 0;	
 				}
 
 				this.rendered = false;				
 				moveX = this.x + this.size*0.5; 	//second define of moveX as canvasX position
-				moveY = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? this.y + this.size*2 : this.y + this.size; 	//second define of moveX as canvasX position
+				moveY = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? this.y + this.size*1.7 : this.y + this.size; 	//second define of moveX as canvasX position
 			
 			}
 			/*		console.log (canvasX)
 					console.log (moveX);
 					console.log (moveRight);*/
 		}
-
-		if (!mouseIsDown && !game.gameOver) {
+		else if (!mouseIsDown && !game.gameOver) {
 			this.image = 0;
 			this.rendered = false;
 		}
 
+		/////////////////////////
+		//	Keyboard controlls
+		////////////////////////
+
 		//left
 		if(game.keys[37] || game.keys[65] && !(game.gameOver) && !(game.gameWon)){ //if key pressed..				
-			if(this.x > this.size/50){ // (keeping it within the boundaries of our canvas)
-				this.speed = 400;
+			if(this.x > 0){ // (keeping it within the boundaries of our canvas)				
+				this.speed = this.maxSpeed;
 				this.direction = Math.PI;				
 				this.image = 13;
 				this.rendered = false;
@@ -774,25 +807,27 @@ function player(hull, fireRate) {
 		}
 		//right
 		if(game.keys[39] || game.keys[68] && !(game.gameOver) && !(game.gameWon)){
-			if(this.x <= game.width - this.size){
-				this.speed = 400;
+			if(this.x <= game.width - this.size){				
+				this.speed = this.maxSpeed;
 				this.direction = 0;
 				this.image = 8;
 				this.rendered = false;
 				this.x += this.speed*dt;
 			}
 		}
-		if(game.keys[38] || game.keys[87] && !(game.gameOver) && !(game.gameWon)){
-			if(this.y > this.size/12){
-				this.speed = 400;
+		//up
+		if((game.keys[38] || game.keys[87] && !game.gameOver && !game.gameWon) || game.levelComplete){ //also if game level is complete!
+			if(this.y > 0 || game.levelComplete){				
+				this.speed = this.maxSpeed;
 				this.direction = -Math.PI/2;
 				this.rendered = false;
 				this.y -= this.speed*dt;
 			}
 		}
-		if(game.keys[40] || game.keys[83] && !(game.gameOver) && !(game.gameWon)){
-			if(this.y <= game.height - this.size){
-				this.speed = 400;
+		//down
+		if(game.keys[40] || game.keys[83] && !(game.gameOver) && !game.gameWon){
+			if(this.y <= game.height - this.size){				
+				this.speed = this.maxSpeed;
 				this.direction = Math.PI/2;
 				this.rendered = false;
 				this.y += this.speed*dt;
@@ -803,7 +838,7 @@ function player(hull, fireRate) {
 		}
 
 
-		if((game.keys[32] || mouseIsDown) && !(game.gameOver)){ //only add a bullet if space is pressed and enough time has passed i.e. our timer has reached 0
+		if((game.keys[32] || mouseIsDown) && !this.dead && !game.gameOver){ //only add a bullet if space is pressed and enough time has passed i.e. our timer has reached 0
 			this.bulletTimer++;
 			// homing missiles, sort of
 			// this.bulletAngle = sectoidWave.units.length > 0 ? this.angleTo(sectoidWave.units[Math.floor(Math.random() * sectoidWave.units.length)]) : -Math.PI/2;
@@ -818,15 +853,13 @@ function player(hull, fireRate) {
 				    	game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
 				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));				
 				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
-				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				        break;
 				    default:
 				        game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
 				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
 				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
 				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
-				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}				
-				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
+				        break;
 				 }
 
 				 switch(this.missileLevel) {
@@ -842,49 +875,114 @@ function player(hull, fireRate) {
 				    default:
 				        game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
 						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
-						game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));										
+						game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+						break;										
 				 }				
-				this.bulletTimer = 1; //resetting our timer
+				// this.bulletTimer = 1; //resetting our timer
 			}
 		}
 		else {
-			this.bulletTimer = fireRate-1;
+			this.bulletTimer = 1;
 		}
 
-		if (this.hull <= 0) {
-			// console.log(this.x);
-			// console.log(this.y);
-			// console.log(this.speed);
-			// console.log(this.direction);
-			game.explosions.push(new explosion(this.x, this.y, this.speed*0.5, this.direction, this.size));
-			this.dead = true;
-			if (game.sound){game.sounds.push(new Audio("_sounds/blast.mp3"));}
-			PlayerDie();
+
+		///////////////////////////////////
+		//	DEATH MANAGEMENT
+		///////////////////////////////////
+
+		if (this.hull <= 0 && !this.dead)
+		{
+			this.dead = true;			
 			this.lives -= 1;
-			this.hull = hull;
+			game.explosions.push(new explosion(this.x, this.y, this.speed*0.5, this.direction, this.size));
+			if (game.sound){game.sounds.push(new Audio("_sounds/blast.mp3"));}
+			gameUI.updateHangar();
+		}	
+
+
+		if (this.dead && this.deadTimer <= 100 && game.lives > 0) 
+		{
+			//waiting a few secs before any action
+			this.deadTimer++; 
+
+			if (this.deadTimer > 100 && this.lives > 0) 
+			{
+					mouseIsDown = 0;
+					this.hull = hull;
+					this.dead = false;
+					this.x = game.width*0.46;
+					this.y = game.height*0.90;
+					this.image = 0;
+					this.rendered = false;
+					this.hit = false;
+					this.hitTimer = 0;
+					this.friction = 0;
+					this.laserLevel = 1;
+					this.missileLevel = 0;						
+					gameUI.updateEnergy();
+					this.deadTimer = 0;
+					this.imune = true;
+					this.imuneTimer = 0;
+			}
+			else if (this.deadTimer > 100 && this.lives === 0)
+			{	
+				mouseIsDown = 0;
+				game.keys[13] = false;				
+				this.deadTimer = 0;
+				game.gameOver = true;
+			}
+			else {
+				this.x = -game.width; //keeping the player outside canvas while dead
+				this.y = -game.height;
+			}
 		}
 
-		this.vx = Math.cos(this.direction) * this.speed;
-		this.vy = Math.sin(this.direction) * this.speed;
-
-
+		if (this.imune){
+			this.imuneTimer++;
+			if (this.imuneTimer > 250){
+				this.imune = false;
+				this.imuneTimer = 0;
+			}
+		}
 
 	};
-
-
 
 	this.draw = function() {
 
 
 		if(!this.dead){		
 			
-			game.contextPlayer.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //rendering
+			if (this.imune && !game.faded && !game.starting && !game.levelComplete)
+			{
+				this.ctx.globalAlpha = 0.8;
+				if (this.imuneTimer >= 0 && this.imuneTimer < 15  || this.imuneTimer >= 20 && this.imuneTimer < 35 ||this.imuneTimer >= 40 && this.imuneTimer < 55 || this.imuneTimer >= 70 && this.imuneTimer < 75 || this.imuneTimer >= 90 && this.imuneTimer < 95 || this.imuneTimer >= 110 && this.imuneTimer < 115 || this.imuneTimer >= 130 && this.imuneTimer < 135 || this.imuneTimer >= 150 && this.imuneTimer < 155 || this.imuneTimer >= 160 && this.imuneTimer < 175 || this.imuneTimer > 180)
+				{
+					this.ctx.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //rendering
+				}
+			}
 
-			if (this.hit) {
-				this.hitTimer++;
-				navigator.vibrate(30);
 
-				// var imgData = game.contextPlayer.getImageData(this.x, this.y, this.size, this.size);
+			if (!this.imune)
+			{
+				if (this.ctx.globalAlpha < 1 && !game.faded && !game.levelComplete)  //we need to avoid imunity clashing with game transitions
+				{
+						this.ctx.globalAlpha += 0.1;				
+				}
+
+				this.ctx.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //rendering
+			}
+
+
+			if (this.hit && !this.imune) {
+				// this.hitTimer++;
+				if (navigator.userAgent.match(/(iPhone|Android)/)) 
+				{
+					navigator.vibrate(30);
+				}
+
+				this.hit = false;
+
+				// var imgData = this.ctx.getImageData(this.x, this.y, this.size, this.size);
 
 				// var d = imgData.data;
 			 //    for (var i = 0; i < d.length; i += 4) {
@@ -894,17 +992,18 @@ function player(hull, fireRate) {
 			 //      d[i] = d[i + 1] = d[i + 2] = 255;
 			 //    }
 
-				// game.contextPlayer.putImageData(imgData, this.x, this.y);
+				// this.ctx.putImageData(imgData, this.x, this.y);
 
-				if (this.hitTimer > 4){
-					this.hit = false;
-					this.hitTimer = 0;
-				}				 
+			// 	if (this.hitTimer > 4){
+				// this.hit = false;
+			// 		this.hitTimer = 0;
+			// 	}				 
+			// }
+
 			}
-
 		}
 	};
-
+	
 	this.reset = function() {
 		this.dead = false;
 		this.x = game.width*0.46;
@@ -915,11 +1014,13 @@ function player(hull, fireRate) {
 		this.hit = false;
 		this.hitTimer = 0; 
 		this.dead = false;
+		game.gameOver = false;
 		this.friction = 0;
 		this.bullets = [];
 		this.laserLevel = 1;
 		this.missileLevel = 0;
-		this.lives = (this.lives < 1) ? 3 : this.lives;
+		this.lives = X_Lives;
+		// this.lives = (this.lives < 1) ? 3 : this.lives;
 	};
 }
 
@@ -927,7 +1028,7 @@ player.prototype = Object.create(particle.prototype); // Creating a player.proto
 player.prototype.constructor = player; // Set the "constructor" property to refer to player
 
 
-playerShip = new player(10, 20);
+playerShip = new player(10, 15);
 function playerBullet(x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame) {
 	particle.call(this, x, y, speed, direction);
 	
@@ -948,7 +1049,7 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 	this.image = image;
 	this.friction = friction;
 	this.dtSet = false;
-	this.context = game.contextPlayer;
+	this.ctx = game.contextEnemies;
 
 	this.update = function(){ // Replacing the default 'update' method		
 		//setting this to make friction work with deltaTime (dt), check particle.js
@@ -983,26 +1084,26 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 		
 		if (!this.dead) {			
 
-			// game.contextPlayer.save();
-			// game.contextPlayer.translate(this.lastX, this.lastY);
-			// game.contextPlayer.rotate(direction - Math.PI/2);
+			// this.ctx.save();
+			// this.ctx.translate(this.lastX, this.lastY);
+			// this.ctx.rotate(direction - Math.PI/2);
 
-			// game.contextPlayer.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
+			// this.ctx.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
 
-			// game.contextPlayer.restore();
+			// this.ctx.restore();
 
-			game.contextPlayer.save();
-			game.contextPlayer.translate(this.x, this.y);
-			game.contextPlayer.rotate(direction - Math.PI/2);
+			this.ctx.save();
+			this.ctx.translate(this.x, this.y);
+			this.ctx.rotate(direction - Math.PI/2);
 
-			game.contextPlayer.drawImage(
+			this.ctx.drawImage(
 				game.images[this.image],
 				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
 				this.frameWidth, this.frameHeight,
 				-this.size/2, -this.size/2,
 				this.size, this.size);
 			
-			game.contextPlayer.restore();
+			this.ctx.restore();
 
 		}
 	};
@@ -1036,13 +1137,17 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.fireRate = fireRate * 60; //bullets/sec
 
 	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
-	this.context = game.contextEnemies;
+	this.ctx = game.contextEnemies;
+	this.inCanvas = false;
+	this.speed = speed;
+	this.direction = direction;
+	this.collided = false;
 
 	this.update = function() {
-		this.lastX = this.x;
-		this.lastY = this.y;
-		this.vx = Math.cos(direction) * (speed*dt);
-		this.vy = Math.sin(direction) * (speed*dt);		
+		// this.lastX = this.x;
+		// this.lastY = this.y;
+		this.vx = Math.cos(this.direction) * (this.speed*dt);
+		this.vy = Math.sin(this.direction) * (this.speed*dt);		
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;
@@ -1050,6 +1155,29 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
+
+		//check if it got inside canvas
+		// if (this.type == 'miniboss')
+		// {
+		// 	if (this.x >= this.size*0.2 || this.x <= game.width - this.size*0.2 || this.y >= this.size || this.y <= game.height - this.size*0.2)
+		// 	{
+		// 		this.inCanvas = true;
+		// 	}
+
+		// 	//once in canvas start controlling bondaries
+		// 	if (this.inCanvas)
+		// 	{
+		// 		if (this.x < this.size*0.5 || this.x > game.width - this.size*0.5 || this.y < this.size*0.5)
+		// 		{
+		// 			//go right
+		// 			this.direction = -this.direction;	
+		// 		}
+		// 	}
+		// 	else
+		// 	{
+		// 		this.direction = Math.PI/2;
+		// 	}
+		// }
 
 		if(this.hit && this.hull > 0 ){
 			if(game.sound){game.sounds.push(new Audio("_sounds/_sfx/hit.mp3"));}
@@ -1060,13 +1188,9 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		if (this.hull <= 0 ) {
 			this.dead = true;
 
-			if(this.type == 'base'){				
-				game.explosions.push(new explosion(this.x-this.size/2, this.y-this.size/2, speed, direction, this.size));
-			}
-			else{
-				game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size));
-			}
+			game.explosions.push(new explosion(this.x, this.y, this.speed, this.direction, this.size));			
 			if(game.sound){game.sounds.push(new Audio("_sounds/explosion.mp3"));}
+
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;
@@ -1078,8 +1202,8 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			this.bulletTimer++;
 			if (this.bulletTimer % this.bulletDivision == 1){
 				this.bulletTimer = 1;				
-				bulletX = (this.type == 'base') ? (this.x + this.size*0.42) - this.size/2 : this.x + this.size*0.42;
-				bulletY = (this.type == 'base') ? (this.y + this.size) - this.size/2 : this.y + this.size;
+				bulletX = this.x + this.size*0.42;
+				bulletY = this.y + this.size;
 				bulletDirection = this.angleTo(playerShip);
 				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 20));			
 			}
@@ -1087,7 +1211,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 
 		if(this.type != 'base' )
 		{	
-		direction -= utils.randomRange(-0.05, 0.05);
+		this.direction -= utils.randomRange(-0.05, 0.05);
 		}
 	};
 
@@ -1095,32 +1219,32 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		
 		if(this.type == 'base'){ //making bases rotate
 			// //clear trails
-			// game.contextEnemies.save();
-			// game.contextEnemies.translate(this.lastX, this.lastY);
-			// game.contextEnemies.rotate(this.rotation);
-			// game.contextEnemies.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
-			// game.contextEnemies.restore();
+			// this.ctx.save();
+			// this.ctx.translate(this.lastX, this.lastY);
+			// this.ctx.rotate(this.rotation);
+			// this.ctx.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
+			// this.ctx.restore();
 
 			if (!this.dead) {				
 
-				//set rotation speed
+				//set rotation this.speed
 				this.rotation += 0.01;
 
 				//rotate canvas
-				game.contextEnemies.save();
-				game.contextEnemies.translate(this.x, this.y);
-				game.contextEnemies.rotate(this.rotation);
+				this.ctx.save();
+				this.ctx.translate(this.x + this.size * 0.5, this.y + this.size * 0.5);
+				this.ctx.rotate(this.rotation);
 
 				//draw image
-				game.contextEnemies.drawImage(game.images[this.image], -this.size/2, -this.size/2, this.size, this.size);
+				this.ctx.drawImage(game.images[this.image], -this.size * 0.5, -this.size * 0.5, this.size, this.size);
 
-				game.contextEnemies.restore();
+				this.ctx.restore();
 			}
 		}
 		else {
-			// game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
+			// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 			if (!this.dead) {
-				game.contextEnemies.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
+				this.ctx.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
 			}
 		}
 
@@ -1162,7 +1286,7 @@ function boss(x, y, speed, direction, hull, image) {
 	this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;
-	this.deadTime = 60;
+	this.deadTimer = 0;
 	this.bulletTimer1 = 1;
 	this.bulletTimer2 = 1;
 	this.bulletDivision1 = 50;
@@ -1200,12 +1324,14 @@ function boss(x, y, speed, direction, hull, image) {
 		}
 
 		if (this.hull <= 0 ) {
-			this.dead = true;
 			game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size));			
-			if(game.sound){game.sounds.push(new Audio("_sounds/blast.mp3"));}
+			if (game.sound){game.sounds.push(new Audio("_sounds/blast.mp3"));}			
+			if (game.music){game.songs.push(new Audio("_sounds/victory.mp3"));}
 			if (!playerShip.crashed){
 				game.score++;
-				game.levelScore++;							
+				game.levelScore++;	
+				game.bossDead = true;
+				this.dead = true;						
 			}
 		}
 
@@ -1301,7 +1427,7 @@ function enemyBullet(x, y, speed, direction, power, image) {
 	this.image = image;
 	this.friction = 1.02;
 	this.dtSet = false;
-	this.context = game.contextPlayer;
+	this.ctx = game.contextEnemies;
 
 	this.update = function(){ // Replacing the default 'update' method
 		if (dt !== 0 && !this.dtSet){
@@ -1337,26 +1463,26 @@ function enemyBullet(x, y, speed, direction, power, image) {
 		
 		if (!this.dead) {			
 
-			// game.contextPlayer.save();
-			// game.contextPlayer.translate(this.lastX, this.lastY);
-			// game.contextPlayer.rotate(direction - Math.PI/2);
+			// this.ctx.save();
+			// this.ctx.translate(this.lastX, this.lastY);
+			// this.ctx.rotate(direction - Math.PI/2);
 
-			// game.contextPlayer.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
+			// this.ctx.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
 
-			// game.contextPlayer.restore();
+			// this.ctx.restore();
 
-			game.contextPlayer.save();
-			game.contextPlayer.translate(this.x, this.y);
-			game.contextPlayer.rotate(direction - Math.PI/2);
+			this.ctx.save();
+			this.ctx.translate(this.x, this.y);
+			this.ctx.rotate(direction - Math.PI/2);
 
-			game.contextPlayer.drawImage(
+			this.ctx.drawImage(
 				game.images[this.image],
 				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
 				this.frameWidth, this.frameHeight,
 				-this.size/2, -this.size/2,
 				this.size, this.size);
 			
-			game.contextPlayer.restore();
+			this.ctx.restore();
 
 		}
 	};
@@ -1445,7 +1571,7 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 	this.hull = hull;
 	this.fireRate = fireRate || 0;
 	this.spawnTimer = 1;
-	this.spawnDivision = 15;
+	this.spawnDivision = Math.round(1500 * dt);
 	switch (this.side){
 		case 'top':
 			this.x = pos;
@@ -1472,10 +1598,10 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 
 	this.update = function() {
 					
-		if (dt !== 0 && !this.spawnDivisionSet){
-			this.spawnDivision = Math.round(700 * dt);
-			this.spawnDivisionSet = true;
-		}
+		// if (dt !== 0 && !this.spawnDivisionSet){
+		// 	this.spawnDivision = Math.round(700 * dt);
+		// 	this.spawnDivisionSet = true;
+		// }
 						
 			
 		this.spawnTimer++;
@@ -1502,25 +1628,30 @@ function ui() {
 	this.energyPointSize = game.height*0.01;
 	this.hangarShipSize = game.height*0.03;
 	this.level = game.level;
-	game.contextText.fillStyle = "#FFD455";
-	game.contextText.font = 15*dtSize + 'px helvetica';
 
 	this.updateLevel = function() {
 		this.level = game.level;
+		game.contextText.fillStyle = "#FFD455";
+		game.contextText.font = 15*dtSize + 'px helvetica';
 		game.contextText.clearRect(this.width*0.02, this.height*0.3, this.width*0.05, this.height*0.35); 
 		game.contextText.fillText("S" + this.level, this.width*0.02, this.height*0.6); //printing level
 	};
 
 	this.updateScore = function() {
 		this.score = game.score;
+		game.contextText.fillStyle = "#FFD455";
+		game.contextText.font = 15*dtSize + 'px helvetica';
 		game.contextText.clearRect(this.width*0.1, this.height*0.3, this.width*0.12, this.height*0.35);  
 		game.contextText.fillText("Score: " + this.score, this.width*0.1, this.height*0.6); //printing the score
 	};
 
 	this.updateSound = function() {	
 		this.soundFx = game.sound ? "ON" : "OFF";
-		// this.music = game.music;	
+		// this.music = game.music;			
+
 		if (!navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
+			game.contextText.fillStyle = "#FFD455";
+			game.contextText.font = 15*dtSize + 'px helvetica';
 			game.contextText.clearRect(this.width*0.39, this.height*0.3, this.width*0.05, this.height*0.35); 
 			game.contextText.fillText("Sound(F8): " + this.soundFx, this.width*0.25, this.height*0.6);
 		}
@@ -1556,30 +1687,531 @@ function ui() {
 }
 
 gameUI = new ui();
+function lights() {
+
+	this.backgroundAlpha = 0; //starting our game with a black screen
+	this.enemiesAlpha = 0; //starting our game with a black screen
+	this.playerAlpha = 0; //starting our game with a black screen
+	this.textAlpha = 0; //starting our game with a black screen
+	this.alphaDelta = 0.01; //the speed of fade in/out 
+
+	this.on = function(ctx)
+	{
+		ctx = ctx;
+
+		switch (ctx)
+		{
+			case 'all':
+				game.contextText.globalAlpha = 1;				
+				game.contextBackground.globalAlpha = 1;
+				game.contextEnemies.globalAlpha = 1;
+				game.contextPlayer.globalAlpha = 1;
+				
+				game.textFaded = false;
+				game.backgroundFaded = false;
+				game.enemiesFaded = false;
+				game.playerFaded = false;
+				
+				game.faded = false;	
+			break;
+
+			case 'text':
+				game.contextText.globalAlpha = 1;
+				game.textFaded = false;	
+			break;
+
+			case 'background':
+				game.contextBackground.globalAlpha = 1;
+				game.backgroundFaded = false;												
+			break;
+
+			case 'enemies':
+				game.contextEnemies.globalAlpha = 1;
+				game.enemiesFaded = false;	
+			break;
+		
+			case 'player':
+				game.contextPlayer.globalAlpha = 1;
+				game.playerFaded = false;						
+			break;
+		}
+	};
+
+	this.off = function(ctx)
+	{
+		ctx = ctx;
+
+		switch (ctx)
+		{
+			case 'all':
+				game.contextText.globalAlpha = 0;				
+				game.contextBackground.globalAlpha = 0;
+				game.contextEnemies.globalAlpha = 0;
+				game.contextPlayer.globalAlpha = 0;
+				
+				game.textFaded = true;
+				game.backgroundFaded = true;
+				game.enemiesFaded = true;
+				game.playerFaded = true;
+				
+				game.faded = true;	
+			break;
+
+			case 'text':
+				game.contextText.globalAlpha = 0;
+				game.textFaded = true;	
+			break;
+
+			case 'background':
+				game.contextBackground.globalAlpha = 0;
+				game.backgroundFaded = true;												
+			break;
+
+			case 'enemies':
+				game.contextEnemies.globalAlpha = 0;
+				game.enemiesFaded = true;	
+			break;
+		
+			case 'player':
+				game.contextPlayer.globalAlpha = 0;
+				game.playerFaded = true;						
+			break;
+		}	
+	};
+
+	this.fadeIn = function(ctx)
+	{
+		ctx = ctx;
+
+		switch (ctx)
+		{
+			case 'all':	
+				if (this.backgroundAlpha < 1 || this.enemiesAlpha < 1 || this.playerAlpha < 1 || this.textAlpha < 1 )
+				{	
+					this.backgroundAlpha += this.alphaDelta;
+					this.enemiesAlpha += this.alphaDelta;
+					this.playerAlpha += this.alphaDelta;			
+					this.textAlpha += this.alphaDelta;
+				}
+				else if (this.backgroundAlpha >= 1 && this.enemiesAlpha >= 1 && this.playerAlpha >= 1 && this.textAlpha >= 1)
+				{
+					game.contextBackground.globalAlpha = 1;
+					game.contextEnemies.globalAlpha = 1;
+					game.contextPlayer.globalAlpha = 1;
+					game.contextText.globalAlpha = 1;
+					game.backgroundFaded = false;
+					game.enemiesFaded = false;
+					game.playerFaded = false;
+					game.textFaded = false;
+					game.faded = false;
+				}
+
+				game.contextBackground.globalAlpha = this.backgroundAlpha;
+				game.contextEnemies.globalAlpha = this.enemiesAlpha;
+				game.contextPlayer.globalAlpha = this.playerAlpha;
+				game.contextText.globalAlpha = this.textAlpha;
+			break;
+
+			case 'text':
+				if (this.textAlpha < 1)
+				{				
+					this.textAlpha += this.alphaDelta;
+				}
+				else if (this.textAlpha >= 1)
+				{
+					game.contextText.globalAlpha = 1;
+					game.textFaded = false;
+				}
+
+				game.contextText.globalAlpha = this.textAlpha;	
+			break;
+
+			case 'background':
+				if (this.backgroundAlpha < 1)
+				{				
+					this.backgroundAlpha += this.alphaDelta;
+				}
+				else if (this.backgroundAlpha >= 1)
+				{
+					game.contextBackground.globalAlpha = 1;
+					game.backgroundFaded = false;
+				}
+
+				game.contextBackground.globalAlpha = this.backgroundAlpha;												
+			break;
+
+			case 'enemies':
+				if (this.enemiesAlpha < 1)
+				{				
+					this.enemiesAlpha += this.alphaDelta;
+				}
+				else if (game.enemiesApha >= 1)
+				{
+					game.contextEnemies.globalAlpha = 1;
+					game.enemiesFaded = false;
+				}
+
+				game.contextEnemies.globalAlpha = this.enemiesAlpha;	
+			break;
+		
+			case 'player':
+				if (this.playerAlpha < 1)
+				{				
+					this.playerAlpha += this.alphaDelta;
+				}
+				else if (this.playerAlpha >= 1)
+				{
+					game.contextPlayer.globalAlpha = 1;
+					game.playerFaded = false;
+				}
+
+				game.contextPlayer.globalAlpha = this.playerAlpha;						
+			break;
+
+		}
+	};
+
+	this.fadeOut = function(ctx)
+	{
+		ctx = ctx;
+
+		switch (ctx)
+		{
+			case 'all':	
+				if (this.backgroundAlpha > 0 || this.enemiesAlpha > 0 || this.playerAlpha > 0 || this.textAlpha > 0 )
+				{	
+					this.backgroundAlpha -= this.alphaDelta;
+					this.enemiesAlpha -= this.alphaDelta;
+					this.playerAlpha -= this.alphaDelta;			
+					this.textAlpha -= this.alphaDelta;
+				}
+				else if (this.backgroundAlpha <= 0 && this.enemiesAlpha <= 0 && this.playerAlpha <= 0 && this.textAlpha <= 0)
+				{
+					game.contextBackground.globalAlpha = 0;
+					game.contextEnemies.globalAlpha = 0;
+					game.contextPlayer.globalAlpha = 0;
+					game.contextText.globalAlpha = 0;
+					game.backgroundFaded = true;
+					game.enemiesFaded = true;
+					game.playerFaded = true;
+					game.textFaded = true;
+					game.faded = true;
+				}
+
+				game.contextBackground.globalAlpha = this.backgroundAlpha;
+				game.contextEnemies.globalAlpha = this.enemiesAlpha;
+				game.contextPlayer.globalAlpha = this.playerAlpha;
+				game.contextText.globalAlpha = this.textAlpha;
+			break;
+
+			case 'text':
+				if (this.textAlpha > 0)
+				{				
+					this.textAlpha -= this.alphaDelta;
+				}
+				else if (this.textAlpha <= 0)
+				{
+					game.contextText.globalAlpha = 0;
+					game.textFaded = true;
+				}
+
+				game.contextText.globalAlpha = this.textAlpha;
+			break;
+
+			case 'background':
+				if (this.backgroundAlpha > 0)
+				{				
+					this.backgroundAlpha -= this.alphaDelta;
+				}
+				else if (this.backgroundAlpha <= 0)
+				{
+					game.contextBackground.globalAlpha = 0;
+					game.backgroundFaded = true;
+				}
+
+				game.contextBackground.globalAlpha = this.backgroundAlpha;													
+			break;
+
+			case 'enemies':
+				if (this.enemiesAlpha > 0)
+				{				
+					this.enemiesAlpha -= this.alphaDelta;
+				}
+				else if (game.enemiesApha <= 0)
+				{
+					game.contextEnemies.globalAlpha = 0;
+					game.enemiesFaded = true;
+				}
+
+				game.contextEnemies.globalAlpha = this.enemiesAlpha;		
+			break;
+		
+			case 'player':
+				if (this.playerAlpha > 0)
+				{				
+					this.playerAlpha -= this.alphaDelta;
+				}
+				else if (this.playerAlpha <= 0)
+				{
+					game.contextPlayer.globalAlpha = 0;
+					game.playerFaded = true;
+				}
+
+				game.contextPlayer.globalAlpha = this.playerAlpha;						
+			break;
+		}
+	};
+
+}
+
+gameLights = new lights();
+function text() {
+
+	this.font = 'Helvetica';
+	this.fontWeight = 'bold';
+	this.fontColor0 = 'purple';
+	this.fontColor1 = '#FFD455';
+	this.fontColor2 = '#FFFFFF';
+	this.levelBriefing = ['Outside the galaxy', 'The outer space', 'AlphaPI 2034' ];
+
+	// function message(message, row, font, fontSize, fontColor, fontWeight)
+
+	// this.gameLoading = function() {
+	// 	game.contextText.clearRect(0, 0, game.width, game.height);
+
+	// 	message('Loading...', 1, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
+
+	// };
+
+	this.gameIntro = function() {
+		game.contextText.clearRect(0, 0, game.width, game.height);
+
+		message('InVaDeRs 2', 1,  this.font, game.width*0.06, this.fontColor0, this.fontWeight); 
+		message('No one knew they were coming', 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
+
+		if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/))
+		{
+			message('Tap screen to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
+		}
+		else
+		{
+			message('Press ENTER or LMB to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight);
+		}
+	};
+
+	this.lvlIntro = function() {
+		game.contextText.clearRect(0, 0, game.width, game.height);				
+
+		message('Stage ' + game.level, 1,  this.font, game.width*0.06, this.fontColor1, this.fontWeight); 
+		message(this.levelBriefing[game.level - 1], 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
+
+		if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/))
+		{
+			message('Tap screen to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
+		}
+		else
+		{
+			message('Press ENTER or LMB to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight);
+		}
+	};
+
+	this.lvlComplete = function() {
+		game.contextText.clearRect(0, 0, game.width, game.height);
+		
+		message('Stage Complete!', 1,  this.font, game.width*0.06, this.fontColor1, this.fontWeight); 
+		message(game.score + ' enemy ships destroyed', 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
+
+		if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/))
+		{
+			message('Tap screen to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
+		}
+		else
+		{
+			message('Press ENTER or LMB to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight);
+		}
+
+	};
+
+	this.gameOver = function() {
+		game.contextText.clearRect(0, 0, game.width, game.height);
+		
+		message('Game Over', 1,  this.font, game.width*0.06, this.fontColor1, this.fontWeight); 
+		message(game.score + ' enemy ships destroyed', 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
+		
+		if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/))
+		{
+			message('Tap screen to restart', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
+		}
+		else
+		{
+			message('Press ENTER or LMB to restart', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight);
+		}
+
+	};
+
+}
+
+gameText = new text();
+function transition()
+{
+
+	this.keyframe0 = true;
+	this.keyframe1 = false;
+	this.keyframe2 = false;	
+
+
+	this.lvlIntro = function()
+	{		
+		gameText.lvlIntro();
+
+		if(this.keyframe0)
+		{				
+			gameLights.fadeIn('text');
+			if(!game.textFaded || game.keys[13] || mouseIsDown)
+			{
+				mouseIsDown = 0;	
+				gameLights.on('text');
+				this.keyframe0 = false;
+				this.keyframe1 = true;				
+			}
+		}
+		else if (this.keyframe1)
+		{
+			if (game.keys[13] || mouseIsDown)
+			{
+				mouseIsDown = 0;
+				game.keys[13] = false;
+				this.keyframe1 = false;
+				this.keyframe2 = true;
+			}
+		}
+		else if(this.keyframe2)
+		{
+			gameLights.fadeOut('text');
+			if(game.textFaded || game.keys[13] || mouseIsDown)
+			{
+				mouseIsDown = 0;
+				gameLights.off('text');
+				this.keyframe2 = false;
+				this.keyframe0 = true;								
+				resetGame();
+				game.lvlIntro = false;
+				game.lvlStart = true;									
+			}
+		}
+	};
+
+	this.lvlStart = function()
+	{
+		gameLights.fadeIn('all');
+		if(!game.faded)
+		{
+			gameUI.updateAll();
+			game.lvlStart = false;		
+		}	
+	};
+
+	this.lvlComplete = function()
+	{
+
+		gameText.lvlComplete();	
+
+		if (this.keyframe0)
+		{
+			if (game.keys[13] || mouseIsDown)
+			{
+				mouseIsDown = 0;
+				game.keys[13] = false;
+				this.keyframe0 = false;
+				this.keyframe1 = true;
+			}
+		}
+		else if(this.keyframe1)
+		{
+			gameLights.fadeOut('all');
+			if(game.faded || game.keys[13] || mouseIsDown)
+			{
+				game.lvlIntro = true;	
+				this.keyframe0 = true;
+				this.keyframe1 = false;
+				game.levelComplete = false;
+				game.level++;						
+			}
+		}	
+	};
+
+	this.gameOver = function()
+	{
+
+		gameText.gameOver();	
+
+		if (this.keyframe0)
+		{
+			if (game.keys[13] || mouseIsDown)
+			{
+				mouseIsDown = 0;
+				game.keys[13] = false;
+				this.keyframe0 = false;
+				this.keyframe1 = true;				
+			}
+		}
+		else if(this.keyframe1)
+		{
+			gameLights.fadeOut('all');
+			if(game.faded || game.keys[13] || mouseIsDown)
+			{
+				mouseIsDown = 0;
+				// resetGame();
+				this.keyframe0 = true;
+				this.keyframe1 = false;
+				game.start = true;
+				gameLights.on('text');
+				gameText.gameIntro();
+				game.gameOver = false;
+				game.paused = true;										
+			}
+		}	
+	};
+
+	this.reset = function()
+	{
+		this.keyframe0 = true;
+		this.keyframe1 = false;
+		this.keyframe2 = false;		
+	};
+
+}
+
+gameTransition = new transition();
 //====================== Game state =================//
 		
 		function gameState() {
 
-
 			//game start
 			if ((game.keys[13] || mouseIsDown) && game.start && !(game.gameOver) && !(game.gameWon)) {
-				game.paused = false;
-				game.start = false;
-				mouseIsDown = 0;				
-				gameUI.updateAll();	
+				resetGame();
+				mouseIsDown = 0;
+				game.keys[13] = false;					
 				if(game.music && game.songs.length < 1){
 					game.songs.push(new Audio("_sounds/_lvl1/tune1.mp3"));
 					game.songs[0].play();
 					game.songs[0].loop = true;				
 					// game.music[q].addEventListener("ended", game.music.splice(q,1));
-				}				
+				}
+				
+				//setting alpha = 0
+				gameLights.off('all');
+				game.start = false;
+				game.paused = false;
+				gameUI.updateAll();
 			}
 			
 			//If Esc
 			if (game.keys[27]) {
-				game.lives = 0;
-				resetGame();	
-				game.keys[27] = false;			
+				mouseIsDown = 0;				
+				game.keys[27] = false;
+				playerShip.hull = 0;
+				game.gameOver = true;								
 			}
 
 			//game sound
@@ -1606,15 +2238,15 @@ gameUI = new ui();
 						game.songs.push(new Audio("_sounds/_lvl1/tune1.mp3"));
 						for(var w in game.songs){
 							game.songs[w].play();
-							game.songs[w].loop = true;					
-							// game.music[q].addEventListener("ended", game.music.splice(q,1));
+							game.songs[w].loop = true;							
 						}
 				}
 			}
 
 
 			//game pause
-			if ((game.keys[80]) && !(game.gameWon) && !(game.gameOver)) {
+			if ((game.keys[80]) && !(game.gameWon) && !(game.gameOver))
+			{
 				game.paused = (game.paused) ? false : true;
 				game.keys[80] = false;
 			}
@@ -1622,62 +2254,30 @@ gameUI = new ui();
 			//If Esc pressed or if gameover and enter pressed
 			if (game.keys[27] ||
 			   ((game.keys[13] || mouseIsDown) && game.paused && !(game.start) && game.gameOver && !(game.gameWon)) ||
-			   ((game.keys[13] || mouseIsDown) && game.paused && !(game.start) && game.level >= 7)){
-
-					if (game.lives < 1 || game.level >=7){
-						game.level = X_Level;
-						game.score = 0;
-						playerShip.lives = X_Lives;
-						// game.downDivision = Math.floor((300 * game.level)); //the higher the level the slower the enemies come down
-					}
-
-					resetGame();
-
-			}
-			
-			//level up
-			if ((game.keys[13] || mouseIsDown) && !(game.gameOver) && !(game.start) && (game.gameWon) && game.level <= 6) {					
-					game.downDivision = Math.floor((300 * game.level)); //the higher the level the slower the enemies come down
-					resetGame();									
-			}
-
-
-			if (game.gameWon && game.level > 1 && game.level <=6 ){
-
-				message('Battle Won!', 'Helvetica', game.height*0.08, '#FFD455', 'bold'); 
-				message(game.levelScore + ' enemy ships destroyed', 'Helvetica', game.height*0.06, '#FFD455', 'bold');
-				if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-					message('Tap screen to continue', 'Helvetica', game.height*0.04, '#FFD455', 'bold'); 
-				} else {
-					message('Press ENTER or LMB to continue', 'Helvetica', game.height*0.04, '#FFD455', 'bold');
+			   ((game.keys[13] || mouseIsDown) && game.paused && !(game.start) && game.level >= 7))
+			{
+				if (game.lives < 1 || game.level >=7)
+				{
+					game.level = X_Level;
+					game.score = 0;
+					playerShip.lives = X_Lives;
+					// game.downDivision = Math.floor((300 * game.level)); //the higher the level the slower the enemies come down
 				}
-				game.levelScore = 0;
-			}
 
-			if (game.gameWon && game.level >=7){
-				game.contextPlayer.font = "bold " + game.width*0.08 + "px " + game.font;				
-				game.contextPlayer.fillStyle = "#CC99FF";
-				game.contextPlayer.fillText("Victory!", game.width*0.35, game.height*0.42);
-				game.contextPlayer.font = "bold " + game.width*0.06 + "px " + game.font;
-				game.contextPlayer.fillText(game.score + " enemy ships destroyed", game.width*0.17, game.height*0.52);
-				game.contextPlayer.font = "bold " + game.width*0.04 + "px " + game.font;
-				game.contextPlayer.fillStyle = "white";
-				if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-					game.contextPlayer.fillText("Tap screen to restart", game.width*0.30, game.height*0.62);
-				} else {
-					game.contextPlayer.fillText("Press Enter or LMB to restart", game.width*0.24, game.height*0.62);
-				}
-				game.levelScore = 0;
+				resetGame();
 			}
 		}
 		//====================== Main update function =================//		
 		function update(){
+			//////////////////////// 
+			// Init
+			///////////////////////	
+
 			//obtaining an average deltaTime
 			if(dtTimer <= 30){
 
 				var timeNow = new Date().getTime();
 				var timeDiff = timeNow - (timeThen);
-				// console.log (timeDiff);
 	    		dtArray.push(timeDiff); // seconds since last frame
 	    		timeThen = timeNow;
 	    		dtTimer++;
@@ -1691,21 +2291,18 @@ gameUI = new ui();
 				}
 					dt = Math.round(dtSum / dtArray.length)/1000;					
     		}	
-    		// console.log (dt);
-    		// console.log (timeNow);
-    		// console.log (timeThen);
 
+    		//game time
 			game.timer++;
 			game.seconds = game.timer/60 || 0;
-			// console.log(game.seconds);	
+			// console.log(game.seconds);
 
-			//////////////////////// 
-			// Init
-			///////////////////////							
+
+			game.contextEnemies.clearRect(0, 0, game.width, game.height); //clear trails						
 			game.contextPlayer.clearRect(0, 0, game.width, game.height); //clear trails
 			playerShip.update();
 			playerShip.draw();
-			game.contextEnemies.clearRect(0, 0, game.width, game.height); //clear trails
+
 
 			//////////////////////// 
 			// Background
@@ -1714,100 +2311,74 @@ gameUI = new ui();
 			// addStars(1);		
 
 			game.contextBackground.clearRect(0, 0, game.width, game.height); //clear trails
+			
 
-			if (level1Bg.length < 1){			
-				level1Bg.push(new background(150, 21, 0));			
+			if (game.background.length < 1)
+			{
+				bgImage = 20 + game.level; //the image before all background images, these need to be consecutive in order for this to work			
+				game.background.push(new background(150, bgImage, 0));			
 			}
 
-			for (var b in level1Bg){
+			for (var b in game.background)
+			{
+				if (game.background[b].y > -game.height*0.02 && game.background.length < 2){
 
-				if (level1Bg[b].y > -game.height*0.02 && level1Bg.length < 2){
-
-					level1Bg.push(new background(150, 21, 1));				
+					game.background.push(new background(150, bgImage, 1));				
 				}
 
-				if (level1Bg[b].y > game.height){
-					level1Bg.splice(b, 1);
+				if (game.background[b].y > game.height){
+					game.background.splice(b, 1);
 				}
 
-				
-				level1Bg[b].update();			
-				level1Bg[b].draw();
+				game.background[b].update();			
+				game.background[b].draw();				
 			}
 
 
 			/////////////////////////////////////////////////////////////////////////////////
-			// LEVEL 1
-			//
-			// enemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
-			// enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate)
+			// LEVELS
 			////////////////////////////////////////////////////////////////////////////////
 
-			if (game.seconds == 1) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 0, true));
-			}
-			if (game.seconds == 3) {
-			    game.waves.push(new enemyWave('left', game.width*0.3, 1, 'pawn', 4, 300, 1, 0, true));		
-			}
-			if (game.seconds == 5) {
-			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));		
-			}
-			if (game.seconds == 7) {
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 22, 1));
-			}
-			if (game.seconds == 11) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 13) {
-				if(game.music){
-					game.songs.push(new Audio("_sounds/_lvl1/tune2.mp3"));				
-					game.songs[1].play();
-					game.songs[1].loop = true;
+			if (game.level == 1) { lvl1(); }
+			else if (game.level == 2) { lvl1(); }
+			else if (game.level == 3) { lvl3(); }
+
+
+			//level finished
+			if (game.bossDead && game.levelUpTimer <= 100) 
+			{
+				//waiting a few secs before any action
+				game.levelUpTimer++; 
+
+				if (game.levelUpTimer == 100) 
+				{
+					game.levelComplete = true;
+					mouseIsDown = 0;					
 				}
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 23, 1));				
-			}
-			if (game.seconds == 18) {
-			    game.waves.push(new enemyWave('right', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 22) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 25) {
-			    game.waves.push(new enemyWave('left', game.width*0.4, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 27) {
-			    game.waves.push(new enemyWave('right', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 30) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 33) {
-			    game.waves.push(new enemyWave('top', game.width*0.6, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 35) {
-			    game.waves.push(new enemyWave('right', game.width*0.2, 1, 'pawn', 4, 300, 1, 2, true));
-			}
-			if (game.seconds == 37) {
-			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
-			}
-			if (game.seconds == 40) {
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
-			}
-			if (game.seconds == 42) {
-			    game.enemies.push(new enemy(game.width * 0.5, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
-			}
-			if (game.seconds == 45) {
-			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
 			}
 
-			if (game.seconds == 55) {
-				if (game.music) {
-					game.songs.push(new Audio("_sounds/_lvl1/boss.mp3"));
-					game.songs[2].play();
-				}
-			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 100, 27));
+			/////////////////////////////////////////////////////////////////////////////////
+			// TRANSITIONS
+			////////////////////////////////////////////////////////////////////////////////
+			
+			if (game.lvlIntro)
+			{
+				gameTransition.lvlIntro();
 			}
-			//boss(x, y, speed, direction, hull, image)
+			else if (game.lvlStart)
+			{
+				gameTransition.lvlStart();
+			}
+			else if (game.levelComplete)
+			{
+				gameTransition.lvlComplete();
+			}
+			else if (game.gameOver)
+			{
+				gameTransition.gameOver();
+			}
+	
+			
 
 			///////////////////////////////////
 			// Player bullets
@@ -1819,11 +2390,17 @@ gameUI = new ui();
 						game.playerBullets[k].update();					
 						game.playerBullets[k].draw();
 					}
-					else  if (game.playerBullets.dead || game.playerBullets[k].x > game.width + game.playerBullets[k].size || game.playerBullets[k].x < 0 - game.playerBullets[k].size || game.playerBullets[k].y > game.height + game.playerBullets[k].size || game.playerBullets[k].y < 0 - 30){
+					
+					if (game.playerBullets[k].dead || game.playerBullets[k].x > game.width + game.playerBullets[k].size || game.playerBullets[k].x < 0 - game.playerBullets[k].size || game.playerBullets[k].y > game.height + game.playerBullets[k].size || game.playerBullets[k].y < 0 - 30){
 						game.playerBullets.splice(k,1);
 					}
 				}
 			}
+
+			// console.log(game.playerBullets.length);
+			// console.log(game.enemyBullets.length);
+			// console.log(game.enemies.length);
+
 
 			///////////////////////////////////
 			// Enemies
@@ -1836,16 +2413,16 @@ gameUI = new ui();
 					game.enemies[c].draw();
 				}
 
-				for (var j in game.enemies){
+				if (game.playerBullets.length >= 1){				
 					//projectiles collision
-					if (game.playerBullets.length >= 1){
+					for (var j in game.enemies){
 						for (var f in game.playerBullets){
 							if (Collision(game.enemies[j], game.playerBullets[f]) && !game.enemies[j].dead){ //dead check avoids ghost scoring														
 								game.enemies[j].hit = true;	
 								game.enemies[j].hull -= game.playerBullets[f].power;
 								// game.contextEnemies.clearRect(game.playerBullets[f].x, game.playerBullets[f].y, game.playerBullets[f].size, game.playerBullets[f].size*1.8);								
 								if(game.enemies[j].hull > 0) {
-									game.explosions.push(new explosion(game.playerBullets[f].x, game.playerBullets[f].y, 0, 1, game.playerBullets[f].size*0.3));
+									game.explosions.push(new explosion(game.enemies[j].x + game.enemies[j].size*0.5, game.enemies[j].y + game.enemies[j].size*0.5, 0, 1, game.enemies[j].size*0.25));
 								}
 								game.playerBullets[f].dead = true;
 								// game.playerBullets.splice(f,1);
@@ -1854,9 +2431,107 @@ gameUI = new ui();
 					}
 				}
 
+				// AI // pathfinding 
+				// for (var w in game.enemies){														
+				// 	for (var m in game.enemies){
+				// 		if (m != w) {
+				// 		// for (var w = 0; w <= game.enemies.length; w++) {												
+				// 			if (Collision(game.enemies[m], game.enemies[w]) && !game.enemies[m].collided && !game.enemies[w].collided && (game.enemies[m].y > game.enemies[m].size || game.enemies[w] > game.enemies[w].size))
+				// 			{
+				// 				game.enemies[m].collided = true;
+				// 				game.enemies[w].collided = true;
+
+				// 				if (game.enemies[m].collided && game.enemies[w].collided)
+				// 				{
+
+				// 					if (game.enemies[m].type == 'base' && game.enemies[w].type !== 'base')
+				// 					{
+				// 						game.enemies[w].direction = game.enemies[w].direction - Math.PI/8;
+				// 						// game.enemies[m].collided = false;
+				// 						// game.enemies[w].collided = false;
+				// 						// game.enemies[m].speed = game.enemies[w].speed;
+				// 					}
+				// 					else if (game.enemies[w].type == 'base' && game.enemies[m].type !== 'base')
+				// 					{
+				// 						game.enemies[m].direction = game.enemies[m].direction - Math.PI/8;
+				// 						// game.enemies[m].collided = false;
+				// 						// game.enemies[w].collided = false;
+				// 						// game.enemies[m].speed = game.enemies[w].speed;
+				// 					}								
+				// 					else if (game.enemies[m].type == 'miniboss' && game.enemies[w].type !== 'miniboss' && game.enemies[w].type !== 'base')
+				// 					{
+				// 						game.enemies[m].direction = game.enemies[w].direction - Math.PI/10;
+				// 						game.enemies[w].direction += Math.PI/2;
+				// 						// game.enemies[m].collided = false;
+				// 						// game.enemies[w].collided = false;
+				// 						// game.enemies[m].speed = game.enemies[w].speed;
+				// 					}
+				// 					else if (game.enemies[w].type == 'miniboss' && game.enemies[m].type !== 'miniboss' && game.enemies[w].type !== 'base')
+				// 					{
+				// 						game.enemies[m].direction = game.enemies[w].direction - Math.PI/10;
+				// 						game.enemies[w].direction += Math.PI/2;
+				// 						// game.enemies[m].collided = false;
+				// 						// game.enemies[w].collided = false;
+				// 						// game.enemies[w].speed = game.enemies[m].speed;
+				// 						// game.enemies[m].speed = game.enemies[w].speed;
+				// 					}
+				// 					else {
+				// 						game.enemies[m].direction = game.enemies[w].direction - Math.PI/10;
+				// 						game.enemies[w].direction += Math.PI/2;
+				// 						// game.enemies[m].speed += 5;
+				// 						// game.enemies[m].collided = false;
+				// 						// game.enemies[w].collided = false;
+				// 					}								
+				// 				}
+
+				// 				// game.enemies[w].direction = game.enemies[m].direction + Math.PI;
+				// 				// game.enemies[w].speed = game.enemies[w].speed/2;
+				// 				// console.log ('collision!');
+				// 			}
+				// 			else if (game.enemies[m].type !== 'base' && game.enemies[w].type !== 'base') {
+				// 				game.enemies[m].direction -= utils.randomRange(-0.05, 0.05);
+				// 				game.enemies[m].collided = false;
+				// 				game.enemies[w].collided = false;
+				// 				// game.enemies[w].direction -= utils.randomRange(-0.05, 0.05);
+				// 				// game.enemies[m].speed = game.enemies[m].speed;
+				// 				// game.enemies[w].speed = game.enemies[w].speed;
+				// 			}
+				// 			else
+				// 			{
+				// 				game.enemies[m].collided = false;
+				// 				game.enemies[w].collided = false;
+				// 			}
+				// 			// else if (game.enemies[m].collided && game.enemies[w].collided)
+				// 			// {
+				// 			// 	if (game.enemies[m].type !== 'base' || game.enemies[w].type !== 'base')
+				// 			// 	{
+				// 			// 		game.enemies[m].speed = game.enemies[m].speed;
+				// 			// 		game.enemies[w].speed = game.enemies[w].speed;
+				// 			// 	}
+				// 			// 	else if (game.enemies[m].type == 'base')
+				// 			// 	{
+				// 			// 		game.enemies[w].direction = -game.enemies[w].direction;
+				// 			// 		// game.enemies[m].speed = game.enemies[w].speed;
+				// 			// 	}
+				// 			// 	else if (game.enemies[w].type == 'base')
+				// 			// 	{
+				// 			// 		game.enemies[m].direction = -game.enemies[m].direction/2;
+				// 			// 	}								
+				// 			// 	game.enemies[m].collided = false;
+				// 			// 	game.enemies[w].collided = false;
+				// 			// }
+				// 			// else
+				// 			// {
+
+				// 			// }
+				// 		}
+				// 		// }
+				// 	}	
+				// }
+
 				for (var t in game.enemies){					
 					// player-enemy collision
-					if (Collision(game.enemies[t], playerShip) && !game.enemies[t].dead && !game.gameOver){			
+					if (Collision(game.enemies[t], playerShip) && !game.enemies[t].dead && !playerShip.imune && !game.gameOver){			
 						playerShip.hull -= game.enemies[t].hull;
 						gameUI.updateEnergy();						
 						playerShip.hit = true;			
@@ -1926,7 +2601,7 @@ gameUI = new ui();
 					game.enemyBullets[z].draw();
 
 
-					if (Collision(game.enemyBullets[z], playerShip) && !game.gameOver){ //
+					if (Collision(game.enemyBullets[z], playerShip) && !playerShip.imune && !game.gameOver){ //
 						// if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}							
 									// game.contextEnemies.clearRect(game.playerBullets[p].x, game.playerBullets[p].y, game.playerBullets[p].size, game.playerBullets[p].size*1.8);								
 						playerShip.hull -= game.enemyBullets[z].power;
@@ -1979,6 +2654,119 @@ gameUI = new ui();
 				}
 			}			
 		}	
+function lvl1() {
+
+			// enemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
+			// enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate)
+
+			if (game.seconds == 1) {
+			    game.waves.push(new enemyWave('left', game.width*0.3, 1, 'pawn', 1, 300, 1, 0, true));
+			}
+			if (game.seconds == 1) {
+			    game.waves.push(new enemyWave('right', game.width*0.3, 1, 'pawn', 1, 250, 1, 0, true));
+			}
+			if (game.seconds == 3) {
+			    game.waves.push(new enemyWave('left', game.height*0.5, 1, 'pawn', 1, 250, 1, 0, true));		
+			}
+			if (game.seconds == 3) {
+			    game.waves.push(new enemyWave('right', game.height*0.5, 1, 'pawn', 1, 300, 1, 0, true));		
+			}
+
+			if (game.seconds == 5) {
+			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));		
+			}
+			if (game.seconds == 7) {
+			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 22, 1));
+			}
+			if (game.seconds == 8) {
+			    game.waves.push(new enemyWave('left', game.height*0.3, 1, 'pawn', 4, 250, 1, 2, true));
+			}
+			if (game.seconds == 9) {
+			    game.waves.push(new enemyWave('right', game.height*0.2, 1, 'pawn', 3, 300, 1, 2, true));
+			}			
+			if (game.seconds == 10) {
+			    game.waves.push(new enemyWave('top', game.width*0.5, 1, 'pawn', 6, 300, 1, 2, true));
+			}
+			if (game.seconds == 11) {
+			    game.waves.push(new enemyWave('top', game.width*0.7, 1, 'pawn', 4, 300, 1, 2, true));
+			}
+			if (game.seconds == 12) {
+			    game.waves.push(new enemyWave('left', game.height*0.2, 1, 'pawn', 3, 300, 1, 2, true));
+			}
+			if (game.seconds == 13) {
+				if(game.music){
+					game.songs.push(new Audio("_sounds/_lvl1/tune2.mp3"));				
+					game.songs[1].play();
+					game.songs[1].loop = true;
+				}
+			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 23, 1));				
+			}
+			if (game.seconds == 15) {
+			    game.waves.push(new enemyWave('top', game.width*0.2, 1, 'pawn', 2, 300, 1, 2, true));
+			}
+			if (game.seconds == 16) {
+			    game.waves.push(new enemyWave('top', game.width*0.4, 1, 'pawn', 3, 300, 1, 2, true));
+			}
+			if (game.seconds == 17) {
+			    game.waves.push(new enemyWave('top', game.width*0.6, 1, 'pawn', 4, 300, 1, 2, true));
+			}
+			if (game.seconds == 18) {
+			    game.waves.push(new enemyWave('top', game.width*0.8, 1, 'pawn', 5, 300, 1, 2, true));
+			}
+			if (game.seconds == 22) {
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
+			}
+			if (game.seconds == 25) {
+			    game.waves.push(new enemyWave('left', game.width*0.4, 1, 'pawn', 4, 300, 1, 2, true));
+			}
+			if (game.seconds == 27) {
+			    game.waves.push(new enemyWave('right', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
+			}
+			if (game.seconds == 30) {
+			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
+			}
+			if (game.seconds == 33) {
+			    game.waves.push(new enemyWave('top', game.width*0.6, 1, 'pawn', 4, 300, 1, 2, true));
+			}
+			if (game.seconds == 35) {
+			    game.waves.push(new enemyWave('right', game.width*0.2, 1, 'pawn', 4, 300, 1, 2, true));
+			}
+			if (game.seconds == 37) {
+			    game.enemies.push(new enemy(game.width * 0.2, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			}
+			if (game.seconds == 38) {
+			    game.enemies.push(new enemy(game.width * 0.4, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			}
+			if (game.seconds == 39) {
+			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			}
+			if (game.seconds == 40) {
+			    game.enemies.push(new enemy(game.width * 0.8, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			}
+			if (game.seconds == 41) {
+			    game.enemies.push(new enemy(game.width * 0.5, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			}			
+			if (game.seconds == 42) {
+			    game.enemies.push(new enemy(game.width * 0.2, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			}
+			if (game.seconds == 43) {
+			    game.enemies.push(new enemy(game.width * 0.4, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			}
+			if (game.seconds == 44) {
+			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			}
+			if (game.seconds == 45) {
+			    game.enemies.push(new enemy(game.width * 0.8, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			}
+			if (game.seconds > 50 && game.enemies.length === 0 && !game.bossDead) {
+				if (game.music) {
+					game.songs.push(new Audio("_sounds/_lvl1/boss.mp3"));
+					game.songs[2].play();
+				}
+			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 100, 27));
+			}
+			//boss(x, y, speed, direction, hull, image)
+}
 		//====================== Game functions =================//
 
 
@@ -2002,7 +2790,7 @@ gameUI = new ui();
  
 
 		function initInput() {
-        canvas = document.getElementById("playerCanvas");
+        canvas = document.getElementById("textCanvas");
         ctx = canvas.getContext("2d");
 		         
         canvas.addEventListener("mousedown",mouseDown, false);
@@ -2018,39 +2806,50 @@ gameUI = new ui();
 		}
 		
 		
-		function mouseUp() {
-			mouseIsDown = 0;
-			mouseXY();
+		function mouseUp(e) {
+			if (e) {
+				e.preventDefault();
+				mouseIsDown = 0;
+				mouseXY();
+			}
 		}
 		 
-		function touchUp() {
-			mouseIsDown = 0;
+		function touchUp(e) {
+			if (e) {
+				e.preventDefault();
+				mouseIsDown = 0;
+			}
 		}
 		 
-		function mouseDown() {
-			mouseIsDown = 1;
-			mouseXY();
+		function mouseDown(e) {
+			if (e) {
+				e.preventDefault();
+				mouseIsDown = 1;
+				mouseXY();
+			}
 		}
 		  
-		function touchDown() {
-			mouseIsDown = 1;
-			touchXY();
+		function touchDown(e) {
+			if (e) {
+				e.preventDefault();
+				mouseIsDown = 1;
+				touchXY();
+			}
 		}
 		
 		function mouseXY(e) {
 			if (e) {
 				e.preventDefault();
-			canvasX = e.pageX - canvas.offsetLeft;
-			canvasY = e.pageY - canvas.offsetTop;
-			//showPos();
+				canvasX = e.pageX - canvas.offsetLeft;
+				canvasY = e.pageY - canvas.offsetTop;
 			}
 		}
 		 
 		function touchXY(e) {
 			if (e) {
 				e.preventDefault();
-			canvasX = e.targetTouches[0].pageX - canvas.offsetLeft;
-			canvasY = e.targetTouches[0].pageY - canvas.offsetTop;
+				canvasX = e.targetTouches[0].pageX - canvas.offsetLeft;
+				canvasY = e.targetTouches[0].pageY - canvas.offsetTop;
 			}
 		}
 				
@@ -2064,28 +2863,37 @@ gameUI = new ui();
 		// 		});
 		// 	}
 		// }
-		
+
 		function resetGame(){
+			gameLights.off('all');
+			gameTransition.reset();
 			mouseIsDown = 0;
 			game.gameOver = false; 
-			game.gameWon = false;					
+			game.gameWon = false;
+			game.level = game.lvlIntro ? game.level : 1 ;
+			game.bossDead = false;
+			game.levelComplete = false;
+			game.lvlStart = false;
+			game.lvlIntro = true;
+			game.levelUpTimer = 0;					
 			// game.downCount = 1;
 			// game.left = false;
 			// game.down = false;
 			// game.enshootTimer = game.enfullShootTimer;
-			game.contextBackground.clearRect(1, 1, game.width, game.height); 
-			game.contextPlayer.clearRect(1, 1, game.width, game.height); 
-			game.contextEnemies.clearRect(1, 1, game.width, game.height); 
-			game.contextText.clearRect(1, 1, game.width, game.height); 
+			game.contextBackground.clearRect(0, 0, game.width, game.height); 
+			game.contextPlayer.clearRect(0, 0, game.width, game.height); 
+			game.contextEnemies.clearRect(0, 0, game.width, game.height); 
+			game.contextText.clearRect(0, 0, game.width, game.height); 
 			// game.projectiles = [];
 			// game.enprojectiles = [];
-			// game.enemies = [];
+			// game.enemies = [];							
 			playerShip.reset();
 			gameUI.updateAll();
 			game.enemies = [];
 			game.waves = [];			
 			game.enemyBullets = [];
 			game.loot = [];
+			game.delayTimer = 0;
 			game.timer = 0;		
 			game.sounds = [];
 
@@ -2125,7 +2933,7 @@ gameUI = new ui();
 			// 	crashed: false					
 			// };
 			game.paused = false;
-			// scores();loading
+			// scores();
 
 		}
 
@@ -2204,96 +3012,298 @@ gameUI = new ui();
 		// }
 
 
-		function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
+		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
 			
-			if (!(first.x + first.size < second.x || second.x + second.size < first.x || first.y + first.size < second.y || second.y + second.size < first.y)) {
+		// 	if (!(first.x + first.size < second.x || second.x + second.size < first.x || first.y + first.size < second.y || second.y + second.size < first.y)) {
 
-				Cx = first.x < second.x ? second.x : first.x;
-				Cy = first.y < second.y ? second.y : first.y;
-				CX = first.x + first.size < second.x + second.size ? first.x + first.size : second.x + second.size;
-				CY = first.y + first.size < second.y + second.size ? first.y + first.size : second.y + second.size;
+		// 		Cx = first.x < second.x ? second.x : first.x;
+		// 		Cy = first.y < second.y ? second.y : first.y;
+		// 		CX = first.x + first.size < second.x + second.size ? first.x + first.size : second.x + second.size;
+		// 		CY = first.y + first.size < second.y + second.size ? first.y + first.size : second.y + second.size;
 
-				iFirst = first.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
-				iSecond = second.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
+		// 		iFirst = first.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
+		// 		iSecond = second.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
 
-				var length = iFirst.data.length;
+		// 		var length = iFirst.data.length;
 
-				for (var i = 0 ; i < length; i+= game.res) {
-					// return !(!iFirst.data[i] || !iSecond.data[i]);
-					if (iFirst.data[i] > 0 && iSecond.data[i] > 0)
-					{						
-						return true;
-					}
-				}
-			}			
-			return false;			
-		}
+		// 		for (var i = 0 ; i < length; i+= game.res) {
+		// 			// return !(!iFirst.data[i] || !iSecond.data[i]);
+		// 			if (iFirst.data[i] > 0 && iSecond.data[i] > 0)
+		// 			{	
+		// 				// console.log('true1');
+		// 				return true;
+						
+		// 			}
+		// 		}
+		// 		console.log(iFirst.data.length);
+		// 	}
+		// 	// console.log('false');			
+		// 	return false;			
+		// }
 
 		
-		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
-		// 	return !(first.x > second.x + second.size ||
-		// 		first.x + first.size < second.x ||
-		// 		first.y > second.y + second.size ||
-		// 		first.y + first.size < second.y);
+		function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
+			return !(first.x > second.x + second.size ||
+				first.x + first.size < second.x ||
+				first.y > second.y + second.size ||
+				first.y + first.size < second.y);
+		}
+
+
+		// function PlayerDie()
+		// {
+		// 	if (game.soundStatus == "ON"){game.playerexplodeSound.play();}
+		// 	game.player.crashed = true;
+		// 	game.gameOver = true;
+		// 	game.paused = true;
+		// 	game.lives--;
+		// 	game.score = game.score - game.levelScore;
+		// 	scores();
+		// 	game.contextPlayer.font = "bold " + game.width*0.08 + "px " + game.font;
+		// 	game.contextPlayer.fillStyle = "#FF7F00";
+		// 	game.contextPlayer.fillText("Game Over", game.width*0.30, game.height*0.42);
+		// 	game.contextPlayer.font = "bold " + game.width*0.06 + "px " + game.font;
+		// 	game.contextPlayer.fillText(game.score + " enemy ships destroyed", game.width*0.19, game.height*0.52);
+		// 	game.contextPlayer.font = "bold " + game.width*0.04 + "px " + game.font;
+		// 	game.contextPlayer.fillStyle = "white";
+		// 	if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
+		// 		game.contextPlayer.fillText("Tap screen to restart", game.width*0.30, game.height*0.62);
+		// 	} else {
+		// 		game.contextPlayer.fillText("Press Enter or LMB to restart", game.width*0.23, game.height*0.62);
+		// 	}
+
+		// 	message('Game Over', 1,  'Helvetica', game.width*0.06, '#FFD455', 'bold'); 
+		// 	message(game.score + ' enemy ships destroyed', 2, 'Helvetica', game.width*0.05, '#FFD455', 'bold');
+		// 	if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
+		// 	message('Tap screen to restart', 3, 'Helvetica', game.width*0.04, 'white', 'bold'); 
+		// 	} else {
+		// 	message('Press ENTER or LMB to restart', 3, 'Helvetica', game.width*0.04, 'white', 'bold');
+		// 	}
+
+		// 	if (game.soundStatus == "ON") {
+		// 		game.sounds.push(new Audio("_sounds/death.mp3"));
+		// 	}
+
+		// 	game.levelScore = 0;
+		// 	playerShip.lives = 3;
+
 		// }
 
 
-		function PlayerDie(){
-			// if (game.soundStatus == "ON"){game.playerexplodeSound.play();}
-			// game.player.crashed = true;
-			game.gameOver = true;
-			game.lives--;
-			game.score = game.score - game.levelScore;
-			// scores();
-			setTimeout(function(){
-				game.paused = true;
-				mouseIsDown = 0;
+		// function fade(light, ctx) //game transitions
+		// {			
+		// 	light = light;
+		// 	ctx = ctx;
 
-				if (game.gameOver && game.paused && game.lives < 1){
-					// game.contextPlayer.font = "bold " + game.width*0.08 + "px " + game.font;
-					// game.contextPlayer.fillStyle = "#FF7F00";
-					// game.contextPlayer.fillText("Game Over", game.width*0.30, game.height*0.42);
-					// game.contextPlayer.font = "bold " + game.width*0.06 + "px " + game.font;
-					// game.contextPlayer.fillText(game.score + " enemy ships destroyed", game.width*0.19, game.height*0.52);
-					// game.contextPlayer.font = "bold " + game.width*0.04 + "px " + game.font;
-					// game.contextPlayer.fillStyle = "white";
-					// if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-					// 	game.contextPlayer.fillText("Tap screen to restart", game.width*0.30, game.height*0.62);
-					// } else {
-					// 	game.contextPlayer.fillText("Press Enter or LMB to restart", game.width*0.23, game.height*0.62);
-					// }
+		// 	if (light === 'in')
+		// 	{
+		// 		switch (ctx)
+		// 		{					
+		// 			case 'background':
+		// 				if (game.backgroundAlpha < 1)
+		// 				{				
+		// 					game.backgroundAlpha += game.alphaDelta;
+		// 				}
+		// 				else if (game.backgroundAlpha >= 1)
+		// 				{
+		// 					game.contextBackground.globalAlpha = 1;
+		// 					game.backgroundFaded = false;
+		// 				}
 
-					message('Game Over', 1,  'Helvetica', game.width*0.06, '#FFD455', 'bold'); 
-					message(game.score + ' enemy ships destroyed', 2, 'Helvetica', game.width*0.05, '#FFD455', 'bold');
-					if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-					message('Tap screen to restart', 3, 'Helvetica', game.width*0.04, 'white', 'bold'); 
-					} else {
-					message('Press ENTER or LMB to restart', 3, 'Helvetica', game.width*0.04, 'white', 'bold');
-					}
+		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;												
+		// 			break;
+		
+		// 			case 'enemies':
+		// 				if (game.enemiesAlpha < 1)
+		// 				{				
+		// 					game.enemiesAlpha += game.alphaDelta;
+		// 				}
+		// 				else if (game.enemiesApha >= 1)
+		// 				{
+		// 					game.contextEnemies.globalAlpha = 1;
+		// 					game.enemiesFaded = false;
+		// 				}
 
-					if (game.soundStatus == "ON") {
-						game.sounds.push(new Audio("_sounds/death.mp3"));
-					}
+		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;	
+		// 			break;
+				
+		// 			case 'player':
+		// 				if (game.playerAlpha < 1)
+		// 				{				
+		// 					game.playerAlpha += game.alphaDelta;
+		// 				}
+		// 				else if (game.playerAlpha >= 1)
+		// 				{
+		// 					game.contextPlayer.globalAlpha = 1;
+		// 					game.playerFaded = false;
+		// 				}
 
-					game.levelScore = 0;
+		// 				game.contextPlayer.globalAlpha = game.playerAlpha;						
+		// 			break;
+				
+		// 			case 'text':
+		// 			if (game.textAlpha < 1)
+		// 				{				
+		// 					game.textAlpha += game.alphaDelta;
+		// 				}
+		// 				else if (game.textAlpha >= 1)
+		// 				{
+		// 					game.contextText.globalAlpha = 1;
+		// 					game.textFaded = false;
+		// 				}
 
-				}
+		// 				game.contextText.globalAlpha = game.textAlpha;	
+		// 			break;
 
-			if (game.gameOver && game.paused && game.lives >= 1){
-				message('Your ship has been destroyed!', 1,  'Helvetica', game.width*0.06, '#FFD455', 'bold'); 
-				message(game.lives + ' ships left', 2, 'Helvetica', game.width*0.05, '#FFD455', 'bold');
-				if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-					message('Tap screen to continue', 3, 'Helvetica', game.width*0.04, 'white', 'bold'); 
-				} else {
-					message('Press ENTER or LMB to continue', 3, 'Helvetica', game.width*0.04, 'white', 'bold');
-				}
+		// 			case 'all':	
+		// 				if (game.backgroundAlpha < 1 || game.enemiesAlpha < 1 || game.playerAlpha < 1 || game.textAlpha < 1 )
+		// 				{	
+		// 					game.backgroundAlpha += game.alphaDelta;
+		// 					game.enemiesAlpha += game.alphaDelta;
+		// 					game.playerAlpha += game.alphaDelta;			
+		// 					game.textAlpha += game.alphaDelta;
+		// 				}
+		// 				else if (game.backgroundAlpha >= 1 && game.enemiesAlpha >= 1 && game.playerAlpha >= 1 && game.textAlpha >= 1)
+		// 				{
+		// 					game.contextBackground.globalAlpha = 1;
+		// 					game.contextEnemies.globalAlpha = 1;
+		// 					game.contextPlayer.globalAlpha = 1;
+		// 					game.contextText.globalAlpha = 1;
+		// 					game.textFaded = false;
+		// 					game.enemiesFaded = false;
+		// 					game.playerFaded = false;
+		// 					game.textFaded = false;
+		// 					game.faded = false;
+		// 				}
 
-				game.levelScore = 0;
-			}
+		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;
+		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;
+		// 				game.contextPlayer.globalAlpha = game.playerAlpha;
+		// 				game.contextText.globalAlpha = game.textAlpha;
+		// 			break;
+		// 		}				 
+		// 	}		
+		// 	if (light === 'out')
+		// 	{
+		// 		switch (ctx)
+		// 		{					
+		// 			case 'background':
+		// 				if (game.backgroundAlpha > 0)
+		// 				{				
+		// 					game.backgroundAlpha -= game.alphaDelta;
+		// 				}
+		// 				else if (game.backgroundAlpha <= 0)
+		// 				{
+		// 					game.contextBackground.globalAlpha = 0;
+		// 					game.backgroundFaded = true;
+		// 				}
+
+		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;													
+		// 			break;
+		
+		// 			case 'enemies':
+		// 				if (game.enemiesAlpha > 0)
+		// 				{				
+		// 					game.enemiesAlpha -= game.alphaDelta;
+		// 				}
+		// 				else if (game.enemiesApha <= 0)
+		// 				{
+		// 					game.contextEnemies.globalAlpha = 0;
+		// 					game.enemiesFaded = true;
+		// 				}
+
+		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;		
+		// 			break;
+				
+		// 			case 'player':
+		// 				if (game.playerAlpha > 0)
+		// 				{				
+		// 					game.playerAlpha -= game.alphaDelta;
+		// 				}
+		// 				else if (game.playerAlpha <= 0)
+		// 				{
+		// 					game.contextPlayer.globalAlpha = 0;
+		// 					game.playerFaded = true;
+		// 				}
+
+		// 				game.contextPlayer.globalAlpha = game.playerAlpha;						
+		// 			break;
+				
+		// 			case 'text':
+		// 				if (game.textAlpha > 0)
+		// 				{				
+		// 					game.textAlpha -= game.alphaDelta;
+		// 				}
+		// 				else if (game.textAlpha <= 0)
+		// 				{
+		// 					game.contextText.globalAlpha = 0;
+		// 					game.textFaded = true;
+		// 				}
+
+		// 				game.contextText.globalAlpha = game.textAlpha;
+		// 			break;
+
+		// 			case 'all':	
+		// 				if (game.backgroundAlpha > 0 || game.enemiesAlpha > 0 || game.playerAlpha > 0 || game.textAlpha > 0 )
+		// 				{	
+		// 					game.backgroundAlpha -= game.alphaDelta;
+		// 					game.enemiesAlpha -= game.alphaDelta;
+		// 					game.playerAlpha -= game.alphaDelta;			
+		// 					game.textAlpha -= game.alphaDelta;
+		// 				}
+		// 				else if (game.backgroundAlpha <= 0 && game.enemiesAlpha <= 0 && game.playerAlpha <= 0 && game.textAlpha <= 0)
+		// 				{
+		// 					game.contextBackground.globalAlpha = 0;
+		// 					game.contextEnemies.globalAlpha = 0;
+		// 					game.contextPlayer.globalAlpha = 0;
+		// 					game.contextText.globalAlpha = 0;
+		// 					game.textFaded = true;
+		// 					game.enemiesFaded = true;
+		// 					game.playerFaded = true;
+		// 					game.textFaded = true;
+		// 					game.faded = true;
+		// 				}
+
+		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;
+		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;
+		// 				game.contextPlayer.globalAlpha = game.playerAlpha;
+		// 				game.contextText.globalAlpha = game.textAlpha;
+		// 			break;
+		// 		}	
+		// 	}	
+		// }		
+
+			// if (ctx == 'all')
+			// {
+		 //    	game.contextBackground.globalAlpha = game.alpha;
+			// 	game.contextEnemies.globalAlpha = game.alpha;
+			// 	game.contextPlayer.globalAlpha = game.alpha;
+			// 	game.contextText.globalAlpha = game.alpha;
+			// }
+			// else
+			// {
+			// 	switch (ctx)
+			// 	{
+			// 		case 'background':
+			// 		game.contextBackground.globalAlpha = game.backgroundAlpha;
+			// 		break;
+		
+			// 		case 'enemies':
+			// 		game.contextEnemies.globalAlpha = game.enemiesAlpha;
+			// 		break;
+				
+			// 		case 'player':
+			// 		game.contextPlayer.globalAlpha = game.playerAlpha;
+			// 		break;
+				
+			// 		case 'text':
+			// 		game.contextText.globalAlpha = game.textAlpha;
+			// 		break;
+			// 	}
+			// }
+		 
 
 
-			}, 1000);
-		}
 
 		//messages
 		function message(message, row, font, fontSize, fontColor, fontWeight) {
@@ -2318,9 +3328,9 @@ gameUI = new ui();
 			// console.log (textLength);
 
 
-			game.contextPlayer.font = fontWeight + " " + fontSize + "px " + font;				
-			game.contextPlayer.fillStyle = fontColor;
-			game.contextPlayer.fillText(text, x, y);	
+			game.contextText.font = fontWeight + " " + fontSize + "px " + font;				
+			game.contextText.fillStyle = fontColor;
+			game.contextText.fillText(text, x, y);	
 		}
 
 		// //Init	
@@ -2364,19 +3374,7 @@ gameUI = new ui();
 
 		function checkImages(){	//checking if all images have been loaded. Once all loaded run init
 			if(game.doneImages >= game.requiredImages){
-				game.contextBackground.clearRect(0, 0, game.width, game.height);
-				game.contextBackground.font = "bold " + game.width*0.11 + "px " + game.font; //Intro screen
-				game.contextBackground.fillStyle = "purple";				
-				game.contextBackground.fillText(X_Title, game.width*0.2, game.height*0.40);
-				game.contextBackground.font = "bold " + game.width*0.04 + "px " + game.font; 
-				game.contextBackground.fillStyle = "#FFD455";
-				game.contextBackground.fillText(X_Subtitle, game.width*0.1, game.height*0.55);
-				game.contextBackground.fillStyle = "white";
-				if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-					game.contextBackground.fillText(X_mb_Start, game.width*0.25, game.height*0.65);
-				} else {
-					game.contextBackground.fillText(X_dt_Start, game.width*0.1, game.height*0.70);
-				}
+				gameText.gameIntro();
 				loop(); //LOoP CALL!!!
 			}else{
 				setTimeout(function(){

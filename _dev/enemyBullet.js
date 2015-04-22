@@ -18,7 +18,7 @@ function enemyBullet(x, y, speed, direction, power, image) {
 	this.image = image;
 	this.friction = 1.02;
 	this.dtSet = false;
-	this.context = game.contextPlayer;
+	this.ctx = game.contextEnemies;
 
 	this.update = function(){ // Replacing the default 'update' method
 		if (dt !== 0 && !this.dtSet){
@@ -54,26 +54,26 @@ function enemyBullet(x, y, speed, direction, power, image) {
 		
 		if (!this.dead) {			
 
-			// game.contextPlayer.save();
-			// game.contextPlayer.translate(this.lastX, this.lastY);
-			// game.contextPlayer.rotate(direction - Math.PI/2);
+			// this.ctx.save();
+			// this.ctx.translate(this.lastX, this.lastY);
+			// this.ctx.rotate(direction - Math.PI/2);
 
-			// game.contextPlayer.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
+			// this.ctx.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
 
-			// game.contextPlayer.restore();
+			// this.ctx.restore();
 
-			game.contextPlayer.save();
-			game.contextPlayer.translate(this.x, this.y);
-			game.contextPlayer.rotate(direction - Math.PI/2);
+			this.ctx.save();
+			this.ctx.translate(this.x, this.y);
+			this.ctx.rotate(direction - Math.PI/2);
 
-			game.contextPlayer.drawImage(
+			this.ctx.drawImage(
 				game.images[this.image],
 				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
 				this.frameWidth, this.frameHeight,
 				-this.size/2, -this.size/2,
 				this.size, this.size);
 			
-			game.contextPlayer.restore();
+			this.ctx.restore();
 
 		}
 	};
