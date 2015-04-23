@@ -120,6 +120,7 @@
 			// game.enemies = [];							
 			playerShip.reset();
 			gameUI.updateAll();
+			game.background = [];
 			game.enemies = [];
 			game.waves = [];			
 			game.enemyBullets = [];

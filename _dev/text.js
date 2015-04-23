@@ -19,7 +19,7 @@ function text() {
 	this.gameIntro = function() {
 		game.contextText.clearRect(0, 0, game.width, game.height);
 
-		message('InVaDeRs 2', 1,  this.font, game.width*0.06, this.fontColor0, this.fontWeight); 
+		message('10,000 AD', 1,  this.font, game.width*0.06, this.fontColor0, this.fontWeight); 
 		message('No one knew they were coming', 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
 
 		if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/))
