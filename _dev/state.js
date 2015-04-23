@@ -26,6 +26,7 @@
 				mouseIsDown = 0;				
 				game.keys[27] = false;
 				playerShip.hull = 0;
+				playerShip.lives = 0;
 				game.gameOver = true;								
 			}
 
