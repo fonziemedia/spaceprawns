@@ -42,28 +42,7 @@
 			// addStars(1);		
 
 			game.contextBackground.clearRect(0, 0, game.width, game.height); //clear trails
-			
-
-			if (game.background.length < 1)
-			{
-				bgImage = 20 + game.level; //the image before all background images, these need to be consecutive in order for this to work			
-				game.background.push(new background(150, bgImage, 0));			
-			}
-
-			for (var b in game.background)
-			{
-				if (game.background[b].y > -game.height*0.02 && game.background.length < 2){
-
-					game.background.push(new background(150, bgImage, 1));				
-				}
-
-				if (game.background[b].y > game.height){
-					game.background.splice(b, 1);
-				}
-
-				game.background[b].update();			
-				game.background[b].draw();				
-			}
+			gameBackground.load();
 
 
 			/////////////////////////////////////////////////////////////////////////////////
