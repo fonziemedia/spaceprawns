@@ -15,9 +15,9 @@ function sprite(image, imageSize, frameWidth, frameHeight, startFrame, endFrame,
 
 	// if (game.soundStatus == "ON"){game.enemyexplodeSound.play();}
 
-	this.draw = function(x, y, loop)
+	this.draw = function(x, y)
 	{
-				// create the sequence of frame numbers for the animation
+		// create the sequence of frame numbers for the animation
 		for (this.FrameNum = this.startFrame; this.FrameNum <= this.endFrame; this.FrameNum++){
 			this.animationSequence.push(this.FrameNum);
 		}
@@ -33,24 +33,11 @@ function sprite(image, imageSize, frameWidth, frameHeight, startFrame, endFrame,
 		this.spriteRow = Math.floor(this.animationSequence[this.currentFrame] / this.fpr);
 		this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
 
-		// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
-		if (!loop && this.currentFrame <= this.endFrame)
-		{
-			this.ctx.drawImage(
-				game.images[this.image],
-				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
-				this.frameWidth, this.frameHeight,
-				x, y,
-				this.imageSize, this.imageSize);
-		}
-		else
-		{
-			this.ctx.drawImage(
-				game.images[this.image],
-				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
-				this.frameWidth, this.frameHeight,
-				x, y,
-				this.imageSize, this.imageSize);
-		}
+		this.ctx.drawImage(
+			game.images[this.image],
+			this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
+			this.frameWidth, this.frameHeight,
+			x, y,
+			this.imageSize, this.imageSize);
 	};
 }

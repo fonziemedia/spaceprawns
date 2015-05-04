@@ -30,7 +30,7 @@ function explosion(x, y, speed, direction, size) {
 	this.draw = function() {
 		// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
-		this.sprite.draw(this.x, this.y, false);
+		this.sprite.draw(this.x, this.y);
 
 	};
 }

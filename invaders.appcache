@@ -7,8 +7,6 @@ style.css
 main.js
 main.min.js
 game.xml
-_api/jquery.vibrate.min.js
-_api/jquery.vibrate.min.map
 
 
 FALLBACK:

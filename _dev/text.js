@@ -22,7 +22,7 @@ function text() {
 		message('10,000 AD', 1,  this.font, game.width*0.06, this.fontColor0, this.fontWeight); 
 		message('No one knew they were coming', 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
 
-		if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/))
+		if (game.isMobile)
 		{
 			message('Tap screen to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
 		}
@@ -38,7 +38,7 @@ function text() {
 		message('Stage ' + game.level, 1,  this.font, game.width*0.06, this.fontColor1, this.fontWeight); 
 		message(this.levelBriefing[game.level - 1], 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
 
-		if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/))
+		if (game.isMobile)
 		{
 			message('Tap screen to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
 		}
@@ -54,7 +54,7 @@ function text() {
 		message('Stage Complete!', 1,  this.font, game.width*0.06, this.fontColor1, this.fontWeight); 
 		message(game.score + ' enemy ships destroyed', 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
 
-		if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/))
+		if (game.isMobile)
 		{
 			message('Tap screen to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
 		}
@@ -71,7 +71,7 @@ function text() {
 		message('Game Over', 1,  this.font, game.width*0.06, this.fontColor1, this.fontWeight); 
 		message(game.score + ' enemy ships destroyed', 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
 		
-		if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/))
+		if (game.isMobile)
 		{
 			message('Tap screen to restart', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
 		}

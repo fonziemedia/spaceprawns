@@ -221,7 +221,7 @@
 			var textWidth = textLength * fontSize/2;
 			var textHeight = game.height*0.1;
 			// this.color = fontColor;
-			// this.font = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? font : "Monaco";
+			// this.font = game.isMobile ? font : "Monaco";
 			// this.fontSize = fontSize;
 			// this.fontWeight = fontWeight;
 
@@ -350,12 +350,6 @@ window.requestAnimFrame = (function(){  // Creating a request animAnimeFrame fun
 			window.oRequestAnimationFrame    ||
 			window.msRequestAnimationFrame    ||
 			function( callback ){
-				// if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-				// 	window.setTimeout(callback, 1000 / 30);
-				// }	
-				// else {
-				// 	window.setTimeout(callback, 1000 / 60);
-				// }
 				window.setTimeout(callback, 1000 / 60);			
 			};
 })(); // jshint ignore:line

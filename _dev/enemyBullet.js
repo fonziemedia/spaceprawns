@@ -43,7 +43,7 @@ function enemyBullet(x, y, speed, direction, power, image) {
 			this.ctx.translate(this.x, this.y);
 			this.ctx.rotate(direction - Math.PI/2);
 
-			this.sprite.draw(-this.size/2, -this.size/2, true); //-this.size/2 because we're rotating ctx
+			this.sprite.draw(-this.size/2, -this.size/2); //-this.size/2 because we're rotating ctx
 			
 			this.ctx.restore();
 

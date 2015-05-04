@@ -72,7 +72,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			this.hit = false;
 		}
 
-		if (this.hull <= 0 ) {
+		if (this.hull <= 0) {
 			this.dead = true;
 
 			game.explosions.push(new explosion(this.x, this.y, this.speed, this.direction, this.size));			

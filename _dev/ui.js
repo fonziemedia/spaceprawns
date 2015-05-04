@@ -32,7 +32,7 @@ function ui() {
 		this.soundFx = game.sound ? "ON" : "OFF";
 		// this.music = game.music;			
 
-		if (!navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
+		if (!game.isMobile) {
 			game.contextText.fillStyle = "#FFD455";
 			game.contextText.font = 15*dtSize + 'px helvetica';
 			game.contextText.clearRect(this.width*0.25, this.height*0.3, this.width*0.2, this.height*0.35); 

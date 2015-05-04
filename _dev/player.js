@@ -26,6 +26,12 @@ function player(hull, fireRate) {
 	this.ctx = game.contextPlayer;
 	this.incline = [game.width*0.004, game.width*0.008, game.width*0.010, game.width*0.012];
 	this.steering = game.width * 0.08; //ship drag radius
+	this.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;
+	
+	if (this.canVibrate && !("vibrate" in navigator))
+	{
+    navigator.vibrate = navigator.mozVibrate;
+    }	
 
 	// bulletspeed: X_BulletSpeed*game.height/1000,
 
@@ -116,7 +122,7 @@ function player(hull, fireRate) {
 
 				this.rendered = false;				
 				moveX = this.x + this.size*0.5; 	//second define of moveX as canvasX position
-				moveY = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? this.y + this.size*1.7 : this.y + this.size; 	//second define of moveX as canvasX position
+				moveY = game.isMobile ? this.y + this.size*1.7 : this.y + this.size; 	//second define of moveX as canvasX position
 			
 			}
 			/*		console.log (canvasX)
@@ -312,7 +318,7 @@ function player(hull, fireRate) {
 
 			if (this.hit && !this.imune) {
 				// this.hitTimer++;
-				if (navigator.userAgent.match(/(iPhone|Android)/)) 
+				if (game.isMobile) 
 				{
 					navigator.vibrate(30);
 				}

@@ -393,7 +393,8 @@ var particle = function(x, y, speed, direction, grav) {
 
 		/*GAME VARS*/
 
-		var game = {}; //this is a global var which will contain other game vars
+		var game = {}; //this is a global var which will contain other game vars			
+		game.isMobile = (/iPhone|iPod|iPad|Android|BlackBerry/).test(navigator.userAgent);	//checking if game is running on mobile
 		game.stars = []; //this is an array which will contain our stars info: position in space and size
 		game.faded = true;
 		game.backgroundFaded = true;
@@ -447,7 +448,7 @@ var particle = function(x, y, speed, direction, grav) {
 		game.images = [];
 		game.doneImages  = 0; // will contain how many images have been loaded
 		game.requiredImages = 0; // will contain how many images should be loaded
-		// game.font = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? "Helvetica" : "Monaco";
+		// game.font = game.isMobile ? "Helvetica" : "Monaco";
 		// game.res = 4*5; //check the 4th index every 5 frames
 		
 		//====================== Canvases + Images + responsiveness  ============================
@@ -553,9 +554,9 @@ function sprite(image, imageSize, frameWidth, frameHeight, startFrame, endFrame,
 
 	// if (game.soundStatus == "ON"){game.enemyexplodeSound.play();}
 
-	this.draw = function(x, y, loop)
+	this.draw = function(x, y)
 	{
-				// create the sequence of frame numbers for the animation
+		// create the sequence of frame numbers for the animation
 		for (this.FrameNum = this.startFrame; this.FrameNum <= this.endFrame; this.FrameNum++){
 			this.animationSequence.push(this.FrameNum);
 		}
@@ -571,25 +572,12 @@ function sprite(image, imageSize, frameWidth, frameHeight, startFrame, endFrame,
 		this.spriteRow = Math.floor(this.animationSequence[this.currentFrame] / this.fpr);
 		this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
 
-		// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
-		if (!loop && this.currentFrame <= this.endFrame)
-		{
-			this.ctx.drawImage(
-				game.images[this.image],
-				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
-				this.frameWidth, this.frameHeight,
-				x, y,
-				this.imageSize, this.imageSize);
-		}
-		else
-		{
-			this.ctx.drawImage(
-				game.images[this.image],
-				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
-				this.frameWidth, this.frameHeight,
-				x, y,
-				this.imageSize, this.imageSize);
-		}
+		this.ctx.drawImage(
+			game.images[this.image],
+			this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
+			this.frameWidth, this.frameHeight,
+			x, y,
+			this.imageSize, this.imageSize);
 	};
 }
 function background(speed, image, section) {
@@ -680,7 +668,7 @@ function explosion(x, y, speed, direction, size) {
 	this.draw = function() {
 		// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
-		this.sprite.draw(this.x, this.y, false);
+		this.sprite.draw(this.x, this.y);
 
 	};
 }
@@ -716,6 +704,12 @@ function player(hull, fireRate) {
 	this.ctx = game.contextPlayer;
 	this.incline = [game.width*0.004, game.width*0.008, game.width*0.010, game.width*0.012];
 	this.steering = game.width * 0.08; //ship drag radius
+	this.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;
+	
+	if (this.canVibrate && !("vibrate" in navigator))
+	{
+    navigator.vibrate = navigator.mozVibrate;
+    }	
 
 	// bulletspeed: X_BulletSpeed*game.height/1000,
 
@@ -806,7 +800,7 @@ function player(hull, fireRate) {
 
 				this.rendered = false;				
 				moveX = this.x + this.size*0.5; 	//second define of moveX as canvasX position
-				moveY = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? this.y + this.size*1.7 : this.y + this.size; 	//second define of moveX as canvasX position
+				moveY = game.isMobile ? this.y + this.size*1.7 : this.y + this.size; 	//second define of moveX as canvasX position
 			
 			}
 			/*		console.log (canvasX)
@@ -1002,7 +996,7 @@ function player(hull, fireRate) {
 
 			if (this.hit && !this.imune) {
 				// this.hitTimer++;
-				if (navigator.userAgent.match(/(iPhone|Android)/)) 
+				if (game.isMobile) 
 				{
 					navigator.vibrate(30);
 				}
@@ -1105,7 +1099,7 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 			this.ctx.translate(this.x, this.y);
 			this.ctx.rotate(direction - Math.PI/2);
 
-			this.sprite.draw(-this.size/2, -this.size/2, true); //-this.size/2 because we're rotating ctx
+			this.sprite.draw(-this.size/2, -this.size/2); //-this.size/2 because we're rotating ctx
 			
 			this.ctx.restore();
 
@@ -1189,7 +1183,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			this.hit = false;
 		}
 
-		if (this.hull <= 0 ) {
+		if (this.hull <= 0) {
 			this.dead = true;
 
 			game.explosions.push(new explosion(this.x, this.y, this.speed, this.direction, this.size));			
@@ -1456,7 +1450,7 @@ function enemyBullet(x, y, speed, direction, power, image) {
 			this.ctx.translate(this.x, this.y);
 			this.ctx.rotate(direction - Math.PI/2);
 
-			this.sprite.draw(-this.size/2, -this.size/2, true); //-this.size/2 because we're rotating ctx
+			this.sprite.draw(-this.size/2, -this.size/2); //-this.size/2 because we're rotating ctx
 			
 			this.ctx.restore();
 
@@ -1630,7 +1624,7 @@ function ui() {
 		this.soundFx = game.sound ? "ON" : "OFF";
 		// this.music = game.music;			
 
-		if (!navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
+		if (!game.isMobile) {
 			game.contextText.fillStyle = "#FFD455";
 			game.contextText.font = 15*dtSize + 'px helvetica';
 			game.contextText.clearRect(this.width*0.25, this.height*0.3, this.width*0.2, this.height*0.35); 
@@ -1970,7 +1964,7 @@ function text() {
 		message('10,000 AD', 1,  this.font, game.width*0.06, this.fontColor0, this.fontWeight); 
 		message('No one knew they were coming', 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
 
-		if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/))
+		if (game.isMobile)
 		{
 			message('Tap screen to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
 		}
@@ -1986,7 +1980,7 @@ function text() {
 		message('Stage ' + game.level, 1,  this.font, game.width*0.06, this.fontColor1, this.fontWeight); 
 		message(this.levelBriefing[game.level - 1], 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
 
-		if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/))
+		if (game.isMobile)
 		{
 			message('Tap screen to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
 		}
@@ -2002,7 +1996,7 @@ function text() {
 		message('Stage Complete!', 1,  this.font, game.width*0.06, this.fontColor1, this.fontWeight); 
 		message(game.score + ' enemy ships destroyed', 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
 
-		if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/))
+		if (game.isMobile)
 		{
 			message('Tap screen to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
 		}
@@ -2019,7 +2013,7 @@ function text() {
 		message('Game Over', 1,  this.font, game.width*0.06, this.fontColor1, this.fontWeight); 
 		message(game.score + ' enemy ships destroyed', 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
 		
-		if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/))
+		if (game.isMobile)
 		{
 			message('Tap screen to restart', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
 		}
@@ -2982,7 +2976,7 @@ function lvl1() {
 			var textWidth = textLength * fontSize/2;
 			var textHeight = game.height*0.1;
 			// this.color = fontColor;
-			// this.font = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? font : "Monaco";
+			// this.font = game.isMobile ? font : "Monaco";
 			// this.fontSize = fontSize;
 			// this.fontWeight = fontWeight;
 
@@ -3111,12 +3105,6 @@ window.requestAnimFrame = (function(){  // Creating a request animAnimeFrame fun
 			window.oRequestAnimationFrame    ||
 			window.msRequestAnimationFrame    ||
 			function( callback ){
-				// if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-				// 	window.setTimeout(callback, 1000 / 30);
-				// }	
-				// else {
-				// 	window.setTimeout(callback, 1000 / 60);
-				// }
 				window.setTimeout(callback, 1000 / 60);			
 			};
 })(); // jshint ignore:line

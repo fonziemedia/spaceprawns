@@ -55,7 +55,8 @@
 
 		/*GAME VARS*/
 
-		var game = {}; //this is a global var which will contain other game vars
+		var game = {}; //this is a global var which will contain other game vars			
+		game.isMobile = (/iPhone|iPod|iPad|Android|BlackBerry/).test(navigator.userAgent);	//checking if game is running on mobile
 		game.stars = []; //this is an array which will contain our stars info: position in space and size
 		game.faded = true;
 		game.backgroundFaded = true;
@@ -109,7 +110,7 @@
 		game.images = [];
 		game.doneImages  = 0; // will contain how many images have been loaded
 		game.requiredImages = 0; // will contain how many images should be loaded
-		// game.font = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? "Helvetica" : "Monaco";
+		// game.font = game.isMobile ? "Helvetica" : "Monaco";
 		// game.res = 4*5; //check the 4th index every 5 frames
 		
 		//====================== Canvases + Images + responsiveness  ============================
