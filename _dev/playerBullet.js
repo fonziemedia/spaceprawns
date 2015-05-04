@@ -6,19 +6,11 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 	this.image = image; 
 	this.dead = false;
 	this.deadTime = 60;
-	this.frameWidth = imageSize;
-	this.frameHeight = imageSize;
-	this.startFrame = 0;
-	this.endFrame = endFrame;
-	this.frameSpeed = 4;
-	this.animationSequence = [];  // array holding the order of the animation
-	this.currentFrame = 0;        // the current frame to draw
-	this.counter = 0;
-	this.fpr = Math.floor(game.images[this.image].width / this.frameWidth); //Sprite FramesperRow
-	this.image = image;
+
 	this.friction = friction;
 	this.dtSet = false;
 	this.ctx = game.contextEnemies;
+	this.sprite = new sprite(this.image, this.size, imageSize, imageSize, 0, endFrame, 4, this.ctx);
 
 	this.update = function(){ // Replacing the default 'update' method		
 		//setting this to make friction work with deltaTime (dt), check particle.js
@@ -31,22 +23,6 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 		this.vy *= this.friction;
 		this.x += this.vx;
 		this.y += this.vy;
-
-		// create the sequence of frame numbers for the animation
-		for (this.FrameNum = this.startFrame; this.FrameNum <= this.endFrame; this.FrameNum++){
-			this.animationSequence.push(this.FrameNum);
-		}
-
-		// update to the next frame if it is time
-		if (this.counter == (this.frameSpeed - 1)) {
-			this.currentFrame = (this.currentFrame + 1) % this.animationSequence.length;
-		}
-
-		// update the counter
-		this.counter = (this.counter + 1) % this.frameSpeed;
-
-		this.spriteRow = Math.floor(this.animationSequence[this.currentFrame] / this.fpr);
-		this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
 	};
 	
 	this.draw = function() {		
@@ -65,12 +41,7 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 			this.ctx.translate(this.x, this.y);
 			this.ctx.rotate(direction - Math.PI/2);
 
-			this.ctx.drawImage(
-				game.images[this.image],
-				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
-				this.frameWidth, this.frameHeight,
-				-this.size/2, -this.size/2,
-				this.size, this.size);
+			this.sprite.draw(-this.size/2, -this.size/2, true); //-this.size/2 because we're rotating ctx
 			
 			this.ctx.restore();
 

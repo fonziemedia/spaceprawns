@@ -420,8 +420,7 @@ var particle = function(x, y, speed, direction, grav) {
 		dtTimer = 0;		
 		dtArray = [];
 		timeThen = new Date().getTime();
-
-		// res = 4*5; //check the 4th index every 5 frames
+		
 		
 		//====================== Game state ========================
 		
@@ -442,13 +441,6 @@ var particle = function(x, y, speed, direction, grav) {
 		game.music = X_Music;	//on/off trigger
 		game.sounds = [];
 		game.songs = [];
-
-		// game.enemyexplodeSound = new Audio("_sounds/explosion.wav");
-		// game.playerexplodeSound = new Audio("_sounds/blast.mp3");
-		// game.shootSound = new Audio("_sounds/laser.wav");
-		// game.deathSound = new Audio("_sounds/death.mp3");
-		// game.winSound = new Audio("_sounds/victory.mp3");
-
 			
 		//======================== Images ========================		
 			
@@ -456,8 +448,7 @@ var particle = function(x, y, speed, direction, grav) {
 		game.doneImages  = 0; // will contain how many images have been loaded
 		game.requiredImages = 0; // will contain how many images should be loaded
 		// game.font = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? "Helvetica" : "Monaco";
-		// game.res = 4*500; //check the 4th index every 5 frames
-
+		// game.res = 4*5; //check the 4th index every 5 frames
 		
 		//====================== Canvases + Images + responsiveness  ============================
 		
@@ -521,23 +512,12 @@ var particle = function(x, y, speed, direction, grav) {
 			//delta size will keep the size of our objects proportional to the display
 			dtSize = game.height*0.001;
 			// console.log (dtSize);
-			
-			// game.player = {	//creating our player
-			// 	x: game.width*0.46,
-			// 	y: game.height*0.90,
-			// 	size: game.height*0.08,
-			// 	speed: X_PlayerSpeed,
-			// 	bulletspeed: X_BulletSpeed*game.height/1000,
-			// 	image: 0,
-			// 	rendered: false,
-			// 	crashed: false					
-			// };
+
 			
 			//the below needs width and height defined, thus we put it here	
 
 			//======================  Game settings =====================				
-			
-			
+						
 			game.enemySpeed = X_EnemySpeed * game.height/2500; //the enemies' speed
 			game.EnBulletSpeed = X_EnBulletSpeed * game.height/1000;
 
@@ -556,6 +536,62 @@ var particle = function(x, y, speed, direction, grav) {
 		respondCanvas();
 
 	// jshint ignore:line
+function sprite(image, imageSize, frameWidth, frameHeight, startFrame, endFrame, frameSpeed, ctx) {	
+	this.image = image;
+	this.imageSize = imageSize;
+	this.frameWidth = frameWidth;
+	this.frameHeight = frameHeight;
+	this.startFrame = startFrame;
+	this.endFrame = endFrame;
+	this.frameSpeed = frameSpeed;
+	this.ctx = ctx;
+
+	this.animationSequence = [];  // array holding the order of the animation
+	this.currentFrame = 0;        // the current frame to draw
+	this.counter = 0;
+	this.fpr = Math.floor(game.images[this.image].width / this.frameWidth);
+
+	// if (game.soundStatus == "ON"){game.enemyexplodeSound.play();}
+
+	this.draw = function(x, y, loop)
+	{
+				// create the sequence of frame numbers for the animation
+		for (this.FrameNum = this.startFrame; this.FrameNum <= this.endFrame; this.FrameNum++){
+			this.animationSequence.push(this.FrameNum);
+		}
+
+		// update to the next frame if it is time
+		if (this.counter == (this.frameSpeed - 1)) {
+			this.currentFrame = (this.currentFrame + 1) % this.animationSequence.length;
+		}
+
+		// update the counter
+		this.counter = (this.counter + 1) % this.frameSpeed;
+
+		this.spriteRow = Math.floor(this.animationSequence[this.currentFrame] / this.fpr);
+		this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
+
+		// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
+		if (!loop && this.currentFrame <= this.endFrame)
+		{
+			this.ctx.drawImage(
+				game.images[this.image],
+				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
+				this.frameWidth, this.frameHeight,
+				x, y,
+				this.imageSize, this.imageSize);
+		}
+		else
+		{
+			this.ctx.drawImage(
+				game.images[this.image],
+				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
+				this.frameWidth, this.frameHeight,
+				x, y,
+				this.imageSize, this.imageSize);
+		}
+	};
+}
 function background(speed, image, section) {
 	particle.call(this, speed);
 
@@ -565,7 +601,7 @@ function background(speed, image, section) {
 	this.height = (game.width * (16 / 9)) * 4 ;
 	this.x = 0;
 	this.y = (this.section === 0) ? -(this.height-game.height) : this.y = -(this.height);
-	this.image = 20 + game.level; //the image before all background images, these need to be consecutive in order for this to work	;
+	this.image = 'level' + game.level + '.jpg'; //needs to be consecutive for this to work
 	this.limits = -game.height*0.02;
 
 	this.update = function() {
@@ -622,17 +658,10 @@ function explosion(x, y, speed, direction, size) {
 	this.hitTimer = 0; 
 	this.dead = false;
 	this.deadTime = 60;
-	this.image = 3;
-	this.frameWidth = 96;
-	this.frameHeight = 96;
-	this.startFrame = 0;
-	this.endFrame = 19;
-	this.frameSpeed = 2;
-	this.animationSequence = [];  // array holding the order of the animation
-	this.currentFrame = 0;        // the current frame to draw
-	this.counter = 0;
-	this.fpr = Math.floor(game.images[this.image].width / this.frameWidth);
+	this.image = 'explosion.png';
 	this.ctx = game.contextPlayer;
+	this.sprite = new sprite(this.image, this.size, 96, 96, 0, 19, 2, this.ctx);
+
 
 	// if (game.soundStatus == "ON"){game.enemyexplodeSound.play();}
 
@@ -646,37 +675,12 @@ function explosion(x, y, speed, direction, size) {
 		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
-
-
-		// create the sequence of frame numbers for the animation
-		for (this.FrameNum = this.startFrame; this.FrameNum <= this.endFrame; this.FrameNum++){
-			this.animationSequence.push(this.FrameNum);
-		}
-
-		// update to the next frame if it is time
-		if (this.counter == (this.frameSpeed - 1)) {
-			this.currentFrame = (this.currentFrame + 1) % this.animationSequence.length;
-		}
-
-		// update the counter
-		this.counter = (this.counter + 1) % this.frameSpeed;
-
-		this.spriteRow = Math.floor(this.animationSequence[this.currentFrame] / this.fpr);
-		this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
-
 	};
 
 	this.draw = function() {
 		// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
-		if (this.currentFrame <= 19){
-			this.ctx.drawImage(
-				game.images[this.image],
-				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
-				this.frameWidth, this.frameHeight,
-				this.x, this.y,
-				this.size, this.size);
-		}
+		this.sprite.draw(this.x, this.y, false);
 
 	};
 }
@@ -695,7 +699,7 @@ function player(hull, fireRate) {
 	this.size = 100*dtSize;
 	this.hull = hull;
 	this.bulletspeed = X_BulletSpeed*game.height/1000;
-	this.image = 0;
+	this.image = 'fighter.png';
 	this.rendered = false;
 	this.hit = false;
 	this.hitTimer = 0;
@@ -715,7 +719,7 @@ function player(hull, fireRate) {
 
 	// bulletspeed: X_BulletSpeed*game.height/1000,
 
-	this.update = function() {
+	this.update = function() {		
 		// this.vx = Math.cos(this.direction) * (this.speed*dt);
 		// this.vy = Math.sin(this.direction) * (this.speed*dt);
 		// this.handleSprings();
@@ -725,7 +729,8 @@ function player(hull, fireRate) {
 		// this.vy += this.gravity;
 		// this.x += this.vx;
 		// this.y += this.vy;
-
+		this.playerImage = game.images[this.image];
+		
 		//////////////////////////////
 		//	Mouse and Touch controls
 		/////////////////////////////
@@ -775,28 +780,28 @@ function player(hull, fireRate) {
 				// console.log (moveY);
 				
 				if (moveRight1) {
-					this.image = 4;
+					this.image = 'fighter_right1.png';
 				} else if (moveRight2) {
-					this.image = 5;
+					this.image = 'fighter_right2.png';
 				} else if (moveRight3) {
-					this.image = 6;
+					this.image = 'fighter_right3.png';
 				} else if (moveRight4) {
-					this.image = 7;
+					this.image = 'fighter_right4.png';
 				} else if (moveRight5) {
-					this.image = 8;
+					this.image = 'fighter_right5.png';
 
 				} else if (moveLeft1) {
-					this.image = 9;
+					this.image = 'fighter_left1.png';
 				} else if (moveLeft2) {
-					this.image = 10;
+					this.image = 'fighter_left2.png';
 				} else if (moveLeft3) {
-					this.image = 11;
+					this.image = 'fighter_left3.png';
 				} else if (moveLeft4) {
-					this.image = 12;
+					this.image = 'fighter_left4.png';
 				} else if (moveLeft5) {
-					this.image = 13;
+					this.image = 'fighter_left5.png';
 				} else {
-					this.image = 0;	
+					this.image = 'fighter.png';	
 				}
 
 				this.rendered = false;				
@@ -809,7 +814,7 @@ function player(hull, fireRate) {
 					console.log (moveRight);*/
 		}
 		else if (!mouseIsDown && !game.gameOver) {
-			this.image = 0;
+			this.image = 'fighter.png';
 			this.rendered = false;
 		}
 
@@ -822,7 +827,7 @@ function player(hull, fireRate) {
 			if(this.x > 0){ // (keeping it within the boundaries of our canvas)				
 				this.speed = this.maxSpeed;
 				this.direction = Math.PI;				
-				this.image = 13;
+				this.image = 'fighter_left5.png';
 				this.rendered = false;
 				this.x -= this.speed*dt;
 			}
@@ -832,7 +837,7 @@ function player(hull, fireRate) {
 			if(this.x <= game.width - this.size){				
 				this.speed = this.maxSpeed;
 				this.direction = 0;
-				this.image = 8;
+				this.image = 'fighter_right5.png';
 				this.rendered = false;
 				this.x += this.speed*dt;
 			}
@@ -868,18 +873,18 @@ function player(hull, fireRate) {
 				// (x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame)
 				switch(this.laserLevel) {
 				    case 1:
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
 				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				        break;
 				    case 2:
-				    	game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));				
+				    	game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));				
 				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				        break;
 				    default:
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
 				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				        break;
 				 }
@@ -888,16 +893,16 @@ function player(hull, fireRate) {
 				 	case 0:
 				 		break;
 				    case 1:
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
 						break;
 				    case 2:
-				    	game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
-						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+				    	game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
 						break;
 				    default:
-				        game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
-						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
-						game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+				        game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
 						break;										
 				 }				
 				// this.bulletTimer = 1; //resetting our timer
@@ -934,7 +939,7 @@ function player(hull, fireRate) {
 					this.dead = false;
 					this.x = game.width*0.46;
 					this.y = game.height*0.90;
-					this.image = 0;
+					this.image = 'fighter.png';
 					this.rendered = false;
 					this.hit = false;
 					this.hitTimer = 0;
@@ -979,7 +984,7 @@ function player(hull, fireRate) {
 				this.ctx.globalAlpha = 0.8;
 				if (this.imuneTimer >= 0 && this.imuneTimer < 15  || this.imuneTimer >= 20 && this.imuneTimer < 35 ||this.imuneTimer >= 40 && this.imuneTimer < 55 || this.imuneTimer >= 70 && this.imuneTimer < 75 || this.imuneTimer >= 90 && this.imuneTimer < 95 || this.imuneTimer >= 110 && this.imuneTimer < 115 || this.imuneTimer >= 130 && this.imuneTimer < 135 || this.imuneTimer >= 150 && this.imuneTimer < 155 || this.imuneTimer >= 160 && this.imuneTimer < 175 || this.imuneTimer > 180)
 				{
-					this.ctx.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //rendering
+					this.ctx.drawImage(this.playerImage, this.x, this.y, this.size, this.size); //rendering
 				}
 			}
 
@@ -991,7 +996,7 @@ function player(hull, fireRate) {
 						this.ctx.globalAlpha += 0.1;				
 				}
 
-				this.ctx.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //rendering
+				this.ctx.drawImage(this.playerImage, this.x, this.y, this.size, this.size); //rendering
 			}
 
 
@@ -1025,12 +1030,18 @@ function player(hull, fireRate) {
 			}
 		}
 	};
+
+	this.load = function()
+	{
+		this.update();
+		this.draw();
+	};
 	
 	this.reset = function() {
 		this.dead = false;
 		this.x = game.width*0.46;
 		this.y = game.height*0.90;
-		this.image = 0;
+		this.image = 'fighter.png';
 		this.hull = hull;
 		this.rendered = false;
 		this.hit = false;
@@ -1059,19 +1070,11 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 	this.image = image; 
 	this.dead = false;
 	this.deadTime = 60;
-	this.frameWidth = imageSize;
-	this.frameHeight = imageSize;
-	this.startFrame = 0;
-	this.endFrame = endFrame;
-	this.frameSpeed = 4;
-	this.animationSequence = [];  // array holding the order of the animation
-	this.currentFrame = 0;        // the current frame to draw
-	this.counter = 0;
-	this.fpr = Math.floor(game.images[this.image].width / this.frameWidth); //Sprite FramesperRow
-	this.image = image;
+
 	this.friction = friction;
 	this.dtSet = false;
 	this.ctx = game.contextEnemies;
+	this.sprite = new sprite(this.image, this.size, imageSize, imageSize, 0, endFrame, 4, this.ctx);
 
 	this.update = function(){ // Replacing the default 'update' method		
 		//setting this to make friction work with deltaTime (dt), check particle.js
@@ -1084,22 +1087,6 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 		this.vy *= this.friction;
 		this.x += this.vx;
 		this.y += this.vy;
-
-		// create the sequence of frame numbers for the animation
-		for (this.FrameNum = this.startFrame; this.FrameNum <= this.endFrame; this.FrameNum++){
-			this.animationSequence.push(this.FrameNum);
-		}
-
-		// update to the next frame if it is time
-		if (this.counter == (this.frameSpeed - 1)) {
-			this.currentFrame = (this.currentFrame + 1) % this.animationSequence.length;
-		}
-
-		// update the counter
-		this.counter = (this.counter + 1) % this.frameSpeed;
-
-		this.spriteRow = Math.floor(this.animationSequence[this.currentFrame] / this.fpr);
-		this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
 	};
 	
 	this.draw = function() {		
@@ -1118,12 +1105,7 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 			this.ctx.translate(this.x, this.y);
 			this.ctx.rotate(direction - Math.PI/2);
 
-			this.ctx.drawImage(
-				game.images[this.image],
-				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
-				this.frameWidth, this.frameHeight,
-				-this.size/2, -this.size/2,
-				this.size, this.size);
+			this.sprite.draw(-this.size/2, -this.size/2, true); //-this.size/2 because we're rotating ctx
 			
 			this.ctx.restore();
 
@@ -1150,7 +1132,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			break;
 	}
 	this.hull = hull;
-	this.image = image;
+	this.image = game.images[image];
 	this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;
@@ -1227,7 +1209,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 				bulletX = this.x + this.size*0.42;
 				bulletY = this.y + this.size;
 				bulletDirection = this.angleTo(playerShip);
-				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 20));			
+				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 'missile.png'));			
 			}
 		}
 
@@ -1258,7 +1240,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 				this.ctx.rotate(this.rotation);
 
 				//draw image
-				this.ctx.drawImage(game.images[this.image], -this.size * 0.5, -this.size * 0.5, this.size, this.size);
+				this.ctx.drawImage(this.image, -this.size * 0.5, -this.size * 0.5, this.size, this.size);
 
 				this.ctx.restore();
 			}
@@ -1266,7 +1248,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		else {
 			// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 			if (!this.dead) {
-				this.ctx.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
+				this.ctx.drawImage(this.image, this.x, this.y, this.size, this.size); //render
 			}
 		}
 
@@ -1303,7 +1285,7 @@ function boss(x, y, speed, direction, hull, image) {
 	particle.call(this, x, y, speed, direction);
 
 	this.hull = hull;
-	this.image = image;
+	this.image = game.images[image];
 	this.size = 200*dtSize;
 	this.hit = false;
 	this.hitTimer = 0; 
@@ -1364,8 +1346,8 @@ function boss(x, y, speed, direction, hull, image) {
 			// (x, y, speed, direction, power, image)
 			if (this.bulletTimer1 % this.bulletDivision1 == 1){
 				this.bulletTimer1 = 1;				
-				game.enemyBullets.push(new enemyBullet(this.x, this.y + this.size*0.6, 50, this.bulletDirection, 1, 20));			
-				game.enemyBullets.push(new enemyBullet(this.x + this.size, this.y + this.size*0.6, 50, this.bulletDirection, 1, 20));			
+				game.enemyBullets.push(new enemyBullet(this.x, this.y + this.size*0.6, 50, this.bulletDirection, 1, 'missile.png'));			
+				game.enemyBullets.push(new enemyBullet(this.x + this.size, this.y + this.size*0.6, 50, this.bulletDirection, 1, 'missile.png'));			
 			}
 		
 			// homing missiles, sort of
@@ -1375,8 +1357,8 @@ function boss(x, y, speed, direction, hull, image) {
 				this.bulletTimer2 = 1; //resetting our timer
 				bulletX = this.x + this.size*0.48;
 				bulletY = this.y + this.size;
-			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 1.5, 2));
-			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 1.5, 2));				
+			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 1.5, 'laser.png'));
+			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 1.5, 'laser.png'));				
 			}
 
 		
@@ -1402,7 +1384,7 @@ function boss(x, y, speed, direction, hull, image) {
 		game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
 		if (!this.dead) {
-				game.contextEnemies.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
+				game.contextEnemies.drawImage(this.image, this.x, this.y, this.size, this.size); //render
 		}		
 
 		// if (this.hit) {
@@ -1437,21 +1419,14 @@ function enemyBullet(x, y, speed, direction, power, image) {
 	this.image = image; 
 	this.dead = false;
 	this.deadTime = 60;
-	this.frameWidth = 64;
-	this.frameHeight = 64;
-	this.startFrame = 0;
-	this.endFrame = 2;
-	this.frameSpeed = 5;
-	this.animationSequence = [];  // array holding the order of the animation
-	this.currentFrame = 0;        // the current frame to draw
-	this.counter = 0;
-	this.fpr = Math.floor(game.images[this.image].width / this.frameWidth); //Sprite FramesperRow
-	this.image = image;
 	this.friction = 1.02;
 	this.dtSet = false;
 	this.ctx = game.contextEnemies;
+	this.sprite = new sprite(this.image, this.size, 64, 64, 0, 2, 5, this.ctx);
 
-	this.update = function(){ // Replacing the default 'update' method
+	this.update = function()
+	{ 	
+		// Replacing the default 'update' method
 		if (dt !== 0 && !this.dtSet){
 			this.vx = Math.cos(direction) * (speed*dt);
 			this.vy = Math.sin(direction) * (speed*dt);
@@ -1461,22 +1436,6 @@ function enemyBullet(x, y, speed, direction, power, image) {
 		this.vy *= this.friction;
 		this.x += this.vx;
 		this.y += this.vy;
-
-		// create the sequence of frame numbers for the animation
-		for (this.FrameNum = this.startFrame; this.FrameNum <= this.endFrame; this.FrameNum++){
-			this.animationSequence.push(this.FrameNum);
-		}
-
-		// update to the next frame if it is time
-		if (this.counter == (this.frameSpeed - 1)) {
-			this.currentFrame = (this.currentFrame + 1) % this.animationSequence.length;
-		}
-
-		// update the counter
-		this.counter = (this.counter + 1) % this.frameSpeed;
-
-		this.spriteRow = Math.floor(this.animationSequence[this.currentFrame] / this.fpr);
-		this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
 
 	};
 	
@@ -1497,12 +1456,7 @@ function enemyBullet(x, y, speed, direction, power, image) {
 			this.ctx.translate(this.x, this.y);
 			this.ctx.rotate(direction - Math.PI/2);
 
-			this.ctx.drawImage(
-				game.images[this.image],
-				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
-				this.frameWidth, this.frameHeight,
-				-this.size/2, -this.size/2,
-				this.size, this.size);
+			this.sprite.draw(-this.size/2, -this.size/2, true); //-this.size/2 because we're rotating ctx
 			
 			this.ctx.restore();
 
@@ -1525,13 +1479,13 @@ function loot(x, y) {
 
 	switch(this.type) {
     case 'health':
-        this.image = 0;
+        this.image = 'fighter.png';
         break;
     case 'laser':
-        this.image = 2;
+        this.image = 'laser.png';
         break;
     case 'missile':
-        this.image = 20;
+        this.image = 'missile.png';
 	}
 	this.context = game.contextPlayer;
 
@@ -1571,7 +1525,7 @@ function loot(x, y) {
 	};
 
 	this.draw = function() {
-		game.contextPlayer.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
+		// game.contextPlayer.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
 		if (!this.dead) {			
 			game.contextPlayer.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render			
@@ -1652,6 +1606,9 @@ function ui() {
 	this.enBarVol = game.width*0.2;	
 	this.hangarShipSize = game.height*0.03;
 	this.level = game.level;
+	this.hangarImg = 'fighter.png';
+	this.enPointImg = 'energypoint.png'; // jshint ignore:line
+	this.enContainerImg = 'energybar.png';// jshint ignore:line
 
 	this.updateLevel = function() {
 		this.level = game.level;
@@ -1684,7 +1641,7 @@ function ui() {
 	this.updateEnergy = function() {		
 		this.hull = playerShip.hull > 0 ? playerShip.hull*game.width*0.02 : 0;
 		game.contextText.clearRect(this.width*0.55, this.height*0.2, this.enBarVol, this.enBarHeight);	
-		game.contextText.drawImage(game.images[26], this.width*0.55, this.height*0.18, this.hull, this.enBarHeight);		
+		game.contextText.drawImage(game.images[this.enPointImg], this.width*0.55, this.height*0.18, this.hull, this.enBarHeight);		
 	};
 
 	this.updateHangar = function() {
@@ -1692,13 +1649,13 @@ function ui() {
 		game.contextText.clearRect(this.width*0.83, this.height*0.2, this.hangarShipSize*3, this.hangarShipSize);		
 		for (i = 0; i < this.hangar; i++){
 			//printing lives
-			game.contextText.drawImage(game.images[0], this.width*0.82 + (this.width * 0.05 * i) , this.height*0.2, this.hangarShipSize, this.hangarShipSize);
+			game.contextText.drawImage(game.images[this.hangarImg], this.width*0.82 + (this.width * 0.05 * i) , this.height*0.2, this.hangarShipSize, this.hangarShipSize);
 		}
 	};
 
 	this.updateAll = function() {
 		game.contextText.clearRect(0, 0, this.width, this.height*1.5);
-		game.contextText.drawImage(game.images[25], this.width*0.5, -this.height*0.1, this.enContainerWidth, this.enContainerHeight);
+		game.contextText.drawImage(game.images[this.enContainerImg], this.width*0.5, -this.height*0.1, this.enContainerWidth, this.enContainerHeight);
 		this.updateLevel();
 		this.updateScore();
 		this.updateSound();
@@ -1711,10 +1668,12 @@ function ui() {
 gameUI = new ui();
 function lights() {
 
-	this.backgroundAlpha = 0; //starting our game with a black screen
-	this.enemiesAlpha = 0; //starting our game with a black screen
-	this.playerAlpha = 0; //starting our game with a black screen
-	this.textAlpha = 0; //starting our game with a black screen
+	//starting our game with a black screen
+	this.backgroundAlpha = 0;
+	this.enemiesAlpha = 0;
+	this.playerAlpha = 0;
+	this.textAlpha = 0;
+	
 	this.alphaDelta = 0.01; //the speed of fade in/out 
 
 	this.on = function(ctx)
@@ -2212,6 +2171,26 @@ function transition()
 		}	
 	};
 
+	this.load = function()
+	{
+		if (game.lvlIntro)
+		{
+			gameTransition.lvlIntro();
+		}
+		else if (game.lvlStart)
+		{
+			gameTransition.lvlStart();
+		}
+		else if (game.levelComplete)
+		{
+			gameTransition.lvlComplete();
+		}
+		else if (game.gameOver)
+		{
+			gameTransition.gameOver();
+		}
+	};
+
 	this.reset = function()
 	{
 		this.keyframe0 = true;
@@ -2311,7 +2290,8 @@ gameTransition = new transition();
 		function update(){
 			//////////////////////// 
 			// Init
-			///////////////////////	
+			///////////////////////
+			clrCanvas();	
 
 			//obtaining an average deltaTime
 			if(dtTimer <= 30){
@@ -2338,10 +2318,8 @@ gameTransition = new transition();
 			// console.log(game.seconds);
 
 
-			game.contextEnemies.clearRect(0, 0, game.width, game.height); //clear trails						
-			game.contextPlayer.clearRect(0, 0, game.width, game.height); //clear trails
-			playerShip.update();
-			playerShip.draw();
+
+			playerShip.load();
 
 
 			//////////////////////// 
@@ -2350,7 +2328,6 @@ gameTransition = new transition();
 
 			// addStars(1);		
 
-			game.contextBackground.clearRect(0, 0, game.width, game.height); //clear trails
 			gameBackground.load();
 
 
@@ -2380,38 +2357,27 @@ gameTransition = new transition();
 			// TRANSITIONS
 			////////////////////////////////////////////////////////////////////////////////
 			
-			if (game.lvlIntro)
-			{
-				gameTransition.lvlIntro();
-			}
-			else if (game.lvlStart)
-			{
-				gameTransition.lvlStart();
-			}
-			else if (game.levelComplete)
-			{
-				gameTransition.lvlComplete();
-			}
-			else if (game.gameOver)
-			{
-				gameTransition.gameOver();
-			}
-	
-			
+			gameTransition.load();			
 
 			///////////////////////////////////
 			// Player bullets
 			///////////////////////////////////
-			if (game.playerBullets.length >= 1) {
-				for (var k in game.playerBullets){
-					
-					if (!game.playerBullets[k].dead) {
+			if (game.playerBullets.length >= 1)
+			{
+				for (var k in game.playerBullets)
+				{					
+					if (!game.playerBullets[k].dead)
+					{
 						game.playerBullets[k].update();					
 						game.playerBullets[k].draw();
 					}
-					
-					if (game.playerBullets[k].dead || game.playerBullets[k].x > game.width + game.playerBullets[k].size || game.playerBullets[k].x < 0 - game.playerBullets[k].size || game.playerBullets[k].y > game.height + game.playerBullets[k].size || game.playerBullets[k].y < 0 - 30){
-						game.playerBullets.splice(k,1);
+				}
+
+				for (var r in game.playerBullets)
+				{					
+					if (game.playerBullets[r].dead || game.playerBullets[r].x > game.width + game.playerBullets[r].size || game.playerBullets[r].x < 0 - game.playerBullets[r].size || game.playerBullets[r].y > game.height + game.playerBullets[r].size || game.playerBullets[r].y < 0 - 30)
+					{
+						game.playerBullets.splice(r,1);
 					}
 				}
 			}
@@ -2614,16 +2580,20 @@ gameTransition = new transition();
 			// Enemy Bullets
 			///////////////////////////////////
 
-			if (game.enemyBullets.length >= 1) {
+			if (game.enemyBullets.length >= 1)
+			{
+
 				for (var z in game.enemyBullets){
 					game.enemyBullets[z].update();
 					game.enemyBullets[z].draw();
+				}
 
-
-					if (Collision(game.enemyBullets[z], playerShip) && !playerShip.imune && !game.gameOver){ //
+				for (var d in game.enemyBullets)
+				{
+					if (Collision(game.enemyBullets[d], playerShip) && !playerShip.imune && !game.gameOver){ //
 						// if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}							
 									// game.contextEnemies.clearRect(game.playerBullets[p].x, game.playerBullets[p].y, game.playerBullets[p].size, game.playerBullets[p].size*1.8);								
-						playerShip.hull -= game.enemyBullets[z].power;
+						playerShip.hull -= game.enemyBullets[d].power;
 						gameUI.updateEnergy();	
 						playerShip.hit = true;	
 						// Xplode(playerShip.x, playerShip.y);
@@ -2632,13 +2602,16 @@ gameTransition = new transition();
 						// 		Xplode(game.player.x, game.player.y);
 								// PlayerDie();
 						// 	}
-						game.enemyBullets[z].dead = true;
-					}
-
-					if(game.enemyBullets[z].dead || game.enemyBullets[z].x > game.width + game.enemyBullets[z].size || game.enemyBullets[z].x < 0 - game.enemyBullets[z].size || game.enemyBullets[z].y > game.height + game.enemyBullets[z].size || game.enemyBullets[z].y < 0 - 30){
-						game.enemyBullets.splice(z,1);
+						game.enemyBullets[d].dead = true;
 					}
 				}
+
+				for (var w in game.enemyBullets){
+					if(game.enemyBullets[w].dead || game.enemyBullets[w].x > game.width + game.enemyBullets[w].size || game.enemyBullets[w].x < 0 - game.enemyBullets[w].size || game.enemyBullets[w].y > game.height + game.enemyBullets[w].size || game.enemyBullets[w].y < 0 - 30){
+						game.enemyBullets.splice(w,1);
+					}
+				}
+				
 			}
 
 			///////////////////////////////////
@@ -2654,7 +2627,7 @@ gameTransition = new transition();
 
 				for(var p in game.explosions){
 
-					if (game.explosions[p].currentFrame == 19){
+					if (game.explosions[p].sprite.currentFrame == game.explosions[p].sprite.endFrame){
 						game.explosions.splice(p,1);
 					}
 				}
@@ -2679,38 +2652,38 @@ function lvl1() {
 			// enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate)
 
 			if (game.seconds == 1) {
-			    game.waves.push(new enemyWave('left', game.width*0.3, 1, 'pawn', 1, 300, 1, 0, true));
+			    game.waves.push(new enemyWave('left', game.width*0.3, 'sectoid.png', 'pawn', 1, 300, 1, 0));
 			}
 			if (game.seconds == 1) {
-			    game.waves.push(new enemyWave('right', game.width*0.3, 1, 'pawn', 1, 250, 1, 0, true));
+			    game.waves.push(new enemyWave('right', game.width*0.3, 'sectoid.png', 'pawn', 1, 250, 1, 0));
 			}
 			if (game.seconds == 3) {
-			    game.waves.push(new enemyWave('left', game.height*0.5, 1, 'pawn', 1, 250, 1, 0, true));		
+			    game.waves.push(new enemyWave('left', game.height*0.5, 'sectoid.png', 'pawn', 1, 250, 1, 0));		
 			}
 			if (game.seconds == 3) {
-			    game.waves.push(new enemyWave('right', game.height*0.5, 1, 'pawn', 1, 300, 1, 0, true));		
+			    game.waves.push(new enemyWave('right', game.height*0.5, 'sectoid.png', 'pawn', 1, 300, 1, 0));		
 			}
 
 			if (game.seconds == 5) {
-			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));		
+			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));		
 			}
 			if (game.seconds == 7) {
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 22, 1));
+			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 'alienbase1.png', 1));
 			}
 			if (game.seconds == 8) {
-			    game.waves.push(new enemyWave('left', game.height*0.3, 1, 'pawn', 4, 250, 1, 2, true));
+			    game.waves.push(new enemyWave('left', game.height*0.3, 'sectoid.png', 'pawn', 4, 250, 1, 2));
 			}
 			if (game.seconds == 9) {
-			    game.waves.push(new enemyWave('right', game.height*0.2, 1, 'pawn', 3, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('right', game.height*0.2, 'sectoid.png', 'pawn', 3, 300, 1, 2));
 			}			
 			if (game.seconds == 10) {
-			    game.waves.push(new enemyWave('top', game.width*0.5, 1, 'pawn', 6, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('top', game.width*0.5, 'sectoid.png', 'pawn', 6, 300, 1, 2));
 			}
 			if (game.seconds == 11) {
-			    game.waves.push(new enemyWave('top', game.width*0.7, 1, 'pawn', 4, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('top', game.width*0.7, 'sectoid.png', 'pawn', 4, 300, 1, 2));
 			}
 			if (game.seconds == 12) {
-			    game.waves.push(new enemyWave('left', game.height*0.2, 1, 'pawn', 3, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('left', game.height*0.2, 'sectoid.png', 'pawn', 3, 300, 1, 2));
 			}
 			if (game.seconds == 13) {
 				if(game.music){
@@ -2718,71 +2691,71 @@ function lvl1() {
 					game.songs[1].play();
 					game.songs[1].loop = true;
 				}
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 23, 1));				
+			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 'alienbase2.png', 1));				
 			}
 			if (game.seconds == 15) {
-			    game.waves.push(new enemyWave('top', game.width*0.2, 1, 'pawn', 2, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('top', game.width*0.2, 'sectoid.png', 'pawn', 2, 300, 1, 2));
 			}
 			if (game.seconds == 16) {
-			    game.waves.push(new enemyWave('top', game.width*0.4, 1, 'pawn', 3, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('top', game.width*0.4, 'sectoid.png', 'pawn', 3, 300, 1, 2));
 			}
 			if (game.seconds == 17) {
-			    game.waves.push(new enemyWave('top', game.width*0.6, 1, 'pawn', 4, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('top', game.width*0.6, 'sectoid.png', 'pawn', 4, 300, 1, 2));
 			}
 			if (game.seconds == 18) {
-			    game.waves.push(new enemyWave('top', game.width*0.8, 1, 'pawn', 5, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('top', game.width*0.8, 'sectoid.png', 'pawn', 5, 300, 1, 2));
 			}
 			if (game.seconds == 22) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('top', game.width*0.3, 'sectoid.png', 'pawn', 4, 300, 1, 2));
 			}
 			if (game.seconds == 25) {
-			    game.waves.push(new enemyWave('left', game.width*0.4, 1, 'pawn', 4, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('left', game.width*0.4, 'sectoid.png', 'pawn', 4, 300, 1, 2));
 			}
 			if (game.seconds == 27) {
-			    game.waves.push(new enemyWave('right', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('right', game.width*0.3, 'sectoid.png', 'pawn', 4, 300, 1, 2));
 			}
 			if (game.seconds == 30) {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 1, 'pawn', 4, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('top', game.width*0.3, 'sectoid.png', 'pawn', 4, 300, 1, 2));
 			}
 			if (game.seconds == 33) {
-			    game.waves.push(new enemyWave('top', game.width*0.6, 1, 'pawn', 4, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('top', game.width*0.6, 'sectoid.png', 'pawn', 4, 300, 1, 2));
 			}
 			if (game.seconds == 35) {
-			    game.waves.push(new enemyWave('right', game.width*0.2, 1, 'pawn', 4, 300, 1, 2, true));
+			    game.waves.push(new enemyWave('right', game.width*0.2, 'sectoid.png', 'pawn', 4, 300, 1, 2));
 			}
 			if (game.seconds == 37) {
-			    game.enemies.push(new enemy(game.width * 0.2, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			    game.enemies.push(new enemy(game.width * 0.2, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			}
 			if (game.seconds == 38) {
-			    game.enemies.push(new enemy(game.width * 0.4, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			    game.enemies.push(new enemy(game.width * 0.4, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			}
 			if (game.seconds == 39) {
-			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			}
 			if (game.seconds == 40) {
-			    game.enemies.push(new enemy(game.width * 0.8, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			    game.enemies.push(new enemy(game.width * 0.8, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			}
 			if (game.seconds == 41) {
-			    game.enemies.push(new enemy(game.width * 0.5, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			    game.enemies.push(new enemy(game.width * 0.5, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			}			
 			if (game.seconds == 42) {
-			    game.enemies.push(new enemy(game.width * 0.2, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			    game.enemies.push(new enemy(game.width * 0.2, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			}
 			if (game.seconds == 43) {
-			    game.enemies.push(new enemy(game.width * 0.4, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			    game.enemies.push(new enemy(game.width * 0.4, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			}
 			if (game.seconds == 44) {
-			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			}
 			if (game.seconds == 45) {
-			    game.enemies.push(new enemy(game.width * 0.8, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 24, 2));
+			    game.enemies.push(new enemy(game.width * 0.8, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			}
 			if (game.seconds > 50 && game.enemies.length === 0 && !game.bossDead) {
 				if (game.music) {
 					game.songs.push(new Audio("_sounds/_lvl1/boss.mp3"));
 					game.songs[2].play();
 				}
-			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 100, 27));
+			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 100, 'sectoidBoss.png'));
 			}
 			//boss(x, y, speed, direction, hull, image)
 }
@@ -2882,6 +2855,11 @@ function lvl1() {
 		// 		});
 		// 	}
 		// }
+		function clrCanvas(){
+			game.contextBackground.clearRect(0, 0, game.width, game.height); 
+			game.contextPlayer.clearRect(0, 0, game.width, game.height); 
+			game.contextEnemies.clearRect(0, 0, game.width, game.height);
+		}
 
 		function resetGame(){
 			gameLights.off('all');
@@ -2899,13 +2877,11 @@ function lvl1() {
 			// game.left = false;
 			// game.down = false;
 			// game.enshootTimer = game.enfullShootTimer;
-			game.contextBackground.clearRect(0, 0, game.width, game.height); 
-			game.contextPlayer.clearRect(0, 0, game.width, game.height); 
-			game.contextEnemies.clearRect(0, 0, game.width, game.height); 
-			game.contextText.clearRect(0, 0, game.width, game.height); 
+
 			// game.projectiles = [];
 			// game.enprojectiles = [];
-			// game.enemies = [];							
+			// game.enemies = [];
+			clrCanvas();							
 			playerShip.reset();
 			gameUI.updateAll();
 			game.background = [];
@@ -2957,79 +2933,6 @@ function lvl1() {
 
 		}
 
-		// function Xplode(xpos,ypos){ 
-		// 	game.explosions.push({
-		// 		x: xpos,
-		// 		y: ypos,
-		// 		frameWidth: 96,
-		// 		frameHeight: 96,
-		// 		size: game.height*0.07,
-		// 		startFrame: 0,
-		// 		endFrame: 19,
-		// 		frameSpeed: 2,
-		// 		animationSequence: [],  // array holding the order of the animation
-		// 		currentFrame: 0,        // the current frame to draw
-		// 		counter: 0,             // keep track of frame rate
-		// 		image: 3
-		// 	});
-		// 	if (game.soundStatus == "ON"){game.enemyexplodeSound.play();}
-		// }
-
-		// function addBullet(){ //add bullet function will be triggered every time space is pressed
-		// 	game.projectiles.push({
-		// 		x: playerShip.x + playerShip.size*0.40,
-		// 		y: playerShip.y - playerShip.bulletspeed*1.8,
-		// 		size: game.height*0.022,
-		// 		frameWidth: 48,
-		// 		frameHeight: 48,
-		// 		startFrame: 0,
-		// 		endFrame: 11,
-		// 		frameSpeed: 4,
-		// 		animationSequence: [],  // array holding the order of the animation
-		// 		currentFrame: 0,        // the current frame to draw
-		// 		counter: 0,             // keep track of frame rate
-		// 		image: 2
-
-		// 	});
-		// }
-
-		// function addEnBullet(){ //add bullet function will be triggered every few seconds
-		// 	xEn = game.enemies.length;
-		// 	pEn = (xEn < 2) ? 0 : Math.floor(Math.random()*((xEn-1)+1)); //a random number between 0 and the maximum array index (xEn-1)
-
-		// 	game.enprojectiles.push({
-		// 		x: game.enemies[pEn].x + game.enemies[pEn].size*0.42,
-		// 		y: game.enemies[pEn].y + game.enemies[pEn].size,
-		// 		size: game.height*0.035,
-		// 		frameWidth: 64,
-		// 		frameHeight: 64,
-		// 		startFrame: 0,
-		// 		endFrame: 2,
-		// 		frameSpeed: 5,
-		// 		animationSequence: [],  // array holding the order of the animation
-		// 		currentFrame: 0,        // the current frame to draw
-		// 		counter: 0,
-		// 		image: 20
-		// 	});
-		// }
-		
-		// function scores(){ 
-		// 	game.contextText.fillStyle = "#FFD455";
-		// 	game.contextText.font = game.height*0.025 + "px helvetica";
-		// 	game.contextText.clearRect(0, 0, game.width, game.height*0.1);
-		// 	game.contextText.fillText("Level: " + game.level, game.height*0.03, game.height*0.04); //printing level
-		// 	game.contextText.fillText("Score: " + game.score, game.height*0.15, game.height*0.04); //printing the score
-		// 	game.soundStatus = (game.sound) ? "ON" : "OFF";
-		// 	if (!navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-		// 		game.contextText.fillText("Sound(F8): " + game.soundStatus, game.width - (game.height*0.45), game.height*0.04); //printing lives
-		// 	}
-		// 	game.contextText.fillText("Hangar: ", game.width - (game.height*0.22), game.height*0.04); 
-		// 	for (i = 0; i < game.lives; i++){
-		// 		//printing lives
-		// 		game.contextText.drawImage(game.images[0], ((i * game.height*0.03)+game.width - (game.height*0.12)), game.height*0.015, game.height*0.035, game.height*0.035);
-		// 	}
-
-		// }
 
 
 		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
@@ -3069,261 +2972,7 @@ function lvl1() {
 				first.y + first.size < second.y);
 		}
 
-
-		// function PlayerDie()
-		// {
-		// 	if (game.soundStatus == "ON"){game.playerexplodeSound.play();}
-		// 	game.player.crashed = true;
-		// 	game.gameOver = true;
-		// 	game.paused = true;
-		// 	game.lives--;
-		// 	game.score = game.score - game.levelScore;
-		// 	scores();
-		// 	game.contextPlayer.font = "bold " + game.width*0.08 + "px " + game.font;
-		// 	game.contextPlayer.fillStyle = "#FF7F00";
-		// 	game.contextPlayer.fillText("Game Over", game.width*0.30, game.height*0.42);
-		// 	game.contextPlayer.font = "bold " + game.width*0.06 + "px " + game.font;
-		// 	game.contextPlayer.fillText(game.score + " enemy ships destroyed", game.width*0.19, game.height*0.52);
-		// 	game.contextPlayer.font = "bold " + game.width*0.04 + "px " + game.font;
-		// 	game.contextPlayer.fillStyle = "white";
-		// 	if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-		// 		game.contextPlayer.fillText("Tap screen to restart", game.width*0.30, game.height*0.62);
-		// 	} else {
-		// 		game.contextPlayer.fillText("Press Enter or LMB to restart", game.width*0.23, game.height*0.62);
-		// 	}
-
-		// 	message('Game Over', 1,  'Helvetica', game.width*0.06, '#FFD455', 'bold'); 
-		// 	message(game.score + ' enemy ships destroyed', 2, 'Helvetica', game.width*0.05, '#FFD455', 'bold');
-		// 	if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-		// 	message('Tap screen to restart', 3, 'Helvetica', game.width*0.04, 'white', 'bold'); 
-		// 	} else {
-		// 	message('Press ENTER or LMB to restart', 3, 'Helvetica', game.width*0.04, 'white', 'bold');
-		// 	}
-
-		// 	if (game.soundStatus == "ON") {
-		// 		game.sounds.push(new Audio("_sounds/death.mp3"));
-		// 	}
-
-		// 	game.levelScore = 0;
-		// 	playerShip.lives = 3;
-
-		// }
-
-
-		// function fade(light, ctx) //game transitions
-		// {			
-		// 	light = light;
-		// 	ctx = ctx;
-
-		// 	if (light === 'in')
-		// 	{
-		// 		switch (ctx)
-		// 		{					
-		// 			case 'background':
-		// 				if (game.backgroundAlpha < 1)
-		// 				{				
-		// 					game.backgroundAlpha += game.alphaDelta;
-		// 				}
-		// 				else if (game.backgroundAlpha >= 1)
-		// 				{
-		// 					game.contextBackground.globalAlpha = 1;
-		// 					game.backgroundFaded = false;
-		// 				}
-
-		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;												
-		// 			break;
 		
-		// 			case 'enemies':
-		// 				if (game.enemiesAlpha < 1)
-		// 				{				
-		// 					game.enemiesAlpha += game.alphaDelta;
-		// 				}
-		// 				else if (game.enemiesApha >= 1)
-		// 				{
-		// 					game.contextEnemies.globalAlpha = 1;
-		// 					game.enemiesFaded = false;
-		// 				}
-
-		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;	
-		// 			break;
-				
-		// 			case 'player':
-		// 				if (game.playerAlpha < 1)
-		// 				{				
-		// 					game.playerAlpha += game.alphaDelta;
-		// 				}
-		// 				else if (game.playerAlpha >= 1)
-		// 				{
-		// 					game.contextPlayer.globalAlpha = 1;
-		// 					game.playerFaded = false;
-		// 				}
-
-		// 				game.contextPlayer.globalAlpha = game.playerAlpha;						
-		// 			break;
-				
-		// 			case 'text':
-		// 			if (game.textAlpha < 1)
-		// 				{				
-		// 					game.textAlpha += game.alphaDelta;
-		// 				}
-		// 				else if (game.textAlpha >= 1)
-		// 				{
-		// 					game.contextText.globalAlpha = 1;
-		// 					game.textFaded = false;
-		// 				}
-
-		// 				game.contextText.globalAlpha = game.textAlpha;	
-		// 			break;
-
-		// 			case 'all':	
-		// 				if (game.backgroundAlpha < 1 || game.enemiesAlpha < 1 || game.playerAlpha < 1 || game.textAlpha < 1 )
-		// 				{	
-		// 					game.backgroundAlpha += game.alphaDelta;
-		// 					game.enemiesAlpha += game.alphaDelta;
-		// 					game.playerAlpha += game.alphaDelta;			
-		// 					game.textAlpha += game.alphaDelta;
-		// 				}
-		// 				else if (game.backgroundAlpha >= 1 && game.enemiesAlpha >= 1 && game.playerAlpha >= 1 && game.textAlpha >= 1)
-		// 				{
-		// 					game.contextBackground.globalAlpha = 1;
-		// 					game.contextEnemies.globalAlpha = 1;
-		// 					game.contextPlayer.globalAlpha = 1;
-		// 					game.contextText.globalAlpha = 1;
-		// 					game.textFaded = false;
-		// 					game.enemiesFaded = false;
-		// 					game.playerFaded = false;
-		// 					game.textFaded = false;
-		// 					game.faded = false;
-		// 				}
-
-		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;
-		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;
-		// 				game.contextPlayer.globalAlpha = game.playerAlpha;
-		// 				game.contextText.globalAlpha = game.textAlpha;
-		// 			break;
-		// 		}				 
-		// 	}		
-		// 	if (light === 'out')
-		// 	{
-		// 		switch (ctx)
-		// 		{					
-		// 			case 'background':
-		// 				if (game.backgroundAlpha > 0)
-		// 				{				
-		// 					game.backgroundAlpha -= game.alphaDelta;
-		// 				}
-		// 				else if (game.backgroundAlpha <= 0)
-		// 				{
-		// 					game.contextBackground.globalAlpha = 0;
-		// 					game.backgroundFaded = true;
-		// 				}
-
-		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;													
-		// 			break;
-		
-		// 			case 'enemies':
-		// 				if (game.enemiesAlpha > 0)
-		// 				{				
-		// 					game.enemiesAlpha -= game.alphaDelta;
-		// 				}
-		// 				else if (game.enemiesApha <= 0)
-		// 				{
-		// 					game.contextEnemies.globalAlpha = 0;
-		// 					game.enemiesFaded = true;
-		// 				}
-
-		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;		
-		// 			break;
-				
-		// 			case 'player':
-		// 				if (game.playerAlpha > 0)
-		// 				{				
-		// 					game.playerAlpha -= game.alphaDelta;
-		// 				}
-		// 				else if (game.playerAlpha <= 0)
-		// 				{
-		// 					game.contextPlayer.globalAlpha = 0;
-		// 					game.playerFaded = true;
-		// 				}
-
-		// 				game.contextPlayer.globalAlpha = game.playerAlpha;						
-		// 			break;
-				
-		// 			case 'text':
-		// 				if (game.textAlpha > 0)
-		// 				{				
-		// 					game.textAlpha -= game.alphaDelta;
-		// 				}
-		// 				else if (game.textAlpha <= 0)
-		// 				{
-		// 					game.contextText.globalAlpha = 0;
-		// 					game.textFaded = true;
-		// 				}
-
-		// 				game.contextText.globalAlpha = game.textAlpha;
-		// 			break;
-
-		// 			case 'all':	
-		// 				if (game.backgroundAlpha > 0 || game.enemiesAlpha > 0 || game.playerAlpha > 0 || game.textAlpha > 0 )
-		// 				{	
-		// 					game.backgroundAlpha -= game.alphaDelta;
-		// 					game.enemiesAlpha -= game.alphaDelta;
-		// 					game.playerAlpha -= game.alphaDelta;			
-		// 					game.textAlpha -= game.alphaDelta;
-		// 				}
-		// 				else if (game.backgroundAlpha <= 0 && game.enemiesAlpha <= 0 && game.playerAlpha <= 0 && game.textAlpha <= 0)
-		// 				{
-		// 					game.contextBackground.globalAlpha = 0;
-		// 					game.contextEnemies.globalAlpha = 0;
-		// 					game.contextPlayer.globalAlpha = 0;
-		// 					game.contextText.globalAlpha = 0;
-		// 					game.textFaded = true;
-		// 					game.enemiesFaded = true;
-		// 					game.playerFaded = true;
-		// 					game.textFaded = true;
-		// 					game.faded = true;
-		// 				}
-
-		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;
-		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;
-		// 				game.contextPlayer.globalAlpha = game.playerAlpha;
-		// 				game.contextText.globalAlpha = game.textAlpha;
-		// 			break;
-		// 		}	
-		// 	}	
-		// }		
-
-			// if (ctx == 'all')
-			// {
-		 //    	game.contextBackground.globalAlpha = game.alpha;
-			// 	game.contextEnemies.globalAlpha = game.alpha;
-			// 	game.contextPlayer.globalAlpha = game.alpha;
-			// 	game.contextText.globalAlpha = game.alpha;
-			// }
-			// else
-			// {
-			// 	switch (ctx)
-			// 	{
-			// 		case 'background':
-			// 		game.contextBackground.globalAlpha = game.backgroundAlpha;
-			// 		break;
-		
-			// 		case 'enemies':
-			// 		game.contextEnemies.globalAlpha = game.enemiesAlpha;
-			// 		break;
-				
-			// 		case 'player':
-			// 		game.contextPlayer.globalAlpha = game.playerAlpha;
-			// 		break;
-				
-			// 		case 'text':
-			// 		game.contextText.globalAlpha = game.textAlpha;
-			// 		break;
-			// 	}
-			// }
-		 
-
-
 
 		//messages
 		function message(message, row, font, fontSize, fontColor, fontWeight) {
@@ -3380,13 +3029,20 @@ function lvl1() {
 		//====================== Images engine =================//
 		
 		function initImages(paths) { //our images engine: passing the array 'paths' to the function
-			game.requiredImages = paths.length;  //the number of required images will be equal to the length of the paths array
-			for(var i in paths){
+			game.requiredImages = paths.length; //the number of required images will be equal to the length of the paths array
+			for(var i in paths)
+			{
 				var img = new Image(); //defining img as a new image
 				img.src = paths[i]; //defining new image src as paths[i]
-				game.images[i] = img; //defining game.image[i] as a new image (with paths)
+
+				var imgIndex = img.src.split("/").pop(); //obtaining file name from path
+				// var imgIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
+
+				game.images[imgIndex] = img; //defining game.image[index] as a new image (with paths)
+
 				/*jshint -W083 */
-				game.images[i].onload = function(){  //once an image loads..
+				game.images[imgIndex].onload = function()
+				{ //once an image loads..
 					game.doneImages++; //  ..increment the doneImages variable by 1
 				};
 			}
@@ -3404,10 +3060,15 @@ function lvl1() {
 		}
 			
 		initImages([	//using initimages function to load our images
+			//Level backgrounds
+			"_img/_dist/background/level1.jpg",
+			
+			//UI
+			"_img/_dist/ui/energybar.png",			
+			"_img/_dist/ui/energypoint.png",
+			
+			//Player
 			"_img/_dist/fighter/fighter.png",
-			"_img/_dist/enemies/sectoid.png",
-			"_img/_dist/laser.png",
-			"_img/_dist/explosion.png",
 			"_img/_dist/fighter/fighter_right1.png",
 			"_img/_dist/fighter/fighter_right2.png",
 			"_img/_dist/fighter/fighter_right3.png",
@@ -3418,23 +3079,26 @@ function lvl1() {
 			"_img/_dist/fighter/fighter_left3.png",
 			"_img/_dist/fighter/fighter_left4.png",
 			"_img/_dist/fighter/fighter_left5.png",
-			"_img/_dist/stars/star1.png",
-			"_img/_dist/stars/star2.png",
-			"_img/_dist/stars/star3.png",
-			"_img/_dist/stars/star4.png",
-			"_img/_dist/stars/star5.png",
-			"_img/_dist/stars/star6.png",
-			"_img/_dist/missile.png",
-			"_img/_dist/background/level_1.jpg",
-			"_img/_dist/enemies/_alienbase/alienbase1.png",			
-			"_img/_dist/enemies/_alienbase/alienbase2.png",			
+			
+			//Enemies
+			////Pawns
+			"_img/_dist/enemies/sectoid.png",
+			////Minibosses
 			"_img/_dist/enemies/_miniboss/floater.png",			
-			"_img/_dist/ui/energyBar.png",			
-			"_img/_dist/ui/energyPoint.png",			
+			////Enemy Bases
+			"_img/_dist/enemies/_alienbase/alienbase1.png",			
+			"_img/_dist/enemies/_alienbase/alienbase2.png",
+			////Big bosses
 			"_img/_dist/enemies/_bigboss/sectoidBoss.png",			
+			
+			//Projectiles
+			"_img/_dist/laser.png",
+			"_img/_dist/missile.png",
+			"_img/_dist/explosion.png",						
 		]);
 		
 		checkImages(); //this function call starts our game
+		
 	/* jshint ignore:start */
 	});
 })();

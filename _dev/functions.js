@@ -94,6 +94,11 @@
 		// 		});
 		// 	}
 		// }
+		function clrCanvas(){
+			game.contextBackground.clearRect(0, 0, game.width, game.height); 
+			game.contextPlayer.clearRect(0, 0, game.width, game.height); 
+			game.contextEnemies.clearRect(0, 0, game.width, game.height);
+		}
 
 		function resetGame(){
 			gameLights.off('all');
@@ -111,13 +116,11 @@
 			// game.left = false;
 			// game.down = false;
 			// game.enshootTimer = game.enfullShootTimer;
-			game.contextBackground.clearRect(0, 0, game.width, game.height); 
-			game.contextPlayer.clearRect(0, 0, game.width, game.height); 
-			game.contextEnemies.clearRect(0, 0, game.width, game.height); 
-			game.contextText.clearRect(0, 0, game.width, game.height); 
+
 			// game.projectiles = [];
 			// game.enprojectiles = [];
-			// game.enemies = [];							
+			// game.enemies = [];
+			clrCanvas();							
 			playerShip.reset();
 			gameUI.updateAll();
 			game.background = [];
@@ -169,79 +172,6 @@
 
 		}
 
-		// function Xplode(xpos,ypos){ 
-		// 	game.explosions.push({
-		// 		x: xpos,
-		// 		y: ypos,
-		// 		frameWidth: 96,
-		// 		frameHeight: 96,
-		// 		size: game.height*0.07,
-		// 		startFrame: 0,
-		// 		endFrame: 19,
-		// 		frameSpeed: 2,
-		// 		animationSequence: [],  // array holding the order of the animation
-		// 		currentFrame: 0,        // the current frame to draw
-		// 		counter: 0,             // keep track of frame rate
-		// 		image: 3
-		// 	});
-		// 	if (game.soundStatus == "ON"){game.enemyexplodeSound.play();}
-		// }
-
-		// function addBullet(){ //add bullet function will be triggered every time space is pressed
-		// 	game.projectiles.push({
-		// 		x: playerShip.x + playerShip.size*0.40,
-		// 		y: playerShip.y - playerShip.bulletspeed*1.8,
-		// 		size: game.height*0.022,
-		// 		frameWidth: 48,
-		// 		frameHeight: 48,
-		// 		startFrame: 0,
-		// 		endFrame: 11,
-		// 		frameSpeed: 4,
-		// 		animationSequence: [],  // array holding the order of the animation
-		// 		currentFrame: 0,        // the current frame to draw
-		// 		counter: 0,             // keep track of frame rate
-		// 		image: 2
-
-		// 	});
-		// }
-
-		// function addEnBullet(){ //add bullet function will be triggered every few seconds
-		// 	xEn = game.enemies.length;
-		// 	pEn = (xEn < 2) ? 0 : Math.floor(Math.random()*((xEn-1)+1)); //a random number between 0 and the maximum array index (xEn-1)
-
-		// 	game.enprojectiles.push({
-		// 		x: game.enemies[pEn].x + game.enemies[pEn].size*0.42,
-		// 		y: game.enemies[pEn].y + game.enemies[pEn].size,
-		// 		size: game.height*0.035,
-		// 		frameWidth: 64,
-		// 		frameHeight: 64,
-		// 		startFrame: 0,
-		// 		endFrame: 2,
-		// 		frameSpeed: 5,
-		// 		animationSequence: [],  // array holding the order of the animation
-		// 		currentFrame: 0,        // the current frame to draw
-		// 		counter: 0,
-		// 		image: 20
-		// 	});
-		// }
-		
-		// function scores(){ 
-		// 	game.contextText.fillStyle = "#FFD455";
-		// 	game.contextText.font = game.height*0.025 + "px helvetica";
-		// 	game.contextText.clearRect(0, 0, game.width, game.height*0.1);
-		// 	game.contextText.fillText("Level: " + game.level, game.height*0.03, game.height*0.04); //printing level
-		// 	game.contextText.fillText("Score: " + game.score, game.height*0.15, game.height*0.04); //printing the score
-		// 	game.soundStatus = (game.sound) ? "ON" : "OFF";
-		// 	if (!navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-		// 		game.contextText.fillText("Sound(F8): " + game.soundStatus, game.width - (game.height*0.45), game.height*0.04); //printing lives
-		// 	}
-		// 	game.contextText.fillText("Hangar: ", game.width - (game.height*0.22), game.height*0.04); 
-		// 	for (i = 0; i < game.lives; i++){
-		// 		//printing lives
-		// 		game.contextText.drawImage(game.images[0], ((i * game.height*0.03)+game.width - (game.height*0.12)), game.height*0.015, game.height*0.035, game.height*0.035);
-		// 	}
-
-		// }
 
 
 		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
@@ -281,261 +211,7 @@
 				first.y + first.size < second.y);
 		}
 
-
-		// function PlayerDie()
-		// {
-		// 	if (game.soundStatus == "ON"){game.playerexplodeSound.play();}
-		// 	game.player.crashed = true;
-		// 	game.gameOver = true;
-		// 	game.paused = true;
-		// 	game.lives--;
-		// 	game.score = game.score - game.levelScore;
-		// 	scores();
-		// 	game.contextPlayer.font = "bold " + game.width*0.08 + "px " + game.font;
-		// 	game.contextPlayer.fillStyle = "#FF7F00";
-		// 	game.contextPlayer.fillText("Game Over", game.width*0.30, game.height*0.42);
-		// 	game.contextPlayer.font = "bold " + game.width*0.06 + "px " + game.font;
-		// 	game.contextPlayer.fillText(game.score + " enemy ships destroyed", game.width*0.19, game.height*0.52);
-		// 	game.contextPlayer.font = "bold " + game.width*0.04 + "px " + game.font;
-		// 	game.contextPlayer.fillStyle = "white";
-		// 	if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-		// 		game.contextPlayer.fillText("Tap screen to restart", game.width*0.30, game.height*0.62);
-		// 	} else {
-		// 		game.contextPlayer.fillText("Press Enter or LMB to restart", game.width*0.23, game.height*0.62);
-		// 	}
-
-		// 	message('Game Over', 1,  'Helvetica', game.width*0.06, '#FFD455', 'bold'); 
-		// 	message(game.score + ' enemy ships destroyed', 2, 'Helvetica', game.width*0.05, '#FFD455', 'bold');
-		// 	if (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
-		// 	message('Tap screen to restart', 3, 'Helvetica', game.width*0.04, 'white', 'bold'); 
-		// 	} else {
-		// 	message('Press ENTER or LMB to restart', 3, 'Helvetica', game.width*0.04, 'white', 'bold');
-		// 	}
-
-		// 	if (game.soundStatus == "ON") {
-		// 		game.sounds.push(new Audio("_sounds/death.mp3"));
-		// 	}
-
-		// 	game.levelScore = 0;
-		// 	playerShip.lives = 3;
-
-		// }
-
-
-		// function fade(light, ctx) //game transitions
-		// {			
-		// 	light = light;
-		// 	ctx = ctx;
-
-		// 	if (light === 'in')
-		// 	{
-		// 		switch (ctx)
-		// 		{					
-		// 			case 'background':
-		// 				if (game.backgroundAlpha < 1)
-		// 				{				
-		// 					game.backgroundAlpha += game.alphaDelta;
-		// 				}
-		// 				else if (game.backgroundAlpha >= 1)
-		// 				{
-		// 					game.contextBackground.globalAlpha = 1;
-		// 					game.backgroundFaded = false;
-		// 				}
-
-		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;												
-		// 			break;
 		
-		// 			case 'enemies':
-		// 				if (game.enemiesAlpha < 1)
-		// 				{				
-		// 					game.enemiesAlpha += game.alphaDelta;
-		// 				}
-		// 				else if (game.enemiesApha >= 1)
-		// 				{
-		// 					game.contextEnemies.globalAlpha = 1;
-		// 					game.enemiesFaded = false;
-		// 				}
-
-		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;	
-		// 			break;
-				
-		// 			case 'player':
-		// 				if (game.playerAlpha < 1)
-		// 				{				
-		// 					game.playerAlpha += game.alphaDelta;
-		// 				}
-		// 				else if (game.playerAlpha >= 1)
-		// 				{
-		// 					game.contextPlayer.globalAlpha = 1;
-		// 					game.playerFaded = false;
-		// 				}
-
-		// 				game.contextPlayer.globalAlpha = game.playerAlpha;						
-		// 			break;
-				
-		// 			case 'text':
-		// 			if (game.textAlpha < 1)
-		// 				{				
-		// 					game.textAlpha += game.alphaDelta;
-		// 				}
-		// 				else if (game.textAlpha >= 1)
-		// 				{
-		// 					game.contextText.globalAlpha = 1;
-		// 					game.textFaded = false;
-		// 				}
-
-		// 				game.contextText.globalAlpha = game.textAlpha;	
-		// 			break;
-
-		// 			case 'all':	
-		// 				if (game.backgroundAlpha < 1 || game.enemiesAlpha < 1 || game.playerAlpha < 1 || game.textAlpha < 1 )
-		// 				{	
-		// 					game.backgroundAlpha += game.alphaDelta;
-		// 					game.enemiesAlpha += game.alphaDelta;
-		// 					game.playerAlpha += game.alphaDelta;			
-		// 					game.textAlpha += game.alphaDelta;
-		// 				}
-		// 				else if (game.backgroundAlpha >= 1 && game.enemiesAlpha >= 1 && game.playerAlpha >= 1 && game.textAlpha >= 1)
-		// 				{
-		// 					game.contextBackground.globalAlpha = 1;
-		// 					game.contextEnemies.globalAlpha = 1;
-		// 					game.contextPlayer.globalAlpha = 1;
-		// 					game.contextText.globalAlpha = 1;
-		// 					game.textFaded = false;
-		// 					game.enemiesFaded = false;
-		// 					game.playerFaded = false;
-		// 					game.textFaded = false;
-		// 					game.faded = false;
-		// 				}
-
-		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;
-		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;
-		// 				game.contextPlayer.globalAlpha = game.playerAlpha;
-		// 				game.contextText.globalAlpha = game.textAlpha;
-		// 			break;
-		// 		}				 
-		// 	}		
-		// 	if (light === 'out')
-		// 	{
-		// 		switch (ctx)
-		// 		{					
-		// 			case 'background':
-		// 				if (game.backgroundAlpha > 0)
-		// 				{				
-		// 					game.backgroundAlpha -= game.alphaDelta;
-		// 				}
-		// 				else if (game.backgroundAlpha <= 0)
-		// 				{
-		// 					game.contextBackground.globalAlpha = 0;
-		// 					game.backgroundFaded = true;
-		// 				}
-
-		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;													
-		// 			break;
-		
-		// 			case 'enemies':
-		// 				if (game.enemiesAlpha > 0)
-		// 				{				
-		// 					game.enemiesAlpha -= game.alphaDelta;
-		// 				}
-		// 				else if (game.enemiesApha <= 0)
-		// 				{
-		// 					game.contextEnemies.globalAlpha = 0;
-		// 					game.enemiesFaded = true;
-		// 				}
-
-		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;		
-		// 			break;
-				
-		// 			case 'player':
-		// 				if (game.playerAlpha > 0)
-		// 				{				
-		// 					game.playerAlpha -= game.alphaDelta;
-		// 				}
-		// 				else if (game.playerAlpha <= 0)
-		// 				{
-		// 					game.contextPlayer.globalAlpha = 0;
-		// 					game.playerFaded = true;
-		// 				}
-
-		// 				game.contextPlayer.globalAlpha = game.playerAlpha;						
-		// 			break;
-				
-		// 			case 'text':
-		// 				if (game.textAlpha > 0)
-		// 				{				
-		// 					game.textAlpha -= game.alphaDelta;
-		// 				}
-		// 				else if (game.textAlpha <= 0)
-		// 				{
-		// 					game.contextText.globalAlpha = 0;
-		// 					game.textFaded = true;
-		// 				}
-
-		// 				game.contextText.globalAlpha = game.textAlpha;
-		// 			break;
-
-		// 			case 'all':	
-		// 				if (game.backgroundAlpha > 0 || game.enemiesAlpha > 0 || game.playerAlpha > 0 || game.textAlpha > 0 )
-		// 				{	
-		// 					game.backgroundAlpha -= game.alphaDelta;
-		// 					game.enemiesAlpha -= game.alphaDelta;
-		// 					game.playerAlpha -= game.alphaDelta;			
-		// 					game.textAlpha -= game.alphaDelta;
-		// 				}
-		// 				else if (game.backgroundAlpha <= 0 && game.enemiesAlpha <= 0 && game.playerAlpha <= 0 && game.textAlpha <= 0)
-		// 				{
-		// 					game.contextBackground.globalAlpha = 0;
-		// 					game.contextEnemies.globalAlpha = 0;
-		// 					game.contextPlayer.globalAlpha = 0;
-		// 					game.contextText.globalAlpha = 0;
-		// 					game.textFaded = true;
-		// 					game.enemiesFaded = true;
-		// 					game.playerFaded = true;
-		// 					game.textFaded = true;
-		// 					game.faded = true;
-		// 				}
-
-		// 				game.contextBackground.globalAlpha = game.backgroundAlpha;
-		// 				game.contextEnemies.globalAlpha = game.enemiesAlpha;
-		// 				game.contextPlayer.globalAlpha = game.playerAlpha;
-		// 				game.contextText.globalAlpha = game.textAlpha;
-		// 			break;
-		// 		}	
-		// 	}	
-		// }		
-
-			// if (ctx == 'all')
-			// {
-		 //    	game.contextBackground.globalAlpha = game.alpha;
-			// 	game.contextEnemies.globalAlpha = game.alpha;
-			// 	game.contextPlayer.globalAlpha = game.alpha;
-			// 	game.contextText.globalAlpha = game.alpha;
-			// }
-			// else
-			// {
-			// 	switch (ctx)
-			// 	{
-			// 		case 'background':
-			// 		game.contextBackground.globalAlpha = game.backgroundAlpha;
-			// 		break;
-		
-			// 		case 'enemies':
-			// 		game.contextEnemies.globalAlpha = game.enemiesAlpha;
-			// 		break;
-				
-			// 		case 'player':
-			// 		game.contextPlayer.globalAlpha = game.playerAlpha;
-			// 		break;
-				
-			// 		case 'text':
-			// 		game.contextText.globalAlpha = game.textAlpha;
-			// 		break;
-			// 	}
-			// }
-		 
-
-
 
 		//messages
 		function message(message, row, font, fontSize, fontColor, fontWeight) {
@@ -592,13 +268,20 @@
 		//====================== Images engine =================//
 		
 		function initImages(paths) { //our images engine: passing the array 'paths' to the function
-			game.requiredImages = paths.length;  //the number of required images will be equal to the length of the paths array
-			for(var i in paths){
+			game.requiredImages = paths.length; //the number of required images will be equal to the length of the paths array
+			for(var i in paths)
+			{
 				var img = new Image(); //defining img as a new image
 				img.src = paths[i]; //defining new image src as paths[i]
-				game.images[i] = img; //defining game.image[i] as a new image (with paths)
+
+				var imgIndex = img.src.split("/").pop(); //obtaining file name from path
+				// var imgIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
+
+				game.images[imgIndex] = img; //defining game.image[index] as a new image (with paths)
+
 				/*jshint -W083 */
-				game.images[i].onload = function(){  //once an image loads..
+				game.images[imgIndex].onload = function()
+				{ //once an image loads..
 					game.doneImages++; //  ..increment the doneImages variable by 1
 				};
 			}
@@ -616,10 +299,15 @@
 		}
 			
 		initImages([	//using initimages function to load our images
+			//Level backgrounds
+			"_img/_dist/background/level1.jpg",
+			
+			//UI
+			"_img/_dist/ui/energybar.png",			
+			"_img/_dist/ui/energypoint.png",
+			
+			//Player
 			"_img/_dist/fighter/fighter.png",
-			"_img/_dist/enemies/sectoid.png",
-			"_img/_dist/laser.png",
-			"_img/_dist/explosion.png",
 			"_img/_dist/fighter/fighter_right1.png",
 			"_img/_dist/fighter/fighter_right2.png",
 			"_img/_dist/fighter/fighter_right3.png",
@@ -630,23 +318,26 @@
 			"_img/_dist/fighter/fighter_left3.png",
 			"_img/_dist/fighter/fighter_left4.png",
 			"_img/_dist/fighter/fighter_left5.png",
-			"_img/_dist/stars/star1.png",
-			"_img/_dist/stars/star2.png",
-			"_img/_dist/stars/star3.png",
-			"_img/_dist/stars/star4.png",
-			"_img/_dist/stars/star5.png",
-			"_img/_dist/stars/star6.png",
-			"_img/_dist/missile.png",
-			"_img/_dist/background/level_1.jpg",
-			"_img/_dist/enemies/_alienbase/alienbase1.png",			
-			"_img/_dist/enemies/_alienbase/alienbase2.png",			
+			
+			//Enemies
+			////Pawns
+			"_img/_dist/enemies/sectoid.png",
+			////Minibosses
 			"_img/_dist/enemies/_miniboss/floater.png",			
-			"_img/_dist/ui/energyBar.png",			
-			"_img/_dist/ui/energyPoint.png",			
+			////Enemy Bases
+			"_img/_dist/enemies/_alienbase/alienbase1.png",			
+			"_img/_dist/enemies/_alienbase/alienbase2.png",
+			////Big bosses
 			"_img/_dist/enemies/_bigboss/sectoidBoss.png",			
+			
+			//Projectiles
+			"_img/_dist/laser.png",
+			"_img/_dist/missile.png",
+			"_img/_dist/explosion.png",						
 		]);
 		
 		checkImages(); //this function call starts our game
+		
 	/* jshint ignore:start */
 	});
 })();

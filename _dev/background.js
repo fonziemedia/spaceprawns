@@ -7,7 +7,7 @@ function background(speed, image, section) {
 	this.height = (game.width * (16 / 9)) * 4 ;
 	this.x = 0;
 	this.y = (this.section === 0) ? -(this.height-game.height) : this.y = -(this.height);
-	this.image = 20 + game.level; //the image before all background images, these need to be consecutive in order for this to work	;
+	this.image = 'level' + game.level + '.jpg'; //needs to be consecutive for this to work
 	this.limits = -game.height*0.02;
 
 	this.update = function() {

@@ -136,6 +136,26 @@ function transition()
 		}	
 	};
 
+	this.load = function()
+	{
+		if (game.lvlIntro)
+		{
+			gameTransition.lvlIntro();
+		}
+		else if (game.lvlStart)
+		{
+			gameTransition.lvlStart();
+		}
+		else if (game.levelComplete)
+		{
+			gameTransition.lvlComplete();
+		}
+		else if (game.gameOver)
+		{
+			gameTransition.gameOver();
+		}
+	};
+
 	this.reset = function()
 	{
 		this.keyframe0 = true;

@@ -11,13 +11,13 @@ function loot(x, y) {
 
 	switch(this.type) {
     case 'health':
-        this.image = 0;
+        this.image = 'fighter.png';
         break;
     case 'laser':
-        this.image = 2;
+        this.image = 'laser.png';
         break;
     case 'missile':
-        this.image = 20;
+        this.image = 'missile.png';
 	}
 	this.context = game.contextPlayer;
 
@@ -57,7 +57,7 @@ function loot(x, y) {
 	};
 
 	this.draw = function() {
-		game.contextPlayer.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
+		// game.contextPlayer.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
 		if (!this.dead) {			
 			game.contextPlayer.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render			

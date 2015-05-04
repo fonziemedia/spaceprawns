@@ -1,9 +1,11 @@
 function lights() {
 
-	this.backgroundAlpha = 0; //starting our game with a black screen
-	this.enemiesAlpha = 0; //starting our game with a black screen
-	this.playerAlpha = 0; //starting our game with a black screen
-	this.textAlpha = 0; //starting our game with a black screen
+	//starting our game with a black screen
+	this.backgroundAlpha = 0;
+	this.enemiesAlpha = 0;
+	this.playerAlpha = 0;
+	this.textAlpha = 0;
+	
 	this.alphaDelta = 0.01; //the speed of fade in/out 
 
 	this.on = function(ctx)

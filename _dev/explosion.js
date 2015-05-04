@@ -8,17 +8,10 @@ function explosion(x, y, speed, direction, size) {
 	this.hitTimer = 0; 
 	this.dead = false;
 	this.deadTime = 60;
-	this.image = 3;
-	this.frameWidth = 96;
-	this.frameHeight = 96;
-	this.startFrame = 0;
-	this.endFrame = 19;
-	this.frameSpeed = 2;
-	this.animationSequence = [];  // array holding the order of the animation
-	this.currentFrame = 0;        // the current frame to draw
-	this.counter = 0;
-	this.fpr = Math.floor(game.images[this.image].width / this.frameWidth);
+	this.image = 'explosion.png';
 	this.ctx = game.contextPlayer;
+	this.sprite = new sprite(this.image, this.size, 96, 96, 0, 19, 2, this.ctx);
+
 
 	// if (game.soundStatus == "ON"){game.enemyexplodeSound.play();}
 
@@ -32,37 +25,12 @@ function explosion(x, y, speed, direction, size) {
 		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
-
-
-		// create the sequence of frame numbers for the animation
-		for (this.FrameNum = this.startFrame; this.FrameNum <= this.endFrame; this.FrameNum++){
-			this.animationSequence.push(this.FrameNum);
-		}
-
-		// update to the next frame if it is time
-		if (this.counter == (this.frameSpeed - 1)) {
-			this.currentFrame = (this.currentFrame + 1) % this.animationSequence.length;
-		}
-
-		// update the counter
-		this.counter = (this.counter + 1) % this.frameSpeed;
-
-		this.spriteRow = Math.floor(this.animationSequence[this.currentFrame] / this.fpr);
-		this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
-
 	};
 
 	this.draw = function() {
 		// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
-		if (this.currentFrame <= 19){
-			this.ctx.drawImage(
-				game.images[this.image],
-				this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
-				this.frameWidth, this.frameHeight,
-				this.x, this.y,
-				this.size, this.size);
-		}
+		this.sprite.draw(this.x, this.y, false);
 
 	};
 }

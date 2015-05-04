@@ -82,8 +82,7 @@
 		dtTimer = 0;		
 		dtArray = [];
 		timeThen = new Date().getTime();
-
-		// res = 4*5; //check the 4th index every 5 frames
+		
 		
 		//====================== Game state ========================
 		
@@ -104,13 +103,6 @@
 		game.music = X_Music;	//on/off trigger
 		game.sounds = [];
 		game.songs = [];
-
-		// game.enemyexplodeSound = new Audio("_sounds/explosion.wav");
-		// game.playerexplodeSound = new Audio("_sounds/blast.mp3");
-		// game.shootSound = new Audio("_sounds/laser.wav");
-		// game.deathSound = new Audio("_sounds/death.mp3");
-		// game.winSound = new Audio("_sounds/victory.mp3");
-
 			
 		//======================== Images ========================		
 			
@@ -118,8 +110,7 @@
 		game.doneImages  = 0; // will contain how many images have been loaded
 		game.requiredImages = 0; // will contain how many images should be loaded
 		// game.font = (navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) ? "Helvetica" : "Monaco";
-		// game.res = 4*500; //check the 4th index every 5 frames
-
+		// game.res = 4*5; //check the 4th index every 5 frames
 		
 		//====================== Canvases + Images + responsiveness  ============================
 		
@@ -183,23 +174,12 @@
 			//delta size will keep the size of our objects proportional to the display
 			dtSize = game.height*0.001;
 			// console.log (dtSize);
-			
-			// game.player = {	//creating our player
-			// 	x: game.width*0.46,
-			// 	y: game.height*0.90,
-			// 	size: game.height*0.08,
-			// 	speed: X_PlayerSpeed,
-			// 	bulletspeed: X_BulletSpeed*game.height/1000,
-			// 	image: 0,
-			// 	rendered: false,
-			// 	crashed: false					
-			// };
+
 			
 			//the below needs width and height defined, thus we put it here	
 
 			//======================  Game settings =====================				
-			
-			
+						
 			game.enemySpeed = X_EnemySpeed * game.height/2500; //the enemies' speed
 			game.EnBulletSpeed = X_EnBulletSpeed * game.height/1000;
 

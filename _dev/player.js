@@ -9,7 +9,7 @@ function player(hull, fireRate) {
 	this.size = 100*dtSize;
 	this.hull = hull;
 	this.bulletspeed = X_BulletSpeed*game.height/1000;
-	this.image = 0;
+	this.image = 'fighter.png';
 	this.rendered = false;
 	this.hit = false;
 	this.hitTimer = 0;
@@ -29,7 +29,7 @@ function player(hull, fireRate) {
 
 	// bulletspeed: X_BulletSpeed*game.height/1000,
 
-	this.update = function() {
+	this.update = function() {		
 		// this.vx = Math.cos(this.direction) * (this.speed*dt);
 		// this.vy = Math.sin(this.direction) * (this.speed*dt);
 		// this.handleSprings();
@@ -39,7 +39,8 @@ function player(hull, fireRate) {
 		// this.vy += this.gravity;
 		// this.x += this.vx;
 		// this.y += this.vy;
-
+		this.playerImage = game.images[this.image];
+		
 		//////////////////////////////
 		//	Mouse and Touch controls
 		/////////////////////////////
@@ -89,28 +90,28 @@ function player(hull, fireRate) {
 				// console.log (moveY);
 				
 				if (moveRight1) {
-					this.image = 4;
+					this.image = 'fighter_right1.png';
 				} else if (moveRight2) {
-					this.image = 5;
+					this.image = 'fighter_right2.png';
 				} else if (moveRight3) {
-					this.image = 6;
+					this.image = 'fighter_right3.png';
 				} else if (moveRight4) {
-					this.image = 7;
+					this.image = 'fighter_right4.png';
 				} else if (moveRight5) {
-					this.image = 8;
+					this.image = 'fighter_right5.png';
 
 				} else if (moveLeft1) {
-					this.image = 9;
+					this.image = 'fighter_left1.png';
 				} else if (moveLeft2) {
-					this.image = 10;
+					this.image = 'fighter_left2.png';
 				} else if (moveLeft3) {
-					this.image = 11;
+					this.image = 'fighter_left3.png';
 				} else if (moveLeft4) {
-					this.image = 12;
+					this.image = 'fighter_left4.png';
 				} else if (moveLeft5) {
-					this.image = 13;
+					this.image = 'fighter_left5.png';
 				} else {
-					this.image = 0;	
+					this.image = 'fighter.png';	
 				}
 
 				this.rendered = false;				
@@ -123,7 +124,7 @@ function player(hull, fireRate) {
 					console.log (moveRight);*/
 		}
 		else if (!mouseIsDown && !game.gameOver) {
-			this.image = 0;
+			this.image = 'fighter.png';
 			this.rendered = false;
 		}
 
@@ -136,7 +137,7 @@ function player(hull, fireRate) {
 			if(this.x > 0){ // (keeping it within the boundaries of our canvas)				
 				this.speed = this.maxSpeed;
 				this.direction = Math.PI;				
-				this.image = 13;
+				this.image = 'fighter_left5.png';
 				this.rendered = false;
 				this.x -= this.speed*dt;
 			}
@@ -146,7 +147,7 @@ function player(hull, fireRate) {
 			if(this.x <= game.width - this.size){				
 				this.speed = this.maxSpeed;
 				this.direction = 0;
-				this.image = 8;
+				this.image = 'fighter_right5.png';
 				this.rendered = false;
 				this.x += this.speed*dt;
 			}
@@ -182,18 +183,18 @@ function player(hull, fireRate) {
 				// (x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame)
 				switch(this.laserLevel) {
 				    case 1:
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
 				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				        break;
 				    case 2:
-				    	game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));				
+				    	game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));				
 				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				        break;
 				    default:
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 2, 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
 				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				        break;
 				 }
@@ -202,16 +203,16 @@ function player(hull, fireRate) {
 				 	case 0:
 				 		break;
 				    case 1:
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
 						break;
 				    case 2:
-				    	game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
-						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+				    	game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
 						break;
 				    default:
-				        game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
-						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
-						game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 20, 64, 2));
+				        game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
 						break;										
 				 }				
 				// this.bulletTimer = 1; //resetting our timer
@@ -248,7 +249,7 @@ function player(hull, fireRate) {
 					this.dead = false;
 					this.x = game.width*0.46;
 					this.y = game.height*0.90;
-					this.image = 0;
+					this.image = 'fighter.png';
 					this.rendered = false;
 					this.hit = false;
 					this.hitTimer = 0;
@@ -293,7 +294,7 @@ function player(hull, fireRate) {
 				this.ctx.globalAlpha = 0.8;
 				if (this.imuneTimer >= 0 && this.imuneTimer < 15  || this.imuneTimer >= 20 && this.imuneTimer < 35 ||this.imuneTimer >= 40 && this.imuneTimer < 55 || this.imuneTimer >= 70 && this.imuneTimer < 75 || this.imuneTimer >= 90 && this.imuneTimer < 95 || this.imuneTimer >= 110 && this.imuneTimer < 115 || this.imuneTimer >= 130 && this.imuneTimer < 135 || this.imuneTimer >= 150 && this.imuneTimer < 155 || this.imuneTimer >= 160 && this.imuneTimer < 175 || this.imuneTimer > 180)
 				{
-					this.ctx.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //rendering
+					this.ctx.drawImage(this.playerImage, this.x, this.y, this.size, this.size); //rendering
 				}
 			}
 
@@ -305,7 +306,7 @@ function player(hull, fireRate) {
 						this.ctx.globalAlpha += 0.1;				
 				}
 
-				this.ctx.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //rendering
+				this.ctx.drawImage(this.playerImage, this.x, this.y, this.size, this.size); //rendering
 			}
 
 
@@ -339,12 +340,18 @@ function player(hull, fireRate) {
 			}
 		}
 	};
+
+	this.load = function()
+	{
+		this.update();
+		this.draw();
+	};
 	
 	this.reset = function() {
 		this.dead = false;
 		this.x = game.width*0.46;
 		this.y = game.height*0.90;
-		this.image = 0;
+		this.image = 'fighter.png';
 		this.hull = hull;
 		this.rendered = false;
 		this.hit = false;

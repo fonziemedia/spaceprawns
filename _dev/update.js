@@ -2,7 +2,8 @@
 		function update(){
 			//////////////////////// 
 			// Init
-			///////////////////////	
+			///////////////////////
+			clrCanvas();	
 
 			//obtaining an average deltaTime
 			if(dtTimer <= 30){
@@ -29,10 +30,8 @@
 			// console.log(game.seconds);
 
 
-			game.contextEnemies.clearRect(0, 0, game.width, game.height); //clear trails						
-			game.contextPlayer.clearRect(0, 0, game.width, game.height); //clear trails
-			playerShip.update();
-			playerShip.draw();
+
+			playerShip.load();
 
 
 			//////////////////////// 
@@ -41,7 +40,6 @@
 
 			// addStars(1);		
 
-			game.contextBackground.clearRect(0, 0, game.width, game.height); //clear trails
 			gameBackground.load();
 
 
@@ -71,38 +69,27 @@
 			// TRANSITIONS
 			////////////////////////////////////////////////////////////////////////////////
 			
-			if (game.lvlIntro)
-			{
-				gameTransition.lvlIntro();
-			}
-			else if (game.lvlStart)
-			{
-				gameTransition.lvlStart();
-			}
-			else if (game.levelComplete)
-			{
-				gameTransition.lvlComplete();
-			}
-			else if (game.gameOver)
-			{
-				gameTransition.gameOver();
-			}
-	
-			
+			gameTransition.load();			
 
 			///////////////////////////////////
 			// Player bullets
 			///////////////////////////////////
-			if (game.playerBullets.length >= 1) {
-				for (var k in game.playerBullets){
-					
-					if (!game.playerBullets[k].dead) {
+			if (game.playerBullets.length >= 1)
+			{
+				for (var k in game.playerBullets)
+				{					
+					if (!game.playerBullets[k].dead)
+					{
 						game.playerBullets[k].update();					
 						game.playerBullets[k].draw();
 					}
-					
-					if (game.playerBullets[k].dead || game.playerBullets[k].x > game.width + game.playerBullets[k].size || game.playerBullets[k].x < 0 - game.playerBullets[k].size || game.playerBullets[k].y > game.height + game.playerBullets[k].size || game.playerBullets[k].y < 0 - 30){
-						game.playerBullets.splice(k,1);
+				}
+
+				for (var r in game.playerBullets)
+				{					
+					if (game.playerBullets[r].dead || game.playerBullets[r].x > game.width + game.playerBullets[r].size || game.playerBullets[r].x < 0 - game.playerBullets[r].size || game.playerBullets[r].y > game.height + game.playerBullets[r].size || game.playerBullets[r].y < 0 - 30)
+					{
+						game.playerBullets.splice(r,1);
 					}
 				}
 			}
@@ -305,16 +292,20 @@
 			// Enemy Bullets
 			///////////////////////////////////
 
-			if (game.enemyBullets.length >= 1) {
+			if (game.enemyBullets.length >= 1)
+			{
+
 				for (var z in game.enemyBullets){
 					game.enemyBullets[z].update();
 					game.enemyBullets[z].draw();
+				}
 
-
-					if (Collision(game.enemyBullets[z], playerShip) && !playerShip.imune && !game.gameOver){ //
+				for (var d in game.enemyBullets)
+				{
+					if (Collision(game.enemyBullets[d], playerShip) && !playerShip.imune && !game.gameOver){ //
 						// if(game.soundStatus == "ON"){game.enemyexplodeSound.play();}							
 									// game.contextEnemies.clearRect(game.playerBullets[p].x, game.playerBullets[p].y, game.playerBullets[p].size, game.playerBullets[p].size*1.8);								
-						playerShip.hull -= game.enemyBullets[z].power;
+						playerShip.hull -= game.enemyBullets[d].power;
 						gameUI.updateEnergy();	
 						playerShip.hit = true;	
 						// Xplode(playerShip.x, playerShip.y);
@@ -323,13 +314,16 @@
 						// 		Xplode(game.player.x, game.player.y);
 								// PlayerDie();
 						// 	}
-						game.enemyBullets[z].dead = true;
-					}
-
-					if(game.enemyBullets[z].dead || game.enemyBullets[z].x > game.width + game.enemyBullets[z].size || game.enemyBullets[z].x < 0 - game.enemyBullets[z].size || game.enemyBullets[z].y > game.height + game.enemyBullets[z].size || game.enemyBullets[z].y < 0 - 30){
-						game.enemyBullets.splice(z,1);
+						game.enemyBullets[d].dead = true;
 					}
 				}
+
+				for (var w in game.enemyBullets){
+					if(game.enemyBullets[w].dead || game.enemyBullets[w].x > game.width + game.enemyBullets[w].size || game.enemyBullets[w].x < 0 - game.enemyBullets[w].size || game.enemyBullets[w].y > game.height + game.enemyBullets[w].size || game.enemyBullets[w].y < 0 - 30){
+						game.enemyBullets.splice(w,1);
+					}
+				}
+				
 			}
 
 			///////////////////////////////////
@@ -345,7 +339,7 @@
 
 				for(var p in game.explosions){
 
-					if (game.explosions[p].currentFrame == 19){
+					if (game.explosions[p].sprite.currentFrame == game.explosions[p].sprite.endFrame){
 						game.explosions.splice(p,1);
 					}
 				}

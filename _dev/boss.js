@@ -2,7 +2,7 @@ function boss(x, y, speed, direction, hull, image) {
 	particle.call(this, x, y, speed, direction);
 
 	this.hull = hull;
-	this.image = image;
+	this.image = game.images[image];
 	this.size = 200*dtSize;
 	this.hit = false;
 	this.hitTimer = 0; 
@@ -63,8 +63,8 @@ function boss(x, y, speed, direction, hull, image) {
 			// (x, y, speed, direction, power, image)
 			if (this.bulletTimer1 % this.bulletDivision1 == 1){
 				this.bulletTimer1 = 1;				
-				game.enemyBullets.push(new enemyBullet(this.x, this.y + this.size*0.6, 50, this.bulletDirection, 1, 20));			
-				game.enemyBullets.push(new enemyBullet(this.x + this.size, this.y + this.size*0.6, 50, this.bulletDirection, 1, 20));			
+				game.enemyBullets.push(new enemyBullet(this.x, this.y + this.size*0.6, 50, this.bulletDirection, 1, 'missile.png'));			
+				game.enemyBullets.push(new enemyBullet(this.x + this.size, this.y + this.size*0.6, 50, this.bulletDirection, 1, 'missile.png'));			
 			}
 		
 			// homing missiles, sort of
@@ -74,8 +74,8 @@ function boss(x, y, speed, direction, hull, image) {
 				this.bulletTimer2 = 1; //resetting our timer
 				bulletX = this.x + this.size*0.48;
 				bulletY = this.y + this.size;
-			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 1.5, 2));
-			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 1.5, 2));				
+			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 1.5, 'laser.png'));
+			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 1.5, 'laser.png'));				
 			}
 
 		
@@ -101,7 +101,7 @@ function boss(x, y, speed, direction, hull, image) {
 		game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
 		if (!this.dead) {
-				game.contextEnemies.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
+				game.contextEnemies.drawImage(this.image, this.x, this.y, this.size, this.size); //render
 		}		
 
 		// if (this.hit) {

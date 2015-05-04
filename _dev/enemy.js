@@ -15,7 +15,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			break;
 	}
 	this.hull = hull;
-	this.image = image;
+	this.image = game.images[image];
 	this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;
@@ -92,7 +92,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 				bulletX = this.x + this.size*0.42;
 				bulletY = this.y + this.size;
 				bulletDirection = this.angleTo(playerShip);
-				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 20));			
+				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 'missile.png'));			
 			}
 		}
 
@@ -123,7 +123,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 				this.ctx.rotate(this.rotation);
 
 				//draw image
-				this.ctx.drawImage(game.images[this.image], -this.size * 0.5, -this.size * 0.5, this.size, this.size);
+				this.ctx.drawImage(this.image, -this.size * 0.5, -this.size * 0.5, this.size, this.size);
 
 				this.ctx.restore();
 			}
@@ -131,7 +131,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		else {
 			// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 			if (!this.dead) {
-				this.ctx.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render
+				this.ctx.drawImage(this.image, this.x, this.y, this.size, this.size); //render
 			}
 		}
 

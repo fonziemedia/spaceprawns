@@ -8,6 +8,9 @@ function ui() {
 	this.enBarVol = game.width*0.2;	
 	this.hangarShipSize = game.height*0.03;
 	this.level = game.level;
+	this.hangarImg = 'fighter.png';
+	this.enPointImg = 'energypoint.png'; // jshint ignore:line
+	this.enContainerImg = 'energybar.png';// jshint ignore:line
 
 	this.updateLevel = function() {
 		this.level = game.level;
@@ -40,7 +43,7 @@ function ui() {
 	this.updateEnergy = function() {		
 		this.hull = playerShip.hull > 0 ? playerShip.hull*game.width*0.02 : 0;
 		game.contextText.clearRect(this.width*0.55, this.height*0.2, this.enBarVol, this.enBarHeight);	
-		game.contextText.drawImage(game.images[26], this.width*0.55, this.height*0.18, this.hull, this.enBarHeight);		
+		game.contextText.drawImage(game.images[this.enPointImg], this.width*0.55, this.height*0.18, this.hull, this.enBarHeight);		
 	};
 
 	this.updateHangar = function() {
@@ -48,13 +51,13 @@ function ui() {
 		game.contextText.clearRect(this.width*0.83, this.height*0.2, this.hangarShipSize*3, this.hangarShipSize);		
 		for (i = 0; i < this.hangar; i++){
 			//printing lives
-			game.contextText.drawImage(game.images[0], this.width*0.82 + (this.width * 0.05 * i) , this.height*0.2, this.hangarShipSize, this.hangarShipSize);
+			game.contextText.drawImage(game.images[this.hangarImg], this.width*0.82 + (this.width * 0.05 * i) , this.height*0.2, this.hangarShipSize, this.hangarShipSize);
 		}
 	};
 
 	this.updateAll = function() {
 		game.contextText.clearRect(0, 0, this.width, this.height*1.5);
-		game.contextText.drawImage(game.images[25], this.width*0.5, -this.height*0.1, this.enContainerWidth, this.enContainerHeight);
+		game.contextText.drawImage(game.images[this.enContainerImg], this.width*0.5, -this.height*0.1, this.enContainerWidth, this.enContainerHeight);
 		this.updateLevel();
 		this.updateScore();
 		this.updateSound();
