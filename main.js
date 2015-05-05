@@ -996,7 +996,7 @@ function player(hull, fireRate) {
 
 			if (this.hit && !this.imune) {
 				// this.hitTimer++;
-				if (game.isMobile) 
+				if (this.canVibrate) 
 				{
 					navigator.vibrate(30);
 				}
@@ -2621,7 +2621,7 @@ gameTransition = new transition();
 
 				for(var p in game.explosions){
 
-					if (game.explosions[p].sprite.currentFrame == game.explosions[p].sprite.endFrame){
+					if (game.explosions[p].sprite.currentFrame >= game.explosions[p].sprite.endFrame){
 						game.explosions.splice(p,1);
 					}
 				}
@@ -2776,6 +2776,8 @@ function lvl1() {
  
 
 		function initInput() {
+		document.body.addEventListener('touchstart', function(e){ e.preventDefault(); }); //prevent scrolling
+		document.body.addEventListener('touchmove', function(e){ e.preventDefault(); }); //prevent scrolling
         canvas = document.getElementById("textCanvas");
         ctx = canvas.getContext("2d");
 		         

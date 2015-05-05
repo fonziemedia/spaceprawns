@@ -21,6 +21,8 @@
  
 
 		function initInput() {
+		document.body.addEventListener('touchstart', function(e){ e.preventDefault(); }); //prevent scrolling
+		document.body.addEventListener('touchmove', function(e){ e.preventDefault(); }); //prevent scrolling
         canvas = document.getElementById("textCanvas");
         ctx = canvas.getContext("2d");
 		         

@@ -22,12 +22,6 @@ CACHE:
 _img/_dist/explosion.png
 _img/_dist/enemies/sectoid.png
 _img/_dist/laser.png
-_img/_dist/stars/star1.png
-_img/_dist/stars/star2.png
-_img/_dist/stars/star3.png
-_img/_dist/stars/star4.png
-_img/_dist/stars/star5.png
-_img/_dist/stars/star6.png
 _img/_dist/fighter/fighter.png
 _img/_dist/fighter/fighter_left1.png
 _img/_dist/fighter/fighter_left2.png
@@ -44,8 +38,8 @@ _img/_dist/background/level1.jpg
 _img/_dist/enemies/_alienbase/alienbase1.png			
 _img/_dist/enemies/_alienbase/alienbase2.png
 _img/_dist/enemies/_miniboss/floater.png			
-_img/_dist/ui/energyBar.png			
-_img/_dist/ui/energyPoint.png			
+_img/_dist/ui/energybar.png			
+_img/_dist/ui/energypoint.png			
 _img/_dist/enemies/_bigboss/sectoidBoss.png
 #SOUND
 _sounds/_sfx/hit.mp3

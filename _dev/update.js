@@ -339,7 +339,7 @@
 
 				for(var p in game.explosions){
 
-					if (game.explosions[p].sprite.currentFrame == game.explosions[p].sprite.endFrame){
+					if (game.explosions[p].sprite.currentFrame >= game.explosions[p].sprite.endFrame){
 						game.explosions.splice(p,1);
 					}
 				}

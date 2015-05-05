@@ -318,7 +318,7 @@ function player(hull, fireRate) {
 
 			if (this.hit && !this.imune) {
 				// this.hitTimer++;
-				if (game.isMobile) 
+				if (this.canVibrate) 
 				{
 					navigator.vibrate(30);
 				}
