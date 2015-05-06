@@ -12,66 +12,62 @@
 		
 		//mouse and touch screens
 		var canvas;
-		var ctx;
-		canvasX = playerShip.x;
-		canvasY = playerShip.y;
+		var canvasX = playerShip.x;
+		var canvasY = playerShip.y;
 		var mouseIsDown = 0;
-		moveX = canvasX;      //initial define of moveX as canvasX position
-		moveY = canvasY;      //initial define of moveX as canvasX position
+		var moveX = canvasX;      //initial define of moveX as canvasX position
+		var moveY = canvasY;      //initial define of moveX as canvasX position
  
 
-		function initInput() {
-		document.body.addEventListener('touchstart', function(e){ e.preventDefault(); }); //prevent scrolling
-		document.body.addEventListener('touchmove', function(e){ e.preventDefault(); }); //prevent scrolling
-        canvas = document.getElementById("textCanvas");
-        ctx = canvas.getContext("2d");
-		         
-        canvas.addEventListener("mousedown",mouseDown, false);
-        canvas.addEventListener("mouseup", mouseUp, false);        
-        canvas.addEventListener("mousemove",mouseXY, false);
+		function initInput()
+		{
+	        canvas = document.getElementById("textCanvas");
+			         
+	        canvas.addEventListener("mousedown",mouseDown, false);
+	        canvas.addEventListener("mouseup", mouseUp, false);        
+	        canvas.addEventListener("mousemove",mouseXY, false);
 
-        canvas.addEventListener("touchstart", touchDown, false);
-        canvas.addEventListener("touchend", touchUp, false);
-        canvas.addEventListener("touchcancel", touchUp, false);
-        canvas.addEventListener("touchleave", touchUp, false);
-		canvas.addEventListener("touchmove", touchXY, false);
+	        canvas.addEventListener("touchstart", touchDown, false);
+	        canvas.addEventListener("touchend", touchUp, false);
+	        canvas.addEventListener("touchcancel", touchUp, false);
+	        canvas.addEventListener("touchleave", touchUp, false);
+			canvas.addEventListener("touchmove", touchXY, false);
 		                
 		}
 		
 		
-		function mouseUp(e) {
-			if (e) {
-				e.preventDefault();
-				mouseIsDown = 0;
-				mouseXY();
-			}
+		function mouseUp(e)
+		{
+			e.preventDefault();
+			mouseIsDown = 0;
+			mouseXY();
 		}
 		 
-		function touchUp(e) {
-			if (e) {
-				e.preventDefault();
-				mouseIsDown = 0;
-			}
+		function touchUp(e)
+		{
+			e.preventDefault();
+			mouseIsDown = 0;
+			touchXY();
 		}
 		 
-		function mouseDown(e) {
-			if (e) {
-				e.preventDefault();
-				mouseIsDown = 1;
-				mouseXY();
-			}
+		function mouseDown(e)
+		{
+			e.preventDefault();
+			mouseIsDown = 1;
+			mouseXY();
 		}
 		  
-		function touchDown(e) {
-			if (e) {
-				e.preventDefault();
-				mouseIsDown = 1;
-				touchXY();
-			}
+		function touchDown(e)
+		{
+			e.preventDefault();
+			mouseIsDown = 1;
+			touchXY();
 		}
 		
-		function mouseXY(e) {
-			if (e) {
+		function mouseXY(e)
+		{
+			if (e)
+			{
 				e.preventDefault();
 				canvasX = e.pageX - canvas.offsetLeft;
 				canvasY = e.pageY - canvas.offsetTop;
@@ -79,7 +75,8 @@
 		}
 		 
 		function touchXY(e) {
-			if (e) {
+			if (e)
+			{
 				e.preventDefault();
 				canvasX = e.targetTouches[0].pageX - canvas.offsetLeft;
 				canvasY = e.targetTouches[0].pageY - canvas.offsetTop;

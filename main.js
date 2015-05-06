@@ -355,8 +355,13 @@ var particle = function(x, y, speed, direction, grav) {
 
 		}, false);
 
-		//start listening to mouse & touch events
-		window.addEventListener('load', initInput, false);
+		document.body.addEventListener('touchstart', function(e){ e.preventDefault(); }); //prevent scrolling
+		document.body.addEventListener('touchmove', function(e){ e.preventDefault(); }); //prevent scrolling
+		document.body.addEventListener('touchend', function(e){ e.preventDefault(); }); //prevent scrolling
+		document.body.addEventListener('touchcancel', function(e){ e.preventDefault(); }); //prevent scrolling
+		document.body.addEventListener('touchleave', function(e){ e.preventDefault(); }); //prevent scrolling
+
+		window.addEventListener('load', initInput, false); //start listening to mouse & touch events
 
 		
 		// /* Connect to XML */
@@ -459,23 +464,23 @@ var particle = function(x, y, speed, direction, grav) {
 		game.contextText = document.getElementById("textCanvas").getContext("2d");
 
 		//making our canvases dynamically resize according to the size of the browser window
-			
-		// LOOKS LIKE WE'RE DUPLICATING STUFF HERE - CHECK THIS LATER
 
-			//Get the canvas & context
+
+		//Get the canvas DOM elements
 		var c1 = $('#backgroundCanvas');
 		var c2 = $('#enemiesCanvas');
 		var c3 = $('#playerCanvas');
 		var c4 = $('#textCanvas');
-		var ct = c1.get(0).getContext('2d');
+
+		//get the canvases container (browser window size)
 		var container = $(c1).parent();
 
 		
-
 		//Run function when browser resizes
 		$(window).resize(respondCanvas);
 
-		function respondCanvas(){ 
+		function respondCanvas()
+		{ 
 
 			c1.attr('height', $(container).height()); //max height
 			c2.attr('height', $(container).height()); //max height
@@ -2750,66 +2755,62 @@ function lvl1() {
 		
 		//mouse and touch screens
 		var canvas;
-		var ctx;
-		canvasX = playerShip.x;
-		canvasY = playerShip.y;
+		var canvasX = playerShip.x;
+		var canvasY = playerShip.y;
 		var mouseIsDown = 0;
-		moveX = canvasX;      //initial define of moveX as canvasX position
-		moveY = canvasY;      //initial define of moveX as canvasX position
+		var moveX = canvasX;      //initial define of moveX as canvasX position
+		var moveY = canvasY;      //initial define of moveX as canvasX position
  
 
-		function initInput() {
-		document.body.addEventListener('touchstart', function(e){ e.preventDefault(); }); //prevent scrolling
-		document.body.addEventListener('touchmove', function(e){ e.preventDefault(); }); //prevent scrolling
-        canvas = document.getElementById("textCanvas");
-        ctx = canvas.getContext("2d");
-		         
-        canvas.addEventListener("mousedown",mouseDown, false);
-        canvas.addEventListener("mouseup", mouseUp, false);        
-        canvas.addEventListener("mousemove",mouseXY, false);
+		function initInput()
+		{
+	        canvas = document.getElementById("textCanvas");
+			         
+	        canvas.addEventListener("mousedown",mouseDown, false);
+	        canvas.addEventListener("mouseup", mouseUp, false);        
+	        canvas.addEventListener("mousemove",mouseXY, false);
 
-        canvas.addEventListener("touchstart", touchDown, false);
-        canvas.addEventListener("touchend", touchUp, false);
-        canvas.addEventListener("touchcancel", touchUp, false);
-        canvas.addEventListener("touchleave", touchUp, false);
-		canvas.addEventListener("touchmove", touchXY, false);
+	        canvas.addEventListener("touchstart", touchDown, false);
+	        canvas.addEventListener("touchend", touchUp, false);
+	        canvas.addEventListener("touchcancel", touchUp, false);
+	        canvas.addEventListener("touchleave", touchUp, false);
+			canvas.addEventListener("touchmove", touchXY, false);
 		                
 		}
 		
 		
-		function mouseUp(e) {
-			if (e) {
-				e.preventDefault();
-				mouseIsDown = 0;
-				mouseXY();
-			}
+		function mouseUp(e)
+		{
+			e.preventDefault();
+			mouseIsDown = 0;
+			mouseXY();
 		}
 		 
-		function touchUp(e) {
-			if (e) {
-				e.preventDefault();
-				mouseIsDown = 0;
-			}
+		function touchUp(e)
+		{
+			e.preventDefault();
+			mouseIsDown = 0;
+			touchXY();
 		}
 		 
-		function mouseDown(e) {
-			if (e) {
-				e.preventDefault();
-				mouseIsDown = 1;
-				mouseXY();
-			}
+		function mouseDown(e)
+		{
+			e.preventDefault();
+			mouseIsDown = 1;
+			mouseXY();
 		}
 		  
-		function touchDown(e) {
-			if (e) {
-				e.preventDefault();
-				mouseIsDown = 1;
-				touchXY();
-			}
+		function touchDown(e)
+		{
+			e.preventDefault();
+			mouseIsDown = 1;
+			touchXY();
 		}
 		
-		function mouseXY(e) {
-			if (e) {
+		function mouseXY(e)
+		{
+			if (e)
+			{
 				e.preventDefault();
 				canvasX = e.pageX - canvas.offsetLeft;
 				canvasY = e.pageY - canvas.offsetTop;
@@ -2817,7 +2818,8 @@ function lvl1() {
 		}
 		 
 		function touchXY(e) {
-			if (e) {
+			if (e)
+			{
 				e.preventDefault();
 				canvasX = e.targetTouches[0].pageX - canvas.offsetLeft;
 				canvasY = e.targetTouches[0].pageY - canvas.offsetTop;

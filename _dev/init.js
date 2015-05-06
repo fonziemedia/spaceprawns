@@ -17,8 +17,13 @@
 
 		}, false);
 
-		//start listening to mouse & touch events
-		window.addEventListener('load', initInput, false);
+		document.body.addEventListener('touchstart', function(e){ e.preventDefault(); }); //prevent scrolling
+		document.body.addEventListener('touchmove', function(e){ e.preventDefault(); }); //prevent scrolling
+		document.body.addEventListener('touchend', function(e){ e.preventDefault(); }); //prevent scrolling
+		document.body.addEventListener('touchcancel', function(e){ e.preventDefault(); }); //prevent scrolling
+		document.body.addEventListener('touchleave', function(e){ e.preventDefault(); }); //prevent scrolling
+
+		window.addEventListener('load', initInput, false); //start listening to mouse & touch events
 
 		
 		// /* Connect to XML */
@@ -121,23 +126,23 @@
 		game.contextText = document.getElementById("textCanvas").getContext("2d");
 
 		//making our canvases dynamically resize according to the size of the browser window
-			
-		// LOOKS LIKE WE'RE DUPLICATING STUFF HERE - CHECK THIS LATER
 
-			//Get the canvas & context
+
+		//Get the canvas DOM elements
 		var c1 = $('#backgroundCanvas');
 		var c2 = $('#enemiesCanvas');
 		var c3 = $('#playerCanvas');
 		var c4 = $('#textCanvas');
-		var ct = c1.get(0).getContext('2d');
+
+		//get the canvases container (browser window size)
 		var container = $(c1).parent();
 
 		
-
 		//Run function when browser resizes
 		$(window).resize(respondCanvas);
 
-		function respondCanvas(){ 
+		function respondCanvas()
+		{ 
 
 			c1.attr('height', $(container).height()); //max height
 			c2.attr('height', $(container).height()); //max height
