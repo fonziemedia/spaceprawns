@@ -1,11 +1,12 @@
 function text() {
 
-	this.font = 'Helvetica';
+	this.font = game.isMobile ? 'Monaco' : 'Helvetica';
 	this.fontWeight = 'bold';
 	this.fontColor0 = 'purple';
-	this.fontColor1 = '#FFD455';
+	this.fontColor1 = '#FFC619';
 	this.fontColor2 = '#FFFFFF';
 	this.levelBriefing = ['Outside the galaxy', 'The outer space', 'AlphaPI 2034' ];
+	this.introBackground = 'intro_bg.jpg';
 
 	// function message(message, row, font, fontSize, fontColor, fontWeight)
 
@@ -18,17 +19,18 @@ function text() {
 
 	this.gameIntro = function() {
 		game.contextText.clearRect(0, 0, game.width, game.height);
+		game.contextBackground.drawImage(game.images[this.introBackground], 0, 0, game.width, game.height);
 
-		message('10,000 AD', 1,  this.font, game.width*0.06, this.fontColor0, this.fontWeight); 
-		message('No one knew they were coming', 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
+		message('Space Prawns 2039', 1,  this.font, game.width*0.09, this.fontColor0, this.fontWeight); 
+		message('We invited, they came...', 2, this.font, game.width*0.07, this.fontColor1, this.fontWeight);
 
 		if (game.isMobile)
 		{
-			message('Tap screen to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
+			message('Tap screen to start', 3, this.font, game.width*0.06, this.fontColor2, this.fontWeight); 
 		}
 		else
 		{
-			message('Press ENTER or LMB to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight);
+			message('Press ENTER or LMB to start', 3, this.font, game.width*0.06, this.fontColor2, this.fontWeight);
 		}
 	};
 

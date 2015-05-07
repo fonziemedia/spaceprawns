@@ -361,8 +361,7 @@ var particle = function(x, y, speed, direction, grav) {
 		document.body.addEventListener('touchcancel', function(e){ e.preventDefault(); }); //prevent scrolling
 		document.body.addEventListener('touchleave', function(e){ e.preventDefault(); }); //prevent scrolling
 
-		window.addEventListener('load', initInput, false); //start listening to mouse & touch events
-
+		window.addEventListener('load', initInput(), false); //start listening to mouse & touch events
 		
 		// /* Connect to XML */
 		$.ajax({
@@ -594,7 +593,7 @@ function background(section) {
 	this.x = 0;
 	this.y = (this.section === 0) ? -(this.height-game.height) : this.y = -(this.height);
 	this.image = 'level' + game.level + '.jpg'; //needs to be consecutive for this to work
-	this.limits = -game.height*0.01; // *0.01 to disguise my bad image manipulation skills
+	this.limits = -game.height*0.02; // *0.02 because of speed and to disguise my bad image manipulation skills
 
 	this.update = function() {
 		this.y += this.speed;
@@ -1930,12 +1929,13 @@ function lights() {
 gameLights = new lights();
 function text() {
 
-	this.font = 'Helvetica';
+	this.font = game.isMobile ? 'Monaco' : 'Helvetica';
 	this.fontWeight = 'bold';
 	this.fontColor0 = 'purple';
-	this.fontColor1 = '#FFD455';
+	this.fontColor1 = '#FFC619';
 	this.fontColor2 = '#FFFFFF';
 	this.levelBriefing = ['Outside the galaxy', 'The outer space', 'AlphaPI 2034' ];
+	this.introBackground = 'intro_bg.jpg';
 
 	// function message(message, row, font, fontSize, fontColor, fontWeight)
 
@@ -1948,17 +1948,18 @@ function text() {
 
 	this.gameIntro = function() {
 		game.contextText.clearRect(0, 0, game.width, game.height);
+		game.contextBackground.drawImage(game.images[this.introBackground], 0, 0, game.width, game.height);
 
-		message('10,000 AD', 1,  this.font, game.width*0.06, this.fontColor0, this.fontWeight); 
-		message('No one knew they were coming', 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
+		message('Space Prawns 2039', 1,  this.font, game.width*0.09, this.fontColor0, this.fontWeight); 
+		message('We invited, they came...', 2, this.font, game.width*0.07, this.fontColor1, this.fontWeight);
 
 		if (game.isMobile)
 		{
-			message('Tap screen to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
+			message('Tap screen to start', 3, this.font, game.width*0.06, this.fontColor2, this.fontWeight); 
 		}
 		else
 		{
-			message('Press ENTER or LMB to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight);
+			message('Press ENTER or LMB to start', 3, this.font, game.width*0.06, this.fontColor2, this.fontWeight);
 		}
 	};
 
@@ -2742,7 +2743,33 @@ function lvl1() {
 			//boss(x, y, speed, direction, hull, image)
 }
 		//====================== Game functions =================//
+		
 
+		function toggleFullScreen()  //experimental   only works with user input
+ 		{
+		  if (!document.fullscreenElement &&    // alternative standard method
+		      !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
+		    if (document.documentElement.requestFullscreen) {
+		      document.documentElement.requestFullscreen();
+		    } else if (document.documentElement.msRequestFullscreen) {
+		      document.documentElement.msRequestFullscreen();
+		    } else if (document.documentElement.mozRequestFullScreen) {
+		      document.documentElement.mozRequestFullScreen();
+		    } else if (document.documentElement.webkitRequestFullscreen) {
+		      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+		    }
+		  } else {
+		    if (document.exitFullscreen) {
+		      document.exitFullscreen();
+		    } else if (document.msExitFullscreen) {
+		      document.msExitFullscreen();
+		    } else if (document.mozCancelFullScreen) {
+		      document.mozCancelFullScreen();
+		    } else if (document.webkitExitFullscreen) {
+		      document.webkitExitFullscreen();
+		    }
+		  }
+		}
 
 		//Keyboard		
 		$(document).keydown(function(e){    //using jquery to listen to pressed keys
@@ -2960,8 +2987,8 @@ function lvl1() {
 
 			var text = message;
 			var textLength = text.length;
-			var textWidth = textLength * fontSize/2;
-			var textHeight = game.height*0.1;
+			var textWidth = Math.round(textLength * (fontSize/2));
+			var textHeight = Math.round(game.height*0.1);
 			// this.color = fontColor;
 			// this.font = game.isMobile ? font : "Monaco";
 			// this.fontSize = fontSize;
@@ -2969,8 +2996,8 @@ function lvl1() {
 
 			// var x = (game.width - textWidth) *0.5;
 			// var y = (game.height - fontSize) *0.5;
-			var x = (game.width - textWidth) *0.5;
-			var y = (game.height/3.5) + (textHeight * row);
+			var x = Math.round((game.width - textWidth)*0.5);
+			var y = Math.round((game.height/3.5) + (textHeight * row));
 
 			// console.log (x, y);
 			// console.log (game.width);			
@@ -3041,7 +3068,8 @@ function lvl1() {
 		}
 			
 		initImages([	//using initimages function to load our images
-			//Level backgrounds
+			//backgrounds
+			"_img/_dist/background/intro_bg.jpg",
 			"_img/_dist/background/level1.jpg",
 			
 			//UI

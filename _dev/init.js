@@ -23,8 +23,7 @@
 		document.body.addEventListener('touchcancel', function(e){ e.preventDefault(); }); //prevent scrolling
 		document.body.addEventListener('touchleave', function(e){ e.preventDefault(); }); //prevent scrolling
 
-		window.addEventListener('load', initInput, false); //start listening to mouse & touch events
-
+		window.addEventListener('load', initInput(), false); //start listening to mouse & touch events
 		
 		// /* Connect to XML */
 		$.ajax({

@@ -7,7 +7,7 @@ function background(section) {
 	this.x = 0;
 	this.y = (this.section === 0) ? -(this.height-game.height) : this.y = -(this.height);
 	this.image = 'level' + game.level + '.jpg'; //needs to be consecutive for this to work
-	this.limits = -game.height*0.01; // *0.01 to disguise my bad image manipulation skills
+	this.limits = -game.height*0.02; // *0.02 because of speed and to disguise my bad image manipulation skills
 
 	this.update = function() {
 		this.y += this.speed;

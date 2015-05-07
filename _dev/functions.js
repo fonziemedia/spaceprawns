@@ -1,5 +1,31 @@
 		//====================== Game functions =================//
+		
 
+		function toggleFullScreen()  //experimental   only works with user input
+ 		{
+		  if (!document.fullscreenElement &&    // alternative standard method
+		      !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
+		    if (document.documentElement.requestFullscreen) {
+		      document.documentElement.requestFullscreen();
+		    } else if (document.documentElement.msRequestFullscreen) {
+		      document.documentElement.msRequestFullscreen();
+		    } else if (document.documentElement.mozRequestFullScreen) {
+		      document.documentElement.mozRequestFullScreen();
+		    } else if (document.documentElement.webkitRequestFullscreen) {
+		      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+		    }
+		  } else {
+		    if (document.exitFullscreen) {
+		      document.exitFullscreen();
+		    } else if (document.msExitFullscreen) {
+		      document.msExitFullscreen();
+		    } else if (document.mozCancelFullScreen) {
+		      document.mozCancelFullScreen();
+		    } else if (document.webkitExitFullscreen) {
+		      document.webkitExitFullscreen();
+		    }
+		  }
+		}
 
 		//Keyboard		
 		$(document).keydown(function(e){    //using jquery to listen to pressed keys
@@ -217,8 +243,8 @@
 
 			var text = message;
 			var textLength = text.length;
-			var textWidth = textLength * fontSize/2;
-			var textHeight = game.height*0.1;
+			var textWidth = Math.round(textLength * (fontSize/2));
+			var textHeight = Math.round(game.height*0.1);
 			// this.color = fontColor;
 			// this.font = game.isMobile ? font : "Monaco";
 			// this.fontSize = fontSize;
@@ -226,8 +252,8 @@
 
 			// var x = (game.width - textWidth) *0.5;
 			// var y = (game.height - fontSize) *0.5;
-			var x = (game.width - textWidth) *0.5;
-			var y = (game.height/3.5) + (textHeight * row);
+			var x = Math.round((game.width - textWidth)*0.5);
+			var y = Math.round((game.height/3.5) + (textHeight * row));
 
 			// console.log (x, y);
 			// console.log (game.width);			
@@ -298,7 +324,8 @@
 		}
 			
 		initImages([	//using initimages function to load our images
-			//Level backgrounds
+			//backgrounds
+			"_img/_dist/background/intro_bg.jpg",
 			"_img/_dist/background/level1.jpg",
 			
 			//UI
