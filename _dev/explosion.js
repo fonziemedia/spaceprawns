@@ -1,10 +1,10 @@
 function explosion(x, y, speed, direction, size) {
 	particle.call(this, x, y, speed, direction);
 
-	this.x = x - (size*0.2);
-	this.y = y - (size*0.2);
+	this.x = Math.round(x - (size*0.2));
+	this.y = Math.round(y - (size*0.2));
 	this.speed = speed;
-	this.size = size*1.5;
+	this.size = Math.round(size*1.5);
 	this.hitTimer = 0; 
 	this.dead = false;
 	this.deadTime = 60;

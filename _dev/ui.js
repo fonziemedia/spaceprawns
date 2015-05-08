@@ -11,6 +11,11 @@ function ui() {
 	this.hangarImg = 'fighter.png';
 	this.enPointImg = 'energypoint.png'; // jshint ignore:line
 	this.enContainerImg = 'energybar.png';// jshint ignore:line
+	this.scoreX = Math.round(this.width*0.1);
+	this.scoreY = Math.round(this.height*0.6);
+	this.energyX = Math.round(this.width*0.55);
+	this.energyY = Math.round(this.height*0.18);
+
 
 	this.updateLevel = function() {
 		this.level = game.level;
@@ -24,8 +29,8 @@ function ui() {
 		this.score = game.score;
 		game.contextText.fillStyle = "#FFD455";
 		game.contextText.font = 15*dtSize + 'px helvetica';
-		game.contextText.clearRect(this.width*0.1, this.height*0.3, this.width*0.14, this.height*0.35);  
-		game.contextText.fillText("Score: " + this.score, this.width*0.1, this.height*0.6); //printing the score
+		game.contextText.clearRect(this.scoreX, this.height*0.3, this.width*0.14, this.height*0.35);  
+		game.contextText.fillText("Score: " + this.score, this.scoreX, this.scoreY); //printing the score
 	};
 
 	this.updateSound = function() {	
@@ -43,7 +48,7 @@ function ui() {
 	this.updateEnergy = function() {		
 		this.hull = playerShip.hull > 0 ? playerShip.hull*game.width*0.02 : 0;
 		game.contextText.clearRect(this.width*0.55, this.height*0.2, this.enBarVol, this.enBarHeight);	
-		game.contextText.drawImage(game.images[this.enPointImg], this.width*0.55, this.height*0.18, this.hull, this.enBarHeight);		
+		game.contextText.drawImage(game.images[this.enPointImg], this.energyX, this.energyY, this.hull, this.enBarHeight);		
 	};
 
 	this.updateHangar = function() {

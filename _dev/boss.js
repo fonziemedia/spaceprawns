@@ -3,7 +3,7 @@ function boss(x, y, speed, direction, hull, image) {
 
 	this.hull = hull;
 	this.image = game.images[image];
-	this.size = 200*dtSize;
+	this.size = Math.round(200*dtSize);
 	this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;
@@ -14,6 +14,8 @@ function boss(x, y, speed, direction, hull, image) {
 	this.bulletDivision2 = 30;
 	this.fireRate = 0; //bullets/sec
 	// this.fireRate = fireRate * 60; //bullets/sec
+	this.yStop = Math.round(game.height*0.1);
+	this.xBondary = Math.round(game.width - this.size/4);
 	this.context = game.contextEnemies;
 
 
@@ -62,9 +64,12 @@ function boss(x, y, speed, direction, hull, image) {
 
 			// (x, y, speed, direction, power, image)
 			if (this.bulletTimer1 % this.bulletDivision1 == 1){
-				this.bulletTimer1 = 1;				
-				game.enemyBullets.push(new enemyBullet(this.x, this.y + this.size*0.6, 50, this.bulletDirection, 1, 'missile.png'));			
-				game.enemyBullets.push(new enemyBullet(this.x + this.size, this.y + this.size*0.6, 50, this.bulletDirection, 1, 'missile.png'));			
+				this.bulletTimer1 = 1;	
+				mBulletX1 = Math.round(this.x);
+				mBulletX2 = Math.round(this.x + this.size);
+				mBulletY = Math.round(this.y + this.size*0.6);		
+				game.enemyBullets.push(new enemyBullet(mBulletX1, mBulletY, 50, this.bulletDirection, 1, 'missile.png'));			
+				game.enemyBullets.push(new enemyBullet(mBulletX2, mBulletY, 50, this.bulletDirection, 1, 'missile.png'));			
 			}
 		
 			// homing missiles, sort of
@@ -72,22 +77,22 @@ function boss(x, y, speed, direction, hull, image) {
 			if (this.bulletTimer2 % this.bulletDivision2 == 1) {				
 				// if (game.sound){game.shootSound.play();}
 				this.bulletTimer2 = 1; //resetting our timer
-				bulletX = this.x + this.size*0.48;
-				bulletY = this.y + this.size;
-			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 1.5, 'laser.png'));
-			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 1.5, 'laser.png'));				
+				lBulletX = Math.round(this.x + this.size*0.48);
+				lBulletY = Math.round(this.y + this.size);
+			    game.enemyBullets.push( new enemyBullet(lBulletX, lBulletY, 250, Math.PI/2, 1.5, 'laser.png'));
+			    game.enemyBullets.push( new enemyBullet(lBulletX, lBulletY, 250, Math.PI/2, 1.5, 'laser.png'));				
 			}
 
 		
 
-		if (this.y > game.height*0.1){
+		if (this.y > this.yStop){
 			speed = 0;
-			if (this.x > 0 && this.x <= game.width - this.size/4) {
+			if (this.x > 0 && this.x <= this.xBondary) {
 
-				if (this.x < playerShip.x){
+				if (this.x < playerShip.x && this.x <= this.xBondary-1){
 					this.x += 1;
 				}
-				else if (this.x > playerShip.x){
+				else if (this.x > playerShip.x && this.x > 1){
 					this.x -= 1;
 				}
 
@@ -97,8 +102,6 @@ function boss(x, y, speed, direction, hull, image) {
 	};
 
 	this.draw = function() {
-		
-		game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
 		if (!this.dead) {
 				game.contextEnemies.drawImage(this.image, this.x, this.y, this.size, this.size); //render

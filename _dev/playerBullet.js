@@ -1,12 +1,13 @@
 function playerBullet(x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame) {
 	particle.call(this, x, y, speed, direction);
 	
-	this.size = bulletSize*dtSize;
+	this.size = Math.round(bulletSize*dtSize);
+	this.spriteX = -Math.round(this.size*0.5);
+	this.spriteY = -Math.round(this.size*0.5);
 	this.power = power;
 	this.image = image; 
 	this.dead = false;
 	this.deadTime = 60;
-
 	this.friction = friction;
 	this.dtSet = false;
 	this.ctx = game.contextEnemies;
@@ -41,7 +42,7 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 			this.ctx.translate(this.x, this.y);
 			this.ctx.rotate(direction - Math.PI/2);
 
-			this.sprite.draw(-this.size/2, -this.size/2); //-this.size/2 because we're rotating ctx
+			this.sprite.draw(this.spriteX, this.spriteY); //-this.size/2 because we're rotating ctx
 			
 			this.ctx.restore();
 

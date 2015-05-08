@@ -1,11 +1,11 @@
 function background(section) {
 
-	this.speed = 180*dt;
+	this.speed = Math.round(180*dt);
 	this.section = section;
 	this.width = game.width;
-	this.height = (game.width * (16 / 9)) * 4 ;
+	this.height = Math.round((game.width * (16 / 9)) * 4);
 	this.x = 0;
-	this.y = (this.section === 0) ? -(this.height-game.height) : this.y = -(this.height);
+	this.y = (this.section === 0) ? -Math.round(this.height-game.height) : -(this.height);
 	this.image = 'level' + game.level + '.jpg'; //needs to be consecutive for this to work
 	this.limits = -game.height*0.02; // *0.02 because of speed and to disguise my bad image manipulation skills
 

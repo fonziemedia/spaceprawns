@@ -13,16 +13,16 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 	switch (this.side){
 		case 'top':
 			this.x = pos;
-			this.y = -game.height*0.1;
+			this.y = -Math.round(game.height*0.1);
 			this.direction = Math.PI/2;
 			break;
 		case 'left':
-			this.x = -game.width*0.2;
+			this.x = -Math.round(game.width*0.2);
 			this.y = pos;
 			this.direction = 0;
 			break;
 		case 'right':
-			this.x = game.width*1.2;
+			this.x = Math.round(game.width*1.2);
 			this.y = pos;
 			this.direction = Math.PI;
 			break;

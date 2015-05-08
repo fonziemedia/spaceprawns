@@ -4,16 +4,17 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.type = type;
 	switch (this.type){
 		case 'pawn':
-				this.size = 65*dtSize;
+				this.size = Math.round(65*dtSize);
 			break;
 		case 'miniboss':
-				this.size = 120*dtSize;	
+				this.size = Math.round(120*dtSize);	
 			break;
 		case 'base':
-				this.size = 170*dtSize;
+				this.size = Math.round(170*dtSize);
 				this.rotation = 0;	
 			break;
 	}
+	this.spritePos = Math.round(this.size * 0.5);
 	this.hull = hull;
 	this.image = game.images[image];
 	this.hit = false;
@@ -42,6 +43,9 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
+		this.spriteX = this.x + this.spritePos;
+		this.spriteY = this.y + this.spritePos;
+
 
 		//check if it got inside canvas
 		// if (this.type == 'miniboss')
@@ -89,8 +93,8 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			this.bulletTimer++;
 			if (this.bulletTimer % this.bulletDivision == 1){
 				this.bulletTimer = 1;				
-				bulletX = this.x + this.size*0.42;
-				bulletY = this.y + this.size;
+				bulletX = Math.round(this.x + this.size*0.42);
+				bulletY = Math.round(this.y + this.size);
 				bulletDirection = this.angleTo(playerShip);
 				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 'missile.png'));			
 			}
@@ -119,11 +123,11 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 
 				//rotate canvas
 				this.ctx.save();
-				this.ctx.translate(this.x + this.size * 0.5, this.y + this.size * 0.5);
+				this.ctx.translate(this.spriteX, this.spriteY);
 				this.ctx.rotate(this.rotation);
 
 				//draw image
-				this.ctx.drawImage(this.image, -this.size * 0.5, -this.size * 0.5, this.size, this.size);
+				this.ctx.drawImage(this.image, -this.spritePos, -this.spritePos, this.size, this.size);
 
 				this.ctx.restore();
 			}

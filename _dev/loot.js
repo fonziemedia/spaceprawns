@@ -3,7 +3,7 @@ function loot(x, y) {
 
 	this.speed = 250;
 	this.direction = Math.PI/2;
-	this.size = 45*dtSize;
+	this.size = Math.round(45*dtSize);
 	this.dead = false;
 	this.drops = ['health', 'laser', 'missile'];
 	var key = Math.floor(Math.random() * this.drops.length);

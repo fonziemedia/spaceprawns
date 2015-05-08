@@ -1,12 +1,12 @@
  /*engaging warp speed */
-/*.animClass {
+.animClass {
 	-webkit-transform: translate3d(0, 0, 0);
 	transform: translate3d(0, 0, 0);
 	-webkit-transform: translateZ(0);
 	transform: translateZ(0);
-	/* more specific animation properties here
+	/* more specific animation properties here */
 }
-*/
+
 
 @font-face {
     font-family: 'Lucida Console', Monaco, monospace;
@@ -21,9 +21,6 @@ body {
 	margin: 0;
     padding: 0;
 	background-color: #000;
-	
-	touch-action:none;
-	-ms-touch-action:none;
 }
 
 h1,h2,h3,h4,h5 {

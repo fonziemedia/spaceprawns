@@ -508,11 +508,11 @@ var particle = function(x, y, speed, direction, grav) {
 				c3.css({"left": ($(container).width()-widthProp)*0.5});
 				c4.css({"left": ($(container).width()-widthProp)*0.5});
 
-				game.width = widthProp;
+				game.width = Math.round(widthProp);
 			}
 
 			 //we'll use width and height to limit the game to our canvas size
-			game.height = $(container).height();
+			game.height = Math.round($(container).height());
 
 			//delta size will keep the size of our objects proportional to the display
 			dtSize = game.height*0.001;
@@ -523,13 +523,13 @@ var particle = function(x, y, speed, direction, grav) {
 
 			//======================  Game settings =====================				
 						
-			game.enemySpeed = X_EnemySpeed * game.height/2500; //the enemies' speed
-			game.EnBulletSpeed = X_EnBulletSpeed * game.height/1000;
+			// game.enemySpeed = X_EnemySpeed * game.height/2500; //the enemies' speed
+			// game.EnBulletSpeed = X_EnBulletSpeed * game.height/1000;
 
-			game.fullShootTimer = X_GunSpeed;	//this timer will limit the number of bullets being fired
-			game.enfullShootTimer = X_EnGunSpeed;	//this timer will limit the number of bullets being fired by enemies
-			game.shootTimer = game.fullShootTimer;
-			game.enshootTimer = game.enfullShootTimer;
+			// game.fullShootTimer = X_GunSpeed;	//this timer will limit the number of bullets being fired
+			// game.enfullShootTimer = X_EnGunSpeed;	//this timer will limit the number of bullets being fired by enemies
+			// game.shootTimer = game.fullShootTimer;
+			// game.enshootTimer = game.enfullShootTimer;
 
 			//=========================== Game loading Screen =================================== 	
 			game.contextText.font = "bold " + game.width*0.08 + "px " + game.font; 
@@ -586,12 +586,12 @@ function sprite(image, imageSize, frameWidth, frameHeight, startFrame, endFrame,
 }
 function background(section) {
 
-	this.speed = 180*dt;
+	this.speed = Math.round(180*dt);
 	this.section = section;
 	this.width = game.width;
-	this.height = (game.width * (16 / 9)) * 4 ;
+	this.height = Math.round((game.width * (16 / 9)) * 4);
 	this.x = 0;
-	this.y = (this.section === 0) ? -(this.height-game.height) : this.y = -(this.height);
+	this.y = (this.section === 0) ? -Math.round(this.height-game.height) : -(this.height);
 	this.image = 'level' + game.level + '.jpg'; //needs to be consecutive for this to work
 	this.limits = -game.height*0.02; // *0.02 because of speed and to disguise my bad image manipulation skills
 
@@ -626,10 +626,10 @@ gameBackground = new background();
 function explosion(x, y, speed, direction, size) {
 	particle.call(this, x, y, speed, direction);
 
-	this.x = x - (size*0.2);
-	this.y = y - (size*0.2);
+	this.x = Math.round(x - (size*0.2));
+	this.y = Math.round(y - (size*0.2));
 	this.speed = speed;
-	this.size = size*1.5;
+	this.size = Math.round(size*1.5);
 	this.hitTimer = 0; 
 	this.dead = false;
 	this.deadTime = 60;
@@ -666,14 +666,14 @@ explosion.prototype.constructor = explosion; // Set the "constructor" property t
 function player(hull, fireRate) {
 	particle.call(this);
 
-	this.x = game.width*0.46;
-	this.y = game.height*0.90;
+	this.x = Math.round(game.width*0.46);
+	this.y = Math.round(game.height*0.90);
 	this.speed = 0;
 	this.maxSpeed = 400;
 	this.direction = -Math.PI/2;
-	this.size = 100*dtSize;
+	this.size = Math.round(100*dtSize);
 	this.hull = hull;
-	this.bulletspeed = X_BulletSpeed*game.height/1000;
+	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
 	this.image = 'fighter.png';
 	this.rendered = false;
 	this.hit = false;
@@ -689,8 +689,13 @@ function player(hull, fireRate) {
 	this.missileLevel = 0;
 	this.lives = X_Lives;
 	this.ctx = game.contextPlayer;
-	this.incline = [game.width*0.004, game.width*0.008, game.width*0.010, game.width*0.012];
-	this.steering = game.width * 0.08; //ship drag radius
+	this.incline = [Math.round(game.width*0.004), Math.round(game.width*0.008), Math.round(game.width*0.010), Math.round(game.width*0.012)];
+	this.steering = Math.round(game.width * 0.08); //ship drag radius
+	this.limitX1 = Math.round(this.size*0.25);
+	this.limitX2 = Math.round(game.width - this.size*0.25);
+	this.limitY1 = this.size;
+	this.limitY2 = Math.round(game.height - this.size*0.16);
+
 	this.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;
 	
 	if (this.canVibrate && !("vibrate" in navigator))
@@ -710,7 +715,7 @@ function player(hull, fireRate) {
 		// this.vy += this.gravity;
 		// this.x += this.vx;
 		// this.y += this.vy;
-		this.playerImage = game.images[this.image];
+		this.playerImage = game.images[this.image];		
 		
 		//////////////////////////////
 		//	Mouse and Touch controls
@@ -719,7 +724,7 @@ function player(hull, fireRate) {
 		if (mouseIsDown && !game.levelComplete && !game.paused && !game.gameOver && !game.gameWon) {
 
 			//defining the boundaries	
-			if((canvasX > (this.size*0.25) && canvasX <= (game.width - this.size*0.25)) && (canvasY > this.size) && canvasY <= (game.height - this.size*0.16)) {			
+			if((canvasX > this.limitX1 && canvasX <= this.limitX2) && (canvasY > this.limitY1) && canvasY <= this.limitY2) {			
 				
 				moveRight1 = (canvasX > moveX && canvasX <= moveX + this.incline[0]) ? true : false;
 				moveRight2 = (canvasX > moveX + this.incline[0] && canvasX <= moveX + this.incline[1]) ? true : false;
@@ -786,8 +791,8 @@ function player(hull, fireRate) {
 				}
 
 				this.rendered = false;				
-				moveX = this.x + this.size*0.5; 	//second define of moveX as canvasX position
-				moveY = game.isMobile ? this.y + this.size*1.7 : this.y + this.size; 	//second define of moveX as canvasX position
+				moveX = Math.round(this.x + this.size*0.5); 	//second define of moveX as canvasX position
+				moveY = game.isMobile ? Math.round(this.y + this.size*1.7) : Math.round(this.y + this.size); 	//second define of moveX as canvasX position
 			
 			}
 			/*		console.log (canvasX)
@@ -810,7 +815,7 @@ function player(hull, fireRate) {
 				this.direction = Math.PI;				
 				this.image = 'fighter_left5.png';
 				this.rendered = false;
-				this.x -= this.speed*dt;
+				this.x -= Math.round(this.speed*dt);
 			}
 		}
 		//right
@@ -820,7 +825,7 @@ function player(hull, fireRate) {
 				this.direction = 0;
 				this.image = 'fighter_right5.png';
 				this.rendered = false;
-				this.x += this.speed*dt;
+				this.x += Math.round(this.speed*dt);
 			}
 		}
 		//up
@@ -829,7 +834,7 @@ function player(hull, fireRate) {
 				this.speed = this.maxSpeed;
 				this.direction = -Math.PI/2;
 				this.rendered = false;
-				this.y -= this.speed*dt;
+				this.y -= Math.round(this.speed*dt);
 			}
 		}
 		//down
@@ -838,12 +843,23 @@ function player(hull, fireRate) {
 				this.speed = this.maxSpeed;
 				this.direction = Math.PI/2;
 				this.rendered = false;
-				this.y += this.speed*dt;
+				this.y += Math.round(this.speed*dt);
 			}	
 		}
 		else {
 			this.speed = 0;
 		}
+
+
+		this.midLaserX = Math.round(this.x + this.size*0.5);
+		this.leftlaserX = Math.round(this.x + this.size*0.25);
+		this.rightlaserX = Math.round(this.x + this.size*0.75);
+		this.LaserY = Math.round(this.y - this.size*0.2);
+
+		this.midMissileX = Math.round(this.x + this.size*0.5);
+		this.leftMissileX = this.x;
+		this.rightMissileX = this.x + this.size;
+		this.missileY = this.y + this.size;
 
 
 		if((game.keys[32] || mouseIsDown) && !this.dead && !game.gameOver){ //only add a bullet if space is pressed and enough time has passed i.e. our timer has reached 0
@@ -854,36 +870,40 @@ function player(hull, fireRate) {
 				// (x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame)
 				switch(this.laserLevel) {
 				    case 1:
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
+				        game.playerBullets.push( new playerBullet(this.midLaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
 				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				        break;
 				    case 2:
-				    	game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));				
+				    	game.playerBullets.push( new playerBullet(this.leftlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
+				        game.playerBullets.push( new playerBullet(this.rightlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));				
 				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				        break;
 				    default:
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.25, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.75, this.y - this.size*0.2, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
+				        game.playerBullets.push( new playerBullet(this.leftlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
+				        game.playerBullets.push( new playerBullet(this.midLaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
+				        game.playerBullets.push( new playerBullet(this.rightlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
 				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
 				        break;
 				 }
+
+
+
+
 
 				 switch(this.missileLevel) {
 				 	case 0:
 				 		break;
 				    case 1:
-				        game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+				        game.playerBullets.push( new playerBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
 						break;
 				    case 2:
-				    	game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
-						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+				    	game.playerBullets.push( new playerBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
 						break;
 				    default:
-				        game.playerBullets.push( new playerBullet(this.x, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
-						game.playerBullets.push( new playerBullet(this.x + this.size, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
-						game.playerBullets.push( new playerBullet(this.x + this.size*0.5, this.y + this.size, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+				        game.playerBullets.push( new playerBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
 						break;										
 				 }				
 				// this.bulletTimer = 1; //resetting our timer
@@ -902,7 +922,7 @@ function player(hull, fireRate) {
 		{
 			this.dead = true;			
 			this.lives -= 1;
-			game.explosions.push(new explosion(this.x, this.y, this.speed*0.5, this.direction, this.size));
+			game.explosions.push(new explosion(this.x, this.y, this.speed, this.direction, this.size));
 			if (game.sound){game.sounds.push(new Audio("_sounds/blast.mp3"));}
 			gameUI.updateHangar();
 		}	
@@ -918,8 +938,8 @@ function player(hull, fireRate) {
 					mouseIsDown = 0;
 					this.hull = hull;
 					this.dead = false;
-					this.x = game.width*0.46;
-					this.y = game.height*0.90;
+					this.x = Math.round(game.width*0.46);
+					this.y = Math.round(game.height*0.90);
 					this.image = 'fighter.png';
 					this.rendered = false;
 					this.hit = false;
@@ -940,8 +960,8 @@ function player(hull, fireRate) {
 				game.gameOver = true;
 			}
 			else {
-				this.x = -game.width; //keeping the player outside canvas while dead
-				this.y = -game.height;
+				this.x = Math.round(game.width*0.5); //keeping the player outside canvas while dead
+				this.y = Math.round(game.height*1.5);
 			}
 		}
 
@@ -1020,8 +1040,8 @@ function player(hull, fireRate) {
 	
 	this.reset = function() {
 		this.dead = false;
-		this.x = game.width*0.46;
-		this.y = game.height*0.90;
+		this.x = Math.round(game.width*0.46);
+		this.y = Math.round(game.height*0.90);
 		this.image = 'fighter.png';
 		this.hull = hull;
 		this.rendered = false;
@@ -1046,12 +1066,13 @@ playerShip = new player(10, 15);
 function playerBullet(x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame) {
 	particle.call(this, x, y, speed, direction);
 	
-	this.size = bulletSize*dtSize;
+	this.size = Math.round(bulletSize*dtSize);
+	this.spriteX = -Math.round(this.size*0.5);
+	this.spriteY = -Math.round(this.size*0.5);
 	this.power = power;
 	this.image = image; 
 	this.dead = false;
 	this.deadTime = 60;
-
 	this.friction = friction;
 	this.dtSet = false;
 	this.ctx = game.contextEnemies;
@@ -1086,7 +1107,7 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 			this.ctx.translate(this.x, this.y);
 			this.ctx.rotate(direction - Math.PI/2);
 
-			this.sprite.draw(-this.size/2, -this.size/2); //-this.size/2 because we're rotating ctx
+			this.sprite.draw(this.spriteX, this.spriteY); //-this.size/2 because we're rotating ctx
 			
 			this.ctx.restore();
 
@@ -1102,16 +1123,17 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.type = type;
 	switch (this.type){
 		case 'pawn':
-				this.size = 65*dtSize;
+				this.size = Math.round(65*dtSize);
 			break;
 		case 'miniboss':
-				this.size = 120*dtSize;	
+				this.size = Math.round(120*dtSize);	
 			break;
 		case 'base':
-				this.size = 170*dtSize;
+				this.size = Math.round(170*dtSize);
 				this.rotation = 0;	
 			break;
 	}
+	this.spritePos = Math.round(this.size * 0.5);
 	this.hull = hull;
 	this.image = game.images[image];
 	this.hit = false;
@@ -1140,6 +1162,9 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
+		this.spriteX = this.x + this.spritePos;
+		this.spriteY = this.y + this.spritePos;
+
 
 		//check if it got inside canvas
 		// if (this.type == 'miniboss')
@@ -1187,8 +1212,8 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			this.bulletTimer++;
 			if (this.bulletTimer % this.bulletDivision == 1){
 				this.bulletTimer = 1;				
-				bulletX = this.x + this.size*0.42;
-				bulletY = this.y + this.size;
+				bulletX = Math.round(this.x + this.size*0.42);
+				bulletY = Math.round(this.y + this.size);
 				bulletDirection = this.angleTo(playerShip);
 				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 'missile.png'));			
 			}
@@ -1217,11 +1242,11 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 
 				//rotate canvas
 				this.ctx.save();
-				this.ctx.translate(this.x + this.size * 0.5, this.y + this.size * 0.5);
+				this.ctx.translate(this.spriteX, this.spriteY);
 				this.ctx.rotate(this.rotation);
 
 				//draw image
-				this.ctx.drawImage(this.image, -this.size * 0.5, -this.size * 0.5, this.size, this.size);
+				this.ctx.drawImage(this.image, -this.spritePos, -this.spritePos, this.size, this.size);
 
 				this.ctx.restore();
 			}
@@ -1267,7 +1292,7 @@ function boss(x, y, speed, direction, hull, image) {
 
 	this.hull = hull;
 	this.image = game.images[image];
-	this.size = 200*dtSize;
+	this.size = Math.round(200*dtSize);
 	this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;
@@ -1278,6 +1303,8 @@ function boss(x, y, speed, direction, hull, image) {
 	this.bulletDivision2 = 30;
 	this.fireRate = 0; //bullets/sec
 	// this.fireRate = fireRate * 60; //bullets/sec
+	this.yStop = Math.round(game.height*0.1);
+	this.xBondary = Math.round(game.width - this.size/4);
 	this.context = game.contextEnemies;
 
 
@@ -1326,9 +1353,12 @@ function boss(x, y, speed, direction, hull, image) {
 
 			// (x, y, speed, direction, power, image)
 			if (this.bulletTimer1 % this.bulletDivision1 == 1){
-				this.bulletTimer1 = 1;				
-				game.enemyBullets.push(new enemyBullet(this.x, this.y + this.size*0.6, 50, this.bulletDirection, 1, 'missile.png'));			
-				game.enemyBullets.push(new enemyBullet(this.x + this.size, this.y + this.size*0.6, 50, this.bulletDirection, 1, 'missile.png'));			
+				this.bulletTimer1 = 1;	
+				mBulletX1 = Math.round(this.x);
+				mBulletX2 = Math.round(this.x + this.size);
+				mBulletY = Math.round(this.y + this.size*0.6);		
+				game.enemyBullets.push(new enemyBullet(mBulletX1, mBulletY, 50, this.bulletDirection, 1, 'missile.png'));			
+				game.enemyBullets.push(new enemyBullet(mBulletX2, mBulletY, 50, this.bulletDirection, 1, 'missile.png'));			
 			}
 		
 			// homing missiles, sort of
@@ -1336,22 +1366,22 @@ function boss(x, y, speed, direction, hull, image) {
 			if (this.bulletTimer2 % this.bulletDivision2 == 1) {				
 				// if (game.sound){game.shootSound.play();}
 				this.bulletTimer2 = 1; //resetting our timer
-				bulletX = this.x + this.size*0.48;
-				bulletY = this.y + this.size;
-			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 1.5, 'laser.png'));
-			    game.enemyBullets.push( new enemyBullet(bulletX, bulletY, 250, Math.PI/2, 1.5, 'laser.png'));				
+				lBulletX = Math.round(this.x + this.size*0.48);
+				lBulletY = Math.round(this.y + this.size);
+			    game.enemyBullets.push( new enemyBullet(lBulletX, lBulletY, 250, Math.PI/2, 1.5, 'laser.png'));
+			    game.enemyBullets.push( new enemyBullet(lBulletX, lBulletY, 250, Math.PI/2, 1.5, 'laser.png'));				
 			}
 
 		
 
-		if (this.y > game.height*0.1){
+		if (this.y > this.yStop){
 			speed = 0;
-			if (this.x > 0 && this.x <= game.width - this.size/4) {
+			if (this.x > 0 && this.x <= this.xBondary) {
 
-				if (this.x < playerShip.x){
+				if (this.x < playerShip.x && this.x <= this.xBondary-1){
 					this.x += 1;
 				}
-				else if (this.x > playerShip.x){
+				else if (this.x > playerShip.x && this.x > 1){
 					this.x -= 1;
 				}
 
@@ -1361,8 +1391,6 @@ function boss(x, y, speed, direction, hull, image) {
 	};
 
 	this.draw = function() {
-		
-		game.contextEnemies.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
 		if (!this.dead) {
 				game.contextEnemies.drawImage(this.image, this.x, this.y, this.size, this.size); //render
@@ -1395,7 +1423,9 @@ boss.prototype.constructor = boss; // Set the "constructor" property to refer to
 function enemyBullet(x, y, speed, direction, power, image) {
 	particle.call(this, x, y, speed, direction);
 	
-	this.size = 30*dtSize;
+	this.size = Math.round(30*dtSize);
+	this.spriteX = -Math.round(this.size*0.5);
+	this.spriteY = -Math.round(this.size*0.5);
 	this.power = power;
 	this.image = image; 
 	this.dead = false;
@@ -1437,7 +1467,7 @@ function enemyBullet(x, y, speed, direction, power, image) {
 			this.ctx.translate(this.x, this.y);
 			this.ctx.rotate(direction - Math.PI/2);
 
-			this.sprite.draw(-this.size/2, -this.size/2); //-this.size/2 because we're rotating ctx
+			this.sprite.draw(this.spriteX, this.spriteY); //-this.size/2 because we're rotating ctx
 			
 			this.ctx.restore();
 
@@ -1452,7 +1482,7 @@ function loot(x, y) {
 
 	this.speed = 250;
 	this.direction = Math.PI/2;
-	this.size = 45*dtSize;
+	this.size = Math.round(45*dtSize);
 	this.dead = false;
 	this.drops = ['health', 'laser', 'missile'];
 	var key = Math.floor(Math.random() * this.drops.length);
@@ -1532,16 +1562,16 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 	switch (this.side){
 		case 'top':
 			this.x = pos;
-			this.y = -game.height*0.1;
+			this.y = -Math.round(game.height*0.1);
 			this.direction = Math.PI/2;
 			break;
 		case 'left':
-			this.x = -game.width*0.2;
+			this.x = -Math.round(game.width*0.2);
 			this.y = pos;
 			this.direction = 0;
 			break;
 		case 'right':
-			this.x = game.width*1.2;
+			this.x = Math.round(game.width*1.2);
 			this.y = pos;
 			this.direction = Math.PI;
 			break;
@@ -1590,6 +1620,11 @@ function ui() {
 	this.hangarImg = 'fighter.png';
 	this.enPointImg = 'energypoint.png'; // jshint ignore:line
 	this.enContainerImg = 'energybar.png';// jshint ignore:line
+	this.scoreX = Math.round(this.width*0.1);
+	this.scoreY = Math.round(this.height*0.6);
+	this.energyX = Math.round(this.width*0.55);
+	this.energyY = Math.round(this.height*0.18);
+
 
 	this.updateLevel = function() {
 		this.level = game.level;
@@ -1603,8 +1638,8 @@ function ui() {
 		this.score = game.score;
 		game.contextText.fillStyle = "#FFD455";
 		game.contextText.font = 15*dtSize + 'px helvetica';
-		game.contextText.clearRect(this.width*0.1, this.height*0.3, this.width*0.14, this.height*0.35);  
-		game.contextText.fillText("Score: " + this.score, this.width*0.1, this.height*0.6); //printing the score
+		game.contextText.clearRect(this.scoreX, this.height*0.3, this.width*0.14, this.height*0.35);  
+		game.contextText.fillText("Score: " + this.score, this.scoreX, this.scoreY); //printing the score
 	};
 
 	this.updateSound = function() {	
@@ -1622,7 +1657,7 @@ function ui() {
 	this.updateEnergy = function() {		
 		this.hull = playerShip.hull > 0 ? playerShip.hull*game.width*0.02 : 0;
 		game.contextText.clearRect(this.width*0.55, this.height*0.2, this.enBarVol, this.enBarHeight);	
-		game.contextText.drawImage(game.images[this.enPointImg], this.width*0.55, this.height*0.18, this.hull, this.enBarHeight);		
+		game.contextText.drawImage(game.images[this.enPointImg], this.energyX, this.energyY, this.hull, this.enBarHeight);		
 	};
 
 	this.updateHangar = function() {
@@ -1929,11 +1964,18 @@ function lights() {
 gameLights = new lights();
 function text() {
 
-	this.font = game.isMobile ? 'Monaco' : 'Helvetica';
+	this.font = 'Helvetica';
 	this.fontWeight = 'bold';
 	this.fontColor0 = 'purple';
 	this.fontColor1 = '#FFC619';
 	this.fontColor2 = '#FFFFFF';
+	this.introFontSize0 = Math.round(game.width*0.09); //Intro title size
+	this.introFontSize1 = Math.round(game.width*0.07); //Intro sub-title size
+	this.introFontSize2 = Math.round(game.width*0.06); //Intro hint size
+	this.fontSize0 = Math.round(game.width*0.06); //title size
+	this.fontSize1 = Math.round(game.width*0.05); //sub-title size
+	this.fontSize2 = Math.round(game.width*0.04); //hint size
+
 	this.levelBriefing = ['Outside the galaxy', 'The outer space', 'AlphaPI 2034' ];
 	this.introBackground = 'intro_bg.jpg';
 
@@ -1950,48 +1992,48 @@ function text() {
 		game.contextText.clearRect(0, 0, game.width, game.height);
 		game.contextBackground.drawImage(game.images[this.introBackground], 0, 0, game.width, game.height);
 
-		message('Space Prawns 2039', 1,  this.font, game.width*0.09, this.fontColor0, this.fontWeight); 
-		message('We invited, they came...', 2, this.font, game.width*0.07, this.fontColor1, this.fontWeight);
+		message('Space Prawns 2039', 1,  this.font, this.introFontSize0, this.fontColor0, this.fontWeight); 
+		message('We invited, they came...', 2, this.font, this.introFontSize1, this.fontColor1, this.fontWeight);
 
 		if (game.isMobile)
 		{
-			message('Tap screen to start', 3, this.font, game.width*0.06, this.fontColor2, this.fontWeight); 
+			message('Tap screen to start', 3, this.font, this.introFontSize2, this.fontColor2, this.fontWeight); 
 		}
 		else
 		{
-			message('Press ENTER or LMB to start', 3, this.font, game.width*0.06, this.fontColor2, this.fontWeight);
+			message('Press ENTER or LMB to start', 3, this.font, this.introFontSize2, this.fontColor2, this.fontWeight);
 		}
 	};
 
 	this.lvlIntro = function() {
 		game.contextText.clearRect(0, 0, game.width, game.height);				
 
-		message('Stage ' + game.level, 1,  this.font, game.width*0.06, this.fontColor1, this.fontWeight); 
-		message(this.levelBriefing[game.level - 1], 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
+		message('Stage ' + game.level, 1,  this.font, this.fontSize0, this.fontColor1, this.fontWeight); 
+		message(this.levelBriefing[game.level - 1], 2, this.font, this.fontSize1, this.fontColor1, this.fontWeight);
 
 		if (game.isMobile)
 		{
-			message('Tap screen to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
+			message('Tap screen to continue', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight); 
 		}
 		else
 		{
-			message('Press ENTER or LMB to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight);
+			message('Press ENTER or LMB to continue', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight);
 		}
 	};
 
 	this.lvlComplete = function() {
 		game.contextText.clearRect(0, 0, game.width, game.height);
 		
-		message('Stage Complete!', 1,  this.font, game.width*0.06, this.fontColor1, this.fontWeight); 
-		message(game.score + ' enemy ships destroyed', 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
+		message('Stage Complete!', 1,  this.font,this.fontSize0, this.fontColor1, this.fontWeight); 
+		message(game.score + ' enemy ships destroyed', 2, this.font, this.fontSize1, this.fontColor1, this.fontWeight);
 
 		if (game.isMobile)
 		{
-			message('Tap screen to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
+			message('Tap screen to continue', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight); 
 		}
 		else
 		{
-			message('Press ENTER or LMB to continue', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight);
+			message('Press ENTER or LMB to continue', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight);
 		}
 
 	};
@@ -1999,16 +2041,16 @@ function text() {
 	this.gameOver = function() {
 		game.contextText.clearRect(0, 0, game.width, game.height);
 		
-		message('Game Over', 1,  this.font, game.width*0.06, this.fontColor1, this.fontWeight); 
-		message(game.score + ' enemy ships destroyed', 2, this.font, game.width*0.05, this.fontColor1, this.fontWeight);
+		message('Game Over', 1,  this.font, this.fontSize0, this.fontColor1, this.fontWeight); 
+		message(game.score + ' enemy ships destroyed', 2, this.font, this.fontSize1, this.fontColor1, this.fontWeight);
 		
 		if (game.isMobile)
 		{
-			message('Tap screen to restart', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight); 
+			message('Tap screen to restart', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight); 
 		}
 		else
 		{
-			message('Press ENTER or LMB to restart', 3, this.font, game.width*0.04, this.fontColor2, this.fontWeight);
+			message('Press ENTER or LMB to restart', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight);
 		}
 
 	};

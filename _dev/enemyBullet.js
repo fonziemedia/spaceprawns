@@ -1,7 +1,9 @@
 function enemyBullet(x, y, speed, direction, power, image) {
 	particle.call(this, x, y, speed, direction);
 	
-	this.size = 30*dtSize;
+	this.size = Math.round(30*dtSize);
+	this.spriteX = -Math.round(this.size*0.5);
+	this.spriteY = -Math.round(this.size*0.5);
 	this.power = power;
 	this.image = image; 
 	this.dead = false;
@@ -43,7 +45,7 @@ function enemyBullet(x, y, speed, direction, power, image) {
 			this.ctx.translate(this.x, this.y);
 			this.ctx.rotate(direction - Math.PI/2);
 
-			this.sprite.draw(-this.size/2, -this.size/2); //-this.size/2 because we're rotating ctx
+			this.sprite.draw(this.spriteX, this.spriteY); //-this.size/2 because we're rotating ctx
 			
 			this.ctx.restore();
 

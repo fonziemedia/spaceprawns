@@ -170,11 +170,11 @@
 				c3.css({"left": ($(container).width()-widthProp)*0.5});
 				c4.css({"left": ($(container).width()-widthProp)*0.5});
 
-				game.width = widthProp;
+				game.width = Math.round(widthProp);
 			}
 
 			 //we'll use width and height to limit the game to our canvas size
-			game.height = $(container).height();
+			game.height = Math.round($(container).height());
 
 			//delta size will keep the size of our objects proportional to the display
 			dtSize = game.height*0.001;
@@ -185,13 +185,13 @@
 
 			//======================  Game settings =====================				
 						
-			game.enemySpeed = X_EnemySpeed * game.height/2500; //the enemies' speed
-			game.EnBulletSpeed = X_EnBulletSpeed * game.height/1000;
+			// game.enemySpeed = X_EnemySpeed * game.height/2500; //the enemies' speed
+			// game.EnBulletSpeed = X_EnBulletSpeed * game.height/1000;
 
-			game.fullShootTimer = X_GunSpeed;	//this timer will limit the number of bullets being fired
-			game.enfullShootTimer = X_EnGunSpeed;	//this timer will limit the number of bullets being fired by enemies
-			game.shootTimer = game.fullShootTimer;
-			game.enshootTimer = game.enfullShootTimer;
+			// game.fullShootTimer = X_GunSpeed;	//this timer will limit the number of bullets being fired
+			// game.enfullShootTimer = X_EnGunSpeed;	//this timer will limit the number of bullets being fired by enemies
+			// game.shootTimer = game.fullShootTimer;
+			// game.enshootTimer = game.enfullShootTimer;
 
 			//=========================== Game loading Screen =================================== 	
 			game.contextText.font = "bold " + game.width*0.08 + "px " + game.font; 
