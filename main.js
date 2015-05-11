@@ -367,7 +367,8 @@ var particle = function(x, y, speed, direction, grav) {
 		$.ajax({
 		type: "GET",
 		url: "game.xml",
-		dataType: "xml",
+		contentType: 'text/xml',
+		dataType: "text",
 		async: false,
 		success: function(xmldata) {
 			$(xmldata).find('data').each(function(){
@@ -532,9 +533,9 @@ var particle = function(x, y, speed, direction, grav) {
 			// game.enshootTimer = game.enfullShootTimer;
 
 			//=========================== Game loading Screen =================================== 	
-			game.contextText.font = "bold " + game.width*0.08 + "px " + game.font; 
-			game.contextText.fillStyle = "white";
-			game.contextText.fillText("Loading...", game.width*0.30, game.height*0.47);
+			// game.contextText.font = "bold " + game.width*0.08 + "px " + game.font; 
+			// game.contextText.fillStyle = "white";
+			// game.contextText.fillText("Loading...", game.width*0.30, game.height*0.47);
 		}
 
 		//Initial call 
@@ -1990,7 +1991,7 @@ function text() {
 
 	this.gameIntro = function() {
 		game.contextText.clearRect(0, 0, game.width, game.height);
-		game.contextBackground.drawImage(game.images[this.introBackground], 0, 0, game.width, game.height);
+		game.contextText.drawImage(game.images[this.introBackground], 0, 0, game.width, game.height); //use ctx text here because ctx background will clear in main update
 
 		message('Space Prawns 2039', 1,  this.font, this.introFontSize0, this.fontColor0, this.fontWeight); 
 		message('We invited, they came...', 2, this.font, this.introFontSize1, this.fontColor1, this.fontWeight);
@@ -2105,7 +2106,8 @@ function transition()
 				if(game.textFaded)
 				{	
 					this.keyframe2 = false;
-					this.keyframe0 = true;								
+					this.keyframe0 = true;
+					game.contextText.clearRect(0, 0, game.width, game.height);	//move this, need to improve clrcanvas function							
 					resetGame();
 					game.lvlIntro = false;
 					game.lvlStart = true;
@@ -3095,6 +3097,14 @@ function lvl1() {
 				{ //once an image loads..
 					game.doneImages++; //  ..increment the doneImages variable by 1
 				};
+
+				if(i < 1)
+				{
+					//=========================== Game loading Screen =================================== 	
+					game.contextText.font = "bold " + game.width*0.08 + "px " + game.font; 
+					game.contextText.fillStyle = "white";
+					game.contextText.fillText("Loading...", game.width*0.30, game.height*0.47);
+				}
 			}
 		}	
 
@@ -3102,7 +3112,10 @@ function lvl1() {
 			if(game.doneImages >= game.requiredImages){
 				gameText.gameIntro();
 				loop(); //LOoP CALL!!!
-			}else{
+			} 
+			else
+			{
+				game.contextText.fillText("|", game.width*0.30+(game.doneImages+1), game.height*0.55);					
 				setTimeout(function(){
 					checkImages();
 				}, 1);

@@ -26,7 +26,7 @@ function text() {
 
 	this.gameIntro = function() {
 		game.contextText.clearRect(0, 0, game.width, game.height);
-		game.contextBackground.drawImage(game.images[this.introBackground], 0, 0, game.width, game.height);
+		game.contextText.drawImage(game.images[this.introBackground], 0, 0, game.width, game.height); //use ctx text here because ctx background will clear in main update
 
 		message('Space Prawns 2039', 1,  this.font, this.introFontSize0, this.fontColor0, this.fontWeight); 
 		message('We invited, they came...', 2, this.font, this.introFontSize1, this.fontColor1, this.fontWeight);

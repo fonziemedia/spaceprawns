@@ -45,7 +45,8 @@ function transition()
 				if(game.textFaded)
 				{	
 					this.keyframe2 = false;
-					this.keyframe0 = true;								
+					this.keyframe0 = true;
+					game.contextText.clearRect(0, 0, game.width, game.height);	//move this, need to improve clrcanvas function							
 					resetGame();
 					game.lvlIntro = false;
 					game.lvlStart = true;

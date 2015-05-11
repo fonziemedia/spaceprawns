@@ -29,7 +29,8 @@
 		$.ajax({
 		type: "GET",
 		url: "game.xml",
-		dataType: "xml",
+		contentType: 'text/xml',
+		dataType: "text",
 		async: false,
 		success: function(xmldata) {
 			$(xmldata).find('data').each(function(){
@@ -194,9 +195,9 @@
 			// game.enshootTimer = game.enfullShootTimer;
 
 			//=========================== Game loading Screen =================================== 	
-			game.contextText.font = "bold " + game.width*0.08 + "px " + game.font; 
-			game.contextText.fillStyle = "white";
-			game.contextText.fillText("Loading...", game.width*0.30, game.height*0.47);
+			// game.contextText.font = "bold " + game.width*0.08 + "px " + game.font; 
+			// game.contextText.fillStyle = "white";
+			// game.contextText.fillText("Loading...", game.width*0.30, game.height*0.47);
 		}
 
 		//Initial call 
