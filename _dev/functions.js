@@ -1,31 +1,31 @@
 		//====================== Game functions =================//
 		
 
-		function toggleFullScreen()  //experimental   only works with user input
- 		{
-		  if (!document.fullscreenElement &&    // alternative standard method
-		      !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
-		    if (document.documentElement.requestFullscreen) {
-		      document.documentElement.requestFullscreen();
-		    } else if (document.documentElement.msRequestFullscreen) {
-		      document.documentElement.msRequestFullscreen();
-		    } else if (document.documentElement.mozRequestFullScreen) {
-		      document.documentElement.mozRequestFullScreen();
-		    } else if (document.documentElement.webkitRequestFullscreen) {
-		      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-		    }
-		  } else {
-		    if (document.exitFullscreen) {
-		      document.exitFullscreen();
-		    } else if (document.msExitFullscreen) {
-		      document.msExitFullscreen();
-		    } else if (document.mozCancelFullScreen) {
-		      document.mozCancelFullScreen();
-		    } else if (document.webkitExitFullscreen) {
-		      document.webkitExitFullscreen();
-		    }
-		  }
-		}
+		// function toggleFullScreen()  //experimental   only works with user input
+ 	// 	{
+		//   if (!document.fullscreenElement &&    // alternative standard method
+		//       !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
+		//     if (document.documentElement.requestFullscreen) {
+		//       document.documentElement.requestFullscreen();
+		//     } else if (document.documentElement.msRequestFullscreen) {
+		//       document.documentElement.msRequestFullscreen();
+		//     } else if (document.documentElement.mozRequestFullScreen) {
+		//       document.documentElement.mozRequestFullScreen();
+		//     } else if (document.documentElement.webkitRequestFullscreen) {
+		//       document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+		//     }
+		//   } else {
+		//     if (document.exitFullscreen) {
+		//       document.exitFullscreen();
+		//     } else if (document.msExitFullscreen) {
+		//       document.msExitFullscreen();
+		//     } else if (document.mozCancelFullScreen) {
+		//       document.mozCancelFullScreen();
+		//     } else if (document.webkitExitFullscreen) {
+		//       document.webkitExitFullscreen();
+		//     }
+		//   }
+		// }
 
 		//Keyboard		
 		$(document).keydown(function(e){    //using jquery to listen to pressed keys
@@ -41,8 +41,8 @@
 		var canvasX = playerShip.x;
 		var canvasY = playerShip.y;
 		var mouseIsDown = 0;
-		var moveX = canvasX;      //initial define of moveX as canvasX position
-		var moveY = canvasY;      //initial define of moveX as canvasX position
+		var touchInitX = 0;
+		var touchInitY = 0;
  
 
 		function initInput()
@@ -59,54 +59,53 @@
 	        canvas.addEventListener("touchleave", touchUp, false);
 			canvas.addEventListener("touchmove", touchXY, false);
 		                
-		}
-		
+		}		
 		
 		function mouseUp(e)
 		{
 			e.preventDefault();
 			mouseIsDown = 0;
-			mouseXY();
 		}
 		 
 		function touchUp(e)
 		{
 			e.preventDefault();
 			mouseIsDown = 0;
-			touchXY();
 		}
 		 
 		function mouseDown(e)
 		{
 			e.preventDefault();
 			mouseIsDown = 1;
-			mouseXY();
+			touchInitX = e.pageX - canvas.offsetLeft;
+			touchInitY = e.pageY - canvas.offsetTop;
 		}
 		  
 		function touchDown(e)
 		{
 			e.preventDefault();
 			mouseIsDown = 1;
-			touchXY();
+			var touch = e.targetTouches[0];
+
+			touchInitX =  touch.pageX - touch.target.offsetLeft;
+			touchInitY =  touch.pageY - touch.target.offsetTop;
+
 		}
 		
 		function mouseXY(e)
 		{
-			if (e)
-			{
-				e.preventDefault();
-				canvasX = e.pageX - canvas.offsetLeft;
-				canvasY = e.pageY - canvas.offsetTop;
-			}
+			e.preventDefault();
+			canvasX = e.pageX - canvas.offsetLeft;
+			canvasY = e.pageY - canvas.offsetTop;
 		}
 		 
 		function touchXY(e) {
-			if (e)
-			{
-				e.preventDefault();
-				canvasX = e.targetTouches[0].pageX - canvas.offsetLeft;
-				canvasY = e.targetTouches[0].pageY - canvas.offsetTop;
-			}
+			e.preventDefault();
+			var touch = e.targetTouches[0];
+
+    		canvasX = touch.pageX - canvas.offsetLeft;
+    		canvasY = touch.pageY - canvas.offsetTop;
+ 
 		}
 				
 		// function addStars(num){ //this function is going to take a number thus num
@@ -119,6 +118,8 @@
 		// 		});
 		// 	}
 		// }
+
+
 		function clrCanvas(){
 			game.contextBackground.clearRect(0, 0, game.width, game.height); 
 			game.contextPlayer.clearRect(0, 0, game.width, game.height); 
@@ -324,6 +325,7 @@
 			if(game.doneImages >= game.requiredImages){
 				gameText.gameIntro();
 				loop(); //LOoP CALL!!!
+				document.getElementById('textCanvas').style.cursor = 'corsair';
 			} 
 			else
 			{

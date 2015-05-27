@@ -17,13 +17,9 @@
 
 		}, false);
 
-		document.body.addEventListener('touchstart', function(e){ e.preventDefault(); }); //prevent scrolling
-		document.body.addEventListener('touchmove', function(e){ e.preventDefault(); }); //prevent scrolling
-		document.body.addEventListener('touchend', function(e){ e.preventDefault(); }); //prevent scrolling
-		document.body.addEventListener('touchcancel', function(e){ e.preventDefault(); }); //prevent scrolling
-		document.body.addEventListener('touchleave', function(e){ e.preventDefault(); }); //prevent scrolling
 
 		window.addEventListener('load', initInput(), false); //start listening to mouse & touch events
+		document.getElementById('textCanvas').style.cursor = 'wait';
 		
 		// /* Connect to XML */
 		$.ajax({

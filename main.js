@@ -355,13 +355,9 @@ var particle = function(x, y, speed, direction, grav) {
 
 		}, false);
 
-		document.body.addEventListener('touchstart', function(e){ e.preventDefault(); }); //prevent scrolling
-		document.body.addEventListener('touchmove', function(e){ e.preventDefault(); }); //prevent scrolling
-		document.body.addEventListener('touchend', function(e){ e.preventDefault(); }); //prevent scrolling
-		document.body.addEventListener('touchcancel', function(e){ e.preventDefault(); }); //prevent scrolling
-		document.body.addEventListener('touchleave', function(e){ e.preventDefault(); }); //prevent scrolling
 
 		window.addEventListener('load', initInput(), false); //start listening to mouse & touch events
+		document.getElementById('textCanvas').style.cursor = 'wait';
 		
 		// /* Connect to XML */
 		$.ajax({
@@ -665,13 +661,13 @@ explosion.prototype = Object.create(particle.prototype); // Creating a explosion
 explosion.prototype.constructor = explosion; // Set the "constructor" property to refer to explosion
 
 function player(hull, fireRate) {
-	particle.call(this);
+	// particle.call(this);
 
 	this.x = Math.round(game.width*0.46);
 	this.y = Math.round(game.height*0.90);
 	this.speed = 0;
 	this.maxSpeed = 400;
-	this.direction = -Math.PI/2;
+	
 	this.size = Math.round(100*dtSize);
 	this.hull = hull;
 	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
@@ -690,12 +686,13 @@ function player(hull, fireRate) {
 	this.missileLevel = 0;
 	this.lives = X_Lives;
 	this.ctx = game.contextPlayer;
-	this.incline = [Math.round(game.width*0.004), Math.round(game.width*0.008), Math.round(game.width*0.010), Math.round(game.width*0.012)];
-	this.steering = Math.round(game.width * 0.08); //ship drag radius
-	this.limitX1 = Math.round(this.size*0.25);
-	this.limitX2 = Math.round(game.width - this.size*0.25);
-	this.limitY1 = this.size;
-	this.limitY2 = Math.round(game.height - this.size*0.16);
+	this.speedX = 0;
+	this.speedY = 0;
+	this.limitX1 = -this.size*0.5;
+	this.limitX2 = game.width - this.size*0.5;
+	this.limitY1 = -this.size*0.5;
+	this.limitY2 = game.height - this.size*0.5;
+	this.movement = Math.round(game.height*0.007);
 
 	this.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;
 	
@@ -716,7 +713,9 @@ function player(hull, fireRate) {
 		// this.vy += this.gravity;
 		// this.x += this.vx;
 		// this.y += this.vy;
-		this.playerImage = game.images[this.image];		
+		this.playerImage = game.images[this.image];
+		this.speedX = Math.round((touchInitX - canvasX)*0.1);
+		this.speedY = Math.round((touchInitY - canvasY)*0.1);		
 		
 		//////////////////////////////
 		//	Mouse and Touch controls
@@ -724,47 +723,100 @@ function player(hull, fireRate) {
 
 		if (mouseIsDown && !game.levelComplete && !game.paused && !game.gameOver && !game.gameWon) {
 
-			//defining the boundaries	
-			if((canvasX > this.limitX1 && canvasX <= this.limitX2) && (canvasY > this.limitY1) && canvasY <= this.limitY2) {			
-				
-				moveRight1 = (canvasX > moveX && canvasX <= moveX + this.incline[0]) ? true : false;
-				moveRight2 = (canvasX > moveX + this.incline[0] && canvasX <= moveX + this.incline[1]) ? true : false;
-				moveRight3 = (canvasX > moveX + this.incline[1] && canvasX <= moveX + this.incline[2]) ? true : false;
-				moveRight4 = (canvasX > moveX + this.incline[2] && canvasX <= moveX + this.incline[3]) ? true : false;
-				moveRight5 = (canvasX > moveX + this.incline[3]) ? true : false;
+			//removing cursor
+			document.getElementById('textCanvas').style.cursor = 'none';
 
-				moveLeft1 = (canvasX < moveX && canvasX >= moveX -this.incline[0]) ? true : false;
-				moveLeft2 = (canvasX < moveX - this.incline[0] && canvasX >= moveX -this.incline[1]) ? true : false;
-				moveLeft3 = (canvasX < moveX - this.incline[1] && canvasX >= moveX -this.incline[2]) ? true : false;
-				moveLeft4 = (canvasX < moveX - this.incline[2] && canvasX >= moveX -this.incline[3]) ? true : false;
-				moveLeft5 = (canvasX < moveX - this.incline[3]) ? true : false;
+
+			//defining the boundaries	
+					
+				
+				moveRight1 = (this.speedX < -2 && this.speedX >= -4) ? true : false;
+				moveRight2 = (this.speedX < -4 && this.speedX >= -6) ? true : false;
+				moveRight3 = (this.speedX < -6 && this.speedX >= -8) ? true : false;
+				moveRight4 = (this.speedX < -8 && this.speedX >= -10) ? true : false;
+				moveRight5 = (this.speedX < -10) ? true : false;
+
+				moveLeft1 = (this.speedX > 2 && this.speedX <= 4) ? true : false;
+				moveLeft2 = (this.speedX > 4 && this.speedX <= 6) ? true : false;
+				moveLeft3 = (this.speedX > 6 && this.speedX <= 8) ? true : false;
+				moveLeft4 = (this.speedX > 8 && this.speedX <= 10) ? true : false;
+				moveLeft5 = (this.speedX > 10) ? true : false;
 				
 				//making it move to touch or click point
-				if (canvasX != moveX || canvasY != moveY) {
+				// if (canvasX != moveX || canvasY != moveY) {
 					//the distance between the current ship pos and the user touch/click pos
-					distX = moveX - canvasX;
-					distY = moveY - canvasY;
 					
-					// if xy touch position is greater than the ships steering radius (approx 10px) make the ship move to touch point, else teleport to touch point (magnet effect)
-					// this gives a smooth steering experience while avoiding cheating (teleportation)
-					if (distX < this.steering && distX > -this.steering){this.speed = this.maxSpeed;this.x -= distX;}
-					if (distX >= this.steering) {this.speed = this.maxSpeed;this.x -= this.speed*dt;}
-					if (distX <= -this.steering) {this.speed = this.maxSpeed;this.x += this.speed*dt;}
+					
+					// console.log('canvasx:'+ canvasX);
+					// console.log('canvasy:'+ canvasY);				
+					// console.log('touchx:'+ touchInitX);
+					// console.log('touchy:'+ touchInitY);
+					// console.log (this.speedX);
+					// console.log (this.speedY);
+					// console.log (dtSize);
 
-					if (distY < this.steering && distY > -this.steering){this.speed = this.maxSpeed;this.y -= distY;}
-					if (distY >= this.steering) {this.speed = this.maxSpeed;this.y -= this.speed*dt;}
-					if (distY <= -this.steering) {this.speed = this.maxSpeed;this.y += this.speed*dt;}
+					// A MAIN CONTROLS
 
-					// this.speed = this.maxSpeed;
-					// this.x -= distX;
-					// this.y -= distY;
 
-				}
+					console.log('movement:' + this.movement);
+					
+					this.speedX = this.speedX < this.movement ? this.speedX : this.movement;					
+					this.speedY = this.speedY < this.movement ? this.speedY : this.movement;
+					this.speedX = this.speedX > -this.movement ? this.speedX : -this.movement;					
+					this.speedY = this.speedY > -this.movement ? this.speedY : -this.movement;
 
-				// console.log (canvasX);
-				// console.log (moveX);
-				// console.log (canvasY);
-				// console.log (moveY);
+					// console.log('touchInitX:'+ touchInitX);
+					// console.log('touchInitY:'+ touchInitY);
+					// console.log('canvasX:'+ canvasX);
+					// console.log('canvasY:'+ canvasY);					
+					// console.log('this.speedX:'+ this.speedX);
+					// console.log('this.speedY:'+ this.speedY);	
+					
+					if (this.speedX !== 0 || this.speedY !== 0) 
+					{
+						//the bondaries and edge portals				
+						if (this.x >= this.limitX1 && this.x <= this.limitX2 && this.y >= this.limitY1 && this.y <= this.limitY2)
+						{			
+						this.x = this.x - this.speedX;
+						this.y = this.y - this.speedY;
+						}						
+						else if(this.x < this.limitX1)
+						{
+						 this.x = this.limitX2;
+						}
+						else if(this.x > this.limitX2)
+						{
+						 this.x = this.limitX1;
+						}
+						else if(this.y < this.limitY1)
+						{
+						 this.y = this.limitY2;
+						}
+						else if(this.y > this.limitY2)
+						{
+						 this.y = this.limitY1;
+						}
+
+					}
+
+					this.speedX = 0;
+					this.speedY = 0; //not needed but..
+					
+					// B ALTERNATIVE CONTROLS 
+					// this.speedX = (touchInitX - canvasX);
+					// this.speedY = (touchInitY - canvasY);
+					
+					
+					// this.x = this.x - this.speedX;
+					// this.y = this.y - this.speedY;					
+
+
+					// touchInitX = canvasX;
+					// touchInitY = canvasY;
+
+
+			
+
 				
 				if (moveRight1) {
 					this.image = 'fighter_right1.png';
@@ -787,70 +839,70 @@ function player(hull, fireRate) {
 					this.image = 'fighter_left4.png';
 				} else if (moveLeft5) {
 					this.image = 'fighter_left5.png';
-				} else {
-					this.image = 'fighter.png';	
 				}
 
-				this.rendered = false;				
-				moveX = Math.round(this.x + this.size*0.5); 	//second define of moveX as canvasX position
-				moveY = game.isMobile ? Math.round(this.y + this.size*1.7) : Math.round(this.y + this.size); 	//second define of moveX as canvasX position
-			
-			}
-			/*		console.log (canvasX)
-					console.log (moveX);
-					console.log (moveRight);*/
+				this.rendered = false;		
+
 		}
-		else if (!mouseIsDown && !game.gameOver) {
-			this.image = 'fighter.png';
-			this.rendered = false;
+		else
+		{
+			this.image = 'fighter.png';	
+			document.getElementById('textCanvas').style.cursor = 'crosshair';
 		}
 
 		/////////////////////////
 		//	Keyboard controlls
 		////////////////////////
 
-		//left
-		if(game.keys[37] || game.keys[65] && !(game.gameOver) && !(game.gameWon)){ //if key pressed..				
-			if(this.x > 0){ // (keeping it within the boundaries of our canvas)				
-				this.speed = this.maxSpeed;
-				this.direction = Math.PI;				
-				this.image = 'fighter_left5.png';
-				this.rendered = false;
-				this.x -= Math.round(this.speed*dt);
+		if(!game.isMobile)
+		{
+			//left
+			if(game.keys[37] || game.keys[65] && !(game.gameOver) && !(game.gameWon)){ //if key pressed..				
+				if(this.x > 0){ // (keeping it within the boundaries of our canvas)				
+					this.speed = this.maxSpeed;							
+					this.image = 'fighter_left5.png';
+					this.rendered = false;
+					this.x -= Math.round(this.speed*dt);
+				}
 			}
-		}
-		//right
-		if(game.keys[39] || game.keys[68] && !(game.gameOver) && !(game.gameWon)){
-			if(this.x <= game.width - this.size){				
-				this.speed = this.maxSpeed;
-				this.direction = 0;
-				this.image = 'fighter_right5.png';
-				this.rendered = false;
-				this.x += Math.round(this.speed*dt);
+			//right
+			if(game.keys[39] || game.keys[68] && !(game.gameOver) && !(game.gameWon)){
+				if(this.x <= game.width - this.size){				
+					this.speed = this.maxSpeed;
+					this.image = 'fighter_right5.png';
+					this.rendered = false;
+					this.x += Math.round(this.speed*dt);
+				}
 			}
-		}
-		//up
-		if((game.keys[38] || game.keys[87] && !game.gameOver && !game.gameWon) || game.levelComplete){ //also if game level is complete!
-			if(this.y > 0 || game.levelComplete){				
-				this.speed = this.maxSpeed;
-				this.direction = -Math.PI/2;
-				this.rendered = false;
-				this.y -= Math.round(this.speed*dt);
+			//up
+			if((game.keys[38] || game.keys[87]) && !game.gameOver && !game.gameWon){
+				if(this.y > 0){				
+					this.speed = this.maxSpeed;					
+					this.rendered = false;
+					this.y -= Math.round(this.speed*dt);
+				}
 			}
-		}
-		//down
-		if(game.keys[40] || game.keys[83] && !(game.gameOver) && !game.gameWon){
-			if(this.y <= game.height - this.size){				
-				this.speed = this.maxSpeed;
-				this.direction = Math.PI/2;
-				this.rendered = false;
-				this.y += Math.round(this.speed*dt);
-			}	
-		}
-		else {
-			this.speed = 0;
+			//down
+			if(game.keys[40] || game.keys[83] && !(game.gameOver) && !game.gameWon){
+				if(this.y <= game.height - this.size){				
+					this.speed = this.maxSpeed;					
+					this.rendered = false;
+					this.y += Math.round(this.speed*dt);
+				}	
+			}
 		}
 
+		
+		if(game.levelComplete){			
+			this.speed = this.maxSpeed;			
+			this.rendered = false;
+			this.y -= Math.round(this.speed*dt);
+		}
+
+
+		/////////////////////////
+		//	Guns
+		////////////////////////
 
 		this.midLaserX = Math.round(this.x + this.size*0.5);
 		this.leftlaserX = Math.round(this.x + this.size*0.25);
@@ -923,7 +975,7 @@ function player(hull, fireRate) {
 		{
 			this.dead = true;			
 			this.lives -= 1;
-			game.explosions.push(new explosion(this.x, this.y, this.speed, this.direction, this.size));
+			game.explosions.push(new explosion(this.x, this.y, this.speed, 0, this.size));
 			if (game.sound){game.sounds.push(new Audio("_sounds/blast.mp3"));}
 			gameUI.updateHangar();
 		}	
@@ -1059,8 +1111,8 @@ function player(hull, fireRate) {
 	};
 }
 
-player.prototype = Object.create(particle.prototype); // Creating a player.prototype object that inherits from particle.prototype.
-player.prototype.constructor = player; // Set the "constructor" property to refer to player
+// player.prototype = Object.create(particle.prototype); // Creating a player.prototype object that inherits from particle.prototype.
+// player.prototype.constructor = player; // Set the "constructor" property to refer to player
 
 
 playerShip = new player(10, 15);
@@ -2789,31 +2841,31 @@ function lvl1() {
 		//====================== Game functions =================//
 		
 
-		function toggleFullScreen()  //experimental   only works with user input
- 		{
-		  if (!document.fullscreenElement &&    // alternative standard method
-		      !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
-		    if (document.documentElement.requestFullscreen) {
-		      document.documentElement.requestFullscreen();
-		    } else if (document.documentElement.msRequestFullscreen) {
-		      document.documentElement.msRequestFullscreen();
-		    } else if (document.documentElement.mozRequestFullScreen) {
-		      document.documentElement.mozRequestFullScreen();
-		    } else if (document.documentElement.webkitRequestFullscreen) {
-		      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-		    }
-		  } else {
-		    if (document.exitFullscreen) {
-		      document.exitFullscreen();
-		    } else if (document.msExitFullscreen) {
-		      document.msExitFullscreen();
-		    } else if (document.mozCancelFullScreen) {
-		      document.mozCancelFullScreen();
-		    } else if (document.webkitExitFullscreen) {
-		      document.webkitExitFullscreen();
-		    }
-		  }
-		}
+		// function toggleFullScreen()  //experimental   only works with user input
+ 	// 	{
+		//   if (!document.fullscreenElement &&    // alternative standard method
+		//       !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
+		//     if (document.documentElement.requestFullscreen) {
+		//       document.documentElement.requestFullscreen();
+		//     } else if (document.documentElement.msRequestFullscreen) {
+		//       document.documentElement.msRequestFullscreen();
+		//     } else if (document.documentElement.mozRequestFullScreen) {
+		//       document.documentElement.mozRequestFullScreen();
+		//     } else if (document.documentElement.webkitRequestFullscreen) {
+		//       document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+		//     }
+		//   } else {
+		//     if (document.exitFullscreen) {
+		//       document.exitFullscreen();
+		//     } else if (document.msExitFullscreen) {
+		//       document.msExitFullscreen();
+		//     } else if (document.mozCancelFullScreen) {
+		//       document.mozCancelFullScreen();
+		//     } else if (document.webkitExitFullscreen) {
+		//       document.webkitExitFullscreen();
+		//     }
+		//   }
+		// }
 
 		//Keyboard		
 		$(document).keydown(function(e){    //using jquery to listen to pressed keys
@@ -2829,8 +2881,8 @@ function lvl1() {
 		var canvasX = playerShip.x;
 		var canvasY = playerShip.y;
 		var mouseIsDown = 0;
-		var moveX = canvasX;      //initial define of moveX as canvasX position
-		var moveY = canvasY;      //initial define of moveX as canvasX position
+		var touchInitX = 0;
+		var touchInitY = 0;
  
 
 		function initInput()
@@ -2847,54 +2899,53 @@ function lvl1() {
 	        canvas.addEventListener("touchleave", touchUp, false);
 			canvas.addEventListener("touchmove", touchXY, false);
 		                
-		}
-		
+		}		
 		
 		function mouseUp(e)
 		{
 			e.preventDefault();
 			mouseIsDown = 0;
-			mouseXY();
 		}
 		 
 		function touchUp(e)
 		{
 			e.preventDefault();
 			mouseIsDown = 0;
-			touchXY();
 		}
 		 
 		function mouseDown(e)
 		{
 			e.preventDefault();
 			mouseIsDown = 1;
-			mouseXY();
+			touchInitX = e.pageX - canvas.offsetLeft;
+			touchInitY = e.pageY - canvas.offsetTop;
 		}
 		  
 		function touchDown(e)
 		{
 			e.preventDefault();
 			mouseIsDown = 1;
-			touchXY();
+			var touch = e.targetTouches[0];
+
+			touchInitX =  touch.pageX - touch.target.offsetLeft;
+			touchInitY =  touch.pageY - touch.target.offsetTop;
+
 		}
 		
 		function mouseXY(e)
 		{
-			if (e)
-			{
-				e.preventDefault();
-				canvasX = e.pageX - canvas.offsetLeft;
-				canvasY = e.pageY - canvas.offsetTop;
-			}
+			e.preventDefault();
+			canvasX = e.pageX - canvas.offsetLeft;
+			canvasY = e.pageY - canvas.offsetTop;
 		}
 		 
 		function touchXY(e) {
-			if (e)
-			{
-				e.preventDefault();
-				canvasX = e.targetTouches[0].pageX - canvas.offsetLeft;
-				canvasY = e.targetTouches[0].pageY - canvas.offsetTop;
-			}
+			e.preventDefault();
+			var touch = e.targetTouches[0];
+
+    		canvasX = touch.pageX - canvas.offsetLeft;
+    		canvasY = touch.pageY - canvas.offsetTop;
+ 
 		}
 				
 		// function addStars(num){ //this function is going to take a number thus num
@@ -2907,6 +2958,8 @@ function lvl1() {
 		// 		});
 		// 	}
 		// }
+
+
 		function clrCanvas(){
 			game.contextBackground.clearRect(0, 0, game.width, game.height); 
 			game.contextPlayer.clearRect(0, 0, game.width, game.height); 
@@ -3112,6 +3165,7 @@ function lvl1() {
 			if(game.doneImages >= game.requiredImages){
 				gameText.gameIntro();
 				loop(); //LOoP CALL!!!
+				document.getElementById('textCanvas').style.cursor = 'corsair';
 			} 
 			else
 			{
