@@ -10,6 +10,8 @@ function player(hull, fireRate) {
 	this.hull = hull;
 	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
 	this.image = 'fighter.png';
+	this.audioFire = 'laser.mp3';
+	this.audioExplode = 'blast.mp3';
 	this.rendered = false;
 	this.hit = false;
 	this.hitTimer = 0;
@@ -96,8 +98,9 @@ function player(hull, fireRate) {
 					// A MAIN CONTROLS
 
 
-					console.log('movement:' + this.movement);
+					// console.log('movement:' + this.movement);
 					
+					//this needs to come after movement vars above because he redefine this.speedX here
 					this.speedX = this.speedX < this.movement ? this.speedX : this.movement;					
 					this.speedY = this.speedY < this.movement ? this.speedY : this.movement;
 					this.speedX = this.speedX > -this.movement ? this.speedX : -this.movement;					
@@ -262,18 +265,18 @@ function player(hull, fireRate) {
 				switch(this.laserLevel) {
 				    case 1:
 				        game.playerBullets.push( new playerBullet(this.midLaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
-				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
+				        if (game.sound){game.sounds.push(game.sfx[this.audioFire]);}
 				        break;
 				    case 2:
 				    	game.playerBullets.push( new playerBullet(this.leftlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
 				        game.playerBullets.push( new playerBullet(this.rightlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));				
-				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
+				        if (game.sound){game.sounds.push(game.sfx[this.audioFire]);}
 				        break;
 				    default:
 				        game.playerBullets.push( new playerBullet(this.leftlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
 				        game.playerBullets.push( new playerBullet(this.midLaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
 				        game.playerBullets.push( new playerBullet(this.rightlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
-				        if (game.sound){game.sounds.push(new Audio("_sounds/_sfx/laser.wav"));}
+				        if (game.sound){game.sounds.push(game.sfx[this.audioFire]);}
 				        break;
 				 }
 
@@ -314,7 +317,7 @@ function player(hull, fireRate) {
 			this.dead = true;			
 			this.lives -= 1;
 			game.explosions.push(new explosion(this.x, this.y, this.speed, 0, this.size));
-			if (game.sound){game.sounds.push(new Audio("_sounds/blast.mp3"));}
+			if (game.sound){game.sounds.push(game.sfx[this.audioExplode]);}
 			gameUI.updateHangar();
 		}	
 

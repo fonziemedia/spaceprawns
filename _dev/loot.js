@@ -19,6 +19,7 @@ function loot(x, y) {
     case 'missile':
         this.image = 'missile.png';
 	}
+	this.sfx = 'loot_powerUp.mp3';
 	this.context = game.contextPlayer;
 
 	this.update = function() {
@@ -50,7 +51,7 @@ function loot(x, y) {
 			    case 'missile':
 			        playerShip.missileLevel += 1;
 			}
-			if(game.sound){game.sounds.push(new Audio("_sounds/_sfx/loot_powerUp.mp3"));}
+			if(game.sound){game.sounds.push(game.sfx[this.sfx]);}
 			this.dead = true;
 		}
 

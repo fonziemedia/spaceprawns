@@ -7,10 +7,10 @@
 				resetGame();
 				mouseIsDown = 0;
 				game.keys[13] = false;					
-				if(game.music && game.songs.length < 1){
-					game.songs.push(new Audio("_sounds/_lvl1/tune1.mp3"));
-					game.songs[0].play();
-					game.songs[0].loop = true;				
+				if(game.music && game.tracks.length < 1){
+					game.tracks.push(game.soundTracks['tune1.mp3']);
+					game.tracks[0].play();
+					game.tracks[0].loop = true;				
 					// game.music[q].addEventListener("ended", game.music.splice(q,1));
 				}
 				
@@ -44,17 +44,17 @@
 
 
 
-				if (game.songs.length > 0) {
-					for(var g in game.songs){
-						game.songs[g].pause();
+				if (game.tracks.length > 0) {
+					for(var g in game.tracks){
+						game.tracks[g].pause();
 					}
-					game.songs = [];
+					game.tracks = [];
 				}
-				else if (game.songs.length < 1) {
-						game.songs.push(new Audio("_sounds/_lvl1/tune1.mp3"));
-						for(var w in game.songs){
-							game.songs[w].play();
-							game.songs[w].loop = true;							
+				else if (game.tracks.length < 1) {
+						game.tracks.push(game.soundTracks['tune1.mp3']);
+						for(var w in game.tracks){
+							game.tracks[w].play();
+							game.tracks[w].loop = true;							
 						}
 				}
 			}

@@ -243,7 +243,7 @@
 						if(game.enemies[o].dead){
 							// game.contextEnemies.clearRect(game.enemies[o].x, game.enemies[o].y, game.enemies[o].size, game.enemies[o].size);
 							lootchance = Math.random();
-							if (lootchance < 0.05) {
+							if (lootchance < 0.3) {
 								game.loot.push(new loot(game.enemies[o].x, game.enemies[o].y));					
 							}
 						}	
@@ -276,11 +276,11 @@
 				for (var u in game.loot){
 					game.loot[u].update();
 					game.loot[u].draw();
+				}
 
-
-
-					if(game.loot[u].dead || game.loot[u].x > game.width + game.loot[u].size || game.loot[u].x < 0 - game.loot[u].size || game.loot[u].y > game.height + game.loot[u].size || game.loot[u].y < 0 - 30){
-						game.loot.splice(u,1);
+				for (var v in game.loot){
+					if(game.loot[v].dead || game.loot[v].x > game.width + game.loot[v].size || game.loot[v].x < 0 - game.loot[v].size || game.loot[v].y > game.height + game.loot[v].size || game.loot[v].y < 0 - 30){
+						game.loot.splice(v,1);
 					}
 				}
 			}
@@ -349,12 +349,25 @@
 			// Game Sounds
 			///////////////////////////////////
 
+			// console.log (game.sounds.length);
+			
 			if (game.sounds.length > 0) {
 				for(var s in game.sounds){
 
-					game.sounds[s].play();
+					game.sounds[s].cloneNode(true).play();
 					game.sounds[s].addEventListener("ended", game.sounds.splice(s,1));
-
 				}
-			}			
+			}
+
+
+			///////////////////////////////////
+			// D3BUG3R!
+			///////////////////////////////////
+
+			// console.log ('game font: ' + game.font);
+			// console.log ('game tracks length: ' + game.tracks.length);
+			// console.log ('game tracks: ' + game.tracks);
+			// console.log ('game soundtracks length: ' + game.soundTracks.length);
+			// console.log ('game sfx length: ' + game.sfx.length);
+										
 		}	

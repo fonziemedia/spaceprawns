@@ -17,6 +17,8 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.spritePos = Math.round(this.size * 0.5);
 	this.hull = hull;
 	this.image = game.images[image];
+	this.audioHit = 'hit.mp3';	
+	this.audioDead = 'explosion.mp3';
 	this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;
@@ -71,7 +73,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		// }
 
 		if(this.hit && this.hull > 0 ){
-			if(game.sound){game.sounds.push(new Audio("_sounds/_sfx/hit.mp3"));}
+			if(game.sound){game.sounds.push(game.sfx[this.audioHit]);}
 			//change image here		
 			this.hit = false;
 		}
@@ -80,7 +82,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 			this.dead = true;
 
 			game.explosions.push(new explosion(this.x, this.y, this.speed, this.direction, this.size));			
-			if(game.sound){game.sounds.push(new Audio("_sounds/explosion.mp3"));}
+			if(game.sound){game.sounds.push(game.sfx[this.audioDead]);}
 
 			if (!playerShip.crashed){
 				game.score++;

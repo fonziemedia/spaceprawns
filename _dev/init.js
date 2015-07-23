@@ -1,24 +1,7 @@
 (function(game){ // jshint ignore:line
 	$(document).ready(function(){ // jshint ignore:line
 		
-		// Check if a new cache is available on page load.
-		window.addEventListener('load', function(e) {
 
-		  window.applicationCache.addEventListener('updateready', function(e) {
-		    if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
-		      // Browser downloaded a new app cache.
-		      if (confirm('A new version of InVaDeRs is available. Load it?')) {
-		        window.location.reload();
-		      }
-		    } else {
-		      // Manifest didn't changed. Nothing new to server.
-		    }
-		  }, false);
-
-		}, false);
-
-
-		window.addEventListener('load', initInput(), false); //start listening to mouse & touch events
 		document.getElementById('textCanvas').style.cursor = 'wait';
 		
 		// /* Connect to XML */
@@ -101,17 +84,30 @@
 		
 		//========================== Audio ==========================
 		
+		// ON/OFF Triggers
 		game.sound = X_Sound;	//on/off trigger
 		game.music = X_Music;	//on/off trigger
+
+		//SFX vars
+		game.sfx = [];		
+		game.doneSfx  = 0; // will contain how many images have been loaded
+		game.requiredSfx = 0; // will contain how many images should be loadedgame.doneSfx  = 0; // will contain how many images have been loaded
+
+		//Sound Tracks vars
+		game.soundTracks = [];		
+		game.doneSoundTracks = 0; // will contain how many images should be loadedgame.doneSfx  = 0; // will contain how many images have been loaded
+		game.requiredSoundTracks = 0; // will contain how many images should be loaded
+		
+		//Our main SOUND players arrays
 		game.sounds = [];
-		game.songs = [];
+		game.tracks = [];		
 			
 		//======================== Images ========================		
 			
 		game.images = [];
 		game.doneImages  = 0; // will contain how many images have been loaded
 		game.requiredImages = 0; // will contain how many images should be loaded
-		// game.font = game.isMobile ? "Helvetica" : "Monaco";
+		game.font = game.isMobile ? "Helvetica" : "Monaco";
 		// game.res = 4*5; //check the 4th index every 5 frames
 		
 		//====================== Canvases + Images + responsiveness  ============================
@@ -145,17 +141,17 @@
 			c3.attr('height', $(container).height()); //max height
 			c4.attr('height', $(container).height()); //max height
 
-			if ($(container).width() < 1080)
+			if (game.isMobile)
 			{
 				c1.attr('width', $(container).width()); //max width
 				c2.attr('width', $(container).width()); //max width
 				c3.attr('width', $(container).width()); //max width
 				c4.attr('width', $(container).width()); //max width
 
-				game.width = $(container).width();
+				game.width = Math.round($(container).width());
 			}
 			else {
-				var widthProp = $(container).height() * 9 / 16;
+				var widthProp = $(container).height() * (9/16);
 
 				c1.attr('width', widthProp); //max width
 				c2.attr('width', widthProp); //max width
@@ -173,9 +169,7 @@
 			 //we'll use width and height to limit the game to our canvas size
 			game.height = Math.round($(container).height());
 
-			//delta size will keep the size of our objects proportional to the display
-			dtSize = game.height*0.001;
-			// console.log (dtSize);
+
 
 			
 			//the below needs width and height defined, thus we put it here	
@@ -198,5 +192,9 @@
 
 		//Initial call 
 		respondCanvas();
+
+					//delta size will keep the size of our objects proportional to the display
+			var dtSize = game.height*0.001;
+			// console.log (dtSize);
 
 	// jshint ignore:line

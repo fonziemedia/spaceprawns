@@ -1,9 +1,10 @@
 CACHE MANIFEST
-# 2015-01-14 v1.0.32
+# 2015-05-28 ver a0.4.8
 
 # Explicitly cached entries
 index.html
 style.css
+_api/jquery-2.1.4.min.js
 main.js
 main.min.js
 game.xml
@@ -44,11 +45,11 @@ _img/_dist/ui/energypoint.png
 _img/_dist/enemies/_bigboss/sectoidBoss.png
 #SOUND
 _sounds/_sfx/hit.mp3
-_sounds/_sfx/laser.wav
+_sounds/_sfx/laser.mp3
 _sounds/_sfx/loot_powerUp.mp3
-_sounds/_lvl1/boss.mp3
-_sounds/_lvl1/tune1.mp3
-_sounds/_lvl1/tune2.mp3
+_sounds/_soundTracks/_lvl1/boss.mp3
+_sounds/_soundTracks/_lvl1/tune1.mp3
+_sounds/_soundTracks/_lvl1/tune2.mp3
 
 
 

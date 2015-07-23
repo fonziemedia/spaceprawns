@@ -158,15 +158,15 @@
 			game.timer = 0;		
 			game.sounds = [];
 
-			for(var g in game.songs){
-					game.songs[g].pause();
+			for(var g in game.tracks){
+					game.tracks[g].pause();
 			}
-			game.songs = [];
+			game.tracks = [];
 
 			if (game.music){
-				game.songs.push(new Audio("_sounds/_lvl1/tune1.mp3"));
-				game.songs[0].play();
-				game.songs[0].loop = true;	
+				game.tracks.push(game.soundTracks['tune1.mp3']);
+				game.tracks[0].play();
+				game.tracks[0].loop = true;	
 			}
 
 
@@ -314,24 +314,158 @@
 				if(i < 1)
 				{
 					//=========================== Game loading Screen =================================== 	
-					game.contextText.font = "bold " + game.width*0.08 + "px " + game.font; 
+					game.contextText.font = "bold " + game.width*0.06 + "px " + game.font; 
 					game.contextText.fillStyle = "white";
-					game.contextText.fillText("Loading...", game.width*0.30, game.height*0.47);
+					game.contextText.fillText("Loading Images...", game.width*0.22, game.height*0.47);
 				}
+				console.log('reqImages: ' + game.requiredImages);
+				// console.log('doneImages: ' + game.doneImages);
 			}
-		}	
+		}
 
-		function checkImages(){	//checking if all images have been loaded. Once all loaded run init
+		function initSfx(paths) { //our Sfx engine: passing the array 'paths' to the function
+			game.requiredSfx = paths.length; //the number of required Sfx will be equal to the length of the paths array
+			for(var i in paths)
+			{
+				var sfx = new Audio(); //defining img as a new Audio
+				sfx.src = paths[i]; //defining new Audio src as paths[i]
+
+				var sfxIndex = sfx.src.split("/").pop(); //obtaining file name from path
+				// var sfxIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
+
+				game.sfx[sfxIndex] = sfx; //defining game.Sfx[index] as a new Audio (with paths)
+
+				/*jshint -W083 */
+				game.sfx[sfxIndex].oncanplaythrough = function()
+				{ //once an Sfx loads..
+					game.doneSfx++; //  ..increment the doneSfx variable by 1
+				};
+
+				if(i < 1)
+				{
+					//=========================== Game loading Screen =================================== 	
+					game.contextText.font = "bold " + game.width*0.06 + "px " + game.font; 
+					game.contextText.fillStyle = "white";
+					game.contextText.fillText("Loading Sfx...", game.width*0.23, game.height*0.47);
+				}
+				console.log('reqSfx: ' + game.requiredSfx);
+			}
+		}
+
+		function initSoundTracks(paths) { //our Sfx engine: passing the array 'paths' to the function
+			game.requiredSoundTracks = paths.length; //the number of required Sfx will be equal to the length of the paths array
+			for(var i in paths)
+			{
+				var soundTracks = new Audio(); //defining img as a new Audio
+				soundTracks.src = paths[i]; //defining new Audio src as paths[i]
+
+				var soundTracksIndex = soundTracks.src.split("/").pop(); //obtaining file name from path
+				// var soundTracksIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
+				console.log (soundTracksIndex);
+
+				game.soundTracks[soundTracksIndex] = soundTracks; //defining game.soundTracks[index] as a new Audio (with paths)
+
+				/*jshint -W083 */
+				game.soundTracks[soundTracksIndex].oncanplaythrough = function()
+				{ //once an sound loads..
+					game.doneSoundTracks++; //  ..increment the doneSoundTracks variable by 1
+				};
+
+				if(i < 1)
+				{
+					//=========================== Game loading Screen =================================== 	
+					game.contextText.font = "bold " + game.width*0.06 + "px " + game.font; 
+					game.contextText.fillStyle = "white";
+					game.contextText.fillText("Loading Sound Tracks...", game.width*0.15, game.height*0.47);
+				}
+				console.log('requiredSoundTracks: ' + game.requiredSoundTracks);
+			}
+		}
+
+		// function initSfx(paths) { //our Sfx engine: passing the array 'paths' to the function
+		// 	game.requiredSfx = paths.length; //the number of required Sfx will be equal to the length of the paths array
+		// 	for(var i in paths)
+		// 	{
+		// 		var sfx = new Audio(); //defining img as a new Audio
+		// 		sfx.src = paths[i]; //defining new Audio src as paths[i]
+
+		// 		var sfxIndex = sfx.src.split("/").pop(); //obtaining file name from path
+		// 		// var sfxIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
+
+		// 		game.sfx[sfxIndex] = sfx; //defining game.Sfx[index] as a new Audio (with paths)
+
+		// 		/*jshint -W083 */
+		// 		game.sfx[sfxIndex].oncanplaythrough = function()
+		// 		{ //once an Sfx loads..
+		// 			game.doneSfx++; //  ..increment the doneSfx variable by 1
+		// 		};
+
+		// 		if(i < 1)
+		// 		{
+		// 			//=========================== Game loading Screen =================================== 	
+		// 			game.contextText.font = "bold " + game.width*0.08 + "px " + game.font; 
+		// 			game.contextText.fillStyle = "white";
+		// 			game.contextText.fillText("Loading Sound FX...", game.width*0.30, game.height*0.47);
+		// 		}
+		// 		console.log('reqSfx: ' + game.requiredSfx);
+		// 	}
+		// }
+
+		function checkImages(){	//checking if all images have been loaded. Once all loaded run initSfx
 			if(game.doneImages >= game.requiredImages){
-				gameText.gameIntro();
-				loop(); //LOoP CALL!!!
-				document.getElementById('textCanvas').style.cursor = 'corsair';
+				game.contextText.clearRect(0, 0, game.width, game.height);
+				initSfx([	//using initSfx function to load our sounds
+					"_sounds/_sfx/laser.mp3",			
+					"_sounds/_sfx/hit.mp3",			
+					"_sounds/_sfx/loot_powerUp.mp3",			
+					"_sounds/_sfx/explosion.mp3",			
+					"_sounds/_sfx/blast.mp3",			
+				]);
+				checkSfx();
 			} 
 			else
 			{
-				game.contextText.fillText("|", game.width*0.30+(game.doneImages+1), game.height*0.55);					
+				game.contextText.fillText("|", game.width*0.15+(game.doneImages+1), game.height*0.55);
+				console.log('doneImages: ' + game.doneImages);					
 				setTimeout(function(){
 					checkImages();
+				}, 1);
+			}
+		}
+
+		function checkSfx(){	//checking if all Sfx have been loaded. Once all loaded run init
+			if(game.doneSfx >= game.requiredSfx){
+				game.contextText.clearRect(0, 0, game.width, game.height);				
+				initSoundTracks([	//using initSfx function to load our sound tracks
+					"_sounds/_soundTracks/_lvl1/tune1.mp3",			
+					"_sounds/_soundTracks/_lvl1/tune2.mp3",			
+					"_sounds/_soundTracks/_lvl1/victory.mp3",			
+					"_sounds/_soundTracks/_lvl1/boss.mp3",		
+				]);
+				checkSoundTracks();
+			} 
+			else
+			{
+				game.contextText.fillText("|", game.width*0.20+(game.doneSfx+1), game.height*0.55);
+				console.log('doneSfx: ' + game.doneSfx);					
+				setTimeout(function(){
+					checkSfx();
+				}, 1);
+			}
+		}
+
+		function checkSoundTracks(){	//checking if all Sfx have been loaded. Once all loaded run init
+			if(game.doneSoundTracks >= game.requiredSoundTracks){
+				gameText.gameIntro();
+				loop(); //LOoP CALL!!!
+				document.getElementById('textCanvas').style.cursor = 'corsair';				
+			} 
+			else
+			{
+				game.contextText.fillText("|", game.width*0.20+(game.doneSoundTracks+1), game.height*0.55);
+				console.log('doneSoundTracks: ' + game.doneSoundTracks);					
+				setTimeout(function(){
+					checkSoundTracks();
 				}, 1);
 			}
 		}
@@ -374,8 +508,33 @@
 			"_img/_dist/missile.png",
 			"_img/_dist/explosion.png",						
 		]);
+
 		
-		checkImages(); //this function call starts our game
+		//this function call starts our game
+		window.addEventListener("load", function load(event)
+		{
+    		window.removeEventListener("load", load, false); //remove listener, no longer needed
+    		
+    		//appcache
+    		window.applicationCache.addEventListener('updateready', function(e) {
+			    if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+			      // Browser downloaded a new app cache.
+			      if (confirm('A new version of InVaDeRs is available. Load it?')) {
+			        window.location.reload();
+			      }
+			    } else {
+			      // Manifest didn't changed. Nothing new to server.
+			    }
+		  	}, false);
+
+    		//load user input listeners
+ 			initInput();
+
+		},false);
+
+
+ 			//load game images
+ 			checkImages();  
 		
 	/* jshint ignore:start */
 	});
