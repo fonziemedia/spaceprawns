@@ -9,9 +9,9 @@ function player(hull, fireRate) {
 	this.size = Math.round(100*dtSize);
 	this.hull = hull;
 	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
-	this.image = 'fighter.png';
-	this.audioFire = 'laser.mp3';
-	this.audioExplode = 'blast.mp3';
+	this.image = 'fighter.' + fileFormat;
+	this.audioFire = 'laser.' + fileFormat;
+	this.audioExplode = 'blast.' + fileFormat;
 	this.rendered = false;
 	this.hit = false;
 	this.hitTimer = 0;
@@ -64,7 +64,7 @@ function player(hull, fireRate) {
 		if (mouseIsDown && !game.levelComplete && !game.paused && !game.gameOver && !game.gameWon) {
 
 			//removing cursor
-			document.getElementById('textCanvas').style.cursor = 'none';
+			if (!game.isMobile) {document.getElementById('textCanvas').style.cursor = 'none';}
 
 
 			//defining the boundaries	
@@ -265,7 +265,24 @@ function player(hull, fireRate) {
 				switch(this.laserLevel) {
 				    case 1:
 				        game.playerBullets.push( new playerBullet(this.midLaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
-				        if (game.sound){game.sounds.push(game.sfx[this.audioFire]);}
+				        if (game.sound)
+				        {
+				        	if (!audio1.paused)
+				        	{
+				        		if (!audio2.paused)
+				        		{
+				        			audio3.play();
+				        		}
+				        		else
+				        		{
+				        			audio2.play();
+				        		}
+				        	}
+				        	else
+				        	{
+				        		audio1.play();
+				        	}				        	
+				        }
 				        break;
 				    case 2:
 				    	game.playerBullets.push( new playerBullet(this.leftlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
@@ -374,7 +391,7 @@ function player(hull, fireRate) {
 
 		if(!this.dead){		
 			
-			if (this.imune && !game.faded && !game.starting && !game.levelComplete)
+			if (this.imune && !game.faded && game.started && !game.levelComplete)
 			{
 				this.ctx.globalAlpha = 0.8;
 				if (this.imuneTimer >= 0 && this.imuneTimer < 15  || this.imuneTimer >= 20 && this.imuneTimer < 35 ||this.imuneTimer >= 40 && this.imuneTimer < 55 || this.imuneTimer >= 70 && this.imuneTimer < 75 || this.imuneTimer >= 90 && this.imuneTimer < 95 || this.imuneTimer >= 110 && this.imuneTimer < 115 || this.imuneTimer >= 130 && this.imuneTimer < 135 || this.imuneTimer >= 150 && this.imuneTimer < 155 || this.imuneTimer >= 160 && this.imuneTimer < 175 || this.imuneTimer > 180)

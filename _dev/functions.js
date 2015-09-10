@@ -107,6 +107,50 @@
     		canvasY = touch.pageY - canvas.offsetTop;
  
 		}
+
+
+
+		//testing using DOM audio sources
+
+		function setSource() {
+  			audio1 = document.querySelector('#audio1');
+  			audio2 = document.querySelector('#audio2');
+  			audio3 = document.querySelector('#audio3');
+  			audio1.src = '_sounds/_sfx/laser.' + fileFormat;
+  			audio2.src = '_sounds/_sfx/laser.' + fileFormat;
+  			audio3.src = '_sounds/_sfx/laser.' + fileFormat;
+		}
+
+		function mediaPlaybackRequiresUserGesture() {
+			// test if play() is ignored when not called from an input event handler
+			audio1 = document.createElement('audio');
+			audio1.play();
+			return audio1.paused;		  
+		}
+
+		function removeBehaviorsRestrictions() {
+			audio1 = document.querySelector('#audio1');
+			audio2 = document.querySelector('#audio2');
+			audio3 = document.querySelector('#audio3');
+			audio1.load();
+			audio2.load();
+			audio3.load();
+			window.removeEventListener('keydown', removeBehaviorsRestrictions);
+			window.removeEventListener('mousedown', removeBehaviorsRestrictions);
+			window.removeEventListener('touchstart', removeBehaviorsRestrictions);
+		   	
+  			setTimeout(setSource, 1000);
+		}
+
+		if (mediaPlaybackRequiresUserGesture()) {
+			window.addEventListener('keydown', removeBehaviorsRestrictions);
+			window.addEventListener('mousedown', removeBehaviorsRestrictions);
+			window.addEventListener('touchstart', removeBehaviorsRestrictions);
+		}
+		else
+		{
+			setSource();
+		}
 				
 		// function addStars(num){ //this function is going to take a number thus num
 		// 	for(var i=0; i<num; i+=4) {
@@ -121,7 +165,7 @@
 
 
 		function clrCanvas(){
-			game.contextBackground.clearRect(0, 0, game.width, game.height); 
+			// game.contextBackground.clearRect(0, 0, game.width, game.height); 
 			game.contextPlayer.clearRect(0, 0, game.width, game.height); 
 			game.contextEnemies.clearRect(0, 0, game.width, game.height);
 		}
@@ -149,7 +193,7 @@
 			clrCanvas();							
 			playerShip.reset();
 			gameUI.updateAll();
-			game.background = [];
+			// game.background = [];
 			game.enemies = [];
 			game.waves = [];			
 			game.enemyBullets = [];
@@ -164,7 +208,7 @@
 			game.tracks = [];
 
 			if (game.music){
-				game.tracks.push(game.soundTracks['tune1.mp3']);
+				game.tracks.push(game.soundTracks['tune1.' + fileFormat]);
 				game.tracks[0].play();
 				game.tracks[0].loop = true;	
 			}
@@ -291,19 +335,42 @@
 			}
 		}
 
+
+		function startGame()
+		{		
+				gameMenu.toggle();
+
+				resetGame();			
+				if(game.music && game.tracks.length < 1){
+					game.tracks.push(game.soundTracks['tune1.' + fileFormat]);
+					game.tracks[0].play();
+					game.tracks[0].loop = true;				
+					// game.music[q].addEventListener("ended", game.music.splice(q,1));
+				}
+				
+				//setting alpha = 0
+				gameLights.off('all');
+				gameBackground.load();
+				game.started = true;
+				game.paused = false;
+				gameUI.updateAll();
+				loop();
+		}
+
+
 		//====================== Images engine =================//
 		
-		function initImages(paths) { //our images engine: passing the array 'paths' to the function
-			game.requiredImages = paths.length; //the number of required images will be equal to the length of the paths array
-			for(var i in paths)
+		function initImages(ipaths) { //our images engine: passing the array 'ipaths' to the function
+			game.requiredImages = ipaths.length; //the number of required images will be equal to the length of the ipaths array
+			for(var i in ipaths)
 			{
 				var img = new Image(); //defining img as a new image
-				img.src = paths[i]; //defining new image src as paths[i]
+				img.src = ipaths[i]; //defining new image src as ipaths[i]
 
 				var imgIndex = img.src.split("/").pop(); //obtaining file name from path
 				// var imgIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
 
-				game.images[imgIndex] = img; //defining game.image[index] as a new image (with paths)
+				game.images[imgIndex] = img; //defining game.image[index] as a new image (with ipaths)
 
 				/*jshint -W083 */
 				game.images[imgIndex].onload = function()
@@ -318,27 +385,30 @@
 					game.contextText.fillStyle = "white";
 					game.contextText.fillText("Loading Images...", game.width*0.22, game.height*0.47);
 				}
-				console.log('reqImages: ' + game.requiredImages);
+				// console.log('reqImages: ' + game.requiredImages);
 				// console.log('doneImages: ' + game.doneImages);
 			}
 		}
 
-		function initSfx(paths) { //our Sfx engine: passing the array 'paths' to the function
-			game.requiredSfx = paths.length; //the number of required Sfx will be equal to the length of the paths array
-			for(var i in paths)
+		function initSfx(sfxPaths) { //our Sfx engine: passing the array 'sfxPaths' to the function
+			game.requiredSfx = sfxPaths.length; //the number of required Sfx will be equal to the length of the sfxPaths array
+			// console.log('required soundSfx:' + game.requiredSfx);
+			for(var i in sfxPaths)
 			{
 				var sfx = new Audio(); //defining img as a new Audio
-				sfx.src = paths[i]; //defining new Audio src as paths[i]
+				sfx.src = sfxPaths[i]; //defining new Audio src as sfxPaths[i]
 
 				var sfxIndex = sfx.src.split("/").pop(); //obtaining file name from path
 				// var sfxIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
 
-				game.sfx[sfxIndex] = sfx; //defining game.Sfx[index] as a new Audio (with paths)
+				game.sfx[sfxIndex] = sfx; //defining game.Sfx[index] as a new Audio (with sfxPaths)
+
 
 				/*jshint -W083 */
 				game.sfx[sfxIndex].oncanplaythrough = function()
 				{ //once an Sfx loads..
 					game.doneSfx++; //  ..increment the doneSfx variable by 1
+					// console.log('done Sfx:' + game.doneSfx);
 				};
 
 				if(i < 1)
@@ -348,27 +418,31 @@
 					game.contextText.fillStyle = "white";
 					game.contextText.fillText("Loading Sfx...", game.width*0.23, game.height*0.47);
 				}
-				console.log('reqSfx: ' + game.requiredSfx);
+				// console.log('reqSfx: ' + game.requiredSfx);
 			}
 		}
 
-		function initSoundTracks(paths) { //our Sfx engine: passing the array 'paths' to the function
-			game.requiredSoundTracks = paths.length; //the number of required Sfx will be equal to the length of the paths array
-			for(var i in paths)
+		function initSoundTracks(stPaths)
+		{ //our Sfx engine: passing the array 'stPaths' to the function
+			game.requiredSoundTracks = stPaths.length; //the number of required Sfx will be equal to the length of the stPaths array
+			// console.log('required soundTracks:' + game.requiredSoundTracks);
+			for(var i in stPaths)
 			{
 				var soundTracks = new Audio(); //defining img as a new Audio
-				soundTracks.src = paths[i]; //defining new Audio src as paths[i]
+				soundTracks.src = stPaths[i]; //defining new Audio src as stPaths[i]
 
 				var soundTracksIndex = soundTracks.src.split("/").pop(); //obtaining file name from path
 				// var soundTracksIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
-				console.log (soundTracksIndex);
+				// console.log (soundTracksIndex);
 
-				game.soundTracks[soundTracksIndex] = soundTracks; //defining game.soundTracks[index] as a new Audio (with paths)
+				game.soundTracks[soundTracksIndex] = soundTracks; //defining game.soundTracks[index] as a new Audio (with stPaths)
 
 				/*jshint -W083 */
 				game.soundTracks[soundTracksIndex].oncanplaythrough = function()
-				{ //once an sound loads..
+				{ //once a sound loads..
 					game.doneSoundTracks++; //  ..increment the doneSoundTracks variable by 1
+					// console.log('done soundTracks:' + game.doneSoundTracks);
+					// game.contextText.fillText("+", game.width*0.20, (game.height*0.55) + (game.doneSoundTracks*5));
 				};
 
 				if(i < 1)
@@ -378,7 +452,7 @@
 					game.contextText.fillStyle = "white";
 					game.contextText.fillText("Loading Sound Tracks...", game.width*0.15, game.height*0.47);
 				}
-				console.log('requiredSoundTracks: ' + game.requiredSoundTracks);
+				// console.log('requiredSoundTracks: ' + game.requiredSoundTracks);
 			}
 		}
 
@@ -415,18 +489,17 @@
 			if(game.doneImages >= game.requiredImages){
 				game.contextText.clearRect(0, 0, game.width, game.height);
 				initSfx([	//using initSfx function to load our sounds
-					"_sounds/_sfx/laser.mp3",			
-					"_sounds/_sfx/hit.mp3",			
-					"_sounds/_sfx/loot_powerUp.mp3",			
-					"_sounds/_sfx/explosion.mp3",			
-					"_sounds/_sfx/blast.mp3",			
+					"_sounds/_sfx/laser." + fileFormat,			
+					"_sounds/_sfx/hit." + fileFormat,			
+					"_sounds/_sfx/loot_powerUp." + fileFormat,			
+					"_sounds/_sfx/explosion." + fileFormat,			
+					"_sounds/_sfx/blast." + fileFormat		
 				]);
 				checkSfx();
 			} 
 			else
 			{
-				game.contextText.fillText("|", game.width*0.15+(game.doneImages+1), game.height*0.55);
-				console.log('doneImages: ' + game.doneImages);					
+				game.contextText.fillText("|", game.width*0.15+(game.doneImages+1), game.height*0.55);		
 				setTimeout(function(){
 					checkImages();
 				}, 1);
@@ -437,17 +510,16 @@
 			if(game.doneSfx >= game.requiredSfx){
 				game.contextText.clearRect(0, 0, game.width, game.height);				
 				initSoundTracks([	//using initSfx function to load our sound tracks
-					"_sounds/_soundTracks/_lvl1/tune1.mp3",			
-					"_sounds/_soundTracks/_lvl1/tune2.mp3",			
-					"_sounds/_soundTracks/_lvl1/victory.mp3",			
-					"_sounds/_soundTracks/_lvl1/boss.mp3",		
+					"_sounds/_soundTracks/_lvl1/tune1." + fileFormat,			
+					"_sounds/_soundTracks/_lvl1/tune2." + fileFormat,			
+					"_sounds/_soundTracks/_lvl1/victory." + fileFormat,			
+					"_sounds/_soundTracks/_lvl1/boss." + fileFormat	
 				]);
 				checkSoundTracks();
 			} 
 			else
 			{
-				game.contextText.fillText("|", game.width*0.20+(game.doneSfx+1), game.height*0.55);
-				console.log('doneSfx: ' + game.doneSfx);					
+				game.contextText.fillText("|", game.width*0.20+(game.doneSfx+1), game.height*0.55);					
 				setTimeout(function(){
 					checkSfx();
 				}, 1);
@@ -457,13 +529,13 @@
 		function checkSoundTracks(){	//checking if all Sfx have been loaded. Once all loaded run init
 			if(game.doneSoundTracks >= game.requiredSoundTracks){
 				gameText.gameIntro();
-				loop(); //LOoP CALL!!!
-				document.getElementById('textCanvas').style.cursor = 'corsair';				
+				gameMenu.init();
+				// loop(); //LOoP CALL!!!
+				if(!game.isMobile) {document.getElementById('textCanvas').style.cursor = 'corsair';} 				
 			} 
 			else
 			{
-				game.contextText.fillText("|", game.width*0.20+(game.doneSoundTracks+1), game.height*0.55);
-				console.log('doneSoundTracks: ' + game.doneSoundTracks);					
+				game.contextText.fillText("|", game.width*0.20+(game.doneSoundTracks+1), game.height*0.55);					
 				setTimeout(function(){
 					checkSoundTracks();
 				}, 1);
@@ -506,15 +578,72 @@
 			//Projectiles
 			"_img/_dist/laser.png",
 			"_img/_dist/missile.png",
-			"_img/_dist/explosion.png",						
+			"_img/_dist/explosion.png"						
 		]);
 
+
+
+		//====================== Pre-loading Assets to Off-Screen canvas =================//
+
+		//background
+
+		// function loadOsCanvas() {
+
+		// 	m_canvas = document.createElement('canvas');
+		// 	m_canvas.width = game.width;
+		// 	m_canvas.height = game.height;
+		// 	var m_context = m_canvas.getContext('2d');
+
+		// 	m_context.drawImage(game.images['level1.jpg'], 0, 0, m_canvas.width, m_canvas.height);
+
+		// }
+
+		// //Drawing (Add below to update function in game class
+		// game.contextBackground.drawImage(m_canvas, this.x, this.y, this.width, this.height);
+
+
+
+		function toggleSound() {
+
+			game.sound = game.sound ? false : true ;
+
+			localStorage.prawnsSound =  game.sound;
+		}
+
+		function toggleMusic() {
+
+			game.music = game.music ? false : true ;
+
+			localStorage.prawnsMusic =  game.music;
+
+			if (game.tracks.length > 0)
+			{
+				for(var g in game.tracks)
+				{
+					game.tracks[g].pause();
+				}
+				game.tracks = [];
+			}
+			else if (game.tracks.length < 1)
+			{
+				game.tracks.push(game.soundTracks['tune1.mp3']);
+
+				for(var w in game.tracks)
+				{
+					game.tracks[w].play();
+					game.tracks[w].loop = true;							
+				}
+			}
+		}
+
+
 		
-		//this function call starts our game
 		window.addEventListener("load", function load(event)
 		{
     		window.removeEventListener("load", load, false); //remove listener, no longer needed
     		
+    		if (!game.isMobile) {document.getElementById('textCanvas').style.cursor = 'wait';}
+
     		//appcache
     		window.applicationCache.addEventListener('updateready', function(e) {
 			    if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
@@ -530,15 +659,18 @@
     		//load user input listeners
  			initInput();
 
+ 			// loadOsCanvas();
+
 		},false);
 
 
- 			//load game images
+ 			//this function call starts our game
  			checkImages();  
 		
 	/* jshint ignore:start */
-	});
-})();
+	// });
+// })();
+	// }	// jshint ignore:line
 /* jshint ignore:end */
 
 window.requestAnimFrame = (function(){  // Creating a request animAnimeFrame function and making it work across browsers.  window.requestAnimationFrame is an HTML built in 60fps anim function

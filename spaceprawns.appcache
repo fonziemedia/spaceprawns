@@ -1,0 +1,82 @@
+CACHE MANIFEST
+# 2015-09-10 ver a0.6.0
+
+# Explicitly cached entries
+index.html
+_css/style.css
+_css/_src/game.css
+_css/_src/reset.css
+_css/_src/assets/fonts/icons.eot
+_css/_src/assets/fonts/icons.svg
+_css/_src/assets/fonts/icons.ttf
+_css/_src/assets/fonts/icons.woff
+_css/_src/assets/fonts/icons.woff2
+_api/jquery-2.1.4.min.js
+main.js
+main.min.js
+game.xml
+
+
+FALLBACK:
+# The FALLBACK section below specifies that "offline.html" will be served in place of all files in the /html/ catalog, in case an internet connection cannot be established
+# /html/ /offline.html
+
+NETWORK:
+*
+
+# Additional resources to cache
+CACHE:
+#GFX
+favicon.ico
+favicon.png
+_img/_dist/explosion.png
+_img/_dist/enemies/sectoid.png
+_img/_dist/laser.png
+_img/_dist/fighter/fighter.png
+_img/_dist/fighter/fighter_left1.png
+_img/_dist/fighter/fighter_left2.png
+_img/_dist/fighter/fighter_left3.png
+_img/_dist/fighter/fighter_left4.png
+_img/_dist/fighter/fighter_left5.png
+_img/_dist/fighter/fighter_right1.png
+_img/_dist/fighter/fighter_right2.png
+_img/_dist/fighter/fighter_right3.png
+_img/_dist/fighter/fighter_right4.png
+_img/_dist/fighter/fighter_right5.png
+_img/_dist/missile.png
+_img/_dist/background/level1.jpg
+_img/_dist/background/intro_bg.jpg
+_img/_dist/enemies/_alienbase/alienbase1.png			
+_img/_dist/enemies/_alienbase/alienbase2.png
+_img/_dist/enemies/_miniboss/floater.png			
+_img/_dist/ui/energybar.png			
+_img/_dist/ui/energypoint.png			
+_img/_dist/enemies/_bigboss/sectoidBoss.png
+#SOUND
+_sounds/_sfx/hit.mp3
+_sounds/_sfx/hit.ogg
+_sounds/_sfx/laser.mp3
+_sounds/_sfx/laser.ogg
+_sounds/_sfx/loot_powerUp.mp3
+_sounds/_sfx/loot_powerUp.ogg
+_sounds/_sfx/explosion.mp3
+_sounds/_sfx/explosion.ogg
+_sounds/_sfx/blast.mp3
+_sounds/_sfx/blast.ogg
+_sounds/_soundTracks/_lvl1/boss.mp3
+_sounds/_soundTracks/_lvl1/boss.ogg
+_sounds/_soundTracks/_lvl1/tune1.mp3
+_sounds/_soundTracks/_lvl1/tune1.ogg
+_sounds/_soundTracks/_lvl1/tune2.mp3
+_sounds/_soundTracks/_lvl1/tune2.ogg
+_sounds/_soundTracks/_lvl1/victory.mp3
+_sounds/_soundTracks/_lvl1/victory.ogg
+
+
+
+
+# Updating the cache
+#
+# Once an application is offline it remains cached until one of the following happens:
+# 	-The user clears their browser's data storage for your site.
+# 	-The manifest file (this file) is modified. Note: updating a file listed in the manifest doesn't mean the browser will re-cache that resource. The manifest file itself must be altered.

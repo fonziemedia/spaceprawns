@@ -1,7 +1,7 @@
 function lights() {
 
 	//starting our game with a black screen
-	this.backgroundAlpha = 0;
+	// this.backgroundAlpha = 0;
 	this.enemiesAlpha = 0;
 	this.playerAlpha = 0;
 	this.textAlpha = 0;
@@ -16,12 +16,12 @@ function lights() {
 		{
 			case 'all':
 				game.contextText.globalAlpha = 1;				
-				game.contextBackground.globalAlpha = 1;
+				// game.contextBackground.globalAlpha = 1;
 				game.contextEnemies.globalAlpha = 1;
 				game.contextPlayer.globalAlpha = 1;
 				
 				game.textFaded = false;
-				game.backgroundFaded = false;
+				// game.backgroundFaded = false;
 				game.enemiesFaded = false;
 				game.playerFaded = false;
 				
@@ -33,10 +33,10 @@ function lights() {
 				game.textFaded = false;	
 			break;
 
-			case 'background':
-				game.contextBackground.globalAlpha = 1;
-				game.backgroundFaded = false;												
-			break;
+			// case 'background':
+			// 	game.contextBackground.globalAlpha = 1;
+			// 	game.backgroundFaded = false;												
+			// break;
 
 			case 'enemies':
 				game.contextEnemies.globalAlpha = 1;
@@ -58,12 +58,12 @@ function lights() {
 		{
 			case 'all':
 				game.contextText.globalAlpha = 0;				
-				game.contextBackground.globalAlpha = 0;
+				// game.contextBackground.globalAlpha = 0;
 				game.contextEnemies.globalAlpha = 0;
 				game.contextPlayer.globalAlpha = 0;
 				
 				game.textFaded = true;
-				game.backgroundFaded = true;
+				// game.backgroundFaded = true;
 				game.enemiesFaded = true;
 				game.playerFaded = true;
 				
@@ -75,10 +75,10 @@ function lights() {
 				game.textFaded = true;	
 			break;
 
-			case 'background':
-				game.contextBackground.globalAlpha = 0;
-				game.backgroundFaded = true;												
-			break;
+			// case 'background':
+			// 	game.contextBackground.globalAlpha = 0;
+			// 	game.backgroundFaded = true;												
+			// break;
 
 			case 'enemies':
 				game.contextEnemies.globalAlpha = 0;
@@ -99,27 +99,29 @@ function lights() {
 		switch (ctx)
 		{
 			case 'all':	
-				if (this.backgroundAlpha < 1 || this.enemiesAlpha < 1 || this.playerAlpha < 1 || this.textAlpha < 1 )
+				// if (this.backgroundAlpha < 1 || this.enemiesAlpha < 1 || this.playerAlpha < 1 || this.textAlpha < 1 )
+				if (this.enemiesAlpha < 1 || this.playerAlpha < 1 || this.textAlpha < 1 )
 				{	
-					this.backgroundAlpha += this.alphaDelta;
+					// this.backgroundAlpha += this.alphaDelta;
 					this.enemiesAlpha += this.alphaDelta;
 					this.playerAlpha += this.alphaDelta;			
 					this.textAlpha += this.alphaDelta;
 				}
-				else if (this.backgroundAlpha >= 1 && this.enemiesAlpha >= 1 && this.playerAlpha >= 1 && this.textAlpha >= 1)
+				// else if (this.backgroundAlpha >= 1 && this.enemiesAlpha >= 1 && this.playerAlpha >= 1 && this.textAlpha >= 1)
+				else if (this.enemiesAlpha >= 1 && this.playerAlpha >= 1 && this.textAlpha >= 1)
 				{
-					game.contextBackground.globalAlpha = 1;
+					// game.contextBackground.globalAlpha = 1;
 					game.contextEnemies.globalAlpha = 1;
 					game.contextPlayer.globalAlpha = 1;
 					game.contextText.globalAlpha = 1;
-					game.backgroundFaded = false;
+					// game.backgroundFaded = false;
 					game.enemiesFaded = false;
 					game.playerFaded = false;
 					game.textFaded = false;
 					game.faded = false;
 				}
 
-				game.contextBackground.globalAlpha = this.backgroundAlpha;
+				// game.contextBackground.globalAlpha = this.backgroundAlpha;
 				game.contextEnemies.globalAlpha = this.enemiesAlpha;
 				game.contextPlayer.globalAlpha = this.playerAlpha;
 				game.contextText.globalAlpha = this.textAlpha;
@@ -139,19 +141,19 @@ function lights() {
 				game.contextText.globalAlpha = this.textAlpha;	
 			break;
 
-			case 'background':
-				if (this.backgroundAlpha < 1)
-				{				
-					this.backgroundAlpha += this.alphaDelta;
-				}
-				else if (this.backgroundAlpha >= 1)
-				{
-					game.contextBackground.globalAlpha = 1;
-					game.backgroundFaded = false;
-				}
+			// case 'background':
+			// 	if (this.backgroundAlpha < 1)
+			// 	{				
+			// 		this.backgroundAlpha += this.alphaDelta;
+			// 	}
+			// 	else if (this.backgroundAlpha >= 1)
+			// 	{
+			// 		game.contextBackground.globalAlpha = 1;
+			// 		game.backgroundFaded = false;
+			// 	}
 
-				game.contextBackground.globalAlpha = this.backgroundAlpha;												
-			break;
+			// 	game.contextBackground.globalAlpha = this.backgroundAlpha;												
+			// break;
 
 			case 'enemies':
 				if (this.enemiesAlpha < 1)
@@ -192,26 +194,27 @@ function lights() {
 		{
 			case 'all':	
 				if (this.backgroundAlpha > 0 || this.enemiesAlpha > 0 || this.playerAlpha > 0 || this.textAlpha > 0 )
+				if (this.enemiesAlpha > 0 || this.playerAlpha > 0 || this.textAlpha > 0 )
 				{	
-					this.backgroundAlpha -= this.alphaDelta;
+					// this.backgroundAlpha -= this.alphaDelta;
 					this.enemiesAlpha -= this.alphaDelta;
 					this.playerAlpha -= this.alphaDelta;			
 					this.textAlpha -= this.alphaDelta;
 				}
-				else if (this.backgroundAlpha <= 0 && this.enemiesAlpha <= 0 && this.playerAlpha <= 0 && this.textAlpha <= 0)
+				else if (this.enemiesAlpha <= 0 && this.playerAlpha <= 0 && this.textAlpha <= 0)
 				{
-					game.contextBackground.globalAlpha = 0;
+					// game.contextBackground.globalAlpha = 0;
 					game.contextEnemies.globalAlpha = 0;
 					game.contextPlayer.globalAlpha = 0;
 					game.contextText.globalAlpha = 0;
-					game.backgroundFaded = true;
+					// game.backgroundFaded = true;
 					game.enemiesFaded = true;
 					game.playerFaded = true;
 					game.textFaded = true;
 					game.faded = true;
 				}
 
-				game.contextBackground.globalAlpha = this.backgroundAlpha;
+				// game.contextBackground.globalAlpha = this.backgroundAlpha;
 				game.contextEnemies.globalAlpha = this.enemiesAlpha;
 				game.contextPlayer.globalAlpha = this.playerAlpha;
 				game.contextText.globalAlpha = this.textAlpha;
@@ -231,19 +234,19 @@ function lights() {
 				game.contextText.globalAlpha = this.textAlpha;
 			break;
 
-			case 'background':
-				if (this.backgroundAlpha > 0)
-				{				
-					this.backgroundAlpha -= this.alphaDelta;
-				}
-				else if (this.backgroundAlpha <= 0)
-				{
-					game.contextBackground.globalAlpha = 0;
-					game.backgroundFaded = true;
-				}
+			// case 'background':
+			// 	if (this.backgroundAlpha > 0)
+			// 	{				
+			// 		this.backgroundAlpha -= this.alphaDelta;
+			// 	}
+			// 	else if (this.backgroundAlpha <= 0)
+			// 	{
+			// 		game.contextBackground.globalAlpha = 0;
+			// 		game.backgroundFaded = true;
+			// 	}
 
-				game.contextBackground.globalAlpha = this.backgroundAlpha;													
-			break;
+			// 	game.contextBackground.globalAlpha = this.backgroundAlpha;													
+			// break;
 
 			case 'enemies':
 				if (this.enemiesAlpha > 0)

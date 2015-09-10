@@ -16,10 +16,10 @@ function loot(x, y) {
     case 'laser':
         this.image = 'laser.png';
         break;
-    case 'missile':
+    case 'missile':    
         this.image = 'missile.png';
 	}
-	this.sfx = 'loot_powerUp.mp3';
+	this.sfx = 'loot_powerUp.' + fileFormat;
 	this.context = game.contextPlayer;
 
 	this.update = function() {

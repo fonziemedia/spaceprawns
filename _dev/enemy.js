@@ -17,8 +17,8 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.spritePos = Math.round(this.size * 0.5);
 	this.hull = hull;
 	this.image = game.images[image];
-	this.audioHit = 'hit.mp3';	
-	this.audioDead = 'explosion.mp3';
+	this.audioHit = 'hit.' + fileFormat;	
+	this.audioDead = 'explosion.' + fileFormat;
 	this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en" manifest="invaders.appcache">
+<html lang="en" manifest="spaceprawns.appcache">
 	<head>
 		<meta charset="UTF-8" />
 		<!-- <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -13,21 +13,34 @@
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="mobile-web-app-capable" content="yes">
 		<!-- <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" media="all and (max-width: 767px)"/>	 -->
-		<script src="_api/jquery-2.1.4.min.js"></script>	
+		<script src="_api/jquery-2.1.4.min.js"></script>			
 		<!-- <script src="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script> -->
 		<!-- <script src="_api/jquery.vibrate.min.js"></script> -->
-		<link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
-		<script src = "main.js" type= text/javascript></script>
+		<link rel="stylesheet" href="_css/style.css" type="text/css" media="screen"/>
 	</head>
 	<body>
-		<section id = "game" class="container">
+		<audio id = "audio1"></audio>
+		<audio id = "audio2"></audio>
+		<audio id = "audio3"></audio>
+		
+		<section id= "container">
 			<div id = "gamearea">
-				<canvas id = "backgroundCanvas" moz-opaque>Sorry, your browser doesn't support canvas technology.</canvas>
+				<div id ="backgroundCanvas"></div>
+				<!-- <canvas id = "backgroundCanvas" moz-opaque>Sorry, your browser doesn't support canvas technology.</canvas> -->
 				<canvas id = "enemiesCanvas"></canvas>
 				<canvas id = "playerCanvas"></canvas> 
-				<canvas id = "textCanvas"></canvas> 
-				<!-- having multiple canvas helps us optimise resources by separating elements of our game and avoiding unnecessary rendering -->
+				<canvas id = "textCanvas"></canvas>
 
+				<!-- BUTTONS -->
+				<button id="toggle-menu-btn" class="btn icon hvr-pulse" onclick="gameMenu.toggle()"><i class="icon options"></i></button>
+				<!-- <div class="btn"> -->
+				<button type="button" id="startGame" class="btn menu-option-btn hvr-pulse" pos="left" onclick="startGame()">Start</button>
+				<button type="button" id="resetGame" class="btn menu-option-btn hvr-pulse" pos="right" onclick="resetGame()">Restart</button>
+				<button type="button" id="toggleSound" class="btn menu-option-btn toggle hvr-pulse" pos="left" onclick="gameMenu.toggleSound()">Sound: OFF</button>
+				<button type="button" id="toggleMusic" class="btn menu-option-btn toggle hvr-pulse" pos="right" onclick="gameMenu.toggleMusic()">Music: OFF</button>				
+
+				<!-- having multiple canvas helps us optimise resources by separating elements of our game and avoiding unnecessary rendering -->
+				<!-- </div> -->
 				
 				<!--
 				<div class = "aright">
@@ -47,4 +60,5 @@
 			</div>
 		</section>
 	</body>
+		<script src = "main.js" type= text/javascript></script>
 </html>

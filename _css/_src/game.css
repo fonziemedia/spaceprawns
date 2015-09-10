@@ -1,0 +1,345 @@
+/*@font-face {
+    font-family: 'Lucida Console', Monaco, monospace;
+}*/
+
+html {
+	width: 100%;
+	height: 100%;
+}
+
+html, body {
+	overflow: hidden;
+}
+
+body {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+  padding: 0;
+	background-color: #000;
+}
+
+/*h1,h2,h3,h4,h5 {
+	margin: 10px;
+}*/
+
+/*h4 {
+	margin-top: 20px
+}*/
+
+#container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+
+canvas {
+	position: absolute;
+	top: 0px;					/* drawing the canvases on top of each other and making them transparent */
+	left: 0px;
+	/*height: 100%;*/
+	/*width: 100%;*/
+	/*zoom: 1;		*/
+	/* This works in IE 8 & 9 too */
+	/* ... but also 5, 6, 7 */
+	filter: alpha(opacity=1);
+	/* Older than Firefox 0.9 */
+	-moz-opacity: 1;
+	/* Safari 1.x (pre WebKit!) */
+	-khtml-opacity: 1;
+	/* Modern!
+	/* Firefox 0.9+, Safari 2?, Chrome any?
+	/* Opera 9+, IE 9+ */
+	opacity: 1;
+	max-width:calc((16/9)*100vh);
+	/* more specific animation properties here */
+}
+
+
+#backgroundCanvas {
+    /*background-image: url('http://fonziemedia.com/games/invaders2/_img/_dist/background/level1.jpg');*/
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background-color: transparent;
+    background-origin: content-box;
+    background-repeat: repeat-y;
+    opacity: 1;
+    z-index: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-transform-style: preserve-3d;
+    -webkit-perspective: 1000;
+    -webkit-backface-visibility: hidden; /* old android browsers fix */
+}
+#enemiesCanvas { z-index: 2 }
+#playerCanvas { z-index: 3 }
+#textCanvas { z-index: 4 }
+
+.btn {
+  cursor: pointer;
+  position: relative;
+  display: none;
+  min-height: 1em;
+  outline: none;
+  border: none;
+  vertical-align: baseline;
+  background: #e0e1e2 none;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 1rem;
+  font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+  margin: 0em 0.25em 0em 0em;
+  padding: 0.78571429em 1.5em 0.78571429em;
+  text-transform: none;
+  text-shadow: none;
+  font-weight: bold;
+  line-height: 1em;
+  font-style: normal;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 0.28571429rem;
+  box-shadow: 0px 0px 0px 1px transparent inset, 0px 0em 0px 0px rgba(34, 36, 38, 0.15) inset;
+  z-index: 9999;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  /*-webkit-transition: opacity 0.1s ease, background-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+          transition: opacity 0.1s ease, background-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;*/
+  will-change: '';
+  -webkit-tap-highlight-color: transparent;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-transform-style: preserve-3d;
+  -webkit-perspective: 1000;
+  -webkit-backface-visibility: hidden; /* old android browsers fix */
+}
+
+.menu-option-btn {
+	position: relative;
+	top: 50%;
+	margin-bottom: 2%;
+	border: #FFFFFF 1px;
+	border-style: solid; 
+	background-color: #264d92;
+	color: #FFFFFF;
+  opacity: 0;
+}
+
+.menu-option-btn.active {
+  background-color: #21ba45;
+  box-shadow: none;
+  text-shadow: none;
+  color: #ffffff;
+}
+
+.menu-option-btn.active:hover {
+  background-color: #16ab39;
+  text-shadow: none;
+  color: #ffffff;
+}
+
+.menu-option-btn[pos="left"] {
+	right: 15%;
+}
+
+.menu-option-btn[pos="right"] {
+	left: 85%;
+}
+
+
+#toggle-menu-btn {
+	position: absolute;
+	display: block;
+	width: 1%;
+	height: 1%;
+	top: 0.5%;
+	right: 2%;
+	margin-bottom: 1%;
+	background-color: transparent;
+}
+
+/*toggle-menu-btn icon*/
+#toggle-menu-btn > i {
+	position: absolute;
+	top: 20%;
+	left: 20%;
+	font-size: 150%;
+	color: #3187A3;
+}
+
+@media (max-width: 991px) {
+
+  #gamearea {
+    position: absolute;
+    height: 100%;
+    width: 100%;    
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-perspective: 1000;
+    -webkit-backface-visibility: hidden; /* old android browsers fix */
+  }	
+
+	.menu-option-btn {
+		width: 40%;
+	}
+	
+	/*Note: the menu-option-btn pos% should be half of the buttons width*/
+	.menu-option-btn[pos="left"] {
+		right: 20%;
+	}
+
+	.menu-option-btn[pos="right"] {
+		left: 80%;
+	}
+}
+
+@media (min-width: 992px) {
+
+	#gamearea {
+		position: absolute;
+		height: 100%;
+		width: 33.333%;
+		left: 33.333%;
+	}
+
+	.menu-option-btn {
+		width: 30%;
+	}
+	
+	/*Note: the menu-option-btn pos% should be half of the buttons width*/
+	.menu-option-btn[pos="left"] {
+		right: 15%;
+	}
+
+	.menu-option-btn[pos="right"] {
+		left: 85%;
+	}
+}
+
+/*******************************
+             Pulse
+*******************************/
+
+/* Pulse */
+@-webkit-keyframes hvr-pulse {
+  25% {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+  }
+
+  75% {
+    -webkit-transform: scale(0.9);
+    transform: scale(0.9);
+  }
+}
+
+@keyframes hvr-pulse {
+  25% {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+  }
+
+  75% {
+    -webkit-transform: scale(0.9);
+    transform: scale(0.9);
+  }
+}
+
+.hvr-pulse {
+  vertical-align: middle;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -moz-osx-font-smoothing: grayscale;
+}
+.hvr-pulse:hover, .hvr-pulse:active {
+  -webkit-animation-name: hvr-pulse;
+  animation-name: hvr-pulse;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+
+
+/*******************************
+             Icon
+*******************************/
+
+@font-face {
+  font-family: 'Icons';
+  src: url("assets/fonts/icons.eot");
+  src: url("assets/fonts/icons.eot?#iefix") format('embedded-opentype'), url("assets/fonts/icons.woff2") format('woff2'), url("assets/fonts/icons.woff") format('woff'), url("assets/fonts/icons.ttf") format('truetype'), url("assets/fonts/icons.svg#icons") format('svg');
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-decoration: inherit;
+  text-transform: none;
+}
+i.icon {
+  display: inline-block;
+  opacity: 1;
+  margin: 0em 0.25rem 0em 0em;
+  width: 1.18em;
+  height: 1em;
+  font-family: 'Icons';
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1em;
+  text-decoration: inherit;
+  text-align: center;
+  speak: none;
+  font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+}
+
+i.icon:before {
+  background: none;
+}
+
+/*******************************
+             Icons
+*******************************/
+
+i.icon.settings:before {
+  content: "\f085";
+}
+
+i.icon.options:before {
+  content: "\f1de";
+}
+
+i.icon.sound:before {
+  content: "\f025";
+}
+
+i.icon.music:before {
+  content: "\f001";
+}
+
+i.icon.volume.off:before {
+  content: "\f026";
+}
+
+i.icon.volume.down:before {
+  content: "\f027";
+}
+i.icon.volume.up:before {
+  content: "\f028";
+}

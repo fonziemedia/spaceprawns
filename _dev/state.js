@@ -3,23 +3,23 @@
 		function gameState() {
 
 			//game start
-			if ((game.keys[13] || mouseIsDown) && game.start && !(game.gameOver) && !(game.gameWon)) {
-				resetGame();
-				mouseIsDown = 0;
-				game.keys[13] = false;					
-				if(game.music && game.tracks.length < 1){
-					game.tracks.push(game.soundTracks['tune1.mp3']);
-					game.tracks[0].play();
-					game.tracks[0].loop = true;				
-					// game.music[q].addEventListener("ended", game.music.splice(q,1));
-				}
+			// if ((game.keys[13] || mouseIsDown) && !game.started && !(game.gameOver) && !(game.gameWon)) {
+			// 	resetGame();
+			// 	mouseIsDown = 0;
+			// 	game.keys[13] = false;					
+			// 	if(game.music && game.tracks.length < 1){
+			// 		game.tracks.push(game.soundTracks['tune1.' + fileFormat]);
+			// 		game.tracks[0].play();
+			// 		game.tracks[0].loop = true;				
+			// 		// game.music[q].addEventListener("ended", game.music.splice(q,1));
+			// 	}
 				
-				//setting alpha = 0
-				gameLights.off('all');
-				game.start = false;
-				game.paused = false;
-				gameUI.updateAll();
-			}
+			// 	//setting alpha = 0
+			// 	gameLights.off('all');
+			// 	game.started = true;
+			// 	game.paused = false;
+			// 	gameUI.updateAll();
+			// }
 			
 			//If Esc
 			if (game.keys[27]) {
@@ -69,8 +69,8 @@
 
 			//If Esc pressed or if gameover and enter pressed
 			if (game.keys[27] ||
-			   ((game.keys[13] || mouseIsDown) && game.paused && !(game.start) && game.gameOver && !(game.gameWon)) ||
-			   ((game.keys[13] || mouseIsDown) && game.paused && !(game.start) && game.level >= 7))
+			   ((game.keys[13] || mouseIsDown) && game.paused && game.started && game.gameOver && !(game.gameWon)) ||
+			   ((game.keys[13] || mouseIsDown) && game.paused && game.started && game.level >= 7))
 			{
 				if (game.lives < 1 || game.level >=7)
 				{

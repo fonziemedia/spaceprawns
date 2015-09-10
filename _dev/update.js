@@ -40,7 +40,7 @@
 
 			// addStars(1);		
 
-			gameBackground.load();
+			gameBackground.update();
 
 
 			/////////////////////////////////////////////////////////////////////////////////
@@ -369,5 +369,8 @@
 			// console.log ('game tracks: ' + game.tracks);
 			// console.log ('game soundtracks length: ' + game.soundTracks.length);
 			// console.log ('game sfx length: ' + game.sfx.length);
+
+			// console.log ('update w:' + game.width);
+			// console.log ('update h:' +game.height);
 										
 		}	
