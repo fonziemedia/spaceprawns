@@ -112,45 +112,53 @@
 
 		//testing using DOM audio sources
 
-		function setSource() {
-  			audio1 = document.querySelector('#audio1');
-  			audio2 = document.querySelector('#audio2');
-  			audio3 = document.querySelector('#audio3');
-  			audio1.src = '_sounds/_sfx/laser.' + fileFormat;
-  			audio2.src = '_sounds/_sfx/laser.' + fileFormat;
-  			audio3.src = '_sounds/_sfx/laser.' + fileFormat;
-		}
+		// function setSource() {
+  // 			audio1 = document.querySelector('#audio1');
+  // 			audio2 = document.querySelector('#audio2');
+  // 			audio3 = document.querySelector('#audio3');
+  // 			audio1.src = '_sounds/_sfx/laser.' + fileFormat;
+  // 			audio2.src = '_sounds/_sfx/laser.' + fileFormat;
+  // 			audio3.src = '_sounds/_sfx/laser.' + fileFormat;
+		// }
 
-		function mediaPlaybackRequiresUserGesture() {
-			// test if play() is ignored when not called from an input event handler
-			audio1 = document.createElement('audio');
-			audio1.play();
-			return audio1.paused;		  
-		}
+		// function mediaPlaybackRequiresUserGesture() {
+		// 	// test if play() is ignored when not called from an input event handler
+		// 	audio_test = document.createElement('audio');
+		// 	audio_test.play();
+		// 	return audio_test.paused;		  
+		// }
 
-		function removeBehaviorsRestrictions() {
-			audio1 = document.querySelector('#audio1');
-			audio2 = document.querySelector('#audio2');
-			audio3 = document.querySelector('#audio3');
-			audio1.load();
-			audio2.load();
-			audio3.load();
-			window.removeEventListener('keydown', removeBehaviorsRestrictions);
-			window.removeEventListener('mousedown', removeBehaviorsRestrictions);
-			window.removeEventListener('touchstart', removeBehaviorsRestrictions);
+		// function removeBehaviorsRestrictions() {
+		// 	// audio1 = document.querySelector('#audio1');
+		// 	// audio2 = document.querySelector('#audio2');
+		// 	// audio3 = document.querySelector('#audio3');
+		// 	sfxTest.load();
+		// 	sfxBlast.load();
+		// 	sfxExplosion.load();
+		// 	sfxHit.load();
+		// 	sfxLaser.load();
+		// 	sfxLoot.load();
+		// 	sfxHit.load();
+		// 	stBoss.load();
+		// 	stLvl1a.load();
+		// 	stLvl1b.load();
+		// 	stVictory.load();
+		// 	window.removeEventListener('keydown', removeBehaviorsRestrictions);
+		// 	window.removeEventListener('mousedown', removeBehaviorsRestrictions);
+		// 	window.removeEventListener('touchstart', removeBehaviorsRestrictions);
 		   	
-  			setTimeout(setSource, 1000);
-		}
+  // 			setTimeout(setSource, 1000);
+		// }
 
-		if (mediaPlaybackRequiresUserGesture()) {
-			window.addEventListener('keydown', removeBehaviorsRestrictions);
-			window.addEventListener('mousedown', removeBehaviorsRestrictions);
-			window.addEventListener('touchstart', removeBehaviorsRestrictions);
-		}
-		else
-		{
-			setSource();
-		}
+		// if (mediaPlaybackRequiresUserGesture()) {
+		// 	window.addEventListener('keydown', removeBehaviorsRestrictions);
+		// 	window.addEventListener('mousedown', removeBehaviorsRestrictions);
+		// 	window.addEventListener('touchstart', removeBehaviorsRestrictions);
+		// }
+		// else
+		// {
+		// 	setSource();
+		// }
 				
 		// function addStars(num){ //this function is going to take a number thus num
 		// 	for(var i=0; i<num; i+=4) {
@@ -190,7 +198,8 @@
 			// game.projectiles = [];
 			// game.enprojectiles = [];
 			// game.enemies = [];
-			clrCanvas();							
+			clrCanvas();			
+			gameBackground.load();							
 			playerShip.reset();
 			gameUI.updateAll();
 			// game.background = [];
@@ -350,7 +359,6 @@
 				
 				//setting alpha = 0
 				gameLights.off('all');
-				gameBackground.load();
 				game.started = true;
 				game.paused = false;
 				gameUI.updateAll();
@@ -395,21 +403,24 @@
 			// console.log('required soundSfx:' + game.requiredSfx);
 			for(var i in sfxPaths)
 			{
-				var sfx = new Audio(); //defining img as a new Audio
-				sfx.src = sfxPaths[i]; //defining new Audio src as sfxPaths[i]
+				var sfx = document.createElement('audio'); //defining sfx as a new Audio					
+				sfx.setAttribute('src', sfxPaths[i]);
 
 				var sfxIndex = sfx.src.split("/").pop(); //obtaining file name from path
 				// var sfxIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
 
+				sfx.setAttribute('id', sfxIndex);
+
 				game.sfx[sfxIndex] = sfx; //defining game.Sfx[index] as a new Audio (with sfxPaths)
 
+				var domContainer = document.getElementById("container"); 
+  				document.body.insertBefore(sfx, domContainer);
 
 				/*jshint -W083 */
-				game.sfx[sfxIndex].oncanplaythrough = function()
-				{ //once an Sfx loads..
+				// game.sfx[sfxIndex].addEventListener("canplaythrough", function(){  //once an Sfx loads..
 					game.doneSfx++; //  ..increment the doneSfx variable by 1
 					// console.log('done Sfx:' + game.doneSfx);
-				};
+				// });
 
 				if(i < 1)
 				{
@@ -428,22 +439,26 @@
 			// console.log('required soundTracks:' + game.requiredSoundTracks);
 			for(var i in stPaths)
 			{
-				var soundTracks = new Audio(); //defining img as a new Audio
-				soundTracks.src = stPaths[i]; //defining new Audio src as stPaths[i]
+				var soundTracks = document.createElement('audio'); //defining img as a new Audio
+				soundTracks.setAttribute('src', stPaths[i]);
 
 				var soundTracksIndex = soundTracks.src.split("/").pop(); //obtaining file name from path
 				// var soundTracksIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
 				// console.log (soundTracksIndex);
 
+				soundTracks.setAttribute('id', soundTracksIndex);
+
 				game.soundTracks[soundTracksIndex] = soundTracks; //defining game.soundTracks[index] as a new Audio (with stPaths)
 
+				var domContainer = document.getElementById("container"); 
+  				document.body.insertBefore(soundTracks, domContainer);
+
 				/*jshint -W083 */
-				game.soundTracks[soundTracksIndex].oncanplaythrough = function()
-				{ //once a sound loads..
+				// game.soundTracks[soundTracksIndex].addEventListener("canplaythrough", function(){ //once a sound loads..
 					game.doneSoundTracks++; //  ..increment the doneSoundTracks variable by 1
 					// console.log('done soundTracks:' + game.doneSoundTracks);
 					// game.contextText.fillText("+", game.width*0.20, (game.height*0.55) + (game.doneSoundTracks*5));
-				};
+				// });
 
 				if(i < 1)
 				{
@@ -545,7 +560,7 @@
 		initImages([	//using initimages function to load our images
 			//backgrounds
 			"_img/_dist/background/intro_bg.jpg",
-			"_img/_dist/background/level1.jpg",
+			// "_img/_dist/background/level1_small.jpg",
 			
 			//UI
 			"_img/_dist/ui/energybar.png",			

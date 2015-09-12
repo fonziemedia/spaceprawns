@@ -58,10 +58,6 @@
 		}
 		soundTest();
 
-		var audio1;
-		var audio2;
-		var audio3;
-
 		game.stars = []; //this is an array which will contain our stars info: position in space and size
 		game.faded = true;
 		// game.backgroundFaded = true;
@@ -174,13 +170,24 @@
 		var gameArea = $('#gamearea');
 		var allCanvas = $('canvas');
 
+		var gameAreaH = window.outerHeight; // !! On Android, window.outerWidth and window.outerHeight are reliably the screen size
 
-		allCanvas.attr('height', gameArea.css("height")); //max height
-		allCanvas.attr('width', gameArea.css("width")); //max height
+		if (game.isMobile)
+		{
+		var gameAreaW = window.outerWidth;
+		}
+		else
+		{
+			gameAreaW = gameArea.css("width");
+		}
+
+		allCanvas.attr('height', gameAreaH); //max height
+		allCanvas.attr('width', gameAreaW); //max height
 
 		//SETTING GAME DIMENSIONS
-		game.height = parseInt(gameArea.css("height"));
-		game.width = parseInt(gameArea.css("width"));
+		game.height = parseInt(gameAreaH); //using parseInt here to remove 'px'
+		game.width = parseInt(gameAreaW);
+
 		
 		//delta size will keep the size of our game objects proportional to the display
 		var dtSize = game.height*0.001;

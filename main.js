@@ -396,10 +396,6 @@ var particle = function(x, y, speed, direction, grav) {
 		}
 		soundTest();
 
-		var audio1;
-		var audio2;
-		var audio3;
-
 		game.stars = []; //this is an array which will contain our stars info: position in space and size
 		game.faded = true;
 		// game.backgroundFaded = true;
@@ -512,13 +508,24 @@ var particle = function(x, y, speed, direction, grav) {
 		var gameArea = $('#gamearea');
 		var allCanvas = $('canvas');
 
+		var gameAreaH = window.outerHeight; // !! On Android, window.outerWidth and window.outerHeight are reliably the screen size
 
-		allCanvas.attr('height', gameArea.css("height")); //max height
-		allCanvas.attr('width', gameArea.css("width")); //max height
+		if (game.isMobile)
+		{
+		var gameAreaW = window.outerWidth;
+		}
+		else
+		{
+			gameAreaW = gameArea.css("width");
+		}
+
+		allCanvas.attr('height', gameAreaH); //max height
+		allCanvas.attr('width', gameAreaW); //max height
 
 		//SETTING GAME DIMENSIONS
-		game.height = parseInt(gameArea.css("height"));
-		game.width = parseInt(gameArea.css("width"));
+		game.height = parseInt(gameAreaH); //using parseInt here to remove 'px'
+		game.width = parseInt(gameAreaW);
+
 		
 		//delta size will keep the size of our game objects proportional to the display
 		var dtSize = game.height*0.001;
@@ -593,7 +600,6 @@ function background() {
 	this.width = this.element.css("width");
 	this.height = this.element.css("height");
 	this.speed = Math.round(180*dt);
-	this.image = 'http://fonziemedia.com/games/invaders2/_img/_dist/background/level1.jpg'; 
 	// this.section = section;
 	// this.width = game.width;
 	// this.height = Math.round((game.width * (16 / 9)) * 4);
@@ -614,8 +620,12 @@ function background() {
 	};
 
 	this.load = function() {
-		this.element.css("background-image", "url('" + this.image + "')");		
-		this.element.css("background-size", "cover");		
+
+		for (var i = 1; i <= 3; i++) {
+			this.element.removeClass('level' + i);
+		}
+		
+		this.element.addClass('level' + game.level);	
 	};
 }
 
@@ -671,7 +681,7 @@ function player(hull, fireRate) {
 	this.size = Math.round(100*dtSize);
 	this.hull = hull;
 	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
-	this.image = 'fighter.' + fileFormat;
+	this.image = 'fighter.png';
 	this.audioFire = 'laser.' + fileFormat;
 	this.audioExplode = 'blast.' + fileFormat;
 	this.rendered = false;
@@ -927,24 +937,25 @@ function player(hull, fireRate) {
 				switch(this.laserLevel) {
 				    case 1:
 				        game.playerBullets.push( new playerBullet(this.midLaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
-				        if (game.sound)
-				        {
-				        	if (!audio1.paused)
-				        	{
-				        		if (!audio2.paused)
-				        		{
-				        			audio3.play();
-				        		}
-				        		else
-				        		{
-				        			audio2.play();
-				        		}
-				        	}
-				        	else
-				        	{
-				        		audio1.play();
-				        	}				        	
-				        }
+				        if (game.sound){game.sounds.push(game.sfx[this.audioFire]);}
+				        // if (game.sound)
+				        // {
+				        // 	if (!audio1.paused)
+				        // 	{
+				        // 		if (!audio2.paused)
+				        // 		{
+				        // 			audio3.play();
+				        // 		}
+				        // 		else
+				        // 		{
+				        // 			audio2.play();
+				        // 		}
+				        // 	}
+				        // 	else
+				        // 	{
+				        // 		audio1.play();
+				        // 	}				        	
+				        // }
 				        break;
 				    case 2:
 				    	game.playerBullets.push( new playerBullet(this.leftlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
@@ -3177,45 +3188,53 @@ function lvl1() {
 
 		//testing using DOM audio sources
 
-		function setSource() {
-  			audio1 = document.querySelector('#audio1');
-  			audio2 = document.querySelector('#audio2');
-  			audio3 = document.querySelector('#audio3');
-  			audio1.src = '_sounds/_sfx/laser.' + fileFormat;
-  			audio2.src = '_sounds/_sfx/laser.' + fileFormat;
-  			audio3.src = '_sounds/_sfx/laser.' + fileFormat;
-		}
+		// function setSource() {
+  // 			audio1 = document.querySelector('#audio1');
+  // 			audio2 = document.querySelector('#audio2');
+  // 			audio3 = document.querySelector('#audio3');
+  // 			audio1.src = '_sounds/_sfx/laser.' + fileFormat;
+  // 			audio2.src = '_sounds/_sfx/laser.' + fileFormat;
+  // 			audio3.src = '_sounds/_sfx/laser.' + fileFormat;
+		// }
 
-		function mediaPlaybackRequiresUserGesture() {
-			// test if play() is ignored when not called from an input event handler
-			audio1 = document.createElement('audio');
-			audio1.play();
-			return audio1.paused;		  
-		}
+		// function mediaPlaybackRequiresUserGesture() {
+		// 	// test if play() is ignored when not called from an input event handler
+		// 	audio_test = document.createElement('audio');
+		// 	audio_test.play();
+		// 	return audio_test.paused;		  
+		// }
 
-		function removeBehaviorsRestrictions() {
-			audio1 = document.querySelector('#audio1');
-			audio2 = document.querySelector('#audio2');
-			audio3 = document.querySelector('#audio3');
-			audio1.load();
-			audio2.load();
-			audio3.load();
-			window.removeEventListener('keydown', removeBehaviorsRestrictions);
-			window.removeEventListener('mousedown', removeBehaviorsRestrictions);
-			window.removeEventListener('touchstart', removeBehaviorsRestrictions);
+		// function removeBehaviorsRestrictions() {
+		// 	// audio1 = document.querySelector('#audio1');
+		// 	// audio2 = document.querySelector('#audio2');
+		// 	// audio3 = document.querySelector('#audio3');
+		// 	sfxTest.load();
+		// 	sfxBlast.load();
+		// 	sfxExplosion.load();
+		// 	sfxHit.load();
+		// 	sfxLaser.load();
+		// 	sfxLoot.load();
+		// 	sfxHit.load();
+		// 	stBoss.load();
+		// 	stLvl1a.load();
+		// 	stLvl1b.load();
+		// 	stVictory.load();
+		// 	window.removeEventListener('keydown', removeBehaviorsRestrictions);
+		// 	window.removeEventListener('mousedown', removeBehaviorsRestrictions);
+		// 	window.removeEventListener('touchstart', removeBehaviorsRestrictions);
 		   	
-  			setTimeout(setSource, 1000);
-		}
+  // 			setTimeout(setSource, 1000);
+		// }
 
-		if (mediaPlaybackRequiresUserGesture()) {
-			window.addEventListener('keydown', removeBehaviorsRestrictions);
-			window.addEventListener('mousedown', removeBehaviorsRestrictions);
-			window.addEventListener('touchstart', removeBehaviorsRestrictions);
-		}
-		else
-		{
-			setSource();
-		}
+		// if (mediaPlaybackRequiresUserGesture()) {
+		// 	window.addEventListener('keydown', removeBehaviorsRestrictions);
+		// 	window.addEventListener('mousedown', removeBehaviorsRestrictions);
+		// 	window.addEventListener('touchstart', removeBehaviorsRestrictions);
+		// }
+		// else
+		// {
+		// 	setSource();
+		// }
 				
 		// function addStars(num){ //this function is going to take a number thus num
 		// 	for(var i=0; i<num; i+=4) {
@@ -3255,7 +3274,8 @@ function lvl1() {
 			// game.projectiles = [];
 			// game.enprojectiles = [];
 			// game.enemies = [];
-			clrCanvas();							
+			clrCanvas();			
+			gameBackground.load();							
 			playerShip.reset();
 			gameUI.updateAll();
 			// game.background = [];
@@ -3415,7 +3435,6 @@ function lvl1() {
 				
 				//setting alpha = 0
 				gameLights.off('all');
-				gameBackground.load();
 				game.started = true;
 				game.paused = false;
 				gameUI.updateAll();
@@ -3460,21 +3479,24 @@ function lvl1() {
 			// console.log('required soundSfx:' + game.requiredSfx);
 			for(var i in sfxPaths)
 			{
-				var sfx = new Audio(); //defining img as a new Audio
-				sfx.src = sfxPaths[i]; //defining new Audio src as sfxPaths[i]
+				var sfx = document.createElement('audio'); //defining sfx as a new Audio					
+				sfx.setAttribute('src', sfxPaths[i]);
 
 				var sfxIndex = sfx.src.split("/").pop(); //obtaining file name from path
 				// var sfxIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
 
+				sfx.setAttribute('id', sfxIndex);
+
 				game.sfx[sfxIndex] = sfx; //defining game.Sfx[index] as a new Audio (with sfxPaths)
 
+				var domContainer = document.getElementById("container"); 
+  				document.body.insertBefore(sfx, domContainer);
 
 				/*jshint -W083 */
-				game.sfx[sfxIndex].oncanplaythrough = function()
-				{ //once an Sfx loads..
+				// game.sfx[sfxIndex].addEventListener("canplaythrough", function(){  //once an Sfx loads..
 					game.doneSfx++; //  ..increment the doneSfx variable by 1
 					// console.log('done Sfx:' + game.doneSfx);
-				};
+				// });
 
 				if(i < 1)
 				{
@@ -3493,22 +3515,26 @@ function lvl1() {
 			// console.log('required soundTracks:' + game.requiredSoundTracks);
 			for(var i in stPaths)
 			{
-				var soundTracks = new Audio(); //defining img as a new Audio
-				soundTracks.src = stPaths[i]; //defining new Audio src as stPaths[i]
+				var soundTracks = document.createElement('audio'); //defining img as a new Audio
+				soundTracks.setAttribute('src', stPaths[i]);
 
 				var soundTracksIndex = soundTracks.src.split("/").pop(); //obtaining file name from path
 				// var soundTracksIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
 				// console.log (soundTracksIndex);
 
+				soundTracks.setAttribute('id', soundTracksIndex);
+
 				game.soundTracks[soundTracksIndex] = soundTracks; //defining game.soundTracks[index] as a new Audio (with stPaths)
 
+				var domContainer = document.getElementById("container"); 
+  				document.body.insertBefore(soundTracks, domContainer);
+
 				/*jshint -W083 */
-				game.soundTracks[soundTracksIndex].oncanplaythrough = function()
-				{ //once a sound loads..
+				// game.soundTracks[soundTracksIndex].addEventListener("canplaythrough", function(){ //once a sound loads..
 					game.doneSoundTracks++; //  ..increment the doneSoundTracks variable by 1
 					// console.log('done soundTracks:' + game.doneSoundTracks);
 					// game.contextText.fillText("+", game.width*0.20, (game.height*0.55) + (game.doneSoundTracks*5));
-				};
+				// });
 
 				if(i < 1)
 				{
@@ -3610,7 +3636,7 @@ function lvl1() {
 		initImages([	//using initimages function to load our images
 			//backgrounds
 			"_img/_dist/background/intro_bg.jpg",
-			"_img/_dist/background/level1.jpg",
+			// "_img/_dist/background/level1_small.jpg",
 			
 			//UI
 			"_img/_dist/ui/energybar.png",			

@@ -9,7 +9,7 @@ function player(hull, fireRate) {
 	this.size = Math.round(100*dtSize);
 	this.hull = hull;
 	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
-	this.image = 'fighter.' + fileFormat;
+	this.image = 'fighter.png';
 	this.audioFire = 'laser.' + fileFormat;
 	this.audioExplode = 'blast.' + fileFormat;
 	this.rendered = false;
@@ -265,24 +265,25 @@ function player(hull, fireRate) {
 				switch(this.laserLevel) {
 				    case 1:
 				        game.playerBullets.push( new playerBullet(this.midLaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
-				        if (game.sound)
-				        {
-				        	if (!audio1.paused)
-				        	{
-				        		if (!audio2.paused)
-				        		{
-				        			audio3.play();
-				        		}
-				        		else
-				        		{
-				        			audio2.play();
-				        		}
-				        	}
-				        	else
-				        	{
-				        		audio1.play();
-				        	}				        	
-				        }
+				        if (game.sound){game.sounds.push(game.sfx[this.audioFire]);}
+				        // if (game.sound)
+				        // {
+				        // 	if (!audio1.paused)
+				        // 	{
+				        // 		if (!audio2.paused)
+				        // 		{
+				        // 			audio3.play();
+				        // 		}
+				        // 		else
+				        // 		{
+				        // 			audio2.play();
+				        // 		}
+				        // 	}
+				        // 	else
+				        // 	{
+				        // 		audio1.play();
+				        // 	}				        	
+				        // }
 				        break;
 				    case 2:
 				    	game.playerBullets.push( new playerBullet(this.leftlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));

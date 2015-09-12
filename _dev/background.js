@@ -4,7 +4,6 @@ function background() {
 	this.width = this.element.css("width");
 	this.height = this.element.css("height");
 	this.speed = Math.round(180*dt);
-	this.image = 'http://fonziemedia.com/games/invaders2/_img/_dist/background/level1.jpg'; 
 	// this.section = section;
 	// this.width = game.width;
 	// this.height = Math.round((game.width * (16 / 9)) * 4);
@@ -25,8 +24,12 @@ function background() {
 	};
 
 	this.load = function() {
-		this.element.css("background-image", "url('" + this.image + "')");		
-		this.element.css("background-size", "cover");		
+
+		for (var i = 1; i <= 3; i++) {
+			this.element.removeClass('level' + i);
+		}
+		
+		this.element.addClass('level' + game.level);	
 	};
 }
 
