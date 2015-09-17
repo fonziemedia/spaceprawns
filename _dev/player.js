@@ -10,7 +10,9 @@ function player(hull, fireRate) {
 	this.hull = hull;
 	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
 	this.image = 'fighter.png';
-	this.audioFire = 'laser.' + fileFormat;
+	this.audioFire1 = 'laser.' + fileFormat;
+	this.audioFire2 = 'laser2.' + fileFormat;
+	this.audioFire3 = 'laser3.' + fileFormat;
 	this.audioExplode = 'blast.' + fileFormat;
 	this.rendered = false;
 	this.hit = false;
@@ -265,42 +267,62 @@ function player(hull, fireRate) {
 				switch(this.laserLevel) {
 				    case 1:
 				        game.playerBullets.push( new playerBullet(this.midLaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
-				        if (game.sound){game.sounds.push(game.sfx[this.audioFire]);}
-				        // if (game.sound)
-				        // {
-				        // 	if (!audio1.paused)
-				        // 	{
-				        // 		if (!audio2.paused)
-				        // 		{
-				        // 			audio3.play();
-				        // 		}
-				        // 		else
-				        // 		{
-				        // 			audio2.play();
-				        // 		}
-				        // 	}
-				        // 	else
-				        // 	{
-				        // 		audio1.play();
-				        // 	}				        	
-				        // }
+				        if (game.sound)
+				        {
+				        	if (game.sfx[this.audioFire1].paused)
+				        	{
+				        		game.sounds.push(game.sfx[this.audioFire1]);
+				        	}
+				        	else if (game.sfx[this.audioFire2].paused)
+				        	{
+				        		game.sounds.push(game.sfx[this.audioFire2]);
+				        	}
+				        	else if (game.sfx[this.audioFire3].paused)
+				        	{
+				        		game.sounds.push(game.sfx[this.audioFire3]);
+				        	}				        	
+				        }
 				        break;
 				    case 2:
 				    	game.playerBullets.push( new playerBullet(this.leftlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
 				        game.playerBullets.push( new playerBullet(this.rightlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));				
-				        if (game.sound){game.sounds.push(game.sfx[this.audioFire]);}
+				        if (game.sound)
+				        {
+				        	if (game.sfx[this.audioFire1].paused)
+				        	{
+				        		game.sounds.push(game.sfx[this.audioFire1]);
+				        	}
+				        	else if (game.sfx[this.audioFire2].paused)
+				        	{
+				        		game.sounds.push(game.sfx[this.audioFire2]);
+				        	}
+				        	else if (game.sfx[this.audioFire3].paused)
+				        	{
+				        		game.sounds.push(game.sfx[this.audioFire3]);
+				        	}				        	
+				        }
 				        break;
 				    default:
 				        game.playerBullets.push( new playerBullet(this.leftlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
 				        game.playerBullets.push( new playerBullet(this.midLaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
 				        game.playerBullets.push( new playerBullet(this.rightlaserX, this.LaserY, 600, -Math.PI/2, 45, 1, 1, 'laser.png', 48, 11));
-				        if (game.sound){game.sounds.push(game.sfx[this.audioFire]);}
+				        if (game.sound)
+				        {
+				        	if (game.sfx[this.audioFire1].paused)
+				        	{
+				        		game.sounds.push(game.sfx[this.audioFire1]);
+				        	}
+				        	else if (game.sfx[this.audioFire2].paused)
+				        	{
+				        		game.sounds.push(game.sfx[this.audioFire2]);
+				        	}
+				        	else if (game.sfx[this.audioFire3].paused)
+				        	{
+				        		game.sounds.push(game.sfx[this.audioFire3]);
+				        	}				        	
+				        }
 				        break;
 				 }
-
-
-
-
 
 				 switch(this.missileLevel) {
 				 	case 0:

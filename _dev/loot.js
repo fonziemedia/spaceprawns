@@ -19,7 +19,9 @@ function loot(x, y) {
     case 'missile':    
         this.image = 'missile.png';
 	}
-	this.sfx = 'loot_powerUp.' + fileFormat;
+	this.sfx1 = 'loot_powerUp.' + fileFormat;
+	this.sfx2 = 'loot_powerUp2.' + fileFormat;
+	this.sfx3 = 'loot_powerUp3.' + fileFormat;
 	this.context = game.contextPlayer;
 
 	this.update = function() {
@@ -51,7 +53,21 @@ function loot(x, y) {
 			    case 'missile':
 			        playerShip.missileLevel += 1;
 			}
-			if(game.sound){game.sounds.push(game.sfx[this.sfx]);}
+			if (game.sound)
+	        {
+	        	if (game.sfx[this.sfx1].paused)
+	        	{
+	        		game.sounds.push(game.sfx[this.sfx1]);
+	        	}
+	        	else if (game.sfx[this.sfx2].paused)
+	        	{
+	        		game.sounds.push(game.sfx[this.sfx2]);
+	        	}
+	        	else if (game.sfx[this.sfx3].paused)
+	        	{
+	        		game.sounds.push(game.sfx[this.sfx3]);
+	        	}				        	
+	        }
 			this.dead = true;
 		}
 

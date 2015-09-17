@@ -5,7 +5,9 @@ function boss(x, y, speed, direction, hull, image) {
 	this.image = game.images[image];
 	this.size = Math.round(200*dtSize);
 	this.hit = false;
-	this.audioHit = 'hit.mp3';
+	this.audioHit1 = 'hit.mp3';
+	this.audioHit2 = 'hit2.mp3';
+	this.audioHit3 = 'hit3.mp3';
 	this.audioDead = 'blast.mp3';
 	this.hitTimer = 0; 
 	this.dead = false;
@@ -35,7 +37,21 @@ function boss(x, y, speed, direction, hull, image) {
 
 
 		if(this.hit && this.hull > 0 ){
-			if(game.sound){game.sounds.push(game.sfx[this.audioHit]);}
+			if (game.sound)
+				        {
+				        	if (game.sfx[this.audioHit1].paused)
+				        	{
+				        		game.sounds.push(game.sfx[this.audioHit1]);
+				        	}
+				        	else if (game.sfx[this.audioHit2].paused)
+				        	{
+				        		game.sounds.push(game.sfx[this.audioHit2]);
+				        	}
+				        	else if (game.sfx[this.audioHit3].paused)
+				        	{
+				        		game.sounds.push(game.sfx[this.audioHit3]);
+				        	}				        	
+				        }
 			//change image here		
 			this.hit = false;
 		}

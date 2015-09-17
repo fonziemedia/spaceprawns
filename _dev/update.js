@@ -354,8 +354,8 @@
 			if (game.sounds.length > 0) {
 				for(var s in game.sounds){
 
-					game.sounds[s].cloneNode(true).play();
-					game.sounds[s].addEventListener("ended", game.sounds.splice(s,1));
+					game.sounds[s].play();
+					game.sounds[s].addEventListener("paused", game.sounds.splice(s,1));
 				}
 			}
 
