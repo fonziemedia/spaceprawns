@@ -369,8 +369,10 @@
 			// console.log ('game tracks: ' + game.tracks);
 			// console.log ('game soundtracks length: ' + game.soundTracks.length);
 			// console.log ('game sfx length: ' + game.sfx.length);
+			// console.log('reqSfx: ' + game.requiredSfx);
 
 			// console.log ('update w:' + game.width);
 			// console.log ('update h:' +game.height);
+
 										
 		}	

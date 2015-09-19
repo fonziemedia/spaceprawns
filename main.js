@@ -3025,9 +3025,11 @@ gameMenu = new menu();
 			// console.log ('game tracks: ' + game.tracks);
 			// console.log ('game soundtracks length: ' + game.soundTracks.length);
 			// console.log ('game sfx length: ' + game.sfx.length);
+			// console.log('reqSfx: ' + game.requiredSfx);
 
 			// console.log ('update w:' + game.width);
 			// console.log ('update h:' +game.height);
+
 										
 		}	
 function lvl1() {
@@ -3551,32 +3553,7 @@ function lvl1() {
 			game.sounds = [];			
 							
 
-			// game.music[q].addEventListener("ended", game.music.splice(q,1));
-			
-			//setting alpha = 0
 			gameLights.off('all');
-
-			// !! Not sure if this double check is required to reduce sound latency at start			
-			// function checkLoadedSfx ()
-			// {
-			
-			// 	if (loadedSfx >= game.requiredSfx)
-			// 	{
-			// 		game.started = true;
-			// 		game.paused = false;
-			// 		gameUI.updateAll();
-			// 		loop();
-			// 	}
-			// 	else
-			// 	{
-			// 		setTimeout(function(){
-			// 			checkLoadedSfx();
-			// 			console.log(loadedSfx);
-			// 			console.log(game.requiredSfx);
-			// 		}, 1);
-			// 	}
-			// }
-			// checkLoadedSfx();
 
 			game.started = true;
 			game.paused = false;
@@ -3618,6 +3595,25 @@ function lvl1() {
 			}
 		}
 
+		//====================== Audio engine =================//
+
+		function sfxEventHandler(sfx)
+		{
+			this.sfx = sfx;
+
+			this.sfx.removeEventListener("canplaythrough", sfxEventHandler);
+			game.doneSfx++;
+		}
+
+		function stEventHandler(st)
+		{
+			this.st = st;
+
+			this.st.removeEventListener("canplaythrough", stEventHandler);
+			game.doneSoundTracks++;
+		}
+
+
 		function initSfx(sfxPaths) { //our Sfx engine: passing the array 'sfxPaths' to the function
 			game.requiredSfx = sfxPaths.length; //the number of required Sfx will be equal to the length of the sfxPaths array
 			// console.log('required soundSfx:' + game.requiredSfx);
@@ -3626,29 +3622,26 @@ function lvl1() {
 				var sfx = new Audio(); //defining sfx as a new Audio					
 				sfx.src = sfxPaths[i]; //defining new Audio src as stPaths[i]
 
-				var sfxIndex = sfx.src.split("/").pop(); //obtaining file name from path
+				var sfxIndex = sfx.src.split("/").pop(); //obtaining file name from path and setting our sfxIndex as such
 				
+				var sfxIndexInstance; //to keep track of sounds which use the same audio source and avoding duplicate indexes
 
-
-				if (!(sfxIndex in game.sfx))
-				{
-					game.sfx[sfxIndex] = sfx; //defining game.Sfx[sfxIndex] as a new Audio (with sfxPaths)
+				if (!(sfxIndex in game.sfx)) //if index is unique
+				{	
+					sfxIndexInstance = 1;
+					game.sfx[sfxIndex] = sfx;
 				}
-				else if (sfxIndex in game.sfx)
+				else //if not increase our index instance and add it to its label
 				{
-					sfxIndex = sfx.src.match(/([^\/]+)(?=\.\w+$)/)[0] + 2 + '.' + fileFormat;
-
-					if (!(sfxIndex in game.sfx))
-					{
-						game.sfx[sfxIndex] = sfx; //defining game.Sfx[sfxIndex] as a new Audio (with sfxPaths)
-					}
-					else
-					{
-						sfxIndex = sfx.src.match(/([^\/]+)(?=\.\w+$)/)[0] + 3 + '.' + fileFormat;
-						game.sfx[sfxIndex] = sfx;
-					}
-
+					sfxIndexInstance++;
+					sfxIndex = sfx.src.match(/([^\/]+)(?=\.\w+$)/)[0] + sfxIndexInstance + '.' + fileFormat;
+					game.sfx[sfxIndex] = sfx;
 				}
+
+				game.sfx[sfxIndex].preload = "auto";
+
+				//checking if sfx have loaded
+				game.sfx[sfxIndex].addEventListener("canplaythrough", sfxEventHandler.bind(window, this)); //!!!!!! this is how you pass on args for event handler functions yo!!!
 				
 				if(i < 1)
 				{
@@ -3657,7 +3650,6 @@ function lvl1() {
 					game.contextText.fillStyle = "white";
 					game.contextText.fillText("Loading Sfx...", game.width*0.23, game.height*0.47);
 				}
-				// console.log('reqSfx: ' + game.requiredSfx);
 			}
 		}
 
@@ -3674,6 +3666,11 @@ function lvl1() {
 
 				game.soundTracks[soundTracksIndex] = soundTracks; //defining game.soundTracks[soundTracksIndex] as a new Audio (with stPaths)
 
+				game.soundTracks[soundTracksIndex].preload = "auto";
+
+				//checking if st's have loaded
+				game.soundTracks[soundTracksIndex].addEventListener("canplaythrough", stEventHandler.bind(window, this));				
+
 				if(i < 1)
 				{
 					//=========================== Game loading Screen =================================== 	
@@ -3685,34 +3682,6 @@ function lvl1() {
 			}
 		}
 
-		// function initSfx(paths) { //our Sfx engine: passing the array 'paths' to the function
-		// 	game.requiredSfx = paths.length; //the number of required Sfx will be equal to the length of the paths array
-		// 	for(var i in paths)
-		// 	{
-		// 		var sfx = new Audio(); //defining img as a new Audio
-		// 		sfx.src = paths[i]; //defining new Audio src as paths[i]
-
-		// 		var sfxIndex = sfx.src.split("/").pop(); //obtaining file name from path
-		// 		// var sfxIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
-
-		// 		game.sfx[sfxIndex] = sfx; //defining game.Sfx[index] as a new Audio (with paths)
-
-		// 		/*jshint -W083 */
-		// 		game.sfx[sfxIndex].oncanplaythrough = function()
-		// 		{ //once an Sfx loads..
-		// 			game.doneSfx++; //  ..increment the doneSfx variable by 1
-		// 		};
-
-		// 		if(i < 1)
-		// 		{
-		// 			//=========================== Game loading Screen =================================== 	
-		// 			game.contextText.font = "bold " + game.width*0.08 + "px " + game.font; 
-		// 			game.contextText.fillStyle = "white";
-		// 			game.contextText.fillText("Loading Sound FX...", game.width*0.30, game.height*0.47);
-		// 		}
-		// 		console.log('reqSfx: ' + game.requiredSfx);
-		// 	}
-		// }
 
 		function checkImages(){	//checking if all images have been loaded. Once all loaded run initSfx
 			if(game.doneImages >= game.requiredImages){
@@ -3732,60 +3701,7 @@ function lvl1() {
 					"_sounds/_sfx/explosion." + fileFormat,			
 					"_sounds/_sfx/blast." + fileFormat		
 				]);
-				//checking if sfx have loaded
-				//!!Improve this, try using a pre loaded function on the event listener with an argument for the sfx index, then put the event listener on the initSfx for loop
-				game.sfx['laser.' + fileFormat].addEventListener("canplaythrough", function event(){ //once sound loads..
-					game.sfx['laser.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSfx++;
-				});
-				game.sfx['laser2.' + fileFormat].addEventListener("canplaythrough", function event(){ //once sound loads..
-					game.sfx['laser2.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSfx++;
-				});
-				game.sfx['laser3.' + fileFormat].addEventListener("canplaythrough", function event(){ //once sound loads..
-					game.sfx['laser3.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSfx++;
-				});
-				game.sfx['hit.' + fileFormat].addEventListener("canplaythrough", function event(){
-					game.sfx['hit.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSfx++;
-				});
-				game.sfx['hit2.' + fileFormat].addEventListener("canplaythrough", function event(){
-					game.sfx['hit2.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSfx++;
-				});
-				game.sfx['hit3.' + fileFormat].addEventListener("canplaythrough", function event(){
-					game.sfx['hit3.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSfx++;
-				});
-				game.sfx['loot_powerUp.' + fileFormat].addEventListener("canplaythrough", function event(){
-					game.sfx['loot_powerUp.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSfx++;
-				});
-				game.sfx['loot_powerUp2.' + fileFormat].addEventListener("canplaythrough", function event(){
-					game.sfx['loot_powerUp2.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSfx++;
-				});
-				game.sfx['loot_powerUp3.' + fileFormat].addEventListener("canplaythrough", function event(){
-					game.sfx['loot_powerUp3.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSfx++;
-				});				
-				game.sfx['explosion.' + fileFormat].addEventListener("canplaythrough", function event(){
-					game.sfx['explosion.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSfx++;
-				});
-				game.sfx['explosion2.' + fileFormat].addEventListener("canplaythrough", function event(){
-					game.sfx['explosion2.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSfx++;
-				});
-				game.sfx['explosion3.' + fileFormat].addEventListener("canplaythrough", function event(){
-					game.sfx['explosion3.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSfx++;
-				});				
-				game.sfx['blast.' + fileFormat].addEventListener("canplaythrough", function event(){
-					game.sfx['blast.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSfx++;
-				});
+
 				checkSfx();
 			} 
 			else
@@ -3800,13 +3716,6 @@ function lvl1() {
 		function checkSfx(){	//checking if all Sfx have been loaded. Once all loaded run init
 			if(game.doneSfx >= game.requiredSfx){
 				
-				//remove event listerner which are not required anymore
-				// game.sfx['laser.' + fileFormat].removeEventListener("canplaythrough");
-				// game.sfx['hit.' + fileFormat].removeEventListener("canplaythrough");
-				// game.sfx['loot_powerUp.' + fileFormat].removeEventListener("canplaythrough");
-				// game.sfx['explosion.' + fileFormat].removeEventListener("canplaythrough");
-				// game.sfx['blast.' + fileFormat].removeEventListener("canplaythrough");
-				
 				//clear the canvas
 				game.contextText.clearRect(0, 0, game.width, game.height);
 
@@ -3818,23 +3727,6 @@ function lvl1() {
 					"_sounds/_soundTracks/_lvl1/boss." + fileFormat	
 				]);
 
-				//add sound tracks event listeners
-				game.soundTracks['tune1.' + fileFormat].addEventListener("canplaythrough", function event(){
-					game.soundTracks['tune1.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSoundTracks++;
-				});
-				game.soundTracks['tune2.' + fileFormat].addEventListener("canplaythrough", function event(){
-					game.soundTracks['tune2.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSoundTracks++;
-				});
-				game.soundTracks['victory.' + fileFormat].addEventListener("canplaythrough", function event(){
-					game.soundTracks['victory.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSoundTracks++;
-				});
-				game.soundTracks['boss.' + fileFormat].addEventListener("canplaythrough", function event(){
-					game.soundTracks['boss.' + fileFormat].removeEventListener("canplaythrough", event);
-					game.doneSoundTracks++;
-				});
 				checkSoundTracks();
 			} 
 			else
@@ -3848,11 +3740,6 @@ function lvl1() {
 
 		function checkSoundTracks(){	//checking if all Sfx have been loaded. Once all loaded run init
 			if(game.doneSoundTracks >= game.requiredSoundTracks){
-				//remove sound tracks event listeners
-				// game.soundTracks['tune1.' + fileFormat].removeEventListener("canplaythrough");
-				// game.soundTracks['tune2.' + fileFormat].removeEventListener("canplaythrough");
-				// game.soundTracks['victory.' + fileFormat].removeEventListener("canplaythrough");
-				// game.soundTracks['boss.' + fileFormat].removeEventListener("canplaythrough");
 
 				//starting game menu
 				gameText.gameIntro();
