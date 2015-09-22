@@ -116,9 +116,9 @@
   // 			audio1 = document.querySelector('#audio1');
   // 			audio2 = document.querySelector('#audio2');
   // 			audio3 = document.querySelector('#audio3');
-  // 			audio1.src = '_sounds/_sfx/laser.' + fileFormat;
-  // 			audio2.src = '_sounds/_sfx/laser.' + fileFormat;
-  // 			audio3.src = '_sounds/_sfx/laser.' + fileFormat;
+  // 			audio1.src = '_sounds/_sfx/laser' + fileFormat;
+  // 			audio2.src = '_sounds/_sfx/laser' + fileFormat;
+  // 			audio3.src = '_sounds/_sfx/laser' + fileFormat;
 		// }
 
 		// function mediaPlaybackRequiresUserGesture() {
@@ -217,7 +217,7 @@
 			game.tracks = [];
 
 			if (game.music && game.tracks.length < 1){
-				game.tracks.push(game.soundTracks['tune1.' + fileFormat]);
+				game.tracks.push(game.soundTracks['tune1' + fileFormat]);
 				game.tracks[0].play();
 				game.tracks[0].loop = true;	
 			}
@@ -354,10 +354,10 @@
 			resetGame();			
 
 			//preparing sound tracks (chromium fix)
-			game.tracks.push(game.soundTracks['tune1.' + fileFormat]);
-			game.tracks.push(game.soundTracks['tune2.' + fileFormat]);
-			game.tracks.push(game.soundTracks['boss.' + fileFormat]);
-			game.tracks.push(game.soundTracks['victory.' + fileFormat]);
+			game.tracks.push(game.soundTracks['tune1' + fileFormat]);
+			game.tracks.push(game.soundTracks['tune2' + fileFormat]);
+			game.tracks.push(game.soundTracks['boss' + fileFormat]);
+			game.tracks.push(game.soundTracks['victory' + fileFormat]);
 
 			for (var t in game.tracks){
 				game.tracks[t].play();
@@ -367,19 +367,19 @@
 			game.tracks = [];
 
 			//preparing soundfx (chromium fix)
-			game.sounds.push(game.sfx['laser.' + fileFormat]);
-			game.sounds.push(game.sfx['laser2.' + fileFormat]);
-			game.sounds.push(game.sfx['laser3.' + fileFormat]);
-			game.sounds.push(game.sfx['hit.' + fileFormat]);
-			game.sounds.push(game.sfx['hit2.' + fileFormat]);
-			game.sounds.push(game.sfx['hit3.' + fileFormat]);
-			game.sounds.push(game.sfx['loot_powerUp.' + fileFormat]);
-			game.sounds.push(game.sfx['loot_powerUp2.' + fileFormat]);
-			game.sounds.push(game.sfx['loot_powerUp3.' + fileFormat]);
-			game.sounds.push(game.sfx['explosion.' + fileFormat]);
-			game.sounds.push(game.sfx['explosion2.' + fileFormat]);
-			game.sounds.push(game.sfx['explosion3.' + fileFormat]);
-			game.sounds.push(game.sfx['blast.' + fileFormat]);
+			game.sounds.push(game.sfx['laser' + fileFormat]);
+			game.sounds.push(game.sfx['laser2' + fileFormat]);
+			game.sounds.push(game.sfx['laser3' + fileFormat]);
+			game.sounds.push(game.sfx['hit' + fileFormat]);
+			game.sounds.push(game.sfx['hit2' + fileFormat]);
+			game.sounds.push(game.sfx['hit3' + fileFormat]);
+			game.sounds.push(game.sfx['loot_powerUp' + fileFormat]);
+			game.sounds.push(game.sfx['loot_powerUp2' + fileFormat]);
+			game.sounds.push(game.sfx['loot_powerUp3' + fileFormat]);
+			game.sounds.push(game.sfx['explosion' + fileFormat]);
+			game.sounds.push(game.sfx['explosion2' + fileFormat]);
+			game.sounds.push(game.sfx['explosion3' + fileFormat]);
+			game.sounds.push(game.sfx['blast' + fileFormat]);
 
 			for (var s in game.sounds){
 				game.sounds[s].play();
@@ -470,7 +470,7 @@
 				else //if not increase our index instance and add it to its label
 				{
 					sfxIndexInstance++;
-					sfxIndex = sfx.src.match(/([^\/]+)(?=\.\w+$)/)[0] + sfxIndexInstance + '.' + fileFormat;
+					sfxIndex = sfx.src.match(/([^\/]+)(?=\.\w+$)/)[0] + sfxIndexInstance + fileFormat;
 					game.sfx[sfxIndex] = sfx;
 				}
 
@@ -523,19 +523,19 @@
 			if(game.doneImages >= game.requiredImages){
 				game.contextText.clearRect(0, 0, game.width, game.height);
 				initSfx([	//using initSfx function to load our sounds
-					"_sounds/_sfx/laser." + fileFormat,			
-					"_sounds/_sfx/laser." + fileFormat,			
-					"_sounds/_sfx/laser." + fileFormat,			
-					"_sounds/_sfx/hit." + fileFormat,			
-					"_sounds/_sfx/hit." + fileFormat,			
-					"_sounds/_sfx/hit." + fileFormat,			
-					"_sounds/_sfx/loot_powerUp." + fileFormat,			
-					"_sounds/_sfx/loot_powerUp." + fileFormat,			
-					"_sounds/_sfx/loot_powerUp." + fileFormat,			
-					"_sounds/_sfx/explosion." + fileFormat,			
-					"_sounds/_sfx/explosion." + fileFormat,			
-					"_sounds/_sfx/explosion." + fileFormat,			
-					"_sounds/_sfx/blast." + fileFormat		
+					"_sounds/_sfx/laser" + fileFormat,			
+					"_sounds/_sfx/laser" + fileFormat,			
+					"_sounds/_sfx/laser" + fileFormat,			
+					"_sounds/_sfx/hit" + fileFormat,			
+					"_sounds/_sfx/hit" + fileFormat,			
+					"_sounds/_sfx/hit" + fileFormat,			
+					"_sounds/_sfx/loot_powerUp" + fileFormat,			
+					"_sounds/_sfx/loot_powerUp" + fileFormat,			
+					"_sounds/_sfx/loot_powerUp" + fileFormat,			
+					"_sounds/_sfx/explosion" + fileFormat,			
+					"_sounds/_sfx/explosion" + fileFormat,			
+					"_sounds/_sfx/explosion" + fileFormat,			
+					"_sounds/_sfx/blast" + fileFormat		
 				]);
 
 				checkSfx();
@@ -557,10 +557,10 @@
 
 				//start loading sound tracks
 				initSoundTracks([	//using initSfx function to load our sound tracks
-					"_sounds/_soundTracks/_lvl1/tune1." + fileFormat,			
-					"_sounds/_soundTracks/_lvl1/tune2." + fileFormat,			
-					"_sounds/_soundTracks/_lvl1/victory." + fileFormat,			
-					"_sounds/_soundTracks/_lvl1/boss." + fileFormat	
+					"_sounds/_soundTracks/_lvl1/tune1" + fileFormat,			
+					"_sounds/_soundTracks/_lvl1/tune2" + fileFormat,			
+					"_sounds/_soundTracks/_lvl1/victory" + fileFormat,			
+					"_sounds/_soundTracks/_lvl1/boss" + fileFormat	
 				]);
 
 				checkSoundTracks();
@@ -676,7 +676,7 @@
 			}
 			else if (game.tracks.length < 1)
 			{
-				game.tracks.push(game.soundTracks['tune1.mp3']);
+				game.tracks.push(game.soundTracks['tune1' + fileFormat]);
 
 				for(var w in game.tracks)
 				{

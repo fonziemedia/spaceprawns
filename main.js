@@ -386,15 +386,59 @@ var particle = function(x, y, speed, direction, grav) {
 		
 				// Sound Test
 		//init Sfx
-		var fileFormat = "mp3";
 		
-		function soundTest()
+		// function soundTest()
+		// {
+		// 		var soundTest = new Audio();
+		// 		var canPlayMP3 = (typeof soundTest.canPlayType === "function" && soundTest.canPlayType("audio/mpeg") !== "");
+
+		// 		if (!canPlayMP3)
+		// 		{
+		// 			fileFormat = "ogg";
+		// 			var canPlayOGG = (typeof soundTest.canPlayType === "function" && soundTest.canPlayType("audio/mpeg") !== "");
+
+
+
+		// 		}
+		// }
+		// soundTest();
+
+		var audioElementSupported = (function(d) {
+
+	    	var a = d.createElement("audio"),
+	        o = {},
+	        s = "audio\/";
+
+		    if (typeof a.canPlayType === "function") {
+		        o.supported = Boolean(true);
+		        o.mp3 = a.canPlayType(s + "mpeg");
+		        o.wav = a.canPlayType(s + 'wav; codecs="1"');
+		        o.ogg = a.canPlayType(s + 'ogg; codecs="vorbis"');
+		        o.m4a = a.canPlayType(s + "x-m4a") || a.canPlayType(s + "aac");
+		        o.webm = a.canPlayType(s + 'webm; codecs="vorbis"');
+		    } else {
+		        o.supported = Boolean(0);
+		    }
+		    return o;
+
+		})(this.document);
+
+
+		if (audioElementSupported.m4a !== "")  //note: audioElementSupported.x is likely to return 'probably' or 'maybe' so you might want to do a thorough check
 		{
-				var mp3Test = new Audio();
-				var canPlayMP3 = (typeof mp3Test.canPlayType === "function" && mp3Test.canPlayType("audio/mpeg") !== "");
-				if (!canPlayMP3) {fileFormat = "ogg";}
+			fileFormat = ".m4a";
 		}
-		soundTest();
+		else if (audioElementSupported.ogg !== "")
+		{
+			fileFormat = ".ogg";
+		}
+		else
+		{
+			fileFormat = ".mp3";
+		}
+		// !! add condition here for no sound support. Create a trigger to be considered when loading audio
+
+
 
 		game.stars = []; //this is an array which will contain our stars info: position in space and size
 		game.faded = true;
@@ -418,7 +462,7 @@ var particle = function(x, y, speed, direction, grav) {
 		game.loot = [];
 		game.explosions = [];
 		
-		dt = 0; // defining dt globally
+		dt = 0.017; // defining dt globally
 		dtTimer = 0;		
 		dtArray = [];
 		timeThen = new Date().getTime();
@@ -507,28 +551,28 @@ var particle = function(x, y, speed, direction, grav) {
 		//get the gameArea and the canvases 
 		var gameArea = $('#gamearea');
 		var allCanvas = $('canvas');
-
-		var gameAreaH = window.outerHeight; // !! On Android, window.outerWidth and window.outerHeight are reliably the screen size
+		var pixelRatio = window.devicePixelRatio; // This is our game size delta to keep the size of our game + objects proportional to the display
+		var gameAreaH = window.outerHeight * pixelRatio; // !! On Android, window.outerWidth and window.outerHeight are more reliable
 
 		if (game.isMobile)
 		{
-		var gameAreaW = window.outerWidth;
+		var gameAreaW = window.outerWidth * pixelRatio;
 		}
 		else
 		{
-			gameAreaW = gameArea.css("width");
+			gameAreaW = parseInt(gameArea.css("width")) * pixelRatio;  //using parseInt here to remove 'px'
 		}
 
 		allCanvas.attr('height', gameAreaH); //max height
 		allCanvas.attr('width', gameAreaW); //max height
 
 		//SETTING GAME DIMENSIONS
-		game.height = parseInt(gameAreaH); //using parseInt here to remove 'px'
-		game.width = parseInt(gameAreaW);
+		game.height = gameAreaH;
+		game.width = gameAreaW;
 
 		
-		//delta size will keep the size of our game objects proportional to the display
-		var dtSize = game.height*0.001;
+		//delta size will keep the size of our game objects proportional to the display - NOT REQUIRED, see pixelRatio above
+		// var dtSize = game.height*0.001;
 		// console.log (dtSize);
 
 		
@@ -630,7 +674,7 @@ function background() {
 }
 
 gameBackground = new background();
-function explosion(x, y, speed, direction, size) {
+function explosion(x, y, speed, direction, size, target) {
 	particle.call(this, x, y, speed, direction);
 
 	this.x = Math.round(x - (size*0.2));
@@ -641,6 +685,14 @@ function explosion(x, y, speed, direction, size) {
 	this.dead = false;
 	this.deadTime = 60;
 	this.image = 'explosion.png';
+	this.target = target;	
+	this.audioHit1 = 'hit' + fileFormat;	
+	this.audioHit2 = 'hit2' + fileFormat;	
+	this.audioHit3 = 'hit3' + fileFormat;		
+	this.audioDead1 = 'explosion' + fileFormat;
+	this.audioDead2 = 'explosion2' + fileFormat;
+	this.audioDead3 = 'explosion3' + fileFormat;	
+	this.audioExplode = 'blast' + fileFormat;
 	this.ctx = game.contextPlayer;
 	this.sprite = new sprite(this.image, this.size, 96, 96, 0, 19, 2, this.ctx);
 
@@ -665,6 +717,48 @@ function explosion(x, y, speed, direction, size) {
 		this.sprite.draw(this.x, this.y);
 
 	};
+
+	this.load = function() {	
+		
+		if (game.sound)
+	    {
+	    	if (this.target == 'chasis')
+	    	{
+	        	if (game.sfx[this.audioHit1].paused)
+	        	{
+	        		game.sounds.push(game.sfx[this.audioHit1]);
+	        	}
+	        	else if (game.sfx[this.audioHit2].paused)
+	        	{
+	        		game.sounds.push(game.sfx[this.audioHit2]);
+	        	}
+	        	else if (game.sfx[this.audioHit3].paused)
+	        	{
+	        		game.sounds.push(game.sfx[this.audioHit3]);
+	        	}				        	
+	        }
+
+	         else if (this.target == 'enemy')
+	         {
+	        	if (game.sfx[this.audioDead1].paused)
+	        	{
+	        		game.sounds.push(game.sfx[this.audioDead1]);
+	        	}
+	        	else if (game.sfx[this.audioDead2].paused)
+	        	{
+	        		game.sounds.push(game.sfx[this.audioDead2]);
+	        	}
+	        	else if (game.sfx[this.audioDead3].paused)
+	        	{
+	        		game.sounds.push(game.sfx[this.audioDead3]);
+	        	}				        	
+	        }	
+			else if (this.target == 'player' || this.target == 'boss'){game.sounds.push(game.sfx[this.audioExplode]);}
+			
+		}
+	};
+
+	this.load();
 }
 
 explosion.prototype = Object.create(particle.prototype); // Creating a explosion.prototype object that inherits from particle.prototype.
@@ -678,14 +772,13 @@ function player(hull, fireRate) {
 	this.speed = 0;
 	this.maxSpeed = 400;
 	
-	this.size = Math.round(100*dtSize);
+	this.size = 100;
 	this.hull = hull;
 	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
 	this.image = 'fighter.png';
-	this.audioFire1 = 'laser.' + fileFormat;
-	this.audioFire2 = 'laser2.' + fileFormat;
-	this.audioFire3 = 'laser3.' + fileFormat;
-	this.audioExplode = 'blast.' + fileFormat;
+	this.audioFire1 = 'laser' + fileFormat;
+	this.audioFire2 = 'laser2' + fileFormat;
+	this.audioFire3 = 'laser3' + fileFormat;
 	this.rendered = false;
 	this.hit = false;
 	this.hitTimer = 0;
@@ -1028,8 +1121,7 @@ function player(hull, fireRate) {
 		{
 			this.dead = true;			
 			this.lives -= 1;
-			game.explosions.push(new explosion(this.x, this.y, this.speed, 0, this.size));
-			if (game.sound){game.sounds.push(game.sfx[this.audioExplode]);}
+			game.explosions.push(new explosion(this.x, this.y, this.speed, 0, this.size, 'player'));			
 			gameUI.updateHangar();
 		}	
 
@@ -1172,7 +1264,7 @@ playerShip = new player(10, 15);
 function playerBullet(x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame) {
 	particle.call(this, x, y, speed, direction);
 	
-	this.size = Math.round(bulletSize*dtSize);
+	this.size = bulletSize;
 	this.spriteX = -Math.round(this.size*0.5);
 	this.spriteY = -Math.round(this.size*0.5);
 	this.power = power;
@@ -1229,26 +1321,20 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.type = type;
 	switch (this.type){
 		case 'pawn':
-				this.size = Math.round(65*dtSize);
+				this.size = 65;
 			break;
 		case 'miniboss':
-				this.size = Math.round(120*dtSize);	
+				this.size = 120;	
 			break;
 		case 'base':
-				this.size = Math.round(170*dtSize);
+				this.size = 170;
 				this.rotation = 0;	
 			break;
 	}
 	this.spritePos = Math.round(this.size * 0.5);
 	this.hull = hull;
 	this.image = game.images[image];
-	this.audioHit1 = 'hit.' + fileFormat;	
-	this.audioHit2 = 'hit2.' + fileFormat;	
-	this.audioHit3 = 'hit3.' + fileFormat;	
-	this.audioDead1 = 'explosion.' + fileFormat;
-	this.audioDead2 = 'explosion2.' + fileFormat;
-	this.audioDead3 = 'explosion3.' + fileFormat;
-	this.hit = false;
+	// this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;
 	this.bulletTimer = 1;
@@ -1301,46 +1387,29 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		// 	}
 		// }
 
-		if(this.hit && this.hull > 0 ){
-			if (game.sound)
-	        {
-	        	if (game.sfx[this.audioHit1].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioHit1]);
-	        	}
-	        	else if (game.sfx[this.audioHit2].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioHit2]);
-	        	}
-	        	else if (game.sfx[this.audioHit3].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioHit3]);
-	        	}				        	
-	        }
-			//change image here		
-			this.hit = false;
-		}
+		// if(this.hit && this.hull > 0 ){
+		// 	if (game.sound)
+	 //        {
+	 //        	if (game.sfx[this.audioHit1].paused)
+	 //        	{
+	 //        		game.sounds.push(game.sfx[this.audioHit1]);
+	 //        	}
+	 //        	else if (game.sfx[this.audioHit2].paused)
+	 //        	{
+	 //        		game.sounds.push(game.sfx[this.audioHit2]);
+	 //        	}
+	 //        	else if (game.sfx[this.audioHit3].paused)
+	 //        	{
+	 //        		game.sounds.push(game.sfx[this.audioHit3]);
+	 //        	}				        	
+	 //        }
+		// 	//change image here		
+		// 	this.hit = false;
+		// }
 
 		if (this.hull <= 0) {
 			this.dead = true;
-
-			game.explosions.push(new explosion(this.x, this.y, this.speed, this.direction, this.size));			
-			if (game.sound)
-	        {
-	        	if (game.sfx[this.audioDead1].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioDead1]);
-	        	}
-	        	else if (game.sfx[this.audioDead2].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioDead2]);
-	        	}
-	        	else if (game.sfx[this.audioDead3].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioDead3]);
-	        	}				        	
-	        }
-	        
+			game.explosions.push(new explosion(this.x, this.y, this.speed, this.direction, this.size, 'enemy'));		        
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;
@@ -1432,12 +1501,11 @@ function boss(x, y, speed, direction, hull, image) {
 
 	this.hull = hull;
 	this.image = game.images[image];
-	this.size = Math.round(200*dtSize);
+	this.size = 200;
 	this.hit = false;
-	this.audioHit1 = 'hit.mp3';
-	this.audioHit2 = 'hit2.mp3';
-	this.audioHit3 = 'hit3.mp3';
-	this.audioDead = 'blast.mp3';
+	this.audioHit1 = 'hit' + fileFormat;
+	this.audioHit2 = 'hit2' + fileFormat;
+	this.audioHit3 = 'hit3' + fileFormat;
 	this.hitTimer = 0; 
 	this.dead = false;
 	this.deadTimer = 0;
@@ -1494,8 +1562,7 @@ function boss(x, y, speed, direction, hull, image) {
 		}
 
 		if (this.hull <= 0 ) {
-			game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size));			
-			if(game.sound){game.sounds.push(game.sfx[this.audioDead]);}
+			game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size, 'boss'));
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;	
@@ -1580,7 +1647,7 @@ boss.prototype.constructor = boss; // Set the "constructor" property to refer to
 function enemyBullet(x, y, speed, direction, power, image) {
 	particle.call(this, x, y, speed, direction);
 	
-	this.size = Math.round(30*dtSize);
+	this.size = 30;
 	this.spriteX = -Math.round(this.size*0.5);
 	this.spriteY = -Math.round(this.size*0.5);
 	this.power = power;
@@ -1639,7 +1706,7 @@ function loot(x, y) {
 
 	this.speed = 250;
 	this.direction = Math.PI/2;
-	this.size = Math.round(45*dtSize);
+	this.size = 45;
 	this.dead = false;
 	this.drops = ['health', 'laser', 'missile'];
 	var key = Math.floor(Math.random() * this.drops.length);
@@ -1655,9 +1722,9 @@ function loot(x, y) {
     case 'missile':    
         this.image = 'missile.png';
 	}
-	this.sfx1 = 'loot_powerUp.' + fileFormat;
-	this.sfx2 = 'loot_powerUp2.' + fileFormat;
-	this.sfx3 = 'loot_powerUp3.' + fileFormat;
+	this.sfx1 = 'loot_powerUp' + fileFormat;
+	this.sfx2 = 'loot_powerUp2' + fileFormat;
+	this.sfx3 = 'loot_powerUp3' + fileFormat;
 	this.context = game.contextPlayer;
 
 	this.update = function() {
@@ -1803,7 +1870,7 @@ function ui() {
 	this.updateLevel = function() {
 		this.level = game.level;
 		game.contextText.fillStyle = "#FFD455";
-		game.contextText.font = 15*dtSize + 'px helvetica';
+		game.contextText.font = 15 + 'px helvetica';
 		game.contextText.clearRect(this.width*0.02, this.height*0.3, this.width*0.05, this.height*0.35); 
 		game.contextText.fillText("S" + this.level, this.width*0.02, this.height*0.6); //printing level
 	};
@@ -1811,7 +1878,7 @@ function ui() {
 	this.updateScore = function() {
 		this.score = game.score;
 		game.contextText.fillStyle = "#FFD455";
-		game.contextText.font = 15*dtSize + 'px helvetica';
+		game.contextText.font = 15 + 'px helvetica';
 		game.contextText.clearRect(this.scoreX, this.height*0.3, this.width*0.14, this.height*0.35);  
 		game.contextText.fillText("Score: " + this.score, this.scoreX, this.scoreY); //printing the score
 	};
@@ -1822,7 +1889,7 @@ function ui() {
 
 	// 	if (!game.isMobile) {
 	// 		game.contextText.fillStyle = "#FFD455";
-	// 		game.contextText.font = 15*dtSize + 'px helvetica';
+	// 		game.contextText.font = 15 + 'px helvetica';
 	// 		game.contextText.clearRect(this.width*0.25, this.height*0.3, this.width*0.2, this.height*0.35); 
 	// 		game.contextText.fillText("Sound(F8): " + this.soundFx, this.width*0.25, this.height*0.6);
 	// 	}
@@ -2452,7 +2519,7 @@ function menu()
 		}
 		else if (game.started && game.tracks.length < 1)
 		{
-			game.tracks.push(game.soundTracks['tune1.mp3']);
+			game.tracks.push(game.soundTracks['tune1' + fileFormat]);
 
 			for(var w in game.tracks)
 			{
@@ -2662,7 +2729,7 @@ gameMenu = new menu();
 			clrCanvas();	
 
 			//obtaining an average deltaTime
-			if(dtTimer <= 30){
+			if(dtTimer <= 100){
 
 				var timeNow = new Date().getTime();
 				var timeDiff = timeNow - (timeThen);
@@ -2671,14 +2738,15 @@ gameMenu = new menu();
 	    		dtTimer++;
     		}
 
-    		if(dtTimer == 30){
+    		if(dtTimer == 100){
     			var dtSum = 0;
-    			for( var i = 0; i < dtArray.length-2; i++) {
-					dtSum += dtArray[i+2]; //+2 skips first values which might be deviant
+    			for( var i = 0; i < dtArray.length-10; i++) {
+					dtSum += dtArray[i+10]; //+10 skips first values which might be deviant
 					// console.log (dtSum);
 				}
 					dt = Math.round(dtSum / dtArray.length)/1000;					
-    		}	
+    		}
+	
 
     		//game time
 			game.timer++;
@@ -2775,7 +2843,7 @@ gameMenu = new menu();
 								game.enemies[j].hull -= game.playerBullets[f].power;
 								// game.contextEnemies.clearRect(game.playerBullets[f].x, game.playerBullets[f].y, game.playerBullets[f].size, game.playerBullets[f].size*1.8);								
 								if(game.enemies[j].hull > 0) {
-									game.explosions.push(new explosion(game.enemies[j].x + game.enemies[j].size*0.5, game.enemies[j].y + game.enemies[j].size*0.5, 0, 1, game.enemies[j].size*0.25));
+									game.explosions.push(new explosion(game.enemies[j].x + game.enemies[j].size*0.5, game.enemies[j].y + game.enemies[j].size*0.5, 0, 1, game.enemies[j].size*0.25, 'chasis'));
 								}
 								game.playerBullets[f].dead = true;
 								// game.playerBullets.splice(f,1);
@@ -3020,6 +3088,11 @@ gameMenu = new menu();
 			// D3BUG3R!
 			///////////////////////////////////
 
+			// console.log (dt);
+
+
+			// console.log(fileFormat);
+
 			// console.log ('game font: ' + game.font);
 			// console.log ('game tracks length: ' + game.tracks.length);
 			// console.log ('game tracks: ' + game.tracks);
@@ -3030,6 +3103,11 @@ gameMenu = new menu();
 			// console.log ('update w:' + game.width);
 			// console.log ('update h:' +game.height);
 
+
+			// console.log(window.devicePixelRatio);
+			// console.log(window.outerHeight);
+			// console.log(window.outerWidth);
+			// console.log(parseInt(gameArea.css("width")));
 										
 		}	
 function lvl1() {
@@ -3077,7 +3155,7 @@ function lvl1() {
 			if (game.seconds > 13 && game.tracks.length < 2 && game.enemies.length > 0 && !game.bossDead) //NEEDS WORK
 			{
 				if(game.music){
-					game.tracks.push(game.soundTracks['tune2.' + fileFormat]);				
+					game.tracks.push(game.soundTracks['tune2' + fileFormat]);				
 					game.tracks[1].play();
 					game.tracks[1].loop = true;
 				}
@@ -3141,7 +3219,7 @@ function lvl1() {
 			}
 			if (game.seconds > 50 && game.enemies.length === 0 && !game.bossDead) {
 				if (game.music) {
-					game.tracks.push(game.soundTracks['boss.' + fileFormat]);
+					game.tracks.push(game.soundTracks['boss' + fileFormat]);
 					game.tracks[2].play();
 					game.tracks[2].loop = true;
 				}
@@ -3155,7 +3233,7 @@ function lvl1() {
 				game.tracks=[];
 				if (game.music && game.tracks.length === 0)
 					{
-						game.tracks.push(game.soundTracks['victory.' + fileFormat]);
+						game.tracks.push(game.soundTracks['victory' + fileFormat]);
 					}
 
 				game.tracks[0].play();
@@ -3280,9 +3358,9 @@ function lvl1() {
   // 			audio1 = document.querySelector('#audio1');
   // 			audio2 = document.querySelector('#audio2');
   // 			audio3 = document.querySelector('#audio3');
-  // 			audio1.src = '_sounds/_sfx/laser.' + fileFormat;
-  // 			audio2.src = '_sounds/_sfx/laser.' + fileFormat;
-  // 			audio3.src = '_sounds/_sfx/laser.' + fileFormat;
+  // 			audio1.src = '_sounds/_sfx/laser' + fileFormat;
+  // 			audio2.src = '_sounds/_sfx/laser' + fileFormat;
+  // 			audio3.src = '_sounds/_sfx/laser' + fileFormat;
 		// }
 
 		// function mediaPlaybackRequiresUserGesture() {
@@ -3381,7 +3459,7 @@ function lvl1() {
 			game.tracks = [];
 
 			if (game.music && game.tracks.length < 1){
-				game.tracks.push(game.soundTracks['tune1.' + fileFormat]);
+				game.tracks.push(game.soundTracks['tune1' + fileFormat]);
 				game.tracks[0].play();
 				game.tracks[0].loop = true;	
 			}
@@ -3518,10 +3596,10 @@ function lvl1() {
 			resetGame();			
 
 			//preparing sound tracks (chromium fix)
-			game.tracks.push(game.soundTracks['tune1.' + fileFormat]);
-			game.tracks.push(game.soundTracks['tune2.' + fileFormat]);
-			game.tracks.push(game.soundTracks['boss.' + fileFormat]);
-			game.tracks.push(game.soundTracks['victory.' + fileFormat]);
+			game.tracks.push(game.soundTracks['tune1' + fileFormat]);
+			game.tracks.push(game.soundTracks['tune2' + fileFormat]);
+			game.tracks.push(game.soundTracks['boss' + fileFormat]);
+			game.tracks.push(game.soundTracks['victory' + fileFormat]);
 
 			for (var t in game.tracks){
 				game.tracks[t].play();
@@ -3531,19 +3609,19 @@ function lvl1() {
 			game.tracks = [];
 
 			//preparing soundfx (chromium fix)
-			game.sounds.push(game.sfx['laser.' + fileFormat]);
-			game.sounds.push(game.sfx['laser2.' + fileFormat]);
-			game.sounds.push(game.sfx['laser3.' + fileFormat]);
-			game.sounds.push(game.sfx['hit.' + fileFormat]);
-			game.sounds.push(game.sfx['hit2.' + fileFormat]);
-			game.sounds.push(game.sfx['hit3.' + fileFormat]);
-			game.sounds.push(game.sfx['loot_powerUp.' + fileFormat]);
-			game.sounds.push(game.sfx['loot_powerUp2.' + fileFormat]);
-			game.sounds.push(game.sfx['loot_powerUp3.' + fileFormat]);
-			game.sounds.push(game.sfx['explosion.' + fileFormat]);
-			game.sounds.push(game.sfx['explosion2.' + fileFormat]);
-			game.sounds.push(game.sfx['explosion3.' + fileFormat]);
-			game.sounds.push(game.sfx['blast.' + fileFormat]);
+			game.sounds.push(game.sfx['laser' + fileFormat]);
+			game.sounds.push(game.sfx['laser2' + fileFormat]);
+			game.sounds.push(game.sfx['laser3' + fileFormat]);
+			game.sounds.push(game.sfx['hit' + fileFormat]);
+			game.sounds.push(game.sfx['hit2' + fileFormat]);
+			game.sounds.push(game.sfx['hit3' + fileFormat]);
+			game.sounds.push(game.sfx['loot_powerUp' + fileFormat]);
+			game.sounds.push(game.sfx['loot_powerUp2' + fileFormat]);
+			game.sounds.push(game.sfx['loot_powerUp3' + fileFormat]);
+			game.sounds.push(game.sfx['explosion' + fileFormat]);
+			game.sounds.push(game.sfx['explosion2' + fileFormat]);
+			game.sounds.push(game.sfx['explosion3' + fileFormat]);
+			game.sounds.push(game.sfx['blast' + fileFormat]);
 
 			for (var s in game.sounds){
 				game.sounds[s].play();
@@ -3634,7 +3712,7 @@ function lvl1() {
 				else //if not increase our index instance and add it to its label
 				{
 					sfxIndexInstance++;
-					sfxIndex = sfx.src.match(/([^\/]+)(?=\.\w+$)/)[0] + sfxIndexInstance + '.' + fileFormat;
+					sfxIndex = sfx.src.match(/([^\/]+)(?=\.\w+$)/)[0] + sfxIndexInstance + fileFormat;
 					game.sfx[sfxIndex] = sfx;
 				}
 
@@ -3687,19 +3765,19 @@ function lvl1() {
 			if(game.doneImages >= game.requiredImages){
 				game.contextText.clearRect(0, 0, game.width, game.height);
 				initSfx([	//using initSfx function to load our sounds
-					"_sounds/_sfx/laser." + fileFormat,			
-					"_sounds/_sfx/laser." + fileFormat,			
-					"_sounds/_sfx/laser." + fileFormat,			
-					"_sounds/_sfx/hit." + fileFormat,			
-					"_sounds/_sfx/hit." + fileFormat,			
-					"_sounds/_sfx/hit." + fileFormat,			
-					"_sounds/_sfx/loot_powerUp." + fileFormat,			
-					"_sounds/_sfx/loot_powerUp." + fileFormat,			
-					"_sounds/_sfx/loot_powerUp." + fileFormat,			
-					"_sounds/_sfx/explosion." + fileFormat,			
-					"_sounds/_sfx/explosion." + fileFormat,			
-					"_sounds/_sfx/explosion." + fileFormat,			
-					"_sounds/_sfx/blast." + fileFormat		
+					"_sounds/_sfx/laser" + fileFormat,			
+					"_sounds/_sfx/laser" + fileFormat,			
+					"_sounds/_sfx/laser" + fileFormat,			
+					"_sounds/_sfx/hit" + fileFormat,			
+					"_sounds/_sfx/hit" + fileFormat,			
+					"_sounds/_sfx/hit" + fileFormat,			
+					"_sounds/_sfx/loot_powerUp" + fileFormat,			
+					"_sounds/_sfx/loot_powerUp" + fileFormat,			
+					"_sounds/_sfx/loot_powerUp" + fileFormat,			
+					"_sounds/_sfx/explosion" + fileFormat,			
+					"_sounds/_sfx/explosion" + fileFormat,			
+					"_sounds/_sfx/explosion" + fileFormat,			
+					"_sounds/_sfx/blast" + fileFormat		
 				]);
 
 				checkSfx();
@@ -3721,10 +3799,10 @@ function lvl1() {
 
 				//start loading sound tracks
 				initSoundTracks([	//using initSfx function to load our sound tracks
-					"_sounds/_soundTracks/_lvl1/tune1." + fileFormat,			
-					"_sounds/_soundTracks/_lvl1/tune2." + fileFormat,			
-					"_sounds/_soundTracks/_lvl1/victory." + fileFormat,			
-					"_sounds/_soundTracks/_lvl1/boss." + fileFormat	
+					"_sounds/_soundTracks/_lvl1/tune1" + fileFormat,			
+					"_sounds/_soundTracks/_lvl1/tune2" + fileFormat,			
+					"_sounds/_soundTracks/_lvl1/victory" + fileFormat,			
+					"_sounds/_soundTracks/_lvl1/boss" + fileFormat	
 				]);
 
 				checkSoundTracks();
@@ -3840,7 +3918,7 @@ function lvl1() {
 			}
 			else if (game.tracks.length < 1)
 			{
-				game.tracks.push(game.soundTracks['tune1.mp3']);
+				game.tracks.push(game.soundTracks['tune1' + fileFormat]);
 
 				for(var w in game.tracks)
 				{

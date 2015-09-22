@@ -1,7 +1,7 @@
 function playerBullet(x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame) {
 	particle.call(this, x, y, speed, direction);
 	
-	this.size = Math.round(bulletSize*dtSize);
+	this.size = bulletSize;
 	this.spriteX = -Math.round(this.size*0.5);
 	this.spriteY = -Math.round(this.size*0.5);
 	this.power = power;

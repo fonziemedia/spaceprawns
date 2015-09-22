@@ -4,26 +4,20 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.type = type;
 	switch (this.type){
 		case 'pawn':
-				this.size = Math.round(65*dtSize);
+				this.size = 65;
 			break;
 		case 'miniboss':
-				this.size = Math.round(120*dtSize);	
+				this.size = 120;	
 			break;
 		case 'base':
-				this.size = Math.round(170*dtSize);
+				this.size = 170;
 				this.rotation = 0;	
 			break;
 	}
 	this.spritePos = Math.round(this.size * 0.5);
 	this.hull = hull;
 	this.image = game.images[image];
-	this.audioHit1 = 'hit.' + fileFormat;	
-	this.audioHit2 = 'hit2.' + fileFormat;	
-	this.audioHit3 = 'hit3.' + fileFormat;	
-	this.audioDead1 = 'explosion.' + fileFormat;
-	this.audioDead2 = 'explosion2.' + fileFormat;
-	this.audioDead3 = 'explosion3.' + fileFormat;
-	this.hit = false;
+	// this.hit = false;
 	this.hitTimer = 0; 
 	this.dead = false;
 	this.bulletTimer = 1;
@@ -76,46 +70,29 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		// 	}
 		// }
 
-		if(this.hit && this.hull > 0 ){
-			if (game.sound)
-	        {
-	        	if (game.sfx[this.audioHit1].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioHit1]);
-	        	}
-	        	else if (game.sfx[this.audioHit2].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioHit2]);
-	        	}
-	        	else if (game.sfx[this.audioHit3].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioHit3]);
-	        	}				        	
-	        }
-			//change image here		
-			this.hit = false;
-		}
+		// if(this.hit && this.hull > 0 ){
+		// 	if (game.sound)
+	 //        {
+	 //        	if (game.sfx[this.audioHit1].paused)
+	 //        	{
+	 //        		game.sounds.push(game.sfx[this.audioHit1]);
+	 //        	}
+	 //        	else if (game.sfx[this.audioHit2].paused)
+	 //        	{
+	 //        		game.sounds.push(game.sfx[this.audioHit2]);
+	 //        	}
+	 //        	else if (game.sfx[this.audioHit3].paused)
+	 //        	{
+	 //        		game.sounds.push(game.sfx[this.audioHit3]);
+	 //        	}				        	
+	 //        }
+		// 	//change image here		
+		// 	this.hit = false;
+		// }
 
 		if (this.hull <= 0) {
 			this.dead = true;
-
-			game.explosions.push(new explosion(this.x, this.y, this.speed, this.direction, this.size));			
-			if (game.sound)
-	        {
-	        	if (game.sfx[this.audioDead1].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioDead1]);
-	        	}
-	        	else if (game.sfx[this.audioDead2].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioDead2]);
-	        	}
-	        	else if (game.sfx[this.audioDead3].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioDead3]);
-	        	}				        	
-	        }
-	        
+			game.explosions.push(new explosion(this.x, this.y, this.speed, this.direction, this.size, 'enemy'));		        
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;

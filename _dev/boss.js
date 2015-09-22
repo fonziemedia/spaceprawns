@@ -3,12 +3,11 @@ function boss(x, y, speed, direction, hull, image) {
 
 	this.hull = hull;
 	this.image = game.images[image];
-	this.size = Math.round(200*dtSize);
+	this.size = 200;
 	this.hit = false;
-	this.audioHit1 = 'hit.mp3';
-	this.audioHit2 = 'hit2.mp3';
-	this.audioHit3 = 'hit3.mp3';
-	this.audioDead = 'blast.mp3';
+	this.audioHit1 = 'hit' + fileFormat;
+	this.audioHit2 = 'hit2' + fileFormat;
+	this.audioHit3 = 'hit3' + fileFormat;
 	this.hitTimer = 0; 
 	this.dead = false;
 	this.deadTimer = 0;
@@ -65,8 +64,7 @@ function boss(x, y, speed, direction, hull, image) {
 		}
 
 		if (this.hull <= 0 ) {
-			game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size));			
-			if(game.sound){game.sounds.push(game.sfx[this.audioDead]);}
+			game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size, 'boss'));
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;	

@@ -6,14 +6,13 @@ function player(hull, fireRate) {
 	this.speed = 0;
 	this.maxSpeed = 400;
 	
-	this.size = Math.round(100*dtSize);
+	this.size = 100;
 	this.hull = hull;
 	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
 	this.image = 'fighter.png';
-	this.audioFire1 = 'laser.' + fileFormat;
-	this.audioFire2 = 'laser2.' + fileFormat;
-	this.audioFire3 = 'laser3.' + fileFormat;
-	this.audioExplode = 'blast.' + fileFormat;
+	this.audioFire1 = 'laser' + fileFormat;
+	this.audioFire2 = 'laser2' + fileFormat;
+	this.audioFire3 = 'laser3' + fileFormat;
 	this.rendered = false;
 	this.hit = false;
 	this.hitTimer = 0;
@@ -356,8 +355,7 @@ function player(hull, fireRate) {
 		{
 			this.dead = true;			
 			this.lives -= 1;
-			game.explosions.push(new explosion(this.x, this.y, this.speed, 0, this.size));
-			if (game.sound){game.sounds.push(game.sfx[this.audioExplode]);}
+			game.explosions.push(new explosion(this.x, this.y, this.speed, 0, this.size, 'player'));			
 			gameUI.updateHangar();
 		}	
 

@@ -20,7 +20,7 @@ function ui() {
 	this.updateLevel = function() {
 		this.level = game.level;
 		game.contextText.fillStyle = "#FFD455";
-		game.contextText.font = 15*dtSize + 'px helvetica';
+		game.contextText.font = 15 + 'px helvetica';
 		game.contextText.clearRect(this.width*0.02, this.height*0.3, this.width*0.05, this.height*0.35); 
 		game.contextText.fillText("S" + this.level, this.width*0.02, this.height*0.6); //printing level
 	};
@@ -28,7 +28,7 @@ function ui() {
 	this.updateScore = function() {
 		this.score = game.score;
 		game.contextText.fillStyle = "#FFD455";
-		game.contextText.font = 15*dtSize + 'px helvetica';
+		game.contextText.font = 15 + 'px helvetica';
 		game.contextText.clearRect(this.scoreX, this.height*0.3, this.width*0.14, this.height*0.35);  
 		game.contextText.fillText("Score: " + this.score, this.scoreX, this.scoreY); //printing the score
 	};
@@ -39,7 +39,7 @@ function ui() {
 
 	// 	if (!game.isMobile) {
 	// 		game.contextText.fillStyle = "#FFD455";
-	// 		game.contextText.font = 15*dtSize + 'px helvetica';
+	// 		game.contextText.font = 15 + 'px helvetica';
 	// 		game.contextText.clearRect(this.width*0.25, this.height*0.3, this.width*0.2, this.height*0.35); 
 	// 		game.contextText.fillText("Sound(F8): " + this.soundFx, this.width*0.25, this.height*0.6);
 	// 	}

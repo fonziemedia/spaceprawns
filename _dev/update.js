@@ -6,7 +6,7 @@
 			clrCanvas();	
 
 			//obtaining an average deltaTime
-			if(dtTimer <= 30){
+			if(dtTimer <= 100){
 
 				var timeNow = new Date().getTime();
 				var timeDiff = timeNow - (timeThen);
@@ -15,14 +15,15 @@
 	    		dtTimer++;
     		}
 
-    		if(dtTimer == 30){
+    		if(dtTimer == 100){
     			var dtSum = 0;
-    			for( var i = 0; i < dtArray.length-2; i++) {
-					dtSum += dtArray[i+2]; //+2 skips first values which might be deviant
+    			for( var i = 0; i < dtArray.length-10; i++) {
+					dtSum += dtArray[i+10]; //+10 skips first values which might be deviant
 					// console.log (dtSum);
 				}
 					dt = Math.round(dtSum / dtArray.length)/1000;					
-    		}	
+    		}
+	
 
     		//game time
 			game.timer++;
@@ -119,7 +120,7 @@
 								game.enemies[j].hull -= game.playerBullets[f].power;
 								// game.contextEnemies.clearRect(game.playerBullets[f].x, game.playerBullets[f].y, game.playerBullets[f].size, game.playerBullets[f].size*1.8);								
 								if(game.enemies[j].hull > 0) {
-									game.explosions.push(new explosion(game.enemies[j].x + game.enemies[j].size*0.5, game.enemies[j].y + game.enemies[j].size*0.5, 0, 1, game.enemies[j].size*0.25));
+									game.explosions.push(new explosion(game.enemies[j].x + game.enemies[j].size*0.5, game.enemies[j].y + game.enemies[j].size*0.5, 0, 1, game.enemies[j].size*0.25, 'chasis'));
 								}
 								game.playerBullets[f].dead = true;
 								// game.playerBullets.splice(f,1);
@@ -364,6 +365,11 @@
 			// D3BUG3R!
 			///////////////////////////////////
 
+			// console.log (dt);
+
+
+			// console.log(fileFormat);
+
 			// console.log ('game font: ' + game.font);
 			// console.log ('game tracks length: ' + game.tracks.length);
 			// console.log ('game tracks: ' + game.tracks);
@@ -374,5 +380,10 @@
 			// console.log ('update w:' + game.width);
 			// console.log ('update h:' +game.height);
 
+
+			// console.log(window.devicePixelRatio);
+			// console.log(window.outerHeight);
+			// console.log(window.outerWidth);
+			// console.log(parseInt(gameArea.css("width")));
 										
 		}	

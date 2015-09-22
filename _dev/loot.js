@@ -3,7 +3,7 @@ function loot(x, y) {
 
 	this.speed = 250;
 	this.direction = Math.PI/2;
-	this.size = Math.round(45*dtSize);
+	this.size = 45;
 	this.dead = false;
 	this.drops = ['health', 'laser', 'missile'];
 	var key = Math.floor(Math.random() * this.drops.length);
@@ -19,9 +19,9 @@ function loot(x, y) {
     case 'missile':    
         this.image = 'missile.png';
 	}
-	this.sfx1 = 'loot_powerUp.' + fileFormat;
-	this.sfx2 = 'loot_powerUp2.' + fileFormat;
-	this.sfx3 = 'loot_powerUp3.' + fileFormat;
+	this.sfx1 = 'loot_powerUp' + fileFormat;
+	this.sfx2 = 'loot_powerUp2' + fileFormat;
+	this.sfx3 = 'loot_powerUp3' + fileFormat;
 	this.context = game.contextPlayer;
 
 	this.update = function() {

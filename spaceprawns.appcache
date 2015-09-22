@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 2015-09-10 ver a0.6.0
+# 2015-09-10 ver 0.7.2
 
 # Explicitly cached entries
 index.html
@@ -54,22 +54,31 @@ _img/_dist/ui/energypoint.png
 _img/_dist/enemies/_bigboss/sectoidBoss.png
 #SOUND
 _sounds/_sfx/hit.mp3
+_sounds/_sfx/hit.m4a
 _sounds/_sfx/hit.ogg
 _sounds/_sfx/laser.mp3
+_sounds/_sfx/laser.m4a
 _sounds/_sfx/laser.ogg
 _sounds/_sfx/loot_powerUp.mp3
+_sounds/_sfx/loot_powerUp.m4a
 _sounds/_sfx/loot_powerUp.ogg
 _sounds/_sfx/explosion.mp3
+_sounds/_sfx/explosion.m4a
 _sounds/_sfx/explosion.ogg
 _sounds/_sfx/blast.mp3
+_sounds/_sfx/blast.m4a
 _sounds/_sfx/blast.ogg
 _sounds/_soundTracks/_lvl1/boss.mp3
+_sounds/_soundTracks/_lvl1/boss.m4a
 _sounds/_soundTracks/_lvl1/boss.ogg
 _sounds/_soundTracks/_lvl1/tune1.mp3
+_sounds/_soundTracks/_lvl1/tune1.m4a
 _sounds/_soundTracks/_lvl1/tune1.ogg
 _sounds/_soundTracks/_lvl1/tune2.mp3
+_sounds/_soundTracks/_lvl1/tune2.m4a
 _sounds/_soundTracks/_lvl1/tune2.ogg
 _sounds/_soundTracks/_lvl1/victory.mp3
+_sounds/_soundTracks/_lvl1/victory.m4a
 _sounds/_soundTracks/_lvl1/victory.ogg
 
 

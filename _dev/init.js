@@ -48,15 +48,59 @@
 		
 				// Sound Test
 		//init Sfx
-		var fileFormat = "mp3";
 		
-		function soundTest()
+		// function soundTest()
+		// {
+		// 		var soundTest = new Audio();
+		// 		var canPlayMP3 = (typeof soundTest.canPlayType === "function" && soundTest.canPlayType("audio/mpeg") !== "");
+
+		// 		if (!canPlayMP3)
+		// 		{
+		// 			fileFormat = "ogg";
+		// 			var canPlayOGG = (typeof soundTest.canPlayType === "function" && soundTest.canPlayType("audio/mpeg") !== "");
+
+
+
+		// 		}
+		// }
+		// soundTest();
+
+		var audioElementSupported = (function(d) {
+
+	    	var a = d.createElement("audio"),
+	        o = {},
+	        s = "audio\/";
+
+		    if (typeof a.canPlayType === "function") {
+		        o.supported = Boolean(true);
+		        o.mp3 = a.canPlayType(s + "mpeg");
+		        o.wav = a.canPlayType(s + 'wav; codecs="1"');
+		        o.ogg = a.canPlayType(s + 'ogg; codecs="vorbis"');
+		        o.m4a = a.canPlayType(s + "x-m4a") || a.canPlayType(s + "aac");
+		        o.webm = a.canPlayType(s + 'webm; codecs="vorbis"');
+		    } else {
+		        o.supported = Boolean(0);
+		    }
+		    return o;
+
+		})(this.document);
+
+
+		if (audioElementSupported.m4a !== "")  //note: audioElementSupported.x is likely to return 'probably' or 'maybe' so you might want to do a thorough check
 		{
-				var mp3Test = new Audio();
-				var canPlayMP3 = (typeof mp3Test.canPlayType === "function" && mp3Test.canPlayType("audio/mpeg") !== "");
-				if (!canPlayMP3) {fileFormat = "ogg";}
+			fileFormat = ".m4a";
 		}
-		soundTest();
+		else if (audioElementSupported.ogg !== "")
+		{
+			fileFormat = ".ogg";
+		}
+		else
+		{
+			fileFormat = ".mp3";
+		}
+		// !! add condition here for no sound support. Create a trigger to be considered when loading audio
+
+
 
 		game.stars = []; //this is an array which will contain our stars info: position in space and size
 		game.faded = true;
@@ -80,7 +124,7 @@
 		game.loot = [];
 		game.explosions = [];
 		
-		dt = 0; // defining dt globally
+		dt = 0.017; // defining dt globally
 		dtTimer = 0;		
 		dtArray = [];
 		timeThen = new Date().getTime();
@@ -169,28 +213,28 @@
 		//get the gameArea and the canvases 
 		var gameArea = $('#gamearea');
 		var allCanvas = $('canvas');
-
-		var gameAreaH = window.outerHeight; // !! On Android, window.outerWidth and window.outerHeight are reliably the screen size
+		var pixelRatio = window.devicePixelRatio; // This is our game size delta to keep the size of our game + objects proportional to the display
+		var gameAreaH = window.outerHeight * pixelRatio; // !! On Android, window.outerWidth and window.outerHeight are more reliable
 
 		if (game.isMobile)
 		{
-		var gameAreaW = window.outerWidth;
+		var gameAreaW = window.outerWidth * pixelRatio;
 		}
 		else
 		{
-			gameAreaW = gameArea.css("width");
+			gameAreaW = parseInt(gameArea.css("width")) * pixelRatio;  //using parseInt here to remove 'px'
 		}
 
 		allCanvas.attr('height', gameAreaH); //max height
 		allCanvas.attr('width', gameAreaW); //max height
 
 		//SETTING GAME DIMENSIONS
-		game.height = parseInt(gameAreaH); //using parseInt here to remove 'px'
-		game.width = parseInt(gameAreaW);
+		game.height = gameAreaH;
+		game.width = gameAreaW;
 
 		
-		//delta size will keep the size of our game objects proportional to the display
-		var dtSize = game.height*0.001;
+		//delta size will keep the size of our game objects proportional to the display - NOT REQUIRED, see pixelRatio above
+		// var dtSize = game.height*0.001;
 		// console.log (dtSize);
 
 		

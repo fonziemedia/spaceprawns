@@ -43,7 +43,7 @@ function lvl1() {
 			if (game.seconds > 13 && game.tracks.length < 2 && game.enemies.length > 0 && !game.bossDead) //NEEDS WORK
 			{
 				if(game.music){
-					game.tracks.push(game.soundTracks['tune2.' + fileFormat]);				
+					game.tracks.push(game.soundTracks['tune2' + fileFormat]);				
 					game.tracks[1].play();
 					game.tracks[1].loop = true;
 				}
@@ -107,7 +107,7 @@ function lvl1() {
 			}
 			if (game.seconds > 50 && game.enemies.length === 0 && !game.bossDead) {
 				if (game.music) {
-					game.tracks.push(game.soundTracks['boss.' + fileFormat]);
+					game.tracks.push(game.soundTracks['boss' + fileFormat]);
 					game.tracks[2].play();
 					game.tracks[2].loop = true;
 				}
@@ -121,7 +121,7 @@ function lvl1() {
 				game.tracks=[];
 				if (game.music && game.tracks.length === 0)
 					{
-						game.tracks.push(game.soundTracks['victory.' + fileFormat]);
+						game.tracks.push(game.soundTracks['victory' + fileFormat]);
 					}
 
 				game.tracks[0].play();

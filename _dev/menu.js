@@ -46,7 +46,7 @@ function menu()
 		}
 		else if (game.started && game.tracks.length < 1)
 		{
-			game.tracks.push(game.soundTracks['tune1.mp3']);
+			game.tracks.push(game.soundTracks['tune1' + fileFormat]);
 
 			for(var w in game.tracks)
 			{

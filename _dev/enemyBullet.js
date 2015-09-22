@@ -1,7 +1,7 @@
 function enemyBullet(x, y, speed, direction, power, image) {
 	particle.call(this, x, y, speed, direction);
 	
-	this.size = Math.round(30*dtSize);
+	this.size = 30;
 	this.spriteX = -Math.round(this.size*0.5);
 	this.spriteY = -Math.round(this.size*0.5);
 	this.power = power;

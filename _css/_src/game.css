@@ -97,6 +97,11 @@ canvas {
   background-color: transparent;
   background-origin: content-box;
   background-repeat: repeat-y;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-transform-style: preserve-3d;
 }
 .level2 {
   background-image: url('assets/images/level1_small.jpg');
