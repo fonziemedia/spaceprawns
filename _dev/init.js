@@ -63,7 +63,7 @@
 
 		// 		}
 		// }
-		// soundTest();
+		// soundTests();
 
 		var audioElementSupported = (function(d) {
 
@@ -99,7 +99,6 @@
 			fileFormat = ".mp3";
 		}
 		// !! add condition here for no sound support. Create a trigger to be considered when loading audio
-
 
 
 		game.stars = []; //this is an array which will contain our stars info: position in space and size
@@ -214,11 +213,14 @@
 		var gameArea = $('#gamearea');
 		var allCanvas = $('canvas');
 		var pixelRatio = window.devicePixelRatio; // This is our game size delta to keep the size of our game + objects proportional to the display
-		var gameAreaH = window.outerHeight * pixelRatio; // !! On Android, window.outerWidth and window.outerHeight are more reliable
+		var windowWidth = $(window).width();
+		var windowHeight = $(window).height();
+
+		var gameAreaH = windowHeight * pixelRatio; // !! On Android, window.outerWidth and window.outerHeight are more reliable
 
 		if (game.isMobile)
 		{
-		var gameAreaW = window.outerWidth * pixelRatio;
+		var gameAreaW = windowWidth * pixelRatio;
 		}
 		else
 		{
@@ -231,6 +233,10 @@
 		//SETTING GAME DIMENSIONS
 		game.height = gameAreaH;
 		game.width = gameAreaW;
+
+		console.log(pixelRatio);
+		console.log(gameAreaW);
+		console.log(gameAreaH);
 
 		
 		//delta size will keep the size of our game objects proportional to the display - NOT REQUIRED, see pixelRatio above

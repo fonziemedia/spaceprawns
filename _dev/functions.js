@@ -436,16 +436,14 @@
 		function sfxEventHandler(sfx)
 		{
 			this.sfx = sfx;
-
-			this.sfx.removeEventListener("canplaythrough", sfxEventHandler);
+			this.sfx.removeEventListener("canplaythrough", sfxEventHandler, false);
 			game.doneSfx++;
 		}
 
 		function stEventHandler(st)
 		{
 			this.st = st;
-
-			this.st.removeEventListener("canplaythrough", stEventHandler);
+			this.st.removeEventListener("canplaythrough", stEventHandler, false);
 			game.doneSoundTracks++;
 		}
 
@@ -474,11 +472,18 @@
 					game.sfx[sfxIndex] = sfx;
 				}
 
-				game.sfx[sfxIndex].preload = "auto";
+				console.log(audiopreload);
+				if(audiopreload)
+				{
+					game.sfx[sfxIndex].preload = "auto";
+					//checking if sfx have loaded
+					game.sfx[sfxIndex].addEventListener("canplaythrough", sfxEventHandler.bind(window, this), false); //!!!!!! this is how you pass on args for event handler functions yo!!!
+				}
+				else
+				{
+					game.doneSfx++;
+				}
 
-				//checking if sfx have loaded
-				game.sfx[sfxIndex].addEventListener("canplaythrough", sfxEventHandler.bind(window, this)); //!!!!!! this is how you pass on args for event handler functions yo!!!
-				
 				if(i < 1)
 				{
 					//=========================== Game loading Screen =================================== 	
@@ -502,10 +507,17 @@
 
 				game.soundTracks[soundTracksIndex] = soundTracks; //defining game.soundTracks[soundTracksIndex] as a new Audio (with stPaths)
 
-				game.soundTracks[soundTracksIndex].preload = "auto";
-
-				//checking if st's have loaded
-				game.soundTracks[soundTracksIndex].addEventListener("canplaythrough", stEventHandler.bind(window, this));				
+								
+				if(audiopreload)
+				{
+					game.soundTracks[soundTracksIndex].preload = "auto";
+					//checking if st's have loaded
+					game.soundTracks[soundTracksIndex].addEventListener("canplaythrough", stEventHandler.bind(window, this, false));				
+				}
+				else
+				{
+					game.doneSoundTracks++;
+				}	
 
 				if(i < 1)
 				{
@@ -717,8 +729,30 @@
 		},false);
 
 
- 			//this function call starts our game
- 			checkImages();  
+
+		//Media pre-load test
+		var audiopreload = false;
+		var timeout;
+		var waitTime = 3000;
+		var audioTest = new Audio();
+		audioTest.src = '_sounds/_sfx/laser' + fileFormat;
+		audioTest.preload = "auto";
+
+		function testpreload(arg)
+		{
+			clearTimeout(timeout);
+			audioTest.removeEventListener('loadeddata', testpreload);
+			audiopreload = arg !== undefined && arg.type ==='loadeddata' ? true : false;
+			 //this function call starts our game
+ 			checkImages(); 
+		}
+
+		setTimeout(function()
+		{
+			audioTest.addEventListener('loadeddata', testpreload);
+			timeout = setTimeout(testpreload, waitTime);
+		}, 0);
+ 
 		
 	/* jshint ignore:start */
 	// });
