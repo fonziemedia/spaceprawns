@@ -54,15 +54,16 @@ function player(hull, fireRate) {
 		// this.vy += this.gravity;
 		// this.x += this.vx;
 		// this.y += this.vy;
-		this.playerImage = game.images[this.image];
-		this.speedX = Math.round((touchInitX - canvasX)*0.1);
-		this.speedY = Math.round((touchInitY - canvasY)*0.1);		
+		this.speed = 0; // !! check if you can optimise this !!
+		this.playerImage = game.images[this.image]; // !! check if you can optimise this !!
+		this.speedX = Math.round((touchInitX - inputAreaX)*0.1);
+		this.speedY = Math.round((touchInitY - inputAreaY)*0.1);		
 		
 		//////////////////////////////
 		//	Mouse and Touch controls
 		/////////////////////////////
 
-		if (mouseIsDown && !game.levelComplete && !game.paused && !game.gameOver && !game.gameWon) {
+		if (mouseIsDown && !game.levelComplete && !game.paused && !game.gameOver) {
 
 			//removing cursor
 			if (!game.isMobile) {document.getElementById('textCanvas').style.cursor = 'none';}
@@ -84,12 +85,12 @@ function player(hull, fireRate) {
 				moveLeft5 = (this.speedX > 10) ? true : false;
 				
 				//making it move to touch or click point
-				// if (canvasX != moveX || canvasY != moveY) {
+				// if (inputAreaX != moveX || inputAreaY != moveY) {
 					//the distance between the current ship pos and the user touch/click pos
 					
 					
-					// console.log('canvasx:'+ canvasX);
-					// console.log('canvasy:'+ canvasY);				
+					// console.log('inputAreax:'+ inputAreaX);
+					// console.log('inputAreay:'+ inputAreaY);				
 					// console.log('touchx:'+ touchInitX);
 					// console.log('touchy:'+ touchInitY);
 					// console.log (this.speedX);
@@ -109,8 +110,8 @@ function player(hull, fireRate) {
 
 					// console.log('touchInitX:'+ touchInitX);
 					// console.log('touchInitY:'+ touchInitY);
-					// console.log('canvasX:'+ canvasX);
-					// console.log('canvasY:'+ canvasY);					
+					// console.log('inputAreaX:'+ inputAreaX);
+					// console.log('inputAreaY:'+ inputAreaY);					
 					// console.log('this.speedX:'+ this.speedX);
 					// console.log('this.speedY:'+ this.speedY);	
 					
@@ -199,7 +200,7 @@ function player(hull, fireRate) {
 		if(!game.isMobile)
 		{
 			//left
-			if(game.keys[37] || game.keys[65] && !(game.gameOver) && !(game.gameWon)){ //if key pressed..				
+			if(game.keys[37] || game.keys[65] && !game.gameOver){ //if key pressed..				
 				if(this.x > 0){ // (keeping it within the boundaries of our canvas)				
 					this.speed = this.maxSpeed;							
 					this.image = 'fighter_left5.png';
@@ -208,7 +209,7 @@ function player(hull, fireRate) {
 				}
 			}
 			//right
-			if(game.keys[39] || game.keys[68] && !(game.gameOver) && !(game.gameWon)){
+			if(game.keys[39] || game.keys[68] && !game.gameOver){
 				if(this.x <= game.width - this.size){				
 					this.speed = this.maxSpeed;
 					this.image = 'fighter_right5.png';
@@ -217,7 +218,7 @@ function player(hull, fireRate) {
 				}
 			}
 			//up
-			if((game.keys[38] || game.keys[87]) && !game.gameOver && !game.gameWon){
+			if((game.keys[38] || game.keys[87]) && !game.gameOver){
 				if(this.y > 0){				
 					this.speed = this.maxSpeed;					
 					this.rendered = false;
@@ -225,7 +226,7 @@ function player(hull, fireRate) {
 				}
 			}
 			//down
-			if(game.keys[40] || game.keys[83] && !(game.gameOver) && !game.gameWon){
+			if(game.keys[40] || game.keys[83] && !game.gameOver){
 				if(this.y <= game.height - this.size){				
 					this.speed = this.maxSpeed;					
 					this.rendered = false;
@@ -236,7 +237,7 @@ function player(hull, fireRate) {
 
 		
 		if(game.levelComplete){			
-			this.speed = this.maxSpeed;			
+			this.speed = this.maxSpeed*2;			
 			this.rendered = false;
 			this.y -= Math.round(this.speed*dt);
 		}
@@ -355,41 +356,42 @@ function player(hull, fireRate) {
 		{
 			this.dead = true;			
 			this.lives -= 1;
-			game.explosions.push(new explosion(this.x, this.y, this.speed, 0, this.size, 'player'));			
+			game.explosions.push(new explosion(this.x, this.y, 0, 0, this.size, 'player')); //need to obtain player direction if we want dinamic explosions, for now we just blow it still			
 			gameUI.updateHangar();
 		}	
 
 
-		if (this.dead && this.deadTimer <= 100 && game.lives > 0) 
+		if (this.dead && this.deadTimer <= 100) 
 		{
 			//waiting a few secs before any action
 			this.deadTimer++; 
 
 			if (this.deadTimer > 100 && this.lives > 0) 
 			{
-					mouseIsDown = 0;
-					this.hull = hull;
-					this.dead = false;
-					this.x = Math.round(game.width*0.46);
-					this.y = Math.round(game.height*0.90);
-					this.image = 'fighter.png';
-					this.rendered = false;
-					this.hit = false;
-					this.hitTimer = 0;
-					this.friction = 0;
-					this.laserLevel = 1;
-					this.missileLevel = 0;						
-					gameUI.updateEnergy();
-					this.deadTimer = 0;
-					this.imune = true;
-					this.imuneTimer = 0;
+				mouseIsDown = 0;
+				this.hull = hull;
+				this.dead = false;
+				this.x = Math.round(game.width*0.46);
+				this.y = Math.round(game.height*0.90);
+				this.image = 'fighter.png';
+				this.rendered = false;
+				this.hit = false;
+				this.hitTimer = 0;
+				this.friction = 0;
+				this.laserLevel = 1;
+				this.missileLevel = 0;						
+				gameUI.updateEnergy();
+				this.deadTimer = 0;
+				this.imune = true;
+				this.imuneTimer = 0;
 			}
-			else if (this.deadTimer > 100 && this.lives === 0)
+			else if (this.deadTimer > 100 && this.lives === 0 && !game.gameOver)
 			{	
 				mouseIsDown = 0;
-				game.keys[13] = false;				
+				game.keys[13] = false;
 				this.deadTimer = 0;
 				game.gameOver = true;
+				gameState.gameOver();
 			}
 			else {
 				this.x = Math.round(game.width*0.5); //keeping the player outside canvas while dead
@@ -415,6 +417,9 @@ function player(hull, fireRate) {
 			if (this.imune && !game.faded && game.started && !game.levelComplete)
 			{
 				this.ctx.globalAlpha = 0.8;
+				////  !!!!!!   ///
+				/// !!?WTF?!! ///
+				////////////////
 				if (this.imuneTimer >= 0 && this.imuneTimer < 15  || this.imuneTimer >= 20 && this.imuneTimer < 35 ||this.imuneTimer >= 40 && this.imuneTimer < 55 || this.imuneTimer >= 70 && this.imuneTimer < 75 || this.imuneTimer >= 90 && this.imuneTimer < 95 || this.imuneTimer >= 110 && this.imuneTimer < 115 || this.imuneTimer >= 130 && this.imuneTimer < 135 || this.imuneTimer >= 150 && this.imuneTimer < 155 || this.imuneTimer >= 160 && this.imuneTimer < 175 || this.imuneTimer > 180)
 				{
 					this.ctx.drawImage(this.playerImage, this.x, this.y, this.size, this.size); //rendering
@@ -471,16 +476,16 @@ function player(hull, fireRate) {
 	};
 	
 	this.reset = function() {
+		game.gameOver = false;
 		this.dead = false;
+		this.deadTimer = 0;				
 		this.x = Math.round(game.width*0.46);
 		this.y = Math.round(game.height*0.90);
 		this.image = 'fighter.png';
 		this.hull = hull;
 		this.rendered = false;
 		this.hit = false;
-		this.hitTimer = 0; 
-		this.dead = false;
-		game.gameOver = false;
+		this.hitTimer = 0;
 		this.friction = 0;
 		this.bullets = [];
 		this.laserLevel = 1;

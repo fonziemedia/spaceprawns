@@ -376,7 +376,7 @@ var particle = function(x, y, speed, direction, grav) {
 		});
 
 
-		/*GAME VARS*/
+		/*GLOBAL VARS*/
 
 		var game = {}; //this is a global var which will contain other game vars
 
@@ -384,25 +384,53 @@ var particle = function(x, y, speed, direction, grav) {
 		// device detection
 		if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0,4))) game.isMobile = true;	//checking if game is running on mobile
 		
-				// Sound Test
-		//init Sfx
+
+		// !! add condition here for no sound support. Create a trigger to be considered when loading audio
+
+
+		// game.stars = []; //this is an array which will contain our stars info: position in space and size
+		// game.background = [];		
+		game.score = 0; //the game score
+		game.levelScore = 0; //the score for each level
+		game.level = X_Level; //starting at level X...
+		game.bossDead = false;
+		game.levelComplete = false;
+		game.levelUpTimer = 0;
+		game.lives = X_Lives; //with X ships (lives)
+		game.keys = []; //the keyboard array
+		game.playerBullets = []; //Our proton torpedoes!
+		game.enemyBullets = []; //Enemy missiles!
+		game.enemies = []; //The InVaDeRs
+		game.waves = [];
+		game.loot = [];
+		game.explosions = [];
 		
-		// function soundTest()
-		// {
-		// 		var soundTest = new Audio();
-		// 		var canPlayMP3 = (typeof soundTest.canPlayType === "function" && soundTest.canPlayType("audio/mpeg") !== "");
+		dt = 0.017; // defining dt globally
+		dtTimer = 0;		
+		dtArray = [];
+		timeThen = new Date().getTime();
+		
+		
+		//====================== Game state ========================
+		
+		game.loaded = false;
+		game.started = false;		
+		game.paused = false;
+		game.gameOver = false;
+		game.timer = 0;
 
-		// 		if (!canPlayMP3)
-		// 		{
-		// 			fileFormat = "ogg";
-		// 			var canPlayOGG = (typeof soundTest.canPlayType === "function" && soundTest.canPlayType("audio/mpeg") !== "");
+		game.fadingIn = false;
+		game.fadingOut = false;
+		game.faded = true;
 
-
-
-		// 		}
-		// }
-		// soundTests();
-
+		game.textFadingIn = false;
+		game.textFadingOut = false;
+		game.textFaded = true;	
+		
+		
+		//========================== Audio ==========================
+		
+		//Audio Support
 		var audioElementSupported = (function(d) {
 
 	    	var a = d.createElement("audio"),
@@ -436,55 +464,12 @@ var particle = function(x, y, speed, direction, grav) {
 		{
 			fileFormat = ".mp3";
 		}
-		// !! add condition here for no sound support. Create a trigger to be considered when loading audio
 
+		
 
-		game.stars = []; //this is an array which will contain our stars info: position in space and size
-		game.faded = true;
-		// game.backgroundFaded = true;
-		game.enemiesFaded = true;
-		game.playerFaded = true;
-		game.textFaded = true;
-		// game.background = [];		
-		game.score = 0; //the game score
-		game.levelScore = 0; //the score for each level
-		game.level = X_Level; //starting at level X...
-		game.bossDead = false;
-		game.levelComplete = false;
-		game.levelUpTimer = 0;
-		game.lives = X_Lives; //with X ships (lives)
-		game.keys = []; //the keyboard array
-		game.playerBullets = []; //Our proton torpedoes!
-		game.enemyBullets = []; //Enemy missiles!
-		game.enemies = []; //The InVaDeRs
-		game.waves = [];
-		game.loot = [];
-		game.explosions = [];
+		// Obtaining Audio ON/OFF status from local storage		
 		
-		dt = 0.017; // defining dt globally
-		dtTimer = 0;		
-		dtArray = [];
-		timeThen = new Date().getTime();
-		
-		
-		//====================== Game state ========================
-		
-		game.started = false;		
-		game.lvlIntro = true;
-		game.lvlStart = false;
-		game.paused = false;
-		game.escaped = false;
-		game.gameWon = false;
-		game.gameOver = false;
-		game.delayTimer = 0;
-		game.timer = 0;	
-		
-		
-		//========================== Audio ==========================
-		
-		// ON/OFF Trigger
-		//checking browser support for local storage
-		if ("localStorage" in window && window.localStorage !== null)
+		if ("localStorage" in window && window.localStorage !== null) //checking browser support for local storage
 		{				
 			//NOTE: localStorage won't accept boolean values! so we need to 'convert' these
 			if (localStorage.prawnsSound === "true")
@@ -530,6 +515,7 @@ var particle = function(x, y, speed, direction, grav) {
 		game.images = [];
 		game.doneImages  = 0; // will contain how many images have been loaded
 		game.requiredImages = 0; // will contain how many images should be loaded
+
 		game.font = game.isMobile ? "Helvetica" : "Monaco";
 		// game.res = 4*5; //check the 4th index every 5 frames
 		
@@ -540,7 +526,7 @@ var particle = function(x, y, speed, direction, grav) {
 		game.contextPlayer = document.getElementById("playerCanvas").getContext("2d");
 		game.contextText = document.getElementById("textCanvas").getContext("2d");
 
-		m_canvas = document.createElement('canvas');
+		// m_canvas = document.createElement('canvas');
 
 		
 
@@ -572,9 +558,9 @@ var particle = function(x, y, speed, direction, grav) {
 		game.height = gameAreaH;
 		game.width = gameAreaW;
 
-		console.log(pixelRatio);
-		console.log(gameAreaW);
-		console.log(gameAreaH);
+		// console.log(pixelRatio);
+		// console.log(gameAreaW);
+		// console.log(gameAreaH);
 
 		
 		//delta size will keep the size of our game objects proportional to the display - NOT REQUIRED, see pixelRatio above
@@ -826,15 +812,16 @@ function player(hull, fireRate) {
 		// this.vy += this.gravity;
 		// this.x += this.vx;
 		// this.y += this.vy;
-		this.playerImage = game.images[this.image];
-		this.speedX = Math.round((touchInitX - canvasX)*0.1);
-		this.speedY = Math.round((touchInitY - canvasY)*0.1);		
+		this.speed = 0; // !! check if you can optimise this !!
+		this.playerImage = game.images[this.image]; // !! check if you can optimise this !!
+		this.speedX = Math.round((touchInitX - inputAreaX)*0.1);
+		this.speedY = Math.round((touchInitY - inputAreaY)*0.1);		
 		
 		//////////////////////////////
 		//	Mouse and Touch controls
 		/////////////////////////////
 
-		if (mouseIsDown && !game.levelComplete && !game.paused && !game.gameOver && !game.gameWon) {
+		if (mouseIsDown && !game.levelComplete && !game.paused && !game.gameOver) {
 
 			//removing cursor
 			if (!game.isMobile) {document.getElementById('textCanvas').style.cursor = 'none';}
@@ -856,12 +843,12 @@ function player(hull, fireRate) {
 				moveLeft5 = (this.speedX > 10) ? true : false;
 				
 				//making it move to touch or click point
-				// if (canvasX != moveX || canvasY != moveY) {
+				// if (inputAreaX != moveX || inputAreaY != moveY) {
 					//the distance between the current ship pos and the user touch/click pos
 					
 					
-					// console.log('canvasx:'+ canvasX);
-					// console.log('canvasy:'+ canvasY);				
+					// console.log('inputAreax:'+ inputAreaX);
+					// console.log('inputAreay:'+ inputAreaY);				
 					// console.log('touchx:'+ touchInitX);
 					// console.log('touchy:'+ touchInitY);
 					// console.log (this.speedX);
@@ -881,8 +868,8 @@ function player(hull, fireRate) {
 
 					// console.log('touchInitX:'+ touchInitX);
 					// console.log('touchInitY:'+ touchInitY);
-					// console.log('canvasX:'+ canvasX);
-					// console.log('canvasY:'+ canvasY);					
+					// console.log('inputAreaX:'+ inputAreaX);
+					// console.log('inputAreaY:'+ inputAreaY);					
 					// console.log('this.speedX:'+ this.speedX);
 					// console.log('this.speedY:'+ this.speedY);	
 					
@@ -971,7 +958,7 @@ function player(hull, fireRate) {
 		if(!game.isMobile)
 		{
 			//left
-			if(game.keys[37] || game.keys[65] && !(game.gameOver) && !(game.gameWon)){ //if key pressed..				
+			if(game.keys[37] || game.keys[65] && !game.gameOver){ //if key pressed..				
 				if(this.x > 0){ // (keeping it within the boundaries of our canvas)				
 					this.speed = this.maxSpeed;							
 					this.image = 'fighter_left5.png';
@@ -980,7 +967,7 @@ function player(hull, fireRate) {
 				}
 			}
 			//right
-			if(game.keys[39] || game.keys[68] && !(game.gameOver) && !(game.gameWon)){
+			if(game.keys[39] || game.keys[68] && !game.gameOver){
 				if(this.x <= game.width - this.size){				
 					this.speed = this.maxSpeed;
 					this.image = 'fighter_right5.png';
@@ -989,7 +976,7 @@ function player(hull, fireRate) {
 				}
 			}
 			//up
-			if((game.keys[38] || game.keys[87]) && !game.gameOver && !game.gameWon){
+			if((game.keys[38] || game.keys[87]) && !game.gameOver){
 				if(this.y > 0){				
 					this.speed = this.maxSpeed;					
 					this.rendered = false;
@@ -997,7 +984,7 @@ function player(hull, fireRate) {
 				}
 			}
 			//down
-			if(game.keys[40] || game.keys[83] && !(game.gameOver) && !game.gameWon){
+			if(game.keys[40] || game.keys[83] && !game.gameOver){
 				if(this.y <= game.height - this.size){				
 					this.speed = this.maxSpeed;					
 					this.rendered = false;
@@ -1008,7 +995,7 @@ function player(hull, fireRate) {
 
 		
 		if(game.levelComplete){			
-			this.speed = this.maxSpeed;			
+			this.speed = this.maxSpeed*2;			
 			this.rendered = false;
 			this.y -= Math.round(this.speed*dt);
 		}
@@ -1127,41 +1114,42 @@ function player(hull, fireRate) {
 		{
 			this.dead = true;			
 			this.lives -= 1;
-			game.explosions.push(new explosion(this.x, this.y, this.speed, 0, this.size, 'player'));			
+			game.explosions.push(new explosion(this.x, this.y, 0, 0, this.size, 'player')); //need to obtain player direction if we want dinamic explosions, for now we just blow it still			
 			gameUI.updateHangar();
 		}	
 
 
-		if (this.dead && this.deadTimer <= 100 && game.lives > 0) 
+		if (this.dead && this.deadTimer <= 100) 
 		{
 			//waiting a few secs before any action
 			this.deadTimer++; 
 
 			if (this.deadTimer > 100 && this.lives > 0) 
 			{
-					mouseIsDown = 0;
-					this.hull = hull;
-					this.dead = false;
-					this.x = Math.round(game.width*0.46);
-					this.y = Math.round(game.height*0.90);
-					this.image = 'fighter.png';
-					this.rendered = false;
-					this.hit = false;
-					this.hitTimer = 0;
-					this.friction = 0;
-					this.laserLevel = 1;
-					this.missileLevel = 0;						
-					gameUI.updateEnergy();
-					this.deadTimer = 0;
-					this.imune = true;
-					this.imuneTimer = 0;
+				mouseIsDown = 0;
+				this.hull = hull;
+				this.dead = false;
+				this.x = Math.round(game.width*0.46);
+				this.y = Math.round(game.height*0.90);
+				this.image = 'fighter.png';
+				this.rendered = false;
+				this.hit = false;
+				this.hitTimer = 0;
+				this.friction = 0;
+				this.laserLevel = 1;
+				this.missileLevel = 0;						
+				gameUI.updateEnergy();
+				this.deadTimer = 0;
+				this.imune = true;
+				this.imuneTimer = 0;
 			}
-			else if (this.deadTimer > 100 && this.lives === 0)
+			else if (this.deadTimer > 100 && this.lives === 0 && !game.gameOver)
 			{	
 				mouseIsDown = 0;
-				game.keys[13] = false;				
+				game.keys[13] = false;
 				this.deadTimer = 0;
 				game.gameOver = true;
+				gameState.gameOver();
 			}
 			else {
 				this.x = Math.round(game.width*0.5); //keeping the player outside canvas while dead
@@ -1187,6 +1175,9 @@ function player(hull, fireRate) {
 			if (this.imune && !game.faded && game.started && !game.levelComplete)
 			{
 				this.ctx.globalAlpha = 0.8;
+				////  !!!!!!   ///
+				/// !!?WTF?!! ///
+				////////////////
 				if (this.imuneTimer >= 0 && this.imuneTimer < 15  || this.imuneTimer >= 20 && this.imuneTimer < 35 ||this.imuneTimer >= 40 && this.imuneTimer < 55 || this.imuneTimer >= 70 && this.imuneTimer < 75 || this.imuneTimer >= 90 && this.imuneTimer < 95 || this.imuneTimer >= 110 && this.imuneTimer < 115 || this.imuneTimer >= 130 && this.imuneTimer < 135 || this.imuneTimer >= 150 && this.imuneTimer < 155 || this.imuneTimer >= 160 && this.imuneTimer < 175 || this.imuneTimer > 180)
 				{
 					this.ctx.drawImage(this.playerImage, this.x, this.y, this.size, this.size); //rendering
@@ -1243,16 +1234,16 @@ function player(hull, fireRate) {
 	};
 	
 	this.reset = function() {
+		game.gameOver = false;
 		this.dead = false;
+		this.deadTimer = 0;				
 		this.x = Math.round(game.width*0.46);
 		this.y = Math.round(game.height*0.90);
 		this.image = 'fighter.png';
 		this.hull = hull;
 		this.rendered = false;
 		this.hit = false;
-		this.hitTimer = 0; 
-		this.dead = false;
-		game.gameOver = false;
+		this.hitTimer = 0;
 		this.friction = 0;
 		this.bullets = [];
 		this.laserLevel = 1;
@@ -1571,7 +1562,8 @@ function boss(x, y, speed, direction, hull, image) {
 			game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size, 'boss'));
 			if (!playerShip.crashed){
 				game.score++;
-				game.levelScore++;	
+				game.levelScore++;
+				gameUI.updateScore();	
 				game.bossDead = true;
 				this.dead = true;						
 			}
@@ -1931,288 +1923,69 @@ function ui() {
 gameUI = new ui();
 function lights() {
 
-	//starting our game with a black screen
-	// this.backgroundAlpha = 0;
-	this.enemiesAlpha = 0;
-	this.playerAlpha = 0;
-	this.textAlpha = 0;
+	this.fader = $('#fader');
+	var effectDuration = 2000;
+
 	
-	this.alphaDelta = 0.01; //the speed of fade in/out 
-
-	this.on = function(ctx)
+	this.switch = function(trigger)
 	{
-		ctx = ctx;
-
-		switch (ctx)
+		switch (trigger)
 		{
-			case 'all':
-				game.contextText.globalAlpha = 1;				
-				// game.contextBackground.globalAlpha = 1;
-				game.contextEnemies.globalAlpha = 1;
-				game.contextPlayer.globalAlpha = 1;
-				
-				game.textFaded = false;
-				// game.backgroundFaded = false;
-				game.enemiesFaded = false;
-				game.playerFaded = false;
-				
-				game.faded = false;	
+			case 'on':
+				// this.fader.stop();
+				this.fader.hide();
+				game.faded = false;
 			break;
 
-			case 'text':
-				game.contextText.globalAlpha = 1;
-				game.textFaded = false;	
-			break;
-
-			// case 'background':
-			// 	game.contextBackground.globalAlpha = 1;
-			// 	game.backgroundFaded = false;												
-			// break;
-
-			case 'enemies':
-				game.contextEnemies.globalAlpha = 1;
-				game.enemiesFaded = false;	
-			break;
-		
-			case 'player':
-				game.contextPlayer.globalAlpha = 1;
-				game.playerFaded = false;						
+			case 'off':
+				// this.fader.stop();
+				this.fader.show();
+				game.faded = true;
 			break;
 		}
 	};
+	
 
-	this.off = function(ctx)
+
+	this.fade = function(trigger)
 	{
-		ctx = ctx;
-
-		switch (ctx)
+		switch (trigger)
 		{
-			case 'all':
-				game.contextText.globalAlpha = 0;				
-				// game.contextBackground.globalAlpha = 0;
-				game.contextEnemies.globalAlpha = 0;
-				game.contextPlayer.globalAlpha = 0;
-				
-				game.textFaded = true;
-				// game.backgroundFaded = true;
-				game.enemiesFaded = true;
-				game.playerFaded = true;
-				
-				game.faded = true;	
-			break;
-
-			case 'text':
-				game.contextText.globalAlpha = 0;
-				game.textFaded = true;	
-			break;
-
-			// case 'background':
-			// 	game.contextBackground.globalAlpha = 0;
-			// 	game.backgroundFaded = true;												
-			// break;
-
-			case 'enemies':
-				game.contextEnemies.globalAlpha = 0;
-				game.enemiesFaded = true;	
-			break;
-		
-			case 'player':
-				game.contextPlayer.globalAlpha = 0;
-				game.playerFaded = true;						
-			break;
-		}	
-	};
-
-	this.fadeIn = function(ctx)
-	{
-		ctx = ctx;
-
-		switch (ctx)
-		{
-			case 'all':	
-				// if (this.backgroundAlpha < 1 || this.enemiesAlpha < 1 || this.playerAlpha < 1 || this.textAlpha < 1 )
-				if (this.enemiesAlpha < 1 || this.playerAlpha < 1 || this.textAlpha < 1 )
-				{	
-					// this.backgroundAlpha += this.alphaDelta;
-					this.enemiesAlpha += this.alphaDelta;
-					this.playerAlpha += this.alphaDelta;			
-					this.textAlpha += this.alphaDelta;
-				}
-				// else if (this.backgroundAlpha >= 1 && this.enemiesAlpha >= 1 && this.playerAlpha >= 1 && this.textAlpha >= 1)
-				else if (this.enemiesAlpha >= 1 && this.playerAlpha >= 1 && this.textAlpha >= 1)
-				{
-					// game.contextBackground.globalAlpha = 1;
-					game.contextEnemies.globalAlpha = 1;
-					game.contextPlayer.globalAlpha = 1;
-					game.contextText.globalAlpha = 1;
-					// game.backgroundFaded = false;
-					game.enemiesFaded = false;
-					game.playerFaded = false;
-					game.textFaded = false;
+			//note that we're fadding the this.fader div here to give the illusion that our game is fading so the jquery effects below should be opposite to what we want to achieve
+			case 'in':
+				game.fadingIn = true;
+				this.fader.fadeOut(effectDuration, function(){
+					game.fadingIn = false;
 					game.faded = false;
-				}
-
-				// game.contextBackground.globalAlpha = this.backgroundAlpha;
-				game.contextEnemies.globalAlpha = this.enemiesAlpha;
-				game.contextPlayer.globalAlpha = this.playerAlpha;
-				game.contextText.globalAlpha = this.textAlpha;
+				});				
 			break;
 
-			case 'text':
-				if (this.textAlpha < 1)
-				{				
-					this.textAlpha += this.alphaDelta;
-				}
-				else if (this.textAlpha >= 1)
-				{
-					game.contextText.globalAlpha = 1;
-					game.textFaded = false;
-				}
-
-				game.contextText.globalAlpha = this.textAlpha;	
-			break;
-
-			// case 'background':
-			// 	if (this.backgroundAlpha < 1)
-			// 	{				
-			// 		this.backgroundAlpha += this.alphaDelta;
-			// 	}
-			// 	else if (this.backgroundAlpha >= 1)
-			// 	{
-			// 		game.contextBackground.globalAlpha = 1;
-			// 		game.backgroundFaded = false;
-			// 	}
-
-			// 	game.contextBackground.globalAlpha = this.backgroundAlpha;												
-			// break;
-
-			case 'enemies':
-				if (this.enemiesAlpha < 1)
-				{				
-					this.enemiesAlpha += this.alphaDelta;
-				}
-				else if (game.enemiesApha >= 1)
-				{
-					game.contextEnemies.globalAlpha = 1;
-					game.enemiesFaded = false;
-				}
-
-				game.contextEnemies.globalAlpha = this.enemiesAlpha;	
-			break;
-		
-			case 'player':
-				if (this.playerAlpha < 1)
-				{				
-					this.playerAlpha += this.alphaDelta;
-				}
-				else if (this.playerAlpha >= 1)
-				{
-					game.contextPlayer.globalAlpha = 1;
-					game.playerFaded = false;
-				}
-
-				game.contextPlayer.globalAlpha = this.playerAlpha;						
-			break;
-
-		}
-	};
-
-	this.fadeOut = function(ctx)
-	{
-		ctx = ctx;
-
-		switch (ctx)
-		{
-			case 'all':	
-				if (this.backgroundAlpha > 0 || this.enemiesAlpha > 0 || this.playerAlpha > 0 || this.textAlpha > 0 )
-				if (this.enemiesAlpha > 0 || this.playerAlpha > 0 || this.textAlpha > 0 )
-				{	
-					// this.backgroundAlpha -= this.alphaDelta;
-					this.enemiesAlpha -= this.alphaDelta;
-					this.playerAlpha -= this.alphaDelta;			
-					this.textAlpha -= this.alphaDelta;
-				}
-				else if (this.enemiesAlpha <= 0 && this.playerAlpha <= 0 && this.textAlpha <= 0)
-				{
-					// game.contextBackground.globalAlpha = 0;
-					game.contextEnemies.globalAlpha = 0;
-					game.contextPlayer.globalAlpha = 0;
-					game.contextText.globalAlpha = 0;
-					// game.backgroundFaded = true;
-					game.enemiesFaded = true;
-					game.playerFaded = true;
-					game.textFaded = true;
+			case 'out':
+				game.fadingOut = true;
+				this.fader.fadeIn(effectDuration, function(){
+					game.fadingOut = false;
 					game.faded = true;
-				}
-
-				// game.contextBackground.globalAlpha = this.backgroundAlpha;
-				game.contextEnemies.globalAlpha = this.enemiesAlpha;
-				game.contextPlayer.globalAlpha = this.playerAlpha;
-				game.contextText.globalAlpha = this.textAlpha;
-			break;
-
-			case 'text':
-				if (this.textAlpha > 0)
-				{				
-					this.textAlpha -= this.alphaDelta;
-				}
-				else if (this.textAlpha <= 0)
-				{
-					game.contextText.globalAlpha = 0;
-					game.textFaded = true;
-				}
-
-				game.contextText.globalAlpha = this.textAlpha;
-			break;
-
-			// case 'background':
-			// 	if (this.backgroundAlpha > 0)
-			// 	{				
-			// 		this.backgroundAlpha -= this.alphaDelta;
-			// 	}
-			// 	else if (this.backgroundAlpha <= 0)
-			// 	{
-			// 		game.contextBackground.globalAlpha = 0;
-			// 		game.backgroundFaded = true;
-			// 	}
-
-			// 	game.contextBackground.globalAlpha = this.backgroundAlpha;													
-			// break;
-
-			case 'enemies':
-				if (this.enemiesAlpha > 0)
-				{				
-					this.enemiesAlpha -= this.alphaDelta;
-				}
-				else if (game.enemiesApha <= 0)
-				{
-					game.contextEnemies.globalAlpha = 0;
-					game.enemiesFaded = true;
-				}
-
-				game.contextEnemies.globalAlpha = this.enemiesAlpha;		
-			break;
-		
-			case 'player':
-				if (this.playerAlpha > 0)
-				{				
-					this.playerAlpha -= this.alphaDelta;
-				}
-				else if (this.playerAlpha <= 0)
-				{
-					game.contextPlayer.globalAlpha = 0;
-					game.playerFaded = true;
-				}
-
-				game.contextPlayer.globalAlpha = this.playerAlpha;						
+				});				
 			break;
 		}
 	};
-
 }
 
 gameLights = new lights();
-function text() {
+function text(header1, header2, inputRequired) {
+
+	var h1 = $('#h1');
+	var h2 = $('#h2');
+	var h3 = $('#h3');
+
+	var h1Text = header1;
+	var h2Text = header2;
+	var h3Text = game.isMobile ? 'Tap screen to continue' : 'Press ENTER or LMB to start';
+	var allText = $('.all-text');
+	var textInput = inputRequired;
+
+	var effectDuration = 2000;
+
 
 	this.font = 'Helvetica';
 	this.fontWeight = 'bold';
@@ -2238,6 +2011,8 @@ function text() {
 
 	// };
 
+	
+
 	this.gameIntro = function() {
 		game.contextText.clearRect(0, 0, game.width, game.height);
 		game.contextText.drawImage(game.images[this.introBackground], 0, 0, game.width, game.height); //use ctx text here because ctx background will clear in main update
@@ -2255,236 +2030,267 @@ function text() {
 		}
 	};
 
-	this.lvlIntro = function() {
-		game.contextText.clearRect(0, 0, game.width, game.height);				
 
-		message('Stage ' + game.level, 1,  this.font, this.fontSize0, this.fontColor1, this.fontWeight); 
-		message(this.levelBriefing[game.level - 1], 2, this.font, this.fontSize1, this.fontColor1, this.fontWeight);
 
-		if (game.isMobile)
+	this.switch = function(trigger)
+	{
+		switch (trigger)
 		{
-			message('Tap screen to continue', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight); 
-		}
-		else
-		{
-			message('Press ENTER or LMB to continue', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight);
+			case 'on':
+				allText.show();
+				game.textFaded = false;
+			break;
+
+			case 'off':
+				allText.stop(true, true);
+				allText.hide();
+				game.textFaded = true;
+			break;
 		}
 	};
 
-	this.lvlComplete = function() {
-		game.contextText.clearRect(0, 0, game.width, game.height);
-		
-		message('Stage Complete!', 1,  this.font,this.fontSize0, this.fontColor1, this.fontWeight); 
-		message(game.score + ' enemy ships destroyed', 2, this.font, this.fontSize1, this.fontColor1, this.fontWeight);
-
-		if (game.isMobile)
+	this.fade = function(trigger)
+	{
+		switch (trigger)
 		{
-			message('Tap screen to continue', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight); 
-		}
-		else
-		{
-			message('Press ENTER or LMB to continue', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight);
-		}
+			case 'in':				
+				game.textFadingIn = true;				
+				allText.fadeIn(effectDuration, function(){
+					game.textFadingIn = false;
+					game.textFaded = false;
+				});
+			break;
 
+			case 'out':
+				game.textFadingOut = true;
+				allText.fadeOut(effectDuration, function(){
+					h1.text('');		
+					h2.text('');
+					h3.text('');
+					game.textFadingOut = false;
+					game.textFaded = true;
+				});
+			break;
+		}
 	};
 
-	this.gameOver = function() {
-		game.contextText.clearRect(0, 0, game.width, game.height);
-		
-		message('Game Over', 1,  this.font, this.fontSize0, this.fontColor1, this.fontWeight); 
-		message(game.score + ' enemy ships destroyed', 2, this.font, this.fontSize1, this.fontColor1, this.fontWeight);
-		
-		if (game.isMobile)
-		{
-			message('Tap screen to restart', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight); 
-		}
-		else
-		{
-			message('Press ENTER or LMB to restart', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight);
-		}
-
+	this.init = function()
+	{
+		h1.text(h1Text);		
+		h2.text(h2Text);
+		if (textInput){h3.text(h3Text);}else{h3.text('');}		
 	};
+
+	this.init();
 
 }
 
-gameText = new text();
-function transition()
+gameText = new text(); //To be removed!
+function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and skiping these
 {
 
-	this.keyframe0 = true;
-	this.keyframe1 = false;
-	this.keyframe2 = false;	
-
-
-	this.lvlIntro = function()
-	{		
-		gameText.lvlIntro();
-
-		if(this.keyframe0)
-		{				
-			gameLights.fadeIn('text');
-			if(!game.textFaded || game.keys[13] || mouseIsDown)
-			{
-				mouseIsDown = 0;
-				game.keys[13] = false;
-				if(!game.textFaded)
-				{						
-					this.keyframe0 = false;
-					this.keyframe1 = true;				
-				}
-				gameLights.on('text');
-			}
-		}
-		else if (this.keyframe1)
+	this.start = function()
+	{	
+		if(!game.started) //checking if we're starting a new game or restarting
 		{
-			if (game.keys[13] || mouseIsDown)
-			{
-				mouseIsDown = 0;
-				game.keys[13] = false;
-				this.keyframe1 = false;
-				this.keyframe2 = true;
-			}
+			game.started = true;
 		}
-		else if(this.keyframe2)
+		else
 		{
-			gameLights.fadeOut('text');
-			if(game.textFaded || game.keys[13] || mouseIsDown)
-			{
-				mouseIsDown = 0;
-				game.keys[13] = false;
-				if(game.textFaded)
-				{	
-					this.keyframe2 = false;
-					this.keyframe0 = true;
-					game.contextText.clearRect(0, 0, game.width, game.height);	//move this, need to improve clrcanvas function							
-					resetGame();
-					game.lvlIntro = false;
-					game.lvlStart = true;
-				}
-				gameLights.off('text');								
-			}
+			game.score = 0;
+			game.level = 1;			
 		}
+
+		game.contextText.clearRect(0, 0, game.width, game.height);
+		removeGamePlayInput();
+		addStandByInput(); 		
+
+		introBriefing = ['Outside the galaxy', 'The outer space', 'AlphaPI 2034' ];
+		introText = new text('Stage ' + game.level, introBriefing[game.level - 1], true);
+
+		if (gameMenu.toggled) //if the game menu is up toggle it off
+		{
+			gameMenu.toggle();
+		}
+
+		gameLights.switch('off');					
+		gameBackground.load();
+
+		introText.fade('in');
+
+		$('.all-text').promise().done(function()
+		{  
+			removeStandByInput();
+			if (game.textFaded) //remove this later
+			{
+				if (!game.loaded){
+					game.loaded = true;
+					startGame();
+				}
+				addGamePlayInput();
+				resetGame();
+				gameLights.fade('in');
+				game.paused = false;
+			} 
+			else
+			{			
+				$('#inputarea').on('mousedown touchstart', function()
+				{   //only trigger this event listner once text animations have ended
+					$('#inputarea').off('mousedown touchstart');
+					introText.fade('out');
+					$('.all-text').promise().done(function()
+					{  
+						if (!game.loaded){
+							game.loaded = true;
+							startGame();
+						}
+						addGamePlayInput();
+						resetGame();
+						gameLights.fade('in');
+						game.paused = false;
+					});
+				});
+			}
+		});
 	};
+	
 
-	this.lvlStart = function()
+	this.lvlComplete = function() //called at the end of each level
 	{
-		gameLights.fadeIn('all');
-		if(!game.faded)
+		game.started = false;
+		removeGamePlayInput();
+
+		levelUpText = new text('Stage Complete!', game.score + ' enemy ships destroyed', true); 	
+		levelUpText.switch('on');
+		
+		$('#inputarea').on('mousedown touchstart', function()
 		{
-			gameUI.updateAll();
-			game.lvlStart = false;		
-		}	
+			$('#inputarea').off('mousedown touchstart');
+			levelUpText.fade('out');
+
+			$('.all-text').promise().done(function()
+			{		
+				gameLights.fade('out');
+					$('#fader').promise().done(function()
+					{   //once text fades 			
+						game.paused = true;
+						game.level++;
+						gameState.start();
+					});
+			});
+		});
+		
 	};
 
-	this.lvlComplete = function()
-	{
-
-		gameText.lvlComplete();	
-
-		if (this.keyframe0)
-		{
-			if (game.keys[13] || mouseIsDown)
-			{
-				mouseIsDown = 0;
-				game.keys[13] = false;
-				this.keyframe0 = false;
-				this.keyframe1 = true;
-			}
-		}
-		else if(this.keyframe1)
-		{
-			gameLights.fadeOut('all');
-			if(game.faded || game.keys[13] || mouseIsDown)
-			{
-				mouseIsDown = 0;
-				game.keys[13] = false;
-				if (game.faded)
-				{
-					game.lvlIntro = true;	
-					this.keyframe0 = true;
-					this.keyframe1 = false;
-					game.levelComplete = false;
-					game.level++;
-				}
-				gameLights.off('all'); //lights out and setting game.faded = true						
-			}
-		}	
-	};
 
 	this.gameOver = function()
 	{
+		game.started = false;
+		removeGamePlayInput();
 
-		gameText.gameOver();	
+		gameOverText = new text('Game Over', game.score + ' enemy ships destroyed', true);		
+		gameOverText.switch('on');
 
-		if (this.keyframe0)
+		$('#inputarea').on('mousedown touchstart', function()
 		{
-			if (game.keys[13] || mouseIsDown)
-			{
-				mouseIsDown = 0;
-				game.keys[13] = false;
-				this.keyframe0 = false;
-				this.keyframe1 = true;				
-			}
-		}
-		else if(this.keyframe1)
-		{
-			gameLights.fadeOut('all');
-			if(game.faded || game.keys[13] || mouseIsDown)
-			{
-				mouseIsDown = 0;
-				game.keys[13] = 0;				
-				if (game.faded){ //this will only trigger in the next frame
-					this.keyframe0 = true;
-					this.keyframe1 = false;
-					game.start = true;
-					gameLights.on('text');
-					gameText.gameIntro();
-					game.gameOver = false;
-					game.paused = true;
-				}	
-				gameLights.off('all'); //lights out and setting game.faded = true									
-			}
-		}	
-	};
+			$('#inputarea').off('mousedown touchstart');
+			gameOverText.fade('out');
 
-	this.load = function()
-	{
-		if (game.lvlIntro)
-		{
-			gameTransition.lvlIntro();
-		}
-		else if (game.lvlStart)
-		{
-			gameTransition.lvlStart();
-		}
-		else if (game.levelComplete)
-		{
-			gameTransition.lvlComplete();
-		}
-		else if (game.gameOver)
-		{
-			gameTransition.gameOver();
-		}
-	};
-
-	this.reset = function()
-	{
-		this.keyframe0 = true;
-		this.keyframe1 = false;
-		this.keyframe2 = false;		
+			$('.all-text').promise().done(function()
+			{		
+				gameLights.fade('out');
+					$('#fader').promise().done(function()
+					{   //once text fades 			
+						game.paused = true;
+						game.score = 0;
+						game.level = 1;
+						gameLights.fade('out');
+						gameMenu.toggle();								
+					});
+			});
+		});	
 	};
 
 }
 
-gameTransition = new transition();
+
+//====================== Game state =================//
+		
+			
+		// 	//If Esc
+		// 	if (game.keys[27]) {
+		// 		mouseIsDown = 0;				
+		// 		game.keys[27] = false;
+		// 		playerShip.hull = 0;
+		// 		playerShip.lives = 0;
+		// 		game.gameOver = true;								
+		// 	}
+
+		// 	//game sound
+		// 	if (game.keys[119]) {				
+		// 		game.sound = (game.sound) ? false : true;
+		// 		gameUI.updateSound();	
+		// 		game.keys[119] = false;
+		// 	}
+
+		// 	if (game.keys[120]) {
+		// 		game.music = (game.music) ? false : true;
+		// 		gameUI.updateSound();
+		// 		game.keys[120] = false;	
+
+
+
+		// 		if (game.tracks.length > 0) {
+		// 			for(var g in game.tracks){
+		// 				game.tracks[g].pause();
+		// 			}
+		// 			game.tracks = [];
+		// 		}
+		// 		else if (game.tracks.length < 1) {
+		// 				game.tracks.push(game.soundTracks['tune1.mp3']);
+		// 				for(var w in game.tracks){
+		// 					game.tracks[w].play();
+		// 					game.tracks[w].loop = true;							
+		// 				}
+		// 		}
+		// 	}
+
+
+		// 	//game pause
+		// 	if ((game.keys[80]) && !(game.gameOver))
+		// 	{
+		// 		game.paused = (game.paused) ? false : true;
+		// 		game.keys[80] = false;
+		// 	}
+
+		// 	//If Esc pressed or if gameover and enter pressed
+		// 	if (game.keys[27] ||
+		// 	   ((game.keys[13] || mouseIsDown) && game.paused && game.started && game.gameOver) ||
+		// 	   ((game.keys[13] || mouseIsDown) && game.paused && game.started && game.level >= 7))
+		// 	{
+		// 		if (game.lives < 1 || game.level >=7)
+		// 		{
+		// 			game.level = X_Level;
+		// 			game.score = 0;
+		// 			playerShip.lives = X_Lives;
+		// 			// game.downDivision = Math.floor((300 * game.level)); //the higher the level the slower the enemies come down
+		// 		}
+
+		// 		resetGame();
+		// 	}
+		// }
+
+gameState = new state();
 function menu()
 {
-	this.toggled = true;
-	this.start = $('#startGame');
-	this.restart = $('#resetGame');
-	this.soundFx = $('#toggleSound');
-	this.music = $('#toggleMusic');
-	this.all = $('.menu-option-btn');
+
+	var startBtn = $('#startGame');
+	var soundFx = $('#toggleSound');
+	var music = $('#toggleMusic');
+	var allButtons = $('.menu-option-btn');
+	var animationSpeed = 800;
+
+	this.toggled = false;
 
 	// this.widthProp = $(gameArea).height() * (9/16);
 
@@ -2498,13 +2304,13 @@ function menu()
 
 		if (game.sound)
 		{
-			this.soundFx.addClass('active');
-			this.soundFx.text('Sound: ON');
+			soundFx.addClass('active');
+			soundFx.text('Sound: ON');
 		}
 		else
 		{			
-		this.soundFx.removeClass('active');
-		this.soundFx.text('Sound: OFF');
+		soundFx.removeClass('active');
+		soundFx.text('Sound: OFF');
 		}
 
 	};
@@ -2536,13 +2342,13 @@ function menu()
 
 		if (game.music)
 		{
-			this.music.addClass('active');
-			this.music.text('Music: ON');
+			music.addClass('active');
+			music.text('Music: ON');
 		}
 		else
 		{			
-			this.music.removeClass('active');
-			this.music.text('Music: OFF');
+			music.removeClass('active');
+			music.text('Music: OFF');
 		}
 
 	};
@@ -2555,25 +2361,31 @@ function menu()
 
 
 		// IMPROVE THIS WITH LEFT RIGHT BTN CLASSES
-		if (!this.toggled)
+		if (this.toggled)
 		{
 			game.paused = true;
-			
-			this.all.css({"display": "block"});
 
-			this.start.animate({
-				opacity: 1,
-				"right": "-=50%",
-			},800);
-			this.restart.animate({
+
+			if(game.started && startBtn.text !== 'Restart')
+			{
+				startBtn.text('Restart');
+			}
+			else
+			{
+				startBtn.text('Start');
+			}
+
+			allButtons.css({"display": "block"});
+
+			startBtn.animate({
 				opacity: 1,
 				"left": "-=50%",
 			},800);
-			this.soundFx.animate({
+			soundFx.animate({
 				opacity: 1,
 				"right": "-=50%",
 			},800);
-			this.music.animate({
+			music.animate({
 				opacity: 1,
 				"left": "-=50%",
 			},800);
@@ -2582,151 +2394,54 @@ function menu()
 		{
 			game.paused = false;
 
-			this.start.animate({
-				opacity: 0,
-				"right": "+=50%",
-			},800);
-			this.restart.animate({
+			startBtn.animate({
 				opacity: 0,
 				"left": "+=50%",
 			},800);
-			this.soundFx.animate({
+			soundFx.animate({
 				opacity: 0,
 				"right": "+=50%",
 			},800);
-			this.music.animate({
+			music.animate({
 				opacity: 0,
 				"left": "+=50%",
 			},800);
 		}
 
-		// this.start.css({"left": ($(gameArea).width()-widthProp)*0.55});		
+		// startBtn.css({"left": ($(gameArea).width()-widthProp)*0.55});		
 	};
 
 	this.init = function()
 	{		
 		if (localStorage.prawnsSound === 'true') //note = localStorage will only process string values
 		{
-			this.soundFx.addClass('active');
-			this.soundFx.text('Sound: ON');
+			soundFx.addClass('active');
+			soundFx.text('Sound: ON');
 		}
 		else
 		{			
-		this.soundFx.removeClass('active');
-		this.soundFx.text('Sound: OFF');
+		soundFx.removeClass('active');
+		soundFx.text('Sound: OFF');
 		}
 
 		if (localStorage.prawnsMusic === 'true') //note = localStorage will only process string values
 		{
-			this.music.addClass('active');
-			this.music.text('Music: ON');
+			music.addClass('active');
+			music.text('Music: ON');
 		}
 		else
 		{			
-		this.music.removeClass('active');
-		this.music.text('Music: OFF');
+			music.removeClass('active');
+			music.text('Music: OFF');
 		}
 
 		gameMenu.toggle();
 
 	};
-
-	this.hide = function() {
-		this.score = game.score;
-		game.contextText.fillStyle = "#FFD455";
-		game.contextText.font = 15*dtSize + 'px helvetica';
-		game.contextText.clearRect(this.scoreX, this.height*0.3, this.width*0.14, this.height*0.35);  
-		game.contextText.fillText("Score: " + this.score, this.scoreX, this.scoreY); //printing the score
-	};
 	
 }
 
 gameMenu = new menu();
-//====================== Game state =================//
-		
-		function gameState() {
-
-			//game start
-			// if ((game.keys[13] || mouseIsDown) && !game.started && !(game.gameOver) && !(game.gameWon)) {
-			// 	resetGame();
-			// 	mouseIsDown = 0;
-			// 	game.keys[13] = false;					
-			// 	if(game.music && game.tracks.length < 1){
-			// 		game.tracks.push(game.soundTracks['tune1.' + fileFormat]);
-			// 		game.tracks[0].play();
-			// 		game.tracks[0].loop = true;				
-			// 		// game.music[q].addEventListener("ended", game.music.splice(q,1));
-			// 	}
-				
-			// 	//setting alpha = 0
-			// 	gameLights.off('all');
-			// 	game.started = true;
-			// 	game.paused = false;
-			// 	gameUI.updateAll();
-			// }
-			
-			//If Esc
-			if (game.keys[27]) {
-				mouseIsDown = 0;				
-				game.keys[27] = false;
-				playerShip.hull = 0;
-				playerShip.lives = 0;
-				game.gameOver = true;								
-			}
-
-			//game sound
-			if (game.keys[119]) {				
-				game.sound = (game.sound) ? false : true;
-				gameUI.updateSound();	
-				game.keys[119] = false;
-			}
-
-			if (game.keys[120]) {
-				game.music = (game.music) ? false : true;
-				gameUI.updateSound();
-				game.keys[120] = false;	
-
-
-
-				if (game.tracks.length > 0) {
-					for(var g in game.tracks){
-						game.tracks[g].pause();
-					}
-					game.tracks = [];
-				}
-				else if (game.tracks.length < 1) {
-						game.tracks.push(game.soundTracks['tune1.mp3']);
-						for(var w in game.tracks){
-							game.tracks[w].play();
-							game.tracks[w].loop = true;							
-						}
-				}
-			}
-
-
-			//game pause
-			if ((game.keys[80]) && !(game.gameWon) && !(game.gameOver))
-			{
-				game.paused = (game.paused) ? false : true;
-				game.keys[80] = false;
-			}
-
-			//If Esc pressed or if gameover and enter pressed
-			if (game.keys[27] ||
-			   ((game.keys[13] || mouseIsDown) && game.paused && game.started && game.gameOver && !(game.gameWon)) ||
-			   ((game.keys[13] || mouseIsDown) && game.paused && game.started && game.level >= 7))
-			{
-				if (game.lives < 1 || game.level >=7)
-				{
-					game.level = X_Level;
-					game.score = 0;
-					playerShip.lives = X_Lives;
-					// game.downDivision = Math.floor((300 * game.level)); //the higher the level the slower the enemies come down
-				}
-
-				resetGame();
-			}
-		}
 		//====================== Main update function =================//		
 		function update(){
 			//////////////////////// 
@@ -2755,6 +2470,7 @@ gameMenu = new menu();
 	
 
     		//game time
+    		//! CHECK OUT 'timeupdate' js event !
 			game.timer++;
 			game.seconds = game.timer/60 || 0;
 			// console.log(game.seconds);
@@ -2790,7 +2506,8 @@ gameMenu = new menu();
 
 				if (game.levelUpTimer == 100) 
 				{
-					game.levelComplete = true;
+					game.levelComplete = true;					
+					gameState.lvlComplete();
 					mouseIsDown = 0;					
 				}
 			}
@@ -2799,7 +2516,7 @@ gameMenu = new menu();
 			// TRANSITIONS
 			////////////////////////////////////////////////////////////////////////////////
 			
-			gameTransition.load();			
+			// gameTransition.load();			
 
 			///////////////////////////////////
 			// Player bullets
@@ -3229,7 +2946,7 @@ function lvl1() {
 					game.tracks[2].play();
 					game.tracks[2].loop = true;
 				}
-			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 100, 'sectoidBoss.png'));
+			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 50, 'sectoidBoss.png'));
 			}
 
 			if (game.seconds > 55 && game.enemies.length === 0 && game.bossDead && game.tracks.length == 3) {
@@ -3285,29 +3002,53 @@ function lvl1() {
 		});
 		
 		//mouse and touch screens
-		var canvas;
-		var canvasX = playerShip.x;
-		var canvasY = playerShip.y;
+		var inputArea = document.getElementById("inputarea");
+		var inputAreaX = playerShip.x;
+		var inputAreaY = playerShip.y;
 		var mouseIsDown = 0;
 		var touchInitX = 0;
 		var touchInitY = 0;
  
 
-		function initInput()
-		{
-	        canvas = document.getElementById("textCanvas");
-			         
-	        canvas.addEventListener("mousedown",mouseDown, false);
-	        canvas.addEventListener("mouseup", mouseUp, false);        
-	        canvas.addEventListener("mousemove",mouseXY, false);
+		function addGamePlayInput()
+		{	                
+	        inputArea.addEventListener("mousedown",mouseDown, false);
+	        inputArea.addEventListener("mouseup", mouseUp, false);        
+	        inputArea.addEventListener("mousemove",mouseXY, false);
 
-	        canvas.addEventListener("touchstart", touchDown, false);
-	        canvas.addEventListener("touchend", touchUp, false);
-	        canvas.addEventListener("touchcancel", touchUp, false);
-	        canvas.addEventListener("touchleave", touchUp, false);
-			canvas.addEventListener("touchmove", touchXY, false);
-		                
-		}		
+	        inputArea.addEventListener("touchstart", touchDown, false);
+	        inputArea.addEventListener("touchend", touchUp, false);
+	        inputArea.addEventListener("touchcancel", touchUp, false);
+	        inputArea.addEventListener("touchleave", touchUp, false);
+	        inputArea.addEventListener("touchmove", touchXY, false);		                
+		}
+
+		//remove this later
+		function addStandByInput()
+		{			         
+	        inputArea.addEventListener("mouseup", standByInput, false);
+	        inputArea.addEventListener("touchstart", standByInput, false);		                
+		}
+
+		function removeGamePlayInput()
+		{	                
+	        inputArea.removeEventListener("mousedown",mouseDown, false);
+	        inputArea.removeEventListener("mouseup", mouseUp, false);        
+	        inputArea.removeEventListener("mousemove",mouseXY, false);
+
+	        inputArea.removeEventListener("touchstart", touchDown, false);
+	        inputArea.removeEventListener("touchend", touchUp, false);
+	        inputArea.removeEventListener("touchcancel", touchUp, false);
+	        inputArea.removeEventListener("touchleave", touchUp, false);
+	        inputArea.removeEventListener("touchmove", touchXY, false);		                
+		}
+
+		function removeStandByInput()
+		{			         
+	        inputArea.removeEventListener("mouseup", standByInput, false);
+	        inputArea.removeEventListener("touchstart", standByInput, false);		                
+		}
+
 		
 		function mouseUp(e)
 		{
@@ -3325,8 +3066,8 @@ function lvl1() {
 		{
 			e.preventDefault();
 			mouseIsDown = 1;
-			touchInitX = e.pageX - canvas.offsetLeft;
-			touchInitY = e.pageY - canvas.offsetTop;
+			touchInitX = e.pageX - inputArea.offsetLeft;
+			touchInitY = e.pageY - inputArea.offsetTop;
 		}
 		  
 		function touchDown(e)
@@ -3343,19 +3084,48 @@ function lvl1() {
 		function mouseXY(e)
 		{
 			e.preventDefault();
-			canvasX = e.pageX - canvas.offsetLeft;
-			canvasY = e.pageY - canvas.offsetTop;
+			inputAreaX = e.pageX - inputArea.offsetLeft;
+			inputAreaY = e.pageY - inputArea.offsetTop;
 		}
 		 
 		function touchXY(e) {
 			e.preventDefault();
 			var touch = e.targetTouches[0];
 
-    		canvasX = touch.pageX - canvas.offsetLeft;
-    		canvasY = touch.pageY - canvas.offsetTop;
+    		inputAreaX = touch.pageX - inputArea.offsetLeft;
+    		inputAreaY = touch.pageY - inputArea.offsetTop;
  
 		}
 
+		//remove this later
+		function standByInput(e)
+		{
+			e.preventDefault();
+
+			if(game.fadingIn)
+			{
+				gameLights.fader.stop(true, true);
+				gameLights.switch('on');
+			}
+
+			if(game.fadingOut)
+			{
+				gameLights.fader.stop(true, true);
+				gameLights.switch('off');
+			}
+
+			if(game.textFadingIn)
+			{
+				$('.all-text').stop(true, true);
+				gameText.switch('off');
+			}
+
+			if(game.textFadingOut)
+			{
+				$('.all-text').stop(true, true);
+				gameText.switch('off');
+			}
+		}
 
 
 		//testing using DOM audio sources
@@ -3426,39 +3196,33 @@ function lvl1() {
 			game.contextEnemies.clearRect(0, 0, game.width, game.height);
 		}
 
-		function resetGame(){
-			gameLights.off('all');
-			gameTransition.reset();
+		function resetGame(){	//called on level start			
+			
 			mouseIsDown = 0;
-			game.gameOver = false; 
-			game.gameWon = false;
-			game.level = game.lvlIntro ? game.level : 1 ;
+			gameLights.switch('off');
+			clrCanvas();
+
+			//Game state
 			game.bossDead = false;
 			game.levelComplete = false;
-			game.lvlStart = false;
-			game.lvlIntro = true;
-			game.levelUpTimer = 0;					
-			// game.downCount = 1;
-			// game.left = false;
-			// game.down = false;
-			// game.enshootTimer = game.enfullShootTimer;
+			
 
-			// game.projectiles = [];
-			// game.enprojectiles = [];
-			// game.enemies = [];
-			clrCanvas();			
-			gameBackground.load();							
-			playerShip.reset();
+			//Timers
+			game.timer = 0;
+			game.levelUpTimer = 0;
+
+
+			//Objects
+			playerShip.reset();							
 			gameUI.updateAll();
-			// game.background = [];
 			game.enemies = [];
 			game.waves = [];			
 			game.enemyBullets = [];
 			game.loot = [];
-			game.delayTimer = 0;
-			game.timer = 0;		
-			game.sounds = [];
+			
 
+			//Sounds
+			game.sounds = [];
 			for(var g in game.tracks){
 					game.tracks[g].pause();
 			}
@@ -3469,33 +3233,6 @@ function lvl1() {
 				game.tracks[0].play();
 				game.tracks[0].loop = true;	
 			}
-
-			// for(var y = 0; y < game.level; y++) {	// y enemies vertically..
-			// 	for(var x = 0; x < game.level; x++){ // ..by x horizontally
-			// 		game.enemies.push({ //adding value to the game.enemies array
-			// 			x: game.width*0.05  + (x*(game.width*0.15)) ,  //setting positions (1st bit) and making space between enemies (2nd bit)
-			// 			y: game.height*0.10 + y*(game.player.size),
-			// 			size: game.height*0.06, //the size of our enemies
-			// 			image: 1, //their ships...
-			// 			dead: false,
-			// 			deadTime: 60
-			// 		});
-			// 	}
-			// }
-
-			// game.player = {	//creating our player
-			// 	x: game.width*0.46,
-			// 	y: game.height*0.90,
-			// 	size: game.height*0.08,
-			// 	speed: X_PlayerSpeed,
-			// 	bulletspeed: X_BulletSpeed*game.height/1000,
-			// 	image: 0,
-			// 	rendered: false,
-			// 	crashed: false					
-			// };
-			game.paused = false;
-			// scores();
-
 		}
 
 
@@ -3585,7 +3322,6 @@ function lvl1() {
 			
 		function loop(){ //the loop		
 			requestAnimFrame(loop);
-			gameState();
 			if (!game.paused){
 			update();
 			}
@@ -3594,12 +3330,7 @@ function lvl1() {
 
 		function startGame()
 		{		
-
-			// var loadedSfx = 0;
-
-			gameMenu.toggle();
-
-			resetGame();			
+			// var loadedSfx = 0;			
 
 			//preparing sound tracks (chromium fix)
 			game.tracks.push(game.soundTracks['tune1' + fileFormat]);
@@ -3636,10 +3367,6 @@ function lvl1() {
 		
 			game.sounds = [];			
 							
-
-			gameLights.off('all');
-
-			game.started = true;
 			game.paused = false;
 			gameUI.updateAll();
 			loop();
@@ -3969,9 +3696,6 @@ function lvl1() {
 			    }
 		  	}, false);
 
-    		//load user input listeners
- 			initInput();
-
  			// loadOsCanvas();
 
 		},false);
@@ -3981,7 +3705,7 @@ function lvl1() {
 		//Audio pre-load test
 		var audiopreload = false;
 		var timeout;
-		var waitTime = 300;
+		var waitTime = 1000;
 		var audioTest = new Audio();
 
 		if (fileFormat === '.mp3')

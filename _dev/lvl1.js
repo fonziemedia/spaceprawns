@@ -111,7 +111,7 @@ function lvl1() {
 					game.tracks[2].play();
 					game.tracks[2].loop = true;
 				}
-			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 100, 'sectoidBoss.png'));
+			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 50, 'sectoidBoss.png'));
 			}
 
 			if (game.seconds > 55 && game.enemies.length === 0 && game.bossDead && game.tracks.length == 3) {

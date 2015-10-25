@@ -37,29 +37,53 @@
 		});
 		
 		//mouse and touch screens
-		var canvas;
-		var canvasX = playerShip.x;
-		var canvasY = playerShip.y;
+		var inputArea = document.getElementById("inputarea");
+		var inputAreaX = playerShip.x;
+		var inputAreaY = playerShip.y;
 		var mouseIsDown = 0;
 		var touchInitX = 0;
 		var touchInitY = 0;
  
 
-		function initInput()
-		{
-	        canvas = document.getElementById("textCanvas");
-			         
-	        canvas.addEventListener("mousedown",mouseDown, false);
-	        canvas.addEventListener("mouseup", mouseUp, false);        
-	        canvas.addEventListener("mousemove",mouseXY, false);
+		function addGamePlayInput()
+		{	                
+	        inputArea.addEventListener("mousedown",mouseDown, false);
+	        inputArea.addEventListener("mouseup", mouseUp, false);        
+	        inputArea.addEventListener("mousemove",mouseXY, false);
 
-	        canvas.addEventListener("touchstart", touchDown, false);
-	        canvas.addEventListener("touchend", touchUp, false);
-	        canvas.addEventListener("touchcancel", touchUp, false);
-	        canvas.addEventListener("touchleave", touchUp, false);
-			canvas.addEventListener("touchmove", touchXY, false);
-		                
-		}		
+	        inputArea.addEventListener("touchstart", touchDown, false);
+	        inputArea.addEventListener("touchend", touchUp, false);
+	        inputArea.addEventListener("touchcancel", touchUp, false);
+	        inputArea.addEventListener("touchleave", touchUp, false);
+	        inputArea.addEventListener("touchmove", touchXY, false);		                
+		}
+
+		//remove this later
+		function addStandByInput()
+		{			         
+	        inputArea.addEventListener("mouseup", standByInput, false);
+	        inputArea.addEventListener("touchstart", standByInput, false);		                
+		}
+
+		function removeGamePlayInput()
+		{	                
+	        inputArea.removeEventListener("mousedown",mouseDown, false);
+	        inputArea.removeEventListener("mouseup", mouseUp, false);        
+	        inputArea.removeEventListener("mousemove",mouseXY, false);
+
+	        inputArea.removeEventListener("touchstart", touchDown, false);
+	        inputArea.removeEventListener("touchend", touchUp, false);
+	        inputArea.removeEventListener("touchcancel", touchUp, false);
+	        inputArea.removeEventListener("touchleave", touchUp, false);
+	        inputArea.removeEventListener("touchmove", touchXY, false);		                
+		}
+
+		function removeStandByInput()
+		{			         
+	        inputArea.removeEventListener("mouseup", standByInput, false);
+	        inputArea.removeEventListener("touchstart", standByInput, false);		                
+		}
+
 		
 		function mouseUp(e)
 		{
@@ -77,8 +101,8 @@
 		{
 			e.preventDefault();
 			mouseIsDown = 1;
-			touchInitX = e.pageX - canvas.offsetLeft;
-			touchInitY = e.pageY - canvas.offsetTop;
+			touchInitX = e.pageX - inputArea.offsetLeft;
+			touchInitY = e.pageY - inputArea.offsetTop;
 		}
 		  
 		function touchDown(e)
@@ -95,19 +119,48 @@
 		function mouseXY(e)
 		{
 			e.preventDefault();
-			canvasX = e.pageX - canvas.offsetLeft;
-			canvasY = e.pageY - canvas.offsetTop;
+			inputAreaX = e.pageX - inputArea.offsetLeft;
+			inputAreaY = e.pageY - inputArea.offsetTop;
 		}
 		 
 		function touchXY(e) {
 			e.preventDefault();
 			var touch = e.targetTouches[0];
 
-    		canvasX = touch.pageX - canvas.offsetLeft;
-    		canvasY = touch.pageY - canvas.offsetTop;
+    		inputAreaX = touch.pageX - inputArea.offsetLeft;
+    		inputAreaY = touch.pageY - inputArea.offsetTop;
  
 		}
 
+		//remove this later
+		function standByInput(e)
+		{
+			e.preventDefault();
+
+			if(game.fadingIn)
+			{
+				gameLights.fader.stop(true, true);
+				gameLights.switch('on');
+			}
+
+			if(game.fadingOut)
+			{
+				gameLights.fader.stop(true, true);
+				gameLights.switch('off');
+			}
+
+			if(game.textFadingIn)
+			{
+				$('.all-text').stop(true, true);
+				gameText.switch('off');
+			}
+
+			if(game.textFadingOut)
+			{
+				$('.all-text').stop(true, true);
+				gameText.switch('off');
+			}
+		}
 
 
 		//testing using DOM audio sources
@@ -178,39 +231,33 @@
 			game.contextEnemies.clearRect(0, 0, game.width, game.height);
 		}
 
-		function resetGame(){
-			gameLights.off('all');
-			gameTransition.reset();
+		function resetGame(){	//called on level start			
+			
 			mouseIsDown = 0;
-			game.gameOver = false; 
-			game.gameWon = false;
-			game.level = game.lvlIntro ? game.level : 1 ;
+			gameLights.switch('off');
+			clrCanvas();
+
+			//Game state
 			game.bossDead = false;
 			game.levelComplete = false;
-			game.lvlStart = false;
-			game.lvlIntro = true;
-			game.levelUpTimer = 0;					
-			// game.downCount = 1;
-			// game.left = false;
-			// game.down = false;
-			// game.enshootTimer = game.enfullShootTimer;
+			
 
-			// game.projectiles = [];
-			// game.enprojectiles = [];
-			// game.enemies = [];
-			clrCanvas();			
-			gameBackground.load();							
-			playerShip.reset();
+			//Timers
+			game.timer = 0;
+			game.levelUpTimer = 0;
+
+
+			//Objects
+			playerShip.reset();							
 			gameUI.updateAll();
-			// game.background = [];
 			game.enemies = [];
 			game.waves = [];			
 			game.enemyBullets = [];
 			game.loot = [];
-			game.delayTimer = 0;
-			game.timer = 0;		
-			game.sounds = [];
+			
 
+			//Sounds
+			game.sounds = [];
 			for(var g in game.tracks){
 					game.tracks[g].pause();
 			}
@@ -221,33 +268,6 @@
 				game.tracks[0].play();
 				game.tracks[0].loop = true;	
 			}
-
-			// for(var y = 0; y < game.level; y++) {	// y enemies vertically..
-			// 	for(var x = 0; x < game.level; x++){ // ..by x horizontally
-			// 		game.enemies.push({ //adding value to the game.enemies array
-			// 			x: game.width*0.05  + (x*(game.width*0.15)) ,  //setting positions (1st bit) and making space between enemies (2nd bit)
-			// 			y: game.height*0.10 + y*(game.player.size),
-			// 			size: game.height*0.06, //the size of our enemies
-			// 			image: 1, //their ships...
-			// 			dead: false,
-			// 			deadTime: 60
-			// 		});
-			// 	}
-			// }
-
-			// game.player = {	//creating our player
-			// 	x: game.width*0.46,
-			// 	y: game.height*0.90,
-			// 	size: game.height*0.08,
-			// 	speed: X_PlayerSpeed,
-			// 	bulletspeed: X_BulletSpeed*game.height/1000,
-			// 	image: 0,
-			// 	rendered: false,
-			// 	crashed: false					
-			// };
-			game.paused = false;
-			// scores();
-
 		}
 
 
@@ -337,7 +357,6 @@
 			
 		function loop(){ //the loop		
 			requestAnimFrame(loop);
-			gameState();
 			if (!game.paused){
 			update();
 			}
@@ -346,12 +365,7 @@
 
 		function startGame()
 		{		
-
-			// var loadedSfx = 0;
-
-			gameMenu.toggle();
-
-			resetGame();			
+			// var loadedSfx = 0;			
 
 			//preparing sound tracks (chromium fix)
 			game.tracks.push(game.soundTracks['tune1' + fileFormat]);
@@ -388,10 +402,6 @@
 		
 			game.sounds = [];			
 							
-
-			gameLights.off('all');
-
-			game.started = true;
 			game.paused = false;
 			gameUI.updateAll();
 			loop();
@@ -721,9 +731,6 @@
 			    }
 		  	}, false);
 
-    		//load user input listeners
- 			initInput();
-
  			// loadOsCanvas();
 
 		},false);
@@ -733,7 +740,7 @@
 		//Audio pre-load test
 		var audiopreload = false;
 		var timeout;
-		var waitTime = 300;
+		var waitTime = 1000;
 		var audioTest = new Audio();
 
 		if (fileFormat === '.mp3')

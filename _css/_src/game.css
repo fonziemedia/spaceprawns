@@ -18,15 +18,23 @@ body {
 	margin: 0;
   padding: 0;
 	background-color: #000;
+  font-size: 62.5%;
 }
 
-/*h1,h2,h3,h4,h5 {
-	margin: 10px;
-}*/
+.no-select { 
+  -moz-user-select: none; 
+  -khtml-user-select: none; 
+  -webkit-user-select: none; 
+  -o-user-select: none; 
+}
 
-/*h4 {
-	margin-top: 20px
-}*/
+.gpu { 
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-transform-style: preserve-3d; 
+}
 
 #container {
   position: absolute;
@@ -34,6 +42,24 @@ body {
   height: 100%;
 }
 
+/* -- Touch input area -- */
+#inputarea {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 9000;
+    background-color: transparent;
+}
+
+/* -- UI -- */
+#fader {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: none;
+    z-index: 5;
+    background-color: black;
+}
 
 canvas {
 	position: absolute;
@@ -74,18 +100,101 @@ canvas {
     width: 100%;
     opacity: 1;
     z-index: 1;
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-transform-style: preserve-3d;
-    -webkit-perspective: 1000;
-    -webkit-backface-visibility: hidden; /* old android browsers fix */
 }
 
 #enemiesCanvas { z-index: 2 }
 #playerCanvas { z-index: 3 }
 #textCanvas { z-index: 4 }
+
+
+/* -- UI -- */
+#ui {
+    position: absolute;
+    height: 5%;
+    width: 100%;
+    opacity: 1;
+    z-index: 9999;
+}
+
+.ui-item {
+  position: absolute;
+  display: inline-block;
+  height: 100%;
+  background-color: transparent;  
+}
+
+#uiLevel {
+  width: 8%;
+  right: 92%;
+}
+
+#uiScore {
+  width: 12%;
+  right: 78%;  
+}
+
+#uiEContainer {
+  width: 30%;
+  right: 45%;  
+}
+
+#uiEBar {
+  width: 30%;
+  right: 45%;  
+}
+
+#uiHangar {
+  width: 20%;
+  right: 15%;  
+}
+
+
+/* -- TEXT MESSAGES -- */
+#textContainer {
+    position: absolute;
+    height: 35%;
+    width: 100%;
+    top: 32%;
+    opacity: 1;
+}
+
+.all-text {
+  position: relative;
+  display: block;
+  background-color: transparent;
+  font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+  color: #FFC619;
+  /*margin: 0em 0em 0em 0em;*/
+  padding: 30px 15px;
+  /*margin: 0.2rem 0.2rem 0.2rem;*/
+  text-transform: none;
+  text-shadow: none;
+  font-weight: bold;
+  /*line-height: 1em;*/
+  font-style: normal;
+  text-align: center;
+  text-decoration: none;
+  display: none;
+  z-index: 6; 
+}
+
+#h1 {
+  height: 28px;
+  font-size: 26px;
+}
+
+#h2 {
+  height: 22px;
+  font-size: 20px;
+}
+
+#h3 {
+  height: 18px;
+  font-size: 16px;  
+  color: #FFFFFF;
+}
+
+
 
 /*ADD BELOW LEVELS AS MEDIA QUERIES*/
 .level1 {
@@ -97,11 +206,6 @@ canvas {
   background-color: transparent;
   background-origin: content-box;
   background-repeat: repeat-y;
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-transform-style: preserve-3d;
 }
 .level2 {
   background-image: url('assets/images/level1_small.jpg');
@@ -125,7 +229,7 @@ canvas {
   color: rgba(0, 0, 0, 0.6);
   font-size: 1rem;
   font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
-  margin: 0em 0.25em 0em 0em;
+  margin: 0em 0em 0em 0em;
   padding: 0.78571429em 1.5em 0.78571429em;
   text-transform: none;
   text-shadow: none;
@@ -136,24 +240,38 @@ canvas {
   text-decoration: none;
   border-radius: 0.28571429rem;
   box-shadow: 0px 0px 0px 1px transparent inset, 0px 0em 0px 0px rgba(34, 36, 38, 0.15) inset;
-  z-index: 9999;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  z-index: 9000;
   /*-webkit-transition: opacity 0.1s ease, background-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
           transition: opacity 0.1s ease, background-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;*/
   will-change: '';
   -webkit-tap-highlight-color: transparent;
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-transform-style: preserve-3d;
   -webkit-perspective: 1000;
   -webkit-backface-visibility: hidden; /* old android browsers fix */
 }
 
+
+/* UI MENU BUTTON */
+#toggle-menu-btn {
+  position: absolute;
+  display: block;
+  height: 100%;
+  width: 10%;
+  right: 1%;
+  background-color: transparent;
+  z-index: 9999;
+}
+
+/*toggle-menu-btn icon*/
+#toggle-menu-btn > i {
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  font-size: 150%;
+  color: #3187A3;
+}
+
+
+/* MENU OPTION BUTTONS */
 .menu-option-btn {
 	position: relative;
 	top: 50%;
@@ -187,26 +305,6 @@ canvas {
 }
 
 
-#toggle-menu-btn {
-	position: absolute;
-	display: block;
-	width: 1%;
-	height: 1%;
-	top: 0.5%;
-	right: 2%;
-	margin-bottom: 1%;
-	background-color: transparent;
-}
-
-/*toggle-menu-btn icon*/
-#toggle-menu-btn > i {
-	position: absolute;
-	top: 20%;
-	left: 20%;
-	font-size: 150%;
-	color: #3187A3;
-}
-
 @media (max-width: 991px) {
 
   #gamearea {
@@ -215,14 +313,6 @@ canvas {
     width: 100%;
     transform-origin: 0 0;
     -webkit-transform-origin: 0 0;
-    user-select: none;
-    -webkit-user-select: none;    
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-perspective: 1000;
-    -webkit-backface-visibility: hidden; /* old android browsers fix */
   }	
 
 	.menu-option-btn {
@@ -329,7 +419,7 @@ canvas {
 i.icon {
   display: inline-block;
   opacity: 1;
-  margin: 0em 0.25rem 0em 0em;
+  margin: 0em 0rem 0em 0em;
   width: 1.18em;
   height: 1em;
   font-family: 'Icons';

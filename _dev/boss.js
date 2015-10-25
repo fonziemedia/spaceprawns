@@ -67,7 +67,8 @@ function boss(x, y, speed, direction, hull, image) {
 			game.explosions.push(new explosion(this.x, this.y, speed, direction, this.size, 'boss'));
 			if (!playerShip.crashed){
 				game.score++;
-				game.levelScore++;	
+				game.levelScore++;
+				gameUI.updateScore();	
 				game.bossDead = true;
 				this.dead = true;						
 			}

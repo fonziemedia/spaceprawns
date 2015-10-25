@@ -1,11 +1,13 @@
 function menu()
 {
-	this.toggled = true;
-	this.start = $('#startGame');
-	this.restart = $('#resetGame');
-	this.soundFx = $('#toggleSound');
-	this.music = $('#toggleMusic');
-	this.all = $('.menu-option-btn');
+
+	var startBtn = $('#startGame');
+	var soundFx = $('#toggleSound');
+	var music = $('#toggleMusic');
+	var allButtons = $('.menu-option-btn');
+	var animationSpeed = 800;
+
+	this.toggled = false;
 
 	// this.widthProp = $(gameArea).height() * (9/16);
 
@@ -19,13 +21,13 @@ function menu()
 
 		if (game.sound)
 		{
-			this.soundFx.addClass('active');
-			this.soundFx.text('Sound: ON');
+			soundFx.addClass('active');
+			soundFx.text('Sound: ON');
 		}
 		else
 		{			
-		this.soundFx.removeClass('active');
-		this.soundFx.text('Sound: OFF');
+		soundFx.removeClass('active');
+		soundFx.text('Sound: OFF');
 		}
 
 	};
@@ -57,13 +59,13 @@ function menu()
 
 		if (game.music)
 		{
-			this.music.addClass('active');
-			this.music.text('Music: ON');
+			music.addClass('active');
+			music.text('Music: ON');
 		}
 		else
 		{			
-			this.music.removeClass('active');
-			this.music.text('Music: OFF');
+			music.removeClass('active');
+			music.text('Music: OFF');
 		}
 
 	};
@@ -76,25 +78,31 @@ function menu()
 
 
 		// IMPROVE THIS WITH LEFT RIGHT BTN CLASSES
-		if (!this.toggled)
+		if (this.toggled)
 		{
 			game.paused = true;
-			
-			this.all.css({"display": "block"});
 
-			this.start.animate({
-				opacity: 1,
-				"right": "-=50%",
-			},800);
-			this.restart.animate({
+
+			if(game.started && startBtn.text !== 'Restart')
+			{
+				startBtn.text('Restart');
+			}
+			else
+			{
+				startBtn.text('Start');
+			}
+
+			allButtons.css({"display": "block"});
+
+			startBtn.animate({
 				opacity: 1,
 				"left": "-=50%",
 			},800);
-			this.soundFx.animate({
+			soundFx.animate({
 				opacity: 1,
 				"right": "-=50%",
 			},800);
-			this.music.animate({
+			music.animate({
 				opacity: 1,
 				"left": "-=50%",
 			},800);
@@ -103,61 +111,49 @@ function menu()
 		{
 			game.paused = false;
 
-			this.start.animate({
-				opacity: 0,
-				"right": "+=50%",
-			},800);
-			this.restart.animate({
+			startBtn.animate({
 				opacity: 0,
 				"left": "+=50%",
 			},800);
-			this.soundFx.animate({
+			soundFx.animate({
 				opacity: 0,
 				"right": "+=50%",
 			},800);
-			this.music.animate({
+			music.animate({
 				opacity: 0,
 				"left": "+=50%",
 			},800);
 		}
 
-		// this.start.css({"left": ($(gameArea).width()-widthProp)*0.55});		
+		// startBtn.css({"left": ($(gameArea).width()-widthProp)*0.55});		
 	};
 
 	this.init = function()
 	{		
 		if (localStorage.prawnsSound === 'true') //note = localStorage will only process string values
 		{
-			this.soundFx.addClass('active');
-			this.soundFx.text('Sound: ON');
+			soundFx.addClass('active');
+			soundFx.text('Sound: ON');
 		}
 		else
 		{			
-		this.soundFx.removeClass('active');
-		this.soundFx.text('Sound: OFF');
+		soundFx.removeClass('active');
+		soundFx.text('Sound: OFF');
 		}
 
 		if (localStorage.prawnsMusic === 'true') //note = localStorage will only process string values
 		{
-			this.music.addClass('active');
-			this.music.text('Music: ON');
+			music.addClass('active');
+			music.text('Music: ON');
 		}
 		else
 		{			
-		this.music.removeClass('active');
-		this.music.text('Music: OFF');
+			music.removeClass('active');
+			music.text('Music: OFF');
 		}
 
 		gameMenu.toggle();
 
-	};
-
-	this.hide = function() {
-		this.score = game.score;
-		game.contextText.fillStyle = "#FFD455";
-		game.contextText.font = 15*dtSize + 'px helvetica';
-		game.contextText.clearRect(this.scoreX, this.height*0.3, this.width*0.14, this.height*0.35);  
-		game.contextText.fillText("Score: " + this.score, this.scoreX, this.scoreY); //printing the score
 	};
 	
 }

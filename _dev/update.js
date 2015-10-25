@@ -26,6 +26,7 @@
 	
 
     		//game time
+    		//! CHECK OUT 'timeupdate' js event !
 			game.timer++;
 			game.seconds = game.timer/60 || 0;
 			// console.log(game.seconds);
@@ -61,7 +62,8 @@
 
 				if (game.levelUpTimer == 100) 
 				{
-					game.levelComplete = true;
+					game.levelComplete = true;					
+					gameState.lvlComplete();
 					mouseIsDown = 0;					
 				}
 			}
@@ -70,7 +72,7 @@
 			// TRANSITIONS
 			////////////////////////////////////////////////////////////////////////////////
 			
-			gameTransition.load();			
+			// gameTransition.load();			
 
 			///////////////////////////////////
 			// Player bullets

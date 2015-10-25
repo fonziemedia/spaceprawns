@@ -1,4 +1,17 @@
-function text() {
+function text(header1, header2, inputRequired) {
+
+	var h1 = $('#h1');
+	var h2 = $('#h2');
+	var h3 = $('#h3');
+
+	var h1Text = header1;
+	var h2Text = header2;
+	var h3Text = game.isMobile ? 'Tap screen to continue' : 'Press ENTER or LMB to start';
+	var allText = $('.all-text');
+	var textInput = inputRequired;
+
+	var effectDuration = 2000;
+
 
 	this.font = 'Helvetica';
 	this.fontWeight = 'bold';
@@ -24,6 +37,8 @@ function text() {
 
 	// };
 
+	
+
 	this.gameIntro = function() {
 		game.contextText.clearRect(0, 0, game.width, game.height);
 		game.contextText.drawImage(game.images[this.introBackground], 0, 0, game.width, game.height); //use ctx text here because ctx background will clear in main update
@@ -41,56 +56,59 @@ function text() {
 		}
 	};
 
-	this.lvlIntro = function() {
-		game.contextText.clearRect(0, 0, game.width, game.height);				
 
-		message('Stage ' + game.level, 1,  this.font, this.fontSize0, this.fontColor1, this.fontWeight); 
-		message(this.levelBriefing[game.level - 1], 2, this.font, this.fontSize1, this.fontColor1, this.fontWeight);
 
-		if (game.isMobile)
+	this.switch = function(trigger)
+	{
+		switch (trigger)
 		{
-			message('Tap screen to continue', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight); 
-		}
-		else
-		{
-			message('Press ENTER or LMB to continue', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight);
+			case 'on':
+				allText.show();
+				game.textFaded = false;
+			break;
+
+			case 'off':
+				allText.stop(true, true);
+				allText.hide();
+				game.textFaded = true;
+			break;
 		}
 	};
 
-	this.lvlComplete = function() {
-		game.contextText.clearRect(0, 0, game.width, game.height);
-		
-		message('Stage Complete!', 1,  this.font,this.fontSize0, this.fontColor1, this.fontWeight); 
-		message(game.score + ' enemy ships destroyed', 2, this.font, this.fontSize1, this.fontColor1, this.fontWeight);
-
-		if (game.isMobile)
+	this.fade = function(trigger)
+	{
+		switch (trigger)
 		{
-			message('Tap screen to continue', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight); 
-		}
-		else
-		{
-			message('Press ENTER or LMB to continue', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight);
-		}
+			case 'in':				
+				game.textFadingIn = true;				
+				allText.fadeIn(effectDuration, function(){
+					game.textFadingIn = false;
+					game.textFaded = false;
+				});
+			break;
 
+			case 'out':
+				game.textFadingOut = true;
+				allText.fadeOut(effectDuration, function(){
+					h1.text('');		
+					h2.text('');
+					h3.text('');
+					game.textFadingOut = false;
+					game.textFaded = true;
+				});
+			break;
+		}
 	};
 
-	this.gameOver = function() {
-		game.contextText.clearRect(0, 0, game.width, game.height);
-		
-		message('Game Over', 1,  this.font, this.fontSize0, this.fontColor1, this.fontWeight); 
-		message(game.score + ' enemy ships destroyed', 2, this.font, this.fontSize1, this.fontColor1, this.fontWeight);
-		
-		if (game.isMobile)
-		{
-			message('Tap screen to restart', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight); 
-		}
-		else
-		{
-			message('Press ENTER or LMB to restart', 3, this.font, this.fontSize2, this.fontColor2, this.fontWeight);
-		}
-
+	this.init = function()
+	{
+		h1.text(h1Text);		
+		h2.text(h2Text);
+		if (textInput){h3.text(h3Text);}else{h3.text('');}		
 	};
+
+	this.init();
 
 }
 
-gameText = new text();
+gameText = new text(); //To be removed!
