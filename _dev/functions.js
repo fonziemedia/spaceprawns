@@ -1,31 +1,4 @@
 		//====================== Game functions =================//
-		
-
-		// function toggleFullScreen()  //experimental   only works with user input
- 	// 	{
-		//   if (!document.fullscreenElement &&    // alternative standard method
-		//       !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
-		//     if (document.documentElement.requestFullscreen) {
-		//       document.documentElement.requestFullscreen();
-		//     } else if (document.documentElement.msRequestFullscreen) {
-		//       document.documentElement.msRequestFullscreen();
-		//     } else if (document.documentElement.mozRequestFullScreen) {
-		//       document.documentElement.mozRequestFullScreen();
-		//     } else if (document.documentElement.webkitRequestFullscreen) {
-		//       document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-		//     }
-		//   } else {
-		//     if (document.exitFullscreen) {
-		//       document.exitFullscreen();
-		//     } else if (document.msExitFullscreen) {
-		//       document.msExitFullscreen();
-		//     } else if (document.mozCancelFullScreen) {
-		//       document.mozCancelFullScreen();
-		//     } else if (document.webkitExitFullscreen) {
-		//       document.webkitExitFullscreen();
-		//     }
-		//   }
-		// }
 
 		//Keyboard		
 		$(document).keydown(function(e){    //using jquery to listen to pressed keys
@@ -248,13 +221,14 @@
 
 
 			//Objects
-			playerShip.reset();							
-			gameUI.updateAll();
-			game.enemies = [];
-			game.waves = [];			
+			playerShip.reset();			
+			game.playerBullets = [];
 			game.enemyBullets = [];
-			game.loot = [];
-			
+			game.explosions = [];
+			game.enemies = [];
+			game.waves = [];
+			game.loot = [];										
+			gameUI.updateAll();		
 
 			//Sounds
 			game.sounds = [];
@@ -310,35 +284,6 @@
 		}
 
 		
-
-		//messages
-		function message(message, row, font, fontSize, fontColor, fontWeight) {
-
-			var text = message;
-			var textLength = text.length;
-			var textWidth = Math.round(textLength * (fontSize/2));
-			var textHeight = Math.round(game.height*0.1);
-			// this.color = fontColor;
-			// this.font = game.isMobile ? font : "Monaco";
-			// this.fontSize = fontSize;
-			// this.fontWeight = fontWeight;
-
-			// var x = (game.width - textWidth) *0.5;
-			// var y = (game.height - fontSize) *0.5;
-			var x = Math.round((game.width - textWidth)*0.5);
-			var y = Math.round((game.height/3.5) + (textHeight * row));
-
-			// console.log (x, y);
-			// console.log (game.width);			
-			// console.log (textWidth);
-			// console.log (textLength);
-
-
-			game.contextText.font = fontWeight + " " + fontSize + "px " + font;				
-			game.contextText.fillStyle = fontColor;
-			game.contextText.fillText(text, x, y);	
-		}
-
 		// //Init	
 		// function init(){ //initialising our game full of stars all over the screen
 		// 	for(var i=0; i<600; i++) {
@@ -364,9 +309,9 @@
 
 
 		function startGame()
-		{		
-			// var loadedSfx = 0;			
-
+		{						
+			game.loaded = true;
+			
 			//preparing sound tracks (chromium fix)
 			game.tracks.push(game.soundTracks['tune1' + fileFormat]);
 			game.tracks.push(game.soundTracks['tune2' + fileFormat]);
@@ -400,17 +345,25 @@
 				game.sounds[s].pause();
 			}
 		
-			game.sounds = [];			
-							
-			game.paused = false;
+			game.sounds = [];
+
 			gameUI.updateAll();
 			loop();
+
 
 		}
 
 
+		//Loaders
+
+		var loadingBar = $('#loadingBar');
+		var loadingBarFiller = $('#loadingBarFiller');
+		var loadingText = new text('Loading Images.. ', '', false);
+		loadingText.switch('on');
+		loadingBar.show();
+
 		//====================== Images engine =================//
-		
+
 		function initImages(ipaths) { //our images engine: passing the array 'ipaths' to the function
 			game.requiredImages = ipaths.length; //the number of required images will be equal to the length of the ipaths array
 			for(var i in ipaths)
@@ -428,14 +381,6 @@
 				{ //once an image loads..
 					game.doneImages++; //  ..increment the doneImages variable by 1
 				};
-
-				if(i < 1)
-				{
-					//=========================== Game loading Screen =================================== 	
-					game.contextText.font = "bold " + game.width*0.06 + "px " + game.font; 
-					game.contextText.fillStyle = "white";
-					game.contextText.fillText("Loading Images...", game.width*0.22, game.height*0.47);
-				}
 				// console.log('reqImages: ' + game.requiredImages);
 				// console.log('doneImages: ' + game.doneImages);
 			}
@@ -493,14 +438,6 @@
 				{
 					game.doneSfx++;
 				}
-
-				if(i < 1)
-				{
-					//=========================== Game loading Screen =================================== 	
-					game.contextText.font = "bold " + game.width*0.06 + "px " + game.font; 
-					game.contextText.fillStyle = "white";
-					game.contextText.fillText("Loading Sfx...", game.width*0.23, game.height*0.47);
-				}
 			}
 		}
 
@@ -529,13 +466,6 @@
 					game.doneSoundTracks++;
 				}	
 
-				if(i < 1)
-				{
-					//=========================== Game loading Screen =================================== 	
-					game.contextText.font = "bold " + game.width*0.06 + "px " + game.font; 
-					game.contextText.fillStyle = "white";
-					game.contextText.fillText("Loading Sound Tracks...", game.width*0.15, game.height*0.47);
-				}
 				// console.log('requiredSoundTracks: ' + game.requiredSoundTracks);
 			}
 		}
@@ -543,7 +473,8 @@
 
 		function checkImages(){	//checking if all images have been loaded. Once all loaded run initSfx
 			if(game.doneImages >= game.requiredImages){
-				game.contextText.clearRect(0, 0, game.width, game.height);
+				loadingText = new text('Loading Sfx.. ', '', false);
+				loadingBarFiller.css({"width": "0"});
 				initSfx([	//using initSfx function to load our sounds
 					"_sounds/_sfx/laser" + fileFormat,			
 					"_sounds/_sfx/laser" + fileFormat,			
@@ -564,7 +495,8 @@
 			} 
 			else
 			{
-				game.contextText.fillText("|", game.width*0.15+(game.doneImages+1), game.height*0.55);		
+				loadingBarWidth = (game.doneImages / game.requiredImages) * 100 + '%';
+				loadingBarFiller.css({"width": loadingBarWidth});		
 				setTimeout(function(){
 					checkImages();
 				}, 1);
@@ -573,9 +505,8 @@
 
 		function checkSfx(){	//checking if all Sfx have been loaded. Once all loaded run init
 			if(game.doneSfx >= game.requiredSfx){
-				
-				//clear the canvas
-				game.contextText.clearRect(0, 0, game.width, game.height);
+				loadingText = new text('Loading Sound Tracks.. ', '', false);
+				loadingBarFiller.css({"width": "0"});
 
 				//start loading sound tracks
 				initSoundTracks([	//using initSfx function to load our sound tracks
@@ -589,7 +520,8 @@
 			} 
 			else
 			{
-				game.contextText.fillText("|", game.width*0.20+(game.doneSfx+1), game.height*0.55);					
+				loadingBarWidth = (game.doneSfx / game.requiredSfx) * 100 + '%';
+				loadingBarFiller.css({"width": loadingBarWidth});					
 				setTimeout(function(){
 					checkSfx();
 				}, 1);
@@ -598,16 +530,15 @@
 
 		function checkSoundTracks(){	//checking if all Sfx have been loaded. Once all loaded run init
 			if(game.doneSoundTracks >= game.requiredSoundTracks){
-
-				//starting game menu
-				gameText.gameIntro();
-				gameMenu.init();
-
-				if(!game.isMobile) {document.getElementById('textCanvas').style.cursor = 'corsair';} 				
+				loadingText.switch('off');
+				loadingBar.hide();
+				//starting game menu				
+				gameMenu.init();				
 			} 
 			else
 			{
-				game.contextText.fillText("|", game.width*0.20+(game.doneSoundTracks+1), game.height*0.55);					
+				loadingBarWidth = (game.doneSoundTracks / game.requiredSoundTracks) * 100 + '%';
+				loadingBarFiller.css({"width": loadingBarWidth});					
 				setTimeout(function(){
 					checkSoundTracks();
 				}, 1);
@@ -713,8 +644,6 @@
 		window.addEventListener("load", function load(event)
 		{
     		window.removeEventListener("load", load, false); //remove listener, no longer needed
-    		
-    		if (!game.isMobile) {document.getElementById('textCanvas').style.cursor = 'wait';}
 
     		//appcache
     		window.applicationCache.addEventListener("updateready", function event() {

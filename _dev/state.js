@@ -2,10 +2,21 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 {
 
 	this.start = function()
-	{	
+	{
+		gameState.pause();		  
+		gameLights.switch('off');
+
+		removeGamePlayInput();
+		addStandByInput(); 		
+
+		if (gameMenu.toggled) //if the game menu is up toggle it off
+		{
+			gameMenu.toggle();
+		}
+
 		if(!game.started) //checking if we're starting a new game or restarting
 		{
-			game.started = true;
+			game.started = true; //this needs to be set after gameMenu.toggle() or will break resume button
 		}
 		else
 		{
@@ -13,56 +24,49 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 			game.level = 1;			
 		}
 
-		game.contextText.clearRect(0, 0, game.width, game.height);
-		removeGamePlayInput();
-		addStandByInput(); 		
-
 		introBriefing = ['Outside the galaxy', 'The outer space', 'AlphaPI 2034' ];
 		introText = new text('Stage ' + game.level, introBriefing[game.level - 1], true);
 
-		if (gameMenu.toggled) //if the game menu is up toggle it off
+		$('.menu-option-btn').promise().done(function()
 		{
-			gameMenu.toggle();
-		}
+			$('#menuBackground').promise().done(function()
+			{					
+				gameBackground.load();
+				introText.fade('in');
 
-		gameLights.switch('off');					
-		gameBackground.load();
-
-		introText.fade('in');
-
-		$('.all-text').promise().done(function()
-		{  
-			removeStandByInput();
-			if (game.textFaded) //remove this later
-			{
-				if (!game.loaded){
-					game.loaded = true;
-					startGame();
-				}
-				addGamePlayInput();
-				resetGame();
-				gameLights.fade('in');
-				game.paused = false;
-			} 
-			else
-			{			
-				$('#inputarea').on('mousedown touchstart', function()
-				{   //only trigger this event listner once text animations have ended
-					$('#inputarea').off('mousedown touchstart');
-					introText.fade('out');
-					$('.all-text').promise().done(function()
-					{  
+				$('.all-text').promise().done(function()
+				{  
+					removeStandByInput();
+					if (game.textFaded) //remove this later
+					{
 						if (!game.loaded){
-							game.loaded = true;
 							startGame();
 						}
 						addGamePlayInput();
 						resetGame();
 						gameLights.fade('in');
-						game.paused = false;
-					});
+						gameState.unPause();
+					} 
+					else
+					{			
+						$('#inputarea').on('mousedown touchstart', function()
+						{   //only trigger this event listner once text animations have ended
+							$('#inputarea').off('mousedown touchstart');
+							introText.fade('out');
+							$('.all-text').promise().done(function()
+							{  
+								if (!game.loaded){									
+									startGame();
+								}
+								addGamePlayInput();
+								resetGame();
+								gameLights.fade('in');
+								gameState.unPause();
+							});
+						});
+					}
 				});
-			}
+			});
 		});
 	};
 	
@@ -70,7 +74,8 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 	this.lvlComplete = function() //called at the end of each level
 	{
 		game.started = false;
-		removeGamePlayInput();
+		removeGamePlayInput();		
+		gameUI.fade('out');
 
 		levelUpText = new text('Stage Complete!', game.score + ' enemy ships destroyed', true); 	
 		levelUpText.switch('on');
@@ -81,11 +86,12 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 			levelUpText.fade('out');
 
 			$('.all-text').promise().done(function()
-			{		
+			{	
+				gameUI.fade('out');	
 				gameLights.fade('out');
 					$('#fader').promise().done(function()
 					{   //once text fades 			
-						game.paused = true;
+						gameState.pause();
 						game.level++;
 						gameState.start();
 					});
@@ -99,6 +105,7 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 	{
 		game.started = false;
 		removeGamePlayInput();
+		gameUI.fade('out');
 
 		gameOverText = new text('Game Over', game.score + ' enemy ships destroyed', true);		
 		gameOverText.switch('on');
@@ -109,11 +116,12 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 			gameOverText.fade('out');
 
 			$('.all-text').promise().done(function()
-			{		
+			{
+				gameUI.fade('out');		
 				gameLights.fade('out');
 					$('#fader').promise().done(function()
 					{   //once text fades 			
-						game.paused = true;
+						gameState.pause();
 						game.score = 0;
 						game.level = 1;
 						gameLights.fade('out');
@@ -121,6 +129,20 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 					});
 			});
 		});	
+	};
+
+
+	this.pause = function()
+	{
+		game.paused = true;
+		gameUI.updateAll();
+		gameUI.fade('out');		
+	};
+
+	this.unPause = function()
+	{
+		game.paused = false;
+		gameUI.fade('in');	
 	};
 
 }

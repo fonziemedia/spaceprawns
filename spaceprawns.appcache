@@ -1,16 +1,11 @@
 CACHE MANIFEST
-# 2015-09-10 ver 0.8.0
+# 2015-09-10 ver 0.9.0
 
 # Explicitly cached entries
 index.html
 _css/style.css
 _css/_src/game.css
 _css/_src/reset.css
-_css/_src/assets/fonts/icons.eot
-_css/_src/assets/fonts/icons.svg
-_css/_src/assets/fonts/icons.ttf
-_css/_src/assets/fonts/icons.woff
-_css/_src/assets/fonts/icons.woff2
 _api/jquery-2.1.4.min.js
 main.js
 main.min.js
@@ -27,8 +22,27 @@ NETWORK:
 # Additional resources to cache
 CACHE:
 #GFX
-favicon.ico
-favicon.png
+
+#CSS GFX
+_css/_src/assets/images/energyBar.png
+_css/_src/assets/images/energyBar_m.png
+_css/_src/assets/images/ePoint_blue.png
+_css/_src/assets/images/ePoint_yellow.png
+_css/_src/assets/images/ePoint_red.png
+_css/_src/assets/images/intro_bg.jpg
+_css/_src/assets/images/intro_bg_m.jpg
+_css/_src/assets/images/level1.jpg
+_css/_src/assets/images/level1_m.jpg
+_css/_src/assets/images/fighter.png
+_css/_src/assets/images/fighter_m.png
+_css/_src/assets/fonts/furore/furore.otf
+_css/_src/assets/fonts/icons/icons.eot
+_css/_src/assets/fonts/icons/icons.svg
+_css/_src/assets/fonts/icons/icons.ttf
+_css/_src/assets/fonts/icons/icons.woff
+_css/_src/assets/fonts/icons/icons.woff2
+
+#CANVAS GFX
 _img/_dist/explosion.png
 _img/_dist/enemies/sectoid.png
 _img/_dist/laser.png
@@ -44,13 +58,9 @@ _img/_dist/fighter/fighter_right3.png
 _img/_dist/fighter/fighter_right4.png
 _img/_dist/fighter/fighter_right5.png
 _img/_dist/missile.png
-_img/_dist/background/level1.jpg
-_img/_dist/background/intro_bg.jpg
 _img/_dist/enemies/_alienbase/alienbase1.png			
 _img/_dist/enemies/_alienbase/alienbase2.png
 _img/_dist/enemies/_miniboss/floater.png			
-_img/_dist/ui/energybar.png			
-_img/_dist/ui/energypoint.png			
 _img/_dist/enemies/_bigboss/sectoidBoss.png
 #SOUND
 _sounds/_sfx/hit.mp3

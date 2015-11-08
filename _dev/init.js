@@ -3,7 +3,6 @@
 // function startGame(){	// jshint ignore:line
 		
 
-		document.getElementById('textCanvas').style.cursor = 'wait';
 		
 		// /* Connect to XML */
 		$.ajax({
@@ -87,8 +86,9 @@
 
 		game.textFadingIn = false;
 		game.textFadingOut = false;
-		game.textFaded = true;	
-		
+		game.textFaded = true;
+
+		game.fullScreen = false;
 		
 		//========================== Audio ==========================
 		
@@ -132,7 +132,7 @@
 		// Obtaining Audio ON/OFF status from local storage		
 		
 		if ("localStorage" in window && window.localStorage !== null) //checking browser support for local storage
-		{				
+		{	
 			//NOTE: localStorage won't accept boolean values! so we need to 'convert' these
 			if (localStorage.prawnsSound === "true")
 			{
@@ -153,7 +153,7 @@
 			}
 		}
 		else
-		{	
+		{
 			game.sound = false;
 			game.music = false;
 		}
@@ -186,7 +186,6 @@
 		// game.contextBackground = document.getElementById("backgroundCanvas").getContext("2d"); //defining the 4 different canvas
 		game.contextEnemies = document.getElementById("enemiesCanvas").getContext("2d");
 		game.contextPlayer = document.getElementById("playerCanvas").getContext("2d");
-		game.contextText = document.getElementById("textCanvas").getContext("2d");
 
 		// m_canvas = document.createElement('canvas');
 

@@ -1,71 +1,91 @@
 function ui() {
 
-	this.width = game.width;
-	this.height = game.height*0.04;
-	this.enContainerWidth = game.width*0.3;
-	this.enContainerHeight = game.height*0.04;
-	this.enBarHeight = game.height*0.019;
-	this.enBarVol = game.width*0.2;	
-	this.hangarShipSize = game.height*0.03;
-	this.level = game.level;
-	this.hangarImg = 'fighter.png';
-	this.enPointImg = 'energypoint.png'; // jshint ignore:line
-	this.enContainerImg = 'energybar.png';// jshint ignore:line
-	this.scoreX = Math.round(this.width*0.1);
-	this.scoreY = Math.round(this.height*0.6);
-	this.energyX = Math.round(this.width*0.3);
-	this.energyY = Math.round(this.height*0.18);
+	var uiAll = $('#ui');
+
+	//avoiding jQuery inside the loop
+	var uiLevel = document.getElementById("uiLevel");
+	var uiScore = document.getElementById("uiScore");
+	var uiEBar = document.getElementById("uiEBar");
+	var uiHangar = document.getElementById("uiHangarList");	
+
+	var effectDuration = 800;	
 
 
-	this.updateLevel = function() {
-		this.level = game.level;
-		game.contextText.fillStyle = "#FFD455";
-		game.contextText.font = 15 + 'px helvetica';
-		game.contextText.clearRect(this.width*0.02, this.height*0.3, this.width*0.05, this.height*0.35); 
-		game.contextText.fillText("S" + this.level, this.width*0.02, this.height*0.6); //printing level
+	this.updateLevel = function() {			
+		uiLevel.innerHTML = 'STAGE ' + game.level;
 	};
 
 	this.updateScore = function() {
-		this.score = game.score;
-		game.contextText.fillStyle = "#FFD455";
-		game.contextText.font = 15 + 'px helvetica';
-		game.contextText.clearRect(this.scoreX, this.height*0.3, this.width*0.14, this.height*0.35);  
-		game.contextText.fillText("Score: " + this.score, this.scoreX, this.scoreY); //printing the score
+		uiScore.innerHTML = 'SCORE: ' + game.score;		
 	};
 
-	// this.updateSound = function() {	
-	// 	this.soundFx = game.sound ? "ON" : "OFF";
-	// 	// this.music = game.music;			
-
-	// 	if (!game.isMobile) {
-	// 		game.contextText.fillStyle = "#FFD455";
-	// 		game.contextText.font = 15 + 'px helvetica';
-	// 		game.contextText.clearRect(this.width*0.25, this.height*0.3, this.width*0.2, this.height*0.35); 
-	// 		game.contextText.fillText("Sound(F8): " + this.soundFx, this.width*0.25, this.height*0.6);
-	// 	}
-	// };
-
 	this.updateEnergy = function() {		
-		this.hull = playerShip.hull > 0 ? playerShip.hull*game.width*0.02 : 0;
-		game.contextText.clearRect(this.energyX, this.height*0.2, this.enBarVol, this.enBarHeight);	
-		game.contextText.drawImage(game.images[this.enPointImg], this.energyX, this.energyY, this.hull, this.enBarHeight);		
+		
+		shipEnergy = (playerShip.hull / playerShip.maxHull) * 100;
+		
+		if(shipEnergy < 0 ) {shipEnergy = 0;}
+
+		shipEnergyPC = shipEnergy + '%';
+		
+		if (shipEnergy >= 66)
+		{			
+			uiEBar.classList.remove('eBar-red');
+			uiEBar.classList.remove('eBar-yellow');
+			uiEBar.classList.add('eBar-blue');
+		}
+		else if (shipEnergy >= 33 && shipEnergy < 66  )
+		{
+			uiEBar.classList.remove('eBar-red');
+			uiEBar.classList.add('eBar-yellow');
+			uiEBar.classList.remove('eBar-blue');
+		}
+		else
+		{
+			uiEBar.classList.add('eBar-red');
+			uiEBar.classList.remove('eBar-yellow');
+			uiEBar.classList.remove('eBar-blue');
+		}
+
+		uiEBar.style.width = shipEnergyPC;
 	};
 
 	this.updateHangar = function() {
-		this.hangar = playerShip.lives;
-		game.contextText.clearRect(this.width*0.69, this.height*0.2, this.hangarShipSize*3, this.hangarShipSize);		
-		for (i = 0; i < this.hangar; i++){
-			//printing lives
-			game.contextText.drawImage(game.images[this.hangarImg], this.width*0.68 + (this.width * 0.05 * i) , this.height*0.2, this.hangarShipSize, this.hangarShipSize);
+		switch (playerShip.lives)
+			{
+				case 3:
+					uiHangar.getElementsByTagName("li")[0].style.display = 'inline-block';
+					uiHangar.getElementsByTagName("li")[1].style.display = 'inline-block';
+					uiHangar.getElementsByTagName("li")[2].style.display = 'inline-block';
+				break;
+				case 2:		
+					uiHangar.getElementsByTagName("li")[0].style.display = 'none';
+				break;
+				case 1:		
+					uiHangar.getElementsByTagName("li")[1].style.display = 'none';
+				break;
+				case 0:		
+					uiHangar.getElementsByTagName("li")[2].style.display = 'none';
+				break;				
+			}
+	};
+
+	this.fade = function(trigger)
+	{
+		switch (trigger)
+		{
+			case 'in':				
+				uiAll.fadeIn(effectDuration);
+			break;
+
+			case 'out':
+				uiAll.fadeOut(effectDuration);
+			break;
 		}
 	};
 
 	this.updateAll = function() {
-		game.contextText.clearRect(0, 0, this.width, this.height*1.5);
-		game.contextText.drawImage(game.images[this.enContainerImg], this.width*0.25, -this.height*0.1, this.enContainerWidth, this.enContainerHeight);
 		this.updateLevel();
 		this.updateScore();
-		// this.updateSound();
 		this.updateEnergy();
 		this.updateHangar();		
 	};

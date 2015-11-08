@@ -8,6 +8,7 @@ function player(hull, fireRate) {
 	
 	this.size = 100;
 	this.hull = hull;
+	this.maxHull = hull;
 	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
 	this.image = 'fighter.png';
 	this.audioFire1 = 'laser' + fileFormat;
@@ -20,7 +21,6 @@ function player(hull, fireRate) {
 	this.imuneTimer = 0;
 	this.dead = false;
 	this.deadTimer = 0;
-	this.bullets = [];
 	this.bulletTimer = 1;
 	this.bulletDivision = fireRate;
 	this.laserLevel = 1;
@@ -66,7 +66,7 @@ function player(hull, fireRate) {
 		if (mouseIsDown && !game.levelComplete && !game.paused && !game.gameOver) {
 
 			//removing cursor
-			if (!game.isMobile) {document.getElementById('textCanvas').style.cursor = 'none';}
+			if (!game.isMobile) {document.getElementById('gamearea').style.cursor = 'none';}
 
 
 			//defining the boundaries	
@@ -190,7 +190,7 @@ function player(hull, fireRate) {
 		else
 		{
 			this.image = 'fighter.png';	
-			document.getElementById('textCanvas').style.cursor = 'crosshair';
+			document.getElementById('gamearea').style.cursor = 'crosshair';
 		}
 
 		/////////////////////////
@@ -487,7 +487,6 @@ function player(hull, fireRate) {
 		this.hit = false;
 		this.hitTimer = 0;
 		this.friction = 0;
-		this.bullets = [];
 		this.laserLevel = 1;
 		this.missileLevel = 0;
 		this.lives = X_Lives;

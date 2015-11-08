@@ -2,6 +2,16 @@
     font-family: 'Lucida Console', Monaco, monospace;
 }*/
 
+@font-face {
+  font-family: 'Furore';
+  src: url("assets/fonts/furore/Furore.otf");
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-decoration: inherit;
+  text-transform: none;
+}
+
 html {
 	width: 100%;
 	height: 100%;
@@ -18,7 +28,15 @@ body {
 	margin: 0;
   padding: 0;
 	background-color: #000;
-  font-size: 62.5%;
+  font-family: 'Furore';
+  letter-spacing: 1px;
+  font-size: 62.5%;  
+  text-shadow: 2px 2px 2px black;
+}
+
+input, button {
+  font: inherit;    
+  text-shadow: 2px 2px 2px black;
 }
 
 .no-select { 
@@ -40,6 +58,18 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
+}
+
+/* -- Menu Background -- */
+#menuBackground {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 9000;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    opacity: 1;
+    display: none;
 }
 
 /* -- Touch input area -- */
@@ -94,7 +124,7 @@ canvas {
 }
 
 
-#backgroundCanvas {
+#levelBackground {
     position: absolute;
     height: 100%;
     width: 100%;
@@ -112,7 +142,9 @@ canvas {
     position: absolute;
     height: 5%;
     width: 100%;
+    margin-left: 2%;
     opacity: 1;
+    display: none;
     z-index: 9999;
 }
 
@@ -120,32 +152,127 @@ canvas {
   position: absolute;
   display: inline-block;
   height: 100%;
-  background-color: transparent;  
+  color: #FFC619;
+  background-color: transparent;
+  z-index: 9999;  
 }
 
-#uiLevel {
-  width: 8%;
-  right: 92%;
+#uiLevel {  
+  margin-top: 2%;
+  width: 15%;
+  right: 84%;
 }
 
-#uiScore {
-  width: 12%;
-  right: 78%;  
+#uiScore {  
+  margin-top: 2%;
+  width: 20%;
+  right: 62%;  
 }
 
 #uiEContainer {
   width: 30%;
-  right: 45%;  
+  top: -10%;
+  right: 32%;
+}
+
+#uiEBarContainer {
+  width: 100%;
+  height: 100%;
+  margin-top: 0%;
+  background-size: 100% 100%;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  z-index: 1; 
+}
+
+#uiEBarMask {
+  position: absolute;
+  height: 50%;
+  width: 68%;
+  top: 26%;
+  left: 16%;
+  background-color: transparent;
+  z-index: 0;
+}
+
+#uiEBarText {
+  position: absolute;
+  width: 100%;
+  color: #FFFFFF;
+  text-align: center;
+  opacity: 0.4;
+  z-index: 1;
 }
 
 #uiEBar {
-  width: 30%;
-  right: 45%;  
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background-size: auto 100%;
+  background-repeat: repeat-x;
+  z-index: 0;
+}
+
+.eBar-blue {
+  background-image: url('assets/images/ePoint_blue.png');
+}
+
+.eBar-yellow {
+  background-image: url('assets/images/ePoint_yellow.png');
+}
+
+.eBar-red {
+  background-image: url('assets/images/ePoint_red.png');
 }
 
 #uiHangar {
-  width: 20%;
-  right: 15%;  
+  height: 100%;
+  width: 15%;
+  right: 13%;
+  margin-top: 1.5%;
+}
+
+#uiHangar ul {
+  width: 100%;
+  height: 100%;
+}
+
+#uiHangar ul li {  
+  display: inline-block;
+  width: 25%;
+  height: 65%;
+  background-repeat: no-repeat;
+  background-position: 0;
+  background-size: 100%;
+}
+
+#uiBtnContainer {
+  margin-top: 1.5%;
+  width: 10%;
+  right: 2%;
+}
+
+/* UI MENU BUTTON */
+#toggle-menu-btn {
+  position: absolute;
+  display: block;
+  height: 100%;
+  width: 100%;
+  padding: 5%;
+  background-color: transparent;
+  z-index: 9999;
+}
+
+/*toggle-menu-btn icon*/
+#toggle-menu-btn > i {
+  display: inline;
+  float: left;
+  height: 100%;
+  width: 100%;
+  margin: 0%;
+  padding: 0%;
+  font-size: 150%;
+  color: #3187A3;
 }
 
 
@@ -155,6 +282,7 @@ canvas {
     height: 35%;
     width: 100%;
     top: 32%;
+    background-color: transparent;
     opacity: 1;
 }
 
@@ -162,13 +290,11 @@ canvas {
   position: relative;
   display: block;
   background-color: transparent;
-  font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
   color: #FFC619;
   /*margin: 0em 0em 0em 0em;*/
   padding: 30px 15px;
   /*margin: 0.2rem 0.2rem 0.2rem;*/
   text-transform: none;
-  text-shadow: none;
   font-weight: bold;
   /*line-height: 1em;*/
   font-style: normal;
@@ -178,42 +304,59 @@ canvas {
   z-index: 6; 
 }
 
-#h1 {
-  height: 28px;
-  font-size: 26px;
+#loadingBar {
+  position: absolute;
+  width: 100%;
+  height: 5%;
+  top: 45%;   
+  background-color: transparent;
+  opacity: 1;
+  display: none;
+  z-index: 9997;
 }
 
-#h2 {
-  height: 22px;
-  font-size: 20px;
+#loadingBarContainer {
+  position: absolute;
+  width: 60%;
+  height: 80%;
+  left: 20%;   
+  border: #FFFFFF 2px;
+  border-style: solid;
+  border-radius: 25px;
+  background-color: transparent;
+  z-index: 9996;
 }
 
-#h3 {
-  height: 18px;
-  font-size: 16px;  
-  color: #FFFFFF;
+#loadingBarMask {
+  position: absolute;
+  width: 60%;
+  height: 80%;
+  top: 6%;
+  left: 20.5%;
+  z-index: 1;
+}
+
+#loadingBarFiller {
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  border: transparent 2px;
+  border-radius: 28px;
+  background-color: #FFC619;
+  opacity: 1;
+  z-index: 0;
 }
 
 
-
-/*ADD BELOW LEVELS AS MEDIA QUERIES*/
+/* Seems that we only need to define these for the 1st level class and the div will keep these (see @media queries) */
 .level1 {
-  background-image: url('assets/images/level1_small.jpg');
   position: absolute;
   height: 100%;
   width: 100%;
-  background-size: cover;
+  background-size: 100% auto;
   background-color: transparent;
   background-origin: content-box;
   background-repeat: repeat-y;
-}
-.level2 {
-  background-image: url('assets/images/level1_small.jpg');
-  background-size: cover;
-}
-.level3 {
-  background-image: url('assets/images/level1_small.jpg');
-  background-size: cover;
 }
 
 
@@ -228,12 +371,9 @@ canvas {
   background: #e0e1e2 none;
   color: rgba(0, 0, 0, 0.6);
   font-size: 1rem;
-  font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
   margin: 0em 0em 0em 0em;
   padding: 0.78571429em 1.5em 0.78571429em;
   text-transform: none;
-  text-shadow: none;
-  font-weight: bold;
   line-height: 1em;
   font-style: normal;
   text-align: center;
@@ -250,31 +390,10 @@ canvas {
 }
 
 
-/* UI MENU BUTTON */
-#toggle-menu-btn {
-  position: absolute;
-  display: block;
-  height: 100%;
-  width: 10%;
-  right: 1%;
-  background-color: transparent;
-  z-index: 9999;
-}
-
-/*toggle-menu-btn icon*/
-#toggle-menu-btn > i {
-  position: absolute;
-  top: 20%;
-  left: 20%;
-  font-size: 150%;
-  color: #3187A3;
-}
-
-
 /* MENU OPTION BUTTONS */
 .menu-option-btn {
 	position: relative;
-	top: 50%;
+	top: 40%;
 	margin-bottom: 2%;
 	border: #FFFFFF 1px;
 	border-style: solid; 
@@ -313,10 +432,25 @@ canvas {
     width: 100%;
     transform-origin: 0 0;
     -webkit-transform-origin: 0 0;
-  }	
+  }
+
+  #menuBackground {
+    background-image: url('assets/images/intro_bg_m.jpg');
+  }
+
+  .level1 {
+    background-image: url('assets/images/level1_m.jpg');
+  }
+  .level2 {
+    background-image: url('assets/images/level1_m.jpg');
+  }
+  .level3 {
+    background-image: url('assets/images/level1_m.jpg');
+  }
 
 	.menu-option-btn {
 		width: 40%;
+    font-size: 12px;
 	}
 	
 	/*Note: the menu-option-btn pos% should be half of the buttons width*/
@@ -327,6 +461,45 @@ canvas {
 	.menu-option-btn[pos="right"] {
 		left: 80%;
 	}
+
+  #h1 {
+  height: 18px;
+  font-size: 20px;
+  }
+
+  #h2 {
+    height: 15px;
+    font-size: 14px;
+  }
+
+  #h3 {
+    height: 10px;
+    font-size: 10px;  
+    color: #FFFFFF;
+  }
+
+  .ui-item {
+    font-size: 8px;
+  }
+
+  #uiHangar ul li {
+    background-image: url('assets/images/fighter_m.png');
+  }
+
+  #uiEBarContainer {
+    background-image: url('assets/images/energyBar_m.png'); 
+  }
+
+  #uiEBarText { 
+    height: 94%;
+    padding-top: 6%;
+    font-size: 6px;
+  }
+
+  #toggle-menu-btn {
+    font-size: 14px;
+  }
+
 }
 
 @media (min-width: 992px) {
@@ -338,8 +511,23 @@ canvas {
 		left: 33.333%;
 	}
 
+  #menuBackground {
+    background-image: url('assets/images/intro_bg.jpg');
+  }
+
+  .level1 {
+    background-image: url('assets/images/level1.jpg');
+  }
+  .level2 {
+    background-image: url('assets/images/level1.jpg');
+  }
+  .level3 {
+    background-image: url('assets/images/level1.jpg');
+  }
+
 	.menu-option-btn {
 		width: 30%;
+    font-size: 14px;
 	}
 	
 	/*Note: the menu-option-btn pos% should be half of the buttons width*/
@@ -350,6 +538,45 @@ canvas {
 	.menu-option-btn[pos="right"] {
 		left: 85%;
 	}
+
+  #h1 {
+  height: 28px;
+  font-size: 26px;
+  }
+
+  #h2 {
+    height: 22px;
+    font-size: 20px;
+  }
+
+  #h3 {
+    height: 18px;
+    font-size: 16px;  
+    color: #FFFFFF;
+  }
+
+  .ui-item {
+    font-size: 11px;
+  }
+
+  #uiHangar ul li {
+    background-image: url('assets/images/fighter.png');
+  }
+
+  #uiEBarContainer {
+    background-image: url('assets/images/energyBar.png'); 
+  }
+
+  #uiEBarText {
+    height: 96%;
+    padding-top: 4%;
+    font-size: 12px;
+  }
+
+  #toggle-menu-btn {
+    font-size: 18px;
+  }
+
 }
 
 /*******************************
@@ -408,8 +635,8 @@ canvas {
 
 @font-face {
   font-family: 'Icons';
-  src: url("assets/fonts/icons.eot");
-  src: url("assets/fonts/icons.eot?#iefix") format('embedded-opentype'), url("assets/fonts/icons.woff2") format('woff2'), url("assets/fonts/icons.woff") format('woff'), url("assets/fonts/icons.ttf") format('truetype'), url("assets/fonts/icons.svg#icons") format('svg');
+  src: url("assets/fonts/icons/icons.eot");
+  src: url("assets/fonts/icons/icons.eot?#iefix") format('embedded-opentype'), url("assets/fonts/icons/icons.woff2") format('woff2'), url("assets/fonts/icons/icons.woff") format('woff'), url("assets/fonts/icons/icons.ttf") format('truetype'), url("assets/fonts/icons/icons.svg#icons") format('svg');
   font-style: normal;
   font-weight: normal;
   font-variant: normal;

@@ -21,31 +21,51 @@
 	<body>
 		<section id="container">
 			<div id="gamearea" class="gpu no-select">
+				<!-- MAIN MENU BACKGROUND -->
+				<div id="menuBackground"></div>
 				<!-- INPUT AREA -->
 				<div id="inputarea"></div>
 
 				<!-- CANVAS -->
-				<div id="backgroundCanvas" class="gpu"></div> <!-- REMOVE THIS LATER -->
+				<div id="levelBackground" class="gpu"></div> <!-- REMOVE THIS LATER -->
 				<!-- <canvas id = "backgroundCanvas" moz-opaque>Sorry, your browser doesn't support canvas technology.</canvas> -->
 				<canvas id="enemiesCanvas" class="gpu"></canvas>
-				<canvas id="playerCanvas" class="gpu"></canvas> 
-				<canvas id="textCanvas" class="gpu"></canvas>
+				<canvas id="playerCanvas" class="gpu"></canvas>
 				
 				<!-- UI -->
 				<div id="ui" class="gpu">
 					<div id="uiLevel" class="ui-item no-select"></div>
 					<div id="uiScore" class="ui-item gpu no-select"></div>
-					<div id="uiEContainer" class="ui-item no-select"></div>
-					<div id="uiEBar" class="ui-item gpu no-select"></div>
-					<div id="uiHangar" class="ui-item no-select"></div>
-					<button id="toggle-menu-btn" class="btn icon hvr-pulse ui-item" onclick="gameMenu.toggle()"><i class="icon options"></i></button>				
+					<div id="uiEContainer" class="ui-item no-select">
+						<div id="uiEBarContainer" class="ui-item no-select"></div>
+						<div id="uiEBarMask" class="ui-item no-select">
+							<div id="uiEBarText" class="ui-item gpu no-select">S H I E L D S</div>
+							<div id="uiEBar" class="ui-item gpu no-select eBar-blue"></div>
+						</div>						
+					</div>					
+					<div id="uiHangar" class="ui-item no-select">
+						<ul id="uiHangarList">
+							<li></li>
+							<li></li>
+							<li></li>
+						</ul>
+					</div>
+					<div id="uiBtnContainer" class="ui-item no-select">
+						<button id="toggle-menu-btn" class="btn icon hvr-pulse ui-item" onclick="gameMenu.toggle()"><i class="icon options"></i></button>		
+					</div>						
 				</div>
 
 				<!-- TEXT MESSAGES -->
 				<div id ="textContainer">
 					<div id="h1" class="all-text gpu no-select"></div>
 					<div id="h2" class="all-text gpu no-select"></div>
-					<div id="h3" class="all-text gpu no-select"></div>
+					<div id="h3" class="all-text gpu no-select"></div>					
+				</div>
+				<div id="loadingBar" class="gpu no-select">
+					<div id="loadingBarContainer" class="no-select"></div>
+					<div id="loadingBarMask" class="no-select">
+						<div id="loadingBarFiller" class="gpu no-select"></div>
+					</div>					
 				</div>
 				
 				<!-- STAGE CURTAIN -->
@@ -59,9 +79,12 @@
 
 				<!-- MENU BUTTONS -->
 				<!-- <div class="btn"> -->
+				<button type="button" id="resumeGame" class="btn menu-option-btn hvr-pulse gpu no-select" pos="left" onclick="gameMenu.toggle()">Resume</button>
 				<button type="button" id="startGame" class="btn menu-option-btn hvr-pulse gpu no-select" pos="right" onclick="gameState.start()">Start</button>
 				<button type="button" id="toggleSound" class="btn menu-option-btn toggle hvr-pulse gpu no-select" pos="left" onclick="gameMenu.toggleSound()">Sound: OFF</button>
-				<button type="button" id="toggleMusic" class="btn menu-option-btn toggle hvr-pulse gpu no-select" pos="right" onclick="gameMenu.toggleMusic()">Music: OFF</button>				
+				<button type="button" id="toggleMusic" class="btn menu-option-btn toggle hvr-pulse gpu no-select" pos="right" onclick="gameMenu.toggleMusic()">Music: OFF</button>
+				<button type="button" id="toggleFullScreen" class="btn menu-option-btn hvr-pulse gpu no-select" pos="left" onclick="gameMenu.toggleFullScreen()">Fullscreen: OFF</button>
+				<button type="button" id="credits" class="btn menu-option-btn hvr-pulse gpu no-select" pos="right" onclick="">Credits</button>				
 
 				<!-- having multiple canvas helps us optimise resources by separating elements of our game and avoiding unnecessary rendering -->
 				<!-- </div> -->

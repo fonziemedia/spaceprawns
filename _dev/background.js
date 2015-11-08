@@ -1,22 +1,12 @@
 function background() {
-
-	this.element = $('#backgroundCanvas');
-	this.width = this.element.css("width");
-	this.height = this.element.css("height");
-	this.speed = Math.round(180*dt);
-	// this.section = section;
-	// this.width = game.width;
-	// this.height = Math.round((game.width * (16 / 9)) * 4);
+	//no jquery here for increased fps
+	this.element = document.getElementById("levelBackground");
 	this.y = 0;
-	// this.y = (this.section === 0) ? -Math.round(this.height-game.height) : -(this.height);
-	// this.image = 'level' + game.level + '.jpg'; //needs to be consecutive for this to work
-	// this.limits = -game.height*0.02; // *0.02 because of speed and to disguise my bad image manipulation skills
 
 	this.update = function() {
 
 		this.y += 2;
-		this.element.css('background-position', '0 ' + this.y + 'px');
-
+		this.element.style.backgroundPosition = '0 ' + this.y + 'px';
 
 		//testing using an off-screen canvas
 		// game.contextBackground.drawImage(m_canvas, this.x, this.y, this.width, this.height);
@@ -26,10 +16,11 @@ function background() {
 	this.load = function() {
 
 		for (var i = 1; i <= 3; i++) {
-			this.element.removeClass('level' + i);
+			this.element.classList.remove('level' + i);
 		}
 		
-		this.element.addClass('level' + game.level);	
+		this.element.classList.add('level' + game.level);
+
 	};
 }
 

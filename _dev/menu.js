@@ -1,15 +1,92 @@
 function menu()
 {
 
+	var menuBg = $('#menuBackground');
+	var resumeBtn = $('#resumeGame');
 	var startBtn = $('#startGame');
 	var soundFx = $('#toggleSound');
-	var music = $('#toggleMusic');
+	var music = $('#toggleMusic');	
+	var fullScreen = $('#toggleFullScreen');
+	var credits = $('#credits');
 	var allButtons = $('.menu-option-btn');
 	var animationSpeed = 800;
 
 	this.toggled = false;
 
 	// this.widthProp = $(gameArea).height() * (9/16);
+
+	
+	document.addEventListener("fullscreenchange", FShandler);
+	document.addEventListener("webkitfullscreenchange", FShandler);
+	document.addEventListener("mozfullscreenchange", FShandler);
+	document.addEventListener("MSFullscreenChange", FShandler);
+
+	function FShandler()
+	{
+		console.log('screen change!');
+
+		game.fullScreen = game.fullScreen ? false : true;
+
+	    if (game.fullScreen)
+	    {
+			fullScreen.addClass('active');
+			fullScreen.text('fullscreen: ON');
+
+	        console.log('fullscreen!');
+	    }
+	    else
+	    {
+			fullScreen.removeClass('active');
+			fullScreen.text('Fullscreen: OFF');
+
+			console.log('not fullscreen!');
+	    }
+	}
+
+
+
+	this.toggleFullScreen = function(trigger)  //experimental   only works with user input
+	{
+		if (!document.fullscreenElement &&    // alternative standard method
+		!document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement)   // current working methods
+		{
+			if (document.documentElement.requestFullscreen)
+			{
+			document.documentElement.requestFullscreen();
+			}
+			else if (document.documentElement.msRequestFullscreen)
+			{
+			document.documentElement.msRequestFullscreen();
+			}
+			else if (document.documentElement.mozRequestFullScreen)
+			{
+			document.documentElement.mozRequestFullScreen();
+			}
+			else if (document.documentElement.webkitRequestFullscreen)
+			{
+			document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+			}
+		}
+		else
+		{
+			if (document.exitFullscreen)
+			{
+			  document.exitFullscreen();
+			}
+			else if (document.msExitFullscreen)
+			{
+			  document.msExitFullscreen();
+			}
+			else if (document.mozCancelFullScreen)
+			{
+			  document.mozCancelFullScreen();
+			}
+			else if (document.webkitExitFullscreen)
+			{
+			  document.webkitExitFullscreen();
+			}
+		}
+	};
 
 
 	this.toggleSound = function()
@@ -80,37 +157,59 @@ function menu()
 		// IMPROVE THIS WITH LEFT RIGHT BTN CLASSES
 		if (this.toggled)
 		{
-			game.paused = true;
-
-
-			if(game.started && startBtn.text !== 'Restart')
-			{
-				startBtn.text('Restart');
-			}
-			else
-			{
-				startBtn.text('Start');
-			}
+			gameState.pause();
 
 			allButtons.css({"display": "block"});
 
-			startBtn.animate({
-				opacity: 1,
-				"left": "-=50%",
-			},800);
-			soundFx.animate({
-				opacity: 1,
-				"right": "-=50%",
-			},800);
-			music.animate({
-				opacity: 1,
-				"left": "-=50%",
-			},800);
+			menuBg.fadeIn(animationSpeed);
+			menuBg.promise().done(function()
+			{
+				if(game.started)
+				{
+					if(startBtn.text !== 'Restart')
+					{
+						startBtn.text('Restart');
+					}
+					resumeBtn.animate({
+						opacity: 1,
+						"right": "-=50%",
+					},800);
+				}	
+				else
+				{
+				startBtn.text('Start');
+				}			
+				startBtn.animate({
+					opacity: 1,
+					"left": "-=50%",
+				},800);
+				soundFx.animate({
+					opacity: 1,
+					"right": "-=50%",
+				},800);
+				music.animate({
+					opacity: 1,
+					"left": "-=50%",
+				},800);
+				fullScreen.animate({
+					opacity: 1,
+					"right": "-=50%",
+				},800);
+				credits.animate({
+					opacity: 1,
+					"left": "-=50%",
+				},800);
+			});
 		}
 		else
 		{
-			game.paused = false;
-
+			if(game.started)
+			{
+				resumeBtn.animate({
+					opacity: 0,
+					"right": "+=50%",
+				},800);
+			}
 			startBtn.animate({
 				opacity: 0,
 				"left": "+=50%",
@@ -123,13 +222,31 @@ function menu()
 				opacity: 0,
 				"left": "+=50%",
 			},800);
+			fullScreen.animate({
+				opacity: 0,
+				"right": "+=50%",
+			},800);
+			credits.animate({
+				opacity: 0,
+				"left": "+=50%",
+			},800);
+
+
+			allButtons.promise().done(function()
+			{
+				menuBg.fadeOut(animationSpeed);
+				menuBg.promise().done(function()
+				{
+					if(game.loaded && !game.faded){gameState.unPause();}
+				});				
+			});
 		}
 
 		// startBtn.css({"left": ($(gameArea).width()-widthProp)*0.55});		
 	};
 
 	this.init = function()
-	{		
+	{
 		if (localStorage.prawnsSound === 'true') //note = localStorage will only process string values
 		{
 			soundFx.addClass('active');
@@ -150,6 +267,17 @@ function menu()
 		{			
 			music.removeClass('active');
 			music.text('Music: OFF');
+		}
+
+		if (localStorage.fullScreen === 'true') //note = localStorage will only process string values
+		{
+			fullScreen.addClass('active');
+			fullScreen.text('Fullscreen: ON');
+		}
+		else
+		{			
+			fullScreen.removeClass('active');
+			fullScreen.text('Fullscreen: OFF');
 		}
 
 		gameMenu.toggle();
