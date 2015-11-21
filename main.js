@@ -522,68 +522,44 @@ var particle = function(x, y, speed, direction, grav) {
 		//====================== Canvases + Images + responsiveness  ============================
 		
 		// game.contextBackground = document.getElementById("backgroundCanvas").getContext("2d"); //defining the 4 different canvas
-		game.contextEnemies = document.getElementById("enemiesCanvas").getContext("2d");
-		game.contextPlayer = document.getElementById("playerCanvas").getContext("2d");
-
+		game.canvas1 = document.getElementById("enemiesCanvas");
+		game.canvas2 = document.getElementById("playerCanvas");	
+		game.contextEnemies = game.canvas1.getContext("2d");
+		game.contextPlayer = game.canvas2.getContext("2d");
 		// m_canvas = document.createElement('canvas');
 
 		
-
-		//SETTING CANVASES ATTRIBUTES
-		//Note: the canvas dimensions need to be set here using attributes due to the nature of the canvas element: it works like an image and using css to set this will stretch it
-
-		//get the gameArea and the canvases 
-		var gameArea = $('#gamearea');
-		var allCanvas = $('canvas');
-		var pixelRatio = window.devicePixelRatio; // This is our game size delta to keep the size of our game + objects proportional to the display
-		var windowWidth = $(window).width();
-		var windowHeight = $(window).height();
-
-		var gameAreaH = windowHeight * pixelRatio; // !! On Android, window.outerWidth and window.outerHeight are more reliable
-
-		if (game.isMobile)
+		var pixelRatio = window.devicePixelRatio > 1.5 ? 2 : 1; // This is our game size delta to keep the size of our game + objects proportional to the display
+		
+		function setGameDimensions()
 		{
-		var gameAreaW = windowWidth * pixelRatio;
+			//SETTING CANVASES ATTRIBUTES
+			//Note: the canvas dimensions need to be set here using attributes due to the nature of the canvas element: it works like an image and using css to set this will stretch it
+
+			//get the gameArea and the canvases 
+			var gameArea = $('#gamearea');
+			var allCanvas = $('canvas');
+			var windowWidth = window.innerWidth;
+			var windowHeight = window.innerHeight;
+
+			if (!game.isMobile)
+			{
+				windowWidth = parseInt(gameArea.css("width"))*pixelRatio;  //using parseInt here to remove 'px'
+			}
+
+			allCanvas.attr('width', windowWidth*pixelRatio);
+			allCanvas.attr('height', windowHeight*pixelRatio);
+
+			game.contextEnemies.scale(pixelRatio,pixelRatio);
+			game.contextPlayer.scale(pixelRatio,pixelRatio);
+
+			//SETTING GAME DIMENSIONS
+			game.width = windowWidth;			
+			game.height = windowHeight;
+
 		}
-		else
-		{
-			gameAreaW = parseInt(gameArea.css("width")) * pixelRatio;  //using parseInt here to remove 'px'
-		}
 
-		allCanvas.attr('height', gameAreaH); //max height
-		allCanvas.attr('width', gameAreaW); //max height
-
-		//SETTING GAME DIMENSIONS
-		game.height = gameAreaH;
-		game.width = gameAreaW;
-
-		// console.log(pixelRatio);
-		// console.log(gameAreaW);
-		// console.log(gameAreaH);
-
-		
-		//delta size will keep the size of our game objects proportional to the display - NOT REQUIRED, see pixelRatio above
-		// var dtSize = game.height*0.001;
-		// console.log (dtSize);
-
-		
-		//// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! /////
-		//making our canvases dynamically resize according to the size of the browser window	//! USE THIS TO SHOW ROTATE SCREEN MSG IF MOBILE AND GAME.WIDTH > GAME HEIGHT
-		// function respondCanvas()
-		// { 
-			
-		// 	// gameArea.attr('height', $(gameContainer).height()); //max height
-
-		
-
-
-		// }
-
-		// //Initial call 
-		// respondCanvas();
-
-		// //Run function whenever browser resizes
-		// $(window).resize(respondCanvas);
+		setGameDimensions();		
 
 	// jshint ignore:line
 function sprite(image, imageSize, frameWidth, frameHeight, startFrame, endFrame, frameSpeed, ctx) {	
@@ -632,12 +608,23 @@ function sprite(image, imageSize, frameWidth, frameHeight, startFrame, endFrame,
 function background() {
 	//no jquery here for increased fps
 	this.element = document.getElementById("levelBackground");
-	this.y = 0;
+	this.elementStyle = window.getComputedStyle(this.element);
+    this.elementTop = -parseInt(this.elementStyle.getPropertyValue("top"));
+	this.elementYpos = 1;
+	this.speed = 4;
 
 	this.update = function() {
 
-		this.y += 2;
-		this.element.style.backgroundPosition = '0 ' + this.y + 'px';
+		if(this.elementYpos <= this.elementTop)
+		{
+			this.elementYpos += this.speed;
+			this.element.style.transform = 'translate3d(0,' + this.elementYpos + 'px, 0)';
+			// this.element.style.webkitTransform = 'translate3d(0,' + this.elementYpos + 'px, 0) rotate(0.0000001deg)';
+		}
+		else
+		{
+			this.elementYpos = 1;
+		}  
 
 		//testing using an off-screen canvas
 		// game.contextBackground.drawImage(m_canvas, this.x, this.y, this.width, this.height);
@@ -652,6 +639,7 @@ function background() {
 		
 		this.element.classList.add('level' + game.level);
 
+		this.elementTop = -parseInt(this.elementStyle.getPropertyValue("top"));
 	};
 }
 
@@ -754,7 +742,7 @@ function player(hull, fireRate) {
 	this.speed = 0;
 	this.maxSpeed = 400;
 	
-	this.size = 100;
+	this.size = Math.round(100/pixelRatio);
 	this.hull = hull;
 	this.maxHull = hull;
 	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
@@ -777,10 +765,10 @@ function player(hull, fireRate) {
 	this.ctx = game.contextPlayer;
 	this.speedX = 0;
 	this.speedY = 0;
-	this.limitX1 = -this.size*0.5;
-	this.limitX2 = game.width - this.size*0.5;
-	this.limitY1 = -this.size*0.5;
-	this.limitY2 = game.height - this.size*0.5;
+	this.limitX1 = Math.round(-this.size*0.5);
+	this.limitX2 = Math.round(game.width - this.size*0.5);
+	this.limitY1 = Math.round(-this.size*0.5);
+	this.limitY2 = Math.round(game.height - this.size*0.5);
 	this.movement = Math.round(game.height*0.007);
 
 	this.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;
@@ -804,8 +792,8 @@ function player(hull, fireRate) {
 		// this.y += this.vy;
 		this.speed = 0; // !! check if you can optimise this !!
 		this.playerImage = game.images[this.image]; // !! check if you can optimise this !!
-		this.speedX = Math.round((touchInitX - inputAreaX)*0.1);
-		this.speedY = Math.round((touchInitY - inputAreaY)*0.1);		
+		this.speedX = Math.round(((touchInitX - inputAreaX)*0.1)/pixelRatio);
+		this.speedY = Math.round(((touchInitY - inputAreaY)*0.1)/pixelRatio);		
 		
 		//////////////////////////////
 		//	Mouse and Touch controls
@@ -1250,7 +1238,7 @@ playerShip = new player(10, 15);
 function playerBullet(x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame) {
 	particle.call(this, x, y, speed, direction);
 	
-	this.size = bulletSize;
+	this.size = Math.round(bulletSize/pixelRatio);
 	this.spriteX = -Math.round(this.size*0.5);
 	this.spriteY = -Math.round(this.size*0.5);
 	this.power = power;
@@ -1265,8 +1253,8 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 	this.update = function(){ // Replacing the default 'update' method		
 		//setting this to make friction work with deltaTime (dt), check particle.js
 		if (dt !== 0 && !this.dtSet){
-			this.vx = Math.cos(direction) * (speed*dt);
-			this.vy = Math.sin(direction) * (speed*dt);
+			this.vx = Math.cos(direction) * ((speed/pixelRatio)*dt);
+			this.vy = Math.sin(direction) * ((speed/pixelRatio)*dt);
 			this.dtSet = true;
 		}
 		this.vx *= this.friction;
@@ -1307,13 +1295,13 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.type = type;
 	switch (this.type){
 		case 'pawn':
-				this.size = 65;
+				this.size = Math.round(65/pixelRatio);
 			break;
 		case 'miniboss':
-				this.size = 120;	
+				this.size = Math.round(120/pixelRatio);	
 			break;
 		case 'base':
-				this.size = 170;
+				this.size = Math.round(170/pixelRatio);
 				this.rotation = 0;	
 			break;
 	}
@@ -1330,7 +1318,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
 	this.ctx = game.contextEnemies;
 	this.inCanvas = false;
-	this.speed = speed;
+	this.speed = speed/pixelRatio;
 	this.direction = direction;
 	this.collided = false;
 
@@ -1487,7 +1475,7 @@ function boss(x, y, speed, direction, hull, image) {
 
 	this.hull = hull;
 	this.image = game.images[image];
-	this.size = 200;
+	this.size = Math.round(200/pixelRatio);
 	this.hit = false;
 	this.audioHit1 = 'hit' + fileFormat;
 	this.audioHit2 = 'hit2' + fileFormat;
@@ -1508,8 +1496,8 @@ function boss(x, y, speed, direction, hull, image) {
 
 	this.update = function() {
 		this.bulletDirection = this.angleTo(playerShip);
-		this.vx = Math.cos(direction) * (speed*dt);
-		this.vy = Math.sin(direction) * (speed*dt);		
+		this.vx = Math.cos(direction) * ((speed/pixelRatio)*dt);
+		this.vy = Math.sin(direction) * ((speed/pixelRatio)*dt);		
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;
@@ -1634,7 +1622,7 @@ boss.prototype.constructor = boss; // Set the "constructor" property to refer to
 function enemyBullet(x, y, speed, direction, power, image) {
 	particle.call(this, x, y, speed, direction);
 	
-	this.size = 30;
+	this.size = Math.round(30/pixelRatio);
 	this.spriteX = -Math.round(this.size*0.5);
 	this.spriteY = -Math.round(this.size*0.5);
 	this.power = power;
@@ -1650,8 +1638,8 @@ function enemyBullet(x, y, speed, direction, power, image) {
 	{ 	
 		// Replacing the default 'update' method
 		if (dt !== 0 && !this.dtSet){
-			this.vx = Math.cos(direction) * (speed*dt);
-			this.vy = Math.sin(direction) * (speed*dt);
+			this.vx = Math.cos(direction) * ((speed/pixelRatio)*dt);
+			this.vy = Math.sin(direction) * ((speed/pixelRatio)*dt);
 			this.dtSet = true;
 		}		
 		this.vx *= this.friction;
@@ -1691,9 +1679,9 @@ enemyBullet.prototype.constructor = enemyBullet; // Set the "constructor" proper
 function loot(x, y) {
 	particle.call(this, x, y);
 
-	this.speed = 250;
+	this.speed = Math.round(250/pixelRatio);
 	this.direction = Math.PI/2;
-	this.size = 45;
+	this.size = Math.round(45/pixelRatio);
 	this.dead = false;
 	this.drops = ['health', 'laser', 'missile'];
 	var key = Math.floor(Math.random() * this.drops.length);
@@ -2281,9 +2269,6 @@ function menu()
 	var animationSpeed = 800;
 
 	this.toggled = false;
-
-	// this.widthProp = $(gameArea).height() * (9/16);
-
 	
 	document.addEventListener("fullscreenchange", FShandler);
 	document.addEventListener("webkitfullscreenchange", FShandler);
@@ -2292,27 +2277,19 @@ function menu()
 
 	function FShandler()
 	{
-		console.log('screen change!');
-
 		game.fullScreen = game.fullScreen ? false : true;
 
 	    if (game.fullScreen)
 	    {
 			fullScreen.addClass('active');
-			fullScreen.text('fullscreen: ON');
-
-	        console.log('fullscreen!');
+			fullScreen.text('Fullscreen: ON');
 	    }
 	    else
 	    {
 			fullScreen.removeClass('active');
 			fullScreen.text('Fullscreen: OFF');
-
-			console.log('not fullscreen!');
 	    }
 	}
-
-
 
 	this.toggleFullScreen = function(trigger)  //experimental   only works with user input
 	{
@@ -2571,24 +2548,25 @@ gameMenu = new menu();
 	    		dtArray.push(timeDiff); // seconds since last frame
 	    		timeThen = timeNow;
 	    		dtTimer++;
-    		}
 
-    		if(dtTimer == 100){
-    			var dtSum = 0;
-    			for( var i = 0; i < dtArray.length-10; i++) {
-					dtSum += dtArray[i+10]; //+10 skips first values which might be deviant
-					// console.log (dtSum);
-				}
-					dt = Math.round(dtSum / dtArray.length)/1000;					
-    		}
-	
+	    		if(dtTimer == 100)
+	    		{
+    				var dtSum = 0;
+	    			for( var i = 0; i < dtArray.length-10; i++)
+	    			{
+						dtSum += dtArray[i+10]; //+10 skips first values which might be deviant
+						// console.log (dtSum);
+					}
+
+					dt = Math.round(dtSum / dtArray.length)/1000;				
+    			}
+    		}	
 
     		//game time
     		//! CHECK OUT 'timeupdate' js event !
 			game.timer++;
 			game.seconds = game.timer/60 || 0;
 			// console.log(game.seconds);
-
 
 
 			playerShip.load();
@@ -2602,15 +2580,17 @@ gameMenu = new menu();
 
 			gameBackground.update();
 
-
 			/////////////////////////////////////////////////////////////////////////////////
 			// LEVELS
 			////////////////////////////////////////////////////////////////////////////////
+			/* jshint ignore:start */
+			if(game.seconds == Math.round(game.seconds) && typeof window['level'+game.level]['second'+game.seconds] != "undefined")
+			{
+				window['level'+game.level]['second'+game.seconds]();
+			}
 
-			if (game.level == 1) { lvl1(); }
-			else if (game.level == 2) { lvl1(); }
-			else if (game.level == 3) { lvl3(); }
-
+			window['level'+game.level].update();
+			/* jshint ignore:end */
 
 			//level finished
 			if (game.bossDead && game.levelUpTimer <= 100) 
@@ -2947,137 +2927,194 @@ gameMenu = new menu();
 			// console.log(parseInt(gameArea.css("width")));
 										
 		}	
-function lvl1() {
+var level1 = {};
 
 			// enemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
 			// enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate)
 
-			if (game.seconds == 1) {
-			    game.waves.push(new enemyWave('left', game.width*0.3, 'sectoid.png', 'pawn', 1, 300, 1, 0));
-			}
-			if (game.seconds == 1) {
+			level1.second1 = function () {
+				game.waves.push(new enemyWave('left', game.width*0.3, 'sectoid.png', 'pawn', 1, 300, 1, 0));
 			    game.waves.push(new enemyWave('right', game.width*0.3, 'sectoid.png', 'pawn', 1, 250, 1, 0));
-			}
-			if (game.seconds == 3) {
-			    game.waves.push(new enemyWave('left', game.height*0.5, 'sectoid.png', 'pawn', 1, 250, 1, 0));		
-			}
-			if (game.seconds == 3) {
+			};
+
+			level1.second3 = function () {
+			    game.waves.push(new enemyWave('left', game.height*0.5, 'sectoid.png', 'pawn', 1, 250, 1, 0));
 			    game.waves.push(new enemyWave('right', game.height*0.5, 'sectoid.png', 'pawn', 1, 300, 1, 0));		
-			}
+			};
 
-			if (game.seconds == 5) {
+			level1.second5 = function () {
 			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));		
-			}
-			if (game.seconds == 7) {
+			};
+
+			level1.second7 = function () {
 			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 'alienbase1.png', 1));
-			}
-			if (game.seconds == 8) {
+			};
+
+			level1.second8 = function () {
 			    game.waves.push(new enemyWave('left', game.height*0.3, 'sectoid.png', 'pawn', 4, 250, 1, 2));
-			}
-			if (game.seconds == 9) {
+			};
+
+			level1.second9 = function () {
 			    game.waves.push(new enemyWave('right', game.height*0.2, 'sectoid.png', 'pawn', 3, 300, 1, 2));
-			}			
-			if (game.seconds == 10) {
+			};
+
+			level1.second10 = function () {
 			    game.waves.push(new enemyWave('top', game.width*0.5, 'sectoid.png', 'pawn', 6, 300, 1, 2));
-			}
-			if (game.seconds == 11) {
+			};
+
+			level1.second11 = function () {
 			    game.waves.push(new enemyWave('top', game.width*0.7, 'sectoid.png', 'pawn', 4, 300, 1, 2));
-			}
-			if (game.seconds == 12) {
+			};
+
+			level1.second12 = function () {
 			    game.waves.push(new enemyWave('left', game.height*0.2, 'sectoid.png', 'pawn', 3, 300, 1, 2));
-			}
-			if (game.seconds == 13) {				
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 'alienbase2.png', 1));				
-			}
-			if (game.seconds > 13 && game.tracks.length < 2 && game.enemies.length > 0 && !game.bossDead) //NEEDS WORK
-			{
-				if(game.music){
-					game.tracks.push(game.soundTracks['tune2' + fileFormat]);				
-					game.tracks[1].play();
-					game.tracks[1].loop = true;
-				}
-			}
-			if (game.seconds == 15) {
+			};
+
+			level1.second13 = function () {				
+			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 'alienbase2.png', 1));			
+			};			
+			
+			level1.second15 = function () {
 			    game.waves.push(new enemyWave('top', game.width*0.2, 'sectoid.png', 'pawn', 2, 300, 1, 2));
-			}
-			if (game.seconds == 16) {
+			};
+
+			level1.second16 = function () {
 			    game.waves.push(new enemyWave('top', game.width*0.4, 'sectoid.png', 'pawn', 3, 300, 1, 2));
-			}
-			if (game.seconds == 17) {
+			};
+
+			level1.second17 = function () {
 			    game.waves.push(new enemyWave('top', game.width*0.6, 'sectoid.png', 'pawn', 4, 300, 1, 2));
-			}
-			if (game.seconds == 18) {
+			};
+
+			level1.second18 = function () {
 			    game.waves.push(new enemyWave('top', game.width*0.8, 'sectoid.png', 'pawn', 5, 300, 1, 2));
-			}
-			if (game.seconds == 22) {
+			};
+
+			level1.second22 = function () {
 			    game.waves.push(new enemyWave('top', game.width*0.3, 'sectoid.png', 'pawn', 4, 300, 1, 2));
-			}
-			if (game.seconds == 25) {
+			};
+
+			level1.second25 = function () {
 			    game.waves.push(new enemyWave('left', game.width*0.4, 'sectoid.png', 'pawn', 4, 300, 1, 2));
-			}
-			if (game.seconds == 27) {
+			};
+
+			level1.second27 = function () {
 			    game.waves.push(new enemyWave('right', game.width*0.3, 'sectoid.png', 'pawn', 4, 300, 1, 2));
-			}
-			if (game.seconds == 30) {
+			};
+
+			level1.second30 = function () {
 			    game.waves.push(new enemyWave('top', game.width*0.3, 'sectoid.png', 'pawn', 4, 300, 1, 2));
-			}
-			if (game.seconds == 33) {
+			};
+
+			level1.second33 = function () {
 			    game.waves.push(new enemyWave('top', game.width*0.6, 'sectoid.png', 'pawn', 4, 300, 1, 2));
-			}
-			if (game.seconds == 35) {
+			};
+
+			level1.second35 = function () {
 			    game.waves.push(new enemyWave('right', game.width*0.2, 'sectoid.png', 'pawn', 4, 300, 1, 2));
-			}
-			if (game.seconds == 37) {
+			};
+
+			level1.second37 = function () {
 			    game.enemies.push(new enemy(game.width * 0.2, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
-			}
-			if (game.seconds == 38) {
+			};
+
+			level1.second38 = function () {
 			    game.enemies.push(new enemy(game.width * 0.4, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
-			}
-			if (game.seconds == 39) {
+			};
+
+			level1.second39 = function () {
 			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
-			}
-			if (game.seconds == 40) {
+			};
+
+			level1.second40 = function () {
 			    game.enemies.push(new enemy(game.width * 0.8, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
-			}
-			if (game.seconds == 41) {
+			};
+
+			level1.second41 = function () {
 			    game.enemies.push(new enemy(game.width * 0.5, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
-			}			
-			if (game.seconds == 42) {
+			};
+
+			level1.second42 = function () {
 			    game.enemies.push(new enemy(game.width * 0.2, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
-			}
-			if (game.seconds == 43) {
+			};
+
+			level1.second43 = function () {
 			    game.enemies.push(new enemy(game.width * 0.4, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
-			}
-			if (game.seconds == 44) {
+			};
+
+			level1.second44 = function () {
 			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
-			}
-			if (game.seconds == 45) {
+			};
+
+			level1.second45 = function () {
 			    game.enemies.push(new enemy(game.width * 0.8, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
-			}
-			if (game.seconds > 50 && game.enemies.length === 0 && !game.bossDead) {
-				if (game.music) {
-					game.tracks.push(game.soundTracks['boss' + fileFormat]);
-					game.tracks[2].play();
-					game.tracks[2].loop = true;
-				}
-			    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 50, 'sectoidBoss.png'));
-			}
+			};
 
-			if (game.seconds > 55 && game.enemies.length === 0 && game.bossDead && game.tracks.length == 3) {
-				game.tracks[0].pause();
-				game.tracks[1].pause();
-				game.tracks[2].pause();
-				game.tracks=[];
-				if (game.music && game.tracks.length === 0)
-					{
-						game.tracks.push(game.soundTracks['victory' + fileFormat]);
+			level1.update = function () {
+				if (game.seconds > 13 && game.tracks.length < 2 && game.enemies.length > 0 && !game.bossDead) //NEEDS WORK
+				{
+					if(game.music){
+						game.tracks.push(game.soundTracks['tune2' + fileFormat]);				
+						game.tracks[1].play();
+						game.tracks[1].loop = true;
 					}
+				}				
+				if (game.seconds > 50 && game.enemies.length === 0 && !game.bossDead) {
+					if (game.music) {
+						game.tracks.push(game.soundTracks['boss' + fileFormat]);
+						game.tracks[2].play();
+						game.tracks[2].loop = true;
+					}
+				    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 50, 'sectoidBoss.png'));
+				}
 
-				game.tracks[0].play();
-			}
+				if (game.seconds > 55 && game.enemies.length === 0 && game.bossDead && game.tracks.length == 3) {
+					game.tracks[0].pause();
+					game.tracks[1].pause();
+					game.tracks[2].pause();
+					game.tracks=[];
+					if (game.music && game.tracks.length === 0)
+						{
+							game.tracks.push(game.soundTracks['victory' + fileFormat]);
+						}
+
+					game.tracks[0].play();
+				}
+			};
 			//boss(x, y, speed, direction, hull, image)
-}
+// };
 		//====================== Game functions =================//
+
+		//making our canvases dynamically resize according to the size of the browser window	//! USE THIS TO SHOW ROTATE SCREEN MSG IF MOBILE AND GAME.WIDTH > GAME HEIGHT
+		function respondCanvas()
+		{ 
+
+			game.paused = gameMenu.toggled ? game.paused : true; //promtp to pause the game if called outside game menu
+
+			setGameDimensions();
+
+			//set playerShip's dimensions/boundaries
+			playerShip.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
+			playerShip.limitX2 = Math.round(game.width - (playerShip.size*0.5));
+			playerShip.limitY2 = Math.round(game.height - (playerShip.size*0.5));
+			playerShip.movement = Math.round(game.height*0.007);
+
+			//set game bosses' boundaries  !Need to give this enemy a name in the array
+			// this.yStop = Math.round(game.height*0.1);
+			// this.xBondary = Math.round(game.width - this.size/4);
+
+			if(!game.started)
+			{
+				playerShip.x = Math.round(game.width*0.46);
+				playerShip.y = Math.round(game.height*0.90);
+			}		
+
+			game.paused = gameMenu.toggled ? game.paused : false; //prompt to unpause the game if called outside game menu
+
+		}
+
+		//Run function whenever browser resizes
+		$(window).resize(respondCanvas);
 
 		//Keyboard		
 		$(document).keydown(function(e){    //using jquery to listen to pressed keys
@@ -3790,6 +3827,10 @@ function lvl1() {
 	// }	// jshint ignore:line
 /* jshint ignore:end */
 
+/*
+Provides requestAnimationFrame in a cross browser way.
+http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+*/
 window.requestAnimFrame = (function(){  // Creating a request animAnimeFrame function and making it work across browsers.  window.requestAnimationFrame is an HTML built in 60fps anim function
 	return  window.requestAnimationFrame       ||
 			window.webkitRequestAnimationFrame ||

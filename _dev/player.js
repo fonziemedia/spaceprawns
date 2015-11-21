@@ -6,7 +6,7 @@ function player(hull, fireRate) {
 	this.speed = 0;
 	this.maxSpeed = 400;
 	
-	this.size = 100;
+	this.size = Math.round(100/pixelRatio);
 	this.hull = hull;
 	this.maxHull = hull;
 	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
@@ -29,10 +29,10 @@ function player(hull, fireRate) {
 	this.ctx = game.contextPlayer;
 	this.speedX = 0;
 	this.speedY = 0;
-	this.limitX1 = -this.size*0.5;
-	this.limitX2 = game.width - this.size*0.5;
-	this.limitY1 = -this.size*0.5;
-	this.limitY2 = game.height - this.size*0.5;
+	this.limitX1 = Math.round(-this.size*0.5);
+	this.limitX2 = Math.round(game.width - this.size*0.5);
+	this.limitY1 = Math.round(-this.size*0.5);
+	this.limitY2 = Math.round(game.height - this.size*0.5);
 	this.movement = Math.round(game.height*0.007);
 
 	this.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;
@@ -56,8 +56,8 @@ function player(hull, fireRate) {
 		// this.y += this.vy;
 		this.speed = 0; // !! check if you can optimise this !!
 		this.playerImage = game.images[this.image]; // !! check if you can optimise this !!
-		this.speedX = Math.round((touchInitX - inputAreaX)*0.1);
-		this.speedY = Math.round((touchInitY - inputAreaY)*0.1);		
+		this.speedX = Math.round(((touchInitX - inputAreaX)*0.1)/pixelRatio);
+		this.speedY = Math.round(((touchInitY - inputAreaY)*0.1)/pixelRatio);		
 		
 		//////////////////////////////
 		//	Mouse and Touch controls

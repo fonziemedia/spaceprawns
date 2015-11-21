@@ -3,7 +3,7 @@ function boss(x, y, speed, direction, hull, image) {
 
 	this.hull = hull;
 	this.image = game.images[image];
-	this.size = 200;
+	this.size = Math.round(200/pixelRatio);
 	this.hit = false;
 	this.audioHit1 = 'hit' + fileFormat;
 	this.audioHit2 = 'hit2' + fileFormat;
@@ -24,8 +24,8 @@ function boss(x, y, speed, direction, hull, image) {
 
 	this.update = function() {
 		this.bulletDirection = this.angleTo(playerShip);
-		this.vx = Math.cos(direction) * (speed*dt);
-		this.vy = Math.sin(direction) * (speed*dt);		
+		this.vx = Math.cos(direction) * ((speed/pixelRatio)*dt);
+		this.vy = Math.sin(direction) * ((speed/pixelRatio)*dt);		
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;

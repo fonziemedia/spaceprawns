@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: 'Furore';
-  src: url("assets/fonts/furore/Furore.otf");
+  src: url("assets/fonts/furore/furore.otf");
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
@@ -47,11 +47,18 @@ input, button {
 }
 
 .gpu { 
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-transform-style: preserve-3d; 
+    -webkit-transform:translate3d(0, 0, 0);
+    -moz-transform:translate3d(0, 0, 0);
+    transform:translate3d(0, 0, 0);
+/*    -webkit-transform: rotateZ(360deg);
+    transform: rotateZ(360deg);*/
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    font-smoothing: antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    box-shadow: 0 0 0 #000
 }
 
 #container {
@@ -97,9 +104,12 @@ canvas {
 	left: 0px;
 	height: 100%;
 	width: 100%;
-  image-rendering: crisp-edges;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: -webkit-optimize-contrast;
+  image-rendering: optimizeSpeed;             /* Older versions of FF          */
+  image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
+  image-rendering: -webkit-optimize-contrast; /* Safari                        */
+  image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
+  image-rendering: pixelated;                 /* Awesome future-browsers       */
+  -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
 	/*zoom: 1;		*/
 	/* This works in IE 8 & 9 too */
 	/* ... but also 5, 6, 7 */
@@ -116,25 +126,30 @@ canvas {
 	/* more specific animation properties here */
 /*  -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
   -webkit-transform-style: preserve-3d;
   -webkit-perspective: 1000;
   -webkit-backface-visibility: hidden; /* old android browsers fix */
 }
 
-
 #levelBackground {
     position: absolute;
-    height: 100%;
-    width: 100%;
+    background-repeat: repeat-y;
+    box-shadow:0 0 1px rgba(0,0,0,0.7);
+    left: 0;
+    right: 0;
+    bottom: 0;
     opacity: 1;
     z-index: 1;
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    -moz-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -moz-perspective: 1000;
+    perspective: 1000;
 }
 
 #enemiesCanvas { z-index: 2 }
 #playerCanvas { z-index: 3 }
-#textCanvas { z-index: 4 }
 
 
 /* -- UI -- */
@@ -347,19 +362,6 @@ canvas {
   z-index: 0;
 }
 
-
-/* Seems that we only need to define these for the 1st level class and the div will keep these (see @media queries) */
-.level1 {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  background-size: 100% auto;
-  background-color: transparent;
-  background-origin: content-box;
-  background-repeat: repeat-y;
-}
-
-
 .btn {
   cursor: pointer;
   position: relative;
@@ -432,21 +434,95 @@ canvas {
     width: 100%;
     transform-origin: 0 0;
     -webkit-transform-origin: 0 0;
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    backface-visibility: hidden;
+    perspective: 1000;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
   }
 
   #menuBackground {
     background-image: url('assets/images/intro_bg_m.jpg');
   }
 
+/*  @keyframes MOVE-BG {
+    from {
+      transform: translateY(0) rotate(0deg);
+    }
+    to { 
+      transform: translateY(2560px) rotate(0.001deg);
+    }
+  }
+
+  @-webkit-keyframes MOVE-BG {
+    from {
+      -webkit-transform: translateY(0) rotate(0deg);
+    }
+    to { 
+      -webkit-transform: translateY(2560px) rotate(0.001deg);
+    }
+  }*/
+
   .level1 {
-    background-image: url('assets/images/level1_m.jpg');
+    top: -2560px;
+    background: url('assets/images/level1_m.jpg');
+    background-size: 360px 2560px;
   }
+
   .level2 {
-    background-image: url('assets/images/level1_m.jpg');
+    top: -2560px;
+    background: url('assets/images/level1_m.jpg');
+    background-size: 360px 2560px;
   }
+
   .level3 {
-    background-image: url('assets/images/level1_m.jpg');
+    top: -2560px;
+    background: url('assets/images/level1_m.jpg');
+    background-size: 360px 2560px;
   }
+
+/*  .level1 {
+    top: -2560px;
+    background: url('assets/images/level1_m.jpg') 0% 0% repeat;    
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;*/
+
+/*    animation-name: MOVE-BG;
+    -webkit-animation-name: MOVE-BG;
+    animation-duration: 25s;
+    -webkit-animation-duration: 25s;
+    animation-timing-function: linear;
+    -webkit-animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;   */ 
+
+/*  .level2 {
+    top: -2560px;    
+    background: url('assets/images/level1_m.jpg') 0% 0% repeat;
+
+    animation-name: MOVE-BG;
+    -webkit-animation-name: MOVE-BG;
+    animation-duration: 25s;
+    -webkit-animation-duration: 25s;
+    animation-timing-function: linear;
+    -webkit-animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+  }
+
+  .level3 {
+    top: -2560px;
+    background: url('assets/images/level1_m.jpg') 0% 0% repeat;
+    animation-name: MOVE-BG;
+    -webkit-animation-name: MOVE-BG;
+    animation-duration: 25s;
+    -webkit-animation-duration: 25s;
+    animation-timing-function: linear;
+    -webkit-animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+  }*/
 
 	.menu-option-btn {
 		width: 40%;
@@ -516,14 +592,22 @@ canvas {
   }
 
   .level1 {
-    background-image: url('assets/images/level1.jpg');
+    top: -5120px;
+    background: url('assets/images/level1.jpg');
+    background-size: 720px 5120px;
   }
+
   .level2 {
-    background-image: url('assets/images/level1.jpg');
+    top: -5120px;
+    background: url('assets/images/level1.jpg');
+    background-size: 720px 5120px;
   }
+
   .level3 {
-    background-image: url('assets/images/level1.jpg');
-  }
+    top: -5120px;
+    background: url('assets/images/level1.jpg');
+    background-size: 720px 5120px;
+  }  
 
 	.menu-option-btn {
 		width: 30%;
@@ -610,8 +694,6 @@ canvas {
 
 .hvr-pulse {
   vertical-align: middle;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
   box-shadow: 0 0 1px rgba(0, 0, 0, 0);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;

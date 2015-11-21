@@ -1,12 +1,23 @@
 function background() {
 	//no jquery here for increased fps
 	this.element = document.getElementById("levelBackground");
-	this.y = 0;
+	this.elementStyle = window.getComputedStyle(this.element);
+    this.elementTop = -parseInt(this.elementStyle.getPropertyValue("top"));
+	this.elementYpos = 1;
+	this.speed = 4;
 
 	this.update = function() {
 
-		this.y += 2;
-		this.element.style.backgroundPosition = '0 ' + this.y + 'px';
+		if(this.elementYpos <= this.elementTop)
+		{
+			this.elementYpos += this.speed;
+			this.element.style.transform = 'translate3d(0,' + this.elementYpos + 'px, 0)';
+			// this.element.style.webkitTransform = 'translate3d(0,' + this.elementYpos + 'px, 0) rotate(0.0000001deg)';
+		}
+		else
+		{
+			this.elementYpos = 1;
+		}  
 
 		//testing using an off-screen canvas
 		// game.contextBackground.drawImage(m_canvas, this.x, this.y, this.width, this.height);
@@ -21,6 +32,7 @@ function background() {
 		
 		this.element.classList.add('level' + game.level);
 
+		this.elementTop = -parseInt(this.elementStyle.getPropertyValue("top"));
 	};
 }
 

@@ -184,67 +184,43 @@
 		//====================== Canvases + Images + responsiveness  ============================
 		
 		// game.contextBackground = document.getElementById("backgroundCanvas").getContext("2d"); //defining the 4 different canvas
-		game.contextEnemies = document.getElementById("enemiesCanvas").getContext("2d");
-		game.contextPlayer = document.getElementById("playerCanvas").getContext("2d");
-
+		game.canvas1 = document.getElementById("enemiesCanvas");
+		game.canvas2 = document.getElementById("playerCanvas");	
+		game.contextEnemies = game.canvas1.getContext("2d");
+		game.contextPlayer = game.canvas2.getContext("2d");
 		// m_canvas = document.createElement('canvas');
 
 		
-
-		//SETTING CANVASES ATTRIBUTES
-		//Note: the canvas dimensions need to be set here using attributes due to the nature of the canvas element: it works like an image and using css to set this will stretch it
-
-		//get the gameArea and the canvases 
-		var gameArea = $('#gamearea');
-		var allCanvas = $('canvas');
-		var pixelRatio = window.devicePixelRatio; // This is our game size delta to keep the size of our game + objects proportional to the display
-		var windowWidth = $(window).width();
-		var windowHeight = $(window).height();
-
-		var gameAreaH = windowHeight * pixelRatio; // !! On Android, window.outerWidth and window.outerHeight are more reliable
-
-		if (game.isMobile)
+		var pixelRatio = window.devicePixelRatio > 1.5 ? 2 : 1; // This is our game size delta to keep the size of our game + objects proportional to the display
+		
+		function setGameDimensions()
 		{
-		var gameAreaW = windowWidth * pixelRatio;
+			//SETTING CANVASES ATTRIBUTES
+			//Note: the canvas dimensions need to be set here using attributes due to the nature of the canvas element: it works like an image and using css to set this will stretch it
+
+			//get the gameArea and the canvases 
+			var gameArea = $('#gamearea');
+			var allCanvas = $('canvas');
+			var windowWidth = window.innerWidth;
+			var windowHeight = window.innerHeight;
+
+			if (!game.isMobile)
+			{
+				windowWidth = parseInt(gameArea.css("width"))*pixelRatio;  //using parseInt here to remove 'px'
+			}
+
+			allCanvas.attr('width', windowWidth*pixelRatio);
+			allCanvas.attr('height', windowHeight*pixelRatio);
+
+			game.contextEnemies.scale(pixelRatio,pixelRatio);
+			game.contextPlayer.scale(pixelRatio,pixelRatio);
+
+			//SETTING GAME DIMENSIONS
+			game.width = windowWidth;			
+			game.height = windowHeight;
+
 		}
-		else
-		{
-			gameAreaW = parseInt(gameArea.css("width")) * pixelRatio;  //using parseInt here to remove 'px'
-		}
 
-		allCanvas.attr('height', gameAreaH); //max height
-		allCanvas.attr('width', gameAreaW); //max height
-
-		//SETTING GAME DIMENSIONS
-		game.height = gameAreaH;
-		game.width = gameAreaW;
-
-		// console.log(pixelRatio);
-		// console.log(gameAreaW);
-		// console.log(gameAreaH);
-
-		
-		//delta size will keep the size of our game objects proportional to the display - NOT REQUIRED, see pixelRatio above
-		// var dtSize = game.height*0.001;
-		// console.log (dtSize);
-
-		
-		//// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! /////
-		//making our canvases dynamically resize according to the size of the browser window	//! USE THIS TO SHOW ROTATE SCREEN MSG IF MOBILE AND GAME.WIDTH > GAME HEIGHT
-		// function respondCanvas()
-		// { 
-			
-		// 	// gameArea.attr('height', $(gameContainer).height()); //max height
-
-		
-
-
-		// }
-
-		// //Initial call 
-		// respondCanvas();
-
-		// //Run function whenever browser resizes
-		// $(window).resize(respondCanvas);
+		setGameDimensions();		
 
 	// jshint ignore:line

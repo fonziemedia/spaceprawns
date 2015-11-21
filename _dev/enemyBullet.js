@@ -1,7 +1,7 @@
 function enemyBullet(x, y, speed, direction, power, image) {
 	particle.call(this, x, y, speed, direction);
 	
-	this.size = 30;
+	this.size = Math.round(30/pixelRatio);
 	this.spriteX = -Math.round(this.size*0.5);
 	this.spriteY = -Math.round(this.size*0.5);
 	this.power = power;
@@ -17,8 +17,8 @@ function enemyBullet(x, y, speed, direction, power, image) {
 	{ 	
 		// Replacing the default 'update' method
 		if (dt !== 0 && !this.dtSet){
-			this.vx = Math.cos(direction) * (speed*dt);
-			this.vy = Math.sin(direction) * (speed*dt);
+			this.vx = Math.cos(direction) * ((speed/pixelRatio)*dt);
+			this.vy = Math.sin(direction) * ((speed/pixelRatio)*dt);
 			this.dtSet = true;
 		}		
 		this.vx *= this.friction;

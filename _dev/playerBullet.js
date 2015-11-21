@@ -1,7 +1,7 @@
 function playerBullet(x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame) {
 	particle.call(this, x, y, speed, direction);
 	
-	this.size = bulletSize;
+	this.size = Math.round(bulletSize/pixelRatio);
 	this.spriteX = -Math.round(this.size*0.5);
 	this.spriteY = -Math.round(this.size*0.5);
 	this.power = power;
@@ -16,8 +16,8 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 	this.update = function(){ // Replacing the default 'update' method		
 		//setting this to make friction work with deltaTime (dt), check particle.js
 		if (dt !== 0 && !this.dtSet){
-			this.vx = Math.cos(direction) * (speed*dt);
-			this.vy = Math.sin(direction) * (speed*dt);
+			this.vx = Math.cos(direction) * ((speed/pixelRatio)*dt);
+			this.vy = Math.sin(direction) * ((speed/pixelRatio)*dt);
 			this.dtSet = true;
 		}
 		this.vx *= this.friction;

@@ -1,9 +1,9 @@
 function loot(x, y) {
 	particle.call(this, x, y);
 
-	this.speed = 250;
+	this.speed = Math.round(250/pixelRatio);
 	this.direction = Math.PI/2;
-	this.size = 45;
+	this.size = Math.round(45/pixelRatio);
 	this.dead = false;
 	this.drops = ['health', 'laser', 'missile'];
 	var key = Math.floor(Math.random() * this.drops.length);

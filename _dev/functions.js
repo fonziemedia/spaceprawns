@@ -1,5 +1,36 @@
 		//====================== Game functions =================//
 
+		//making our canvases dynamically resize according to the size of the browser window	//! USE THIS TO SHOW ROTATE SCREEN MSG IF MOBILE AND GAME.WIDTH > GAME HEIGHT
+		function respondCanvas()
+		{ 
+
+			game.paused = gameMenu.toggled ? game.paused : true; //promtp to pause the game if called outside game menu
+
+			setGameDimensions();
+
+			//set playerShip's dimensions/boundaries
+			playerShip.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
+			playerShip.limitX2 = Math.round(game.width - (playerShip.size*0.5));
+			playerShip.limitY2 = Math.round(game.height - (playerShip.size*0.5));
+			playerShip.movement = Math.round(game.height*0.007);
+
+			//set game bosses' boundaries  !Need to give this enemy a name in the array
+			// this.yStop = Math.round(game.height*0.1);
+			// this.xBondary = Math.round(game.width - this.size/4);
+
+			if(!game.started)
+			{
+				playerShip.x = Math.round(game.width*0.46);
+				playerShip.y = Math.round(game.height*0.90);
+			}		
+
+			game.paused = gameMenu.toggled ? game.paused : false; //prompt to unpause the game if called outside game menu
+
+		}
+
+		//Run function whenever browser resizes
+		$(window).resize(respondCanvas);
+
 		//Keyboard		
 		$(document).keydown(function(e){    //using jquery to listen to pressed keys
 			game.keys[e.keyCode ? e.keyCode : e.which] = true;	//and cross browser proofing
@@ -711,6 +742,10 @@
 	// }	// jshint ignore:line
 /* jshint ignore:end */
 
+/*
+Provides requestAnimationFrame in a cross browser way.
+http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+*/
 window.requestAnimFrame = (function(){  // Creating a request animAnimeFrame function and making it work across browsers.  window.requestAnimationFrame is an HTML built in 60fps anim function
 	return  window.requestAnimationFrame       ||
 			window.webkitRequestAnimationFrame ||

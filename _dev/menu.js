@@ -12,9 +12,6 @@ function menu()
 	var animationSpeed = 800;
 
 	this.toggled = false;
-
-	// this.widthProp = $(gameArea).height() * (9/16);
-
 	
 	document.addEventListener("fullscreenchange", FShandler);
 	document.addEventListener("webkitfullscreenchange", FShandler);
@@ -23,27 +20,19 @@ function menu()
 
 	function FShandler()
 	{
-		console.log('screen change!');
-
 		game.fullScreen = game.fullScreen ? false : true;
 
 	    if (game.fullScreen)
 	    {
 			fullScreen.addClass('active');
-			fullScreen.text('fullscreen: ON');
-
-	        console.log('fullscreen!');
+			fullScreen.text('Fullscreen: ON');
 	    }
 	    else
 	    {
 			fullScreen.removeClass('active');
 			fullScreen.text('Fullscreen: OFF');
-
-			console.log('not fullscreen!');
 	    }
 	}
-
-
 
 	this.toggleFullScreen = function(trigger)  //experimental   only works with user input
 	{

@@ -4,13 +4,13 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.type = type;
 	switch (this.type){
 		case 'pawn':
-				this.size = 65;
+				this.size = Math.round(65/pixelRatio);
 			break;
 		case 'miniboss':
-				this.size = 120;	
+				this.size = Math.round(120/pixelRatio);	
 			break;
 		case 'base':
-				this.size = 170;
+				this.size = Math.round(170/pixelRatio);
 				this.rotation = 0;	
 			break;
 	}
@@ -27,7 +27,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
 	this.ctx = game.contextEnemies;
 	this.inCanvas = false;
-	this.speed = speed;
+	this.speed = speed/pixelRatio;
 	this.direction = direction;
 	this.collided = false;
 

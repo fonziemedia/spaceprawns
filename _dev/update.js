@@ -13,24 +13,25 @@
 	    		dtArray.push(timeDiff); // seconds since last frame
 	    		timeThen = timeNow;
 	    		dtTimer++;
-    		}
 
-    		if(dtTimer == 100){
-    			var dtSum = 0;
-    			for( var i = 0; i < dtArray.length-10; i++) {
-					dtSum += dtArray[i+10]; //+10 skips first values which might be deviant
-					// console.log (dtSum);
-				}
-					dt = Math.round(dtSum / dtArray.length)/1000;					
-    		}
-	
+	    		if(dtTimer == 100)
+	    		{
+    				var dtSum = 0;
+	    			for( var i = 0; i < dtArray.length-10; i++)
+	    			{
+						dtSum += dtArray[i+10]; //+10 skips first values which might be deviant
+						// console.log (dtSum);
+					}
+
+					dt = Math.round(dtSum / dtArray.length)/1000;				
+    			}
+    		}	
 
     		//game time
     		//! CHECK OUT 'timeupdate' js event !
 			game.timer++;
 			game.seconds = game.timer/60 || 0;
 			// console.log(game.seconds);
-
 
 
 			playerShip.load();
@@ -44,15 +45,17 @@
 
 			gameBackground.update();
 
-
 			/////////////////////////////////////////////////////////////////////////////////
 			// LEVELS
 			////////////////////////////////////////////////////////////////////////////////
+			/* jshint ignore:start */
+			if(game.seconds == Math.round(game.seconds) && typeof window['level'+game.level]['second'+game.seconds] != "undefined")
+			{
+				window['level'+game.level]['second'+game.seconds]();
+			}
 
-			if (game.level == 1) { lvl1(); }
-			else if (game.level == 2) { lvl1(); }
-			else if (game.level == 3) { lvl3(); }
-
+			window['level'+game.level].update();
+			/* jshint ignore:end */
 
 			//level finished
 			if (game.bossDead && game.levelUpTimer <= 100) 
