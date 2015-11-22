@@ -90,6 +90,13 @@
 
 		game.fullScreen = false;
 		
+		//========================== Input ==========================
+		var inputArea = document.getElementById("inputarea");
+		var inputAreaX, inputAreaY;
+		var mouseIsDown = 0;
+		var touchInitX = 0;
+		var touchInitY = 0;
+
 		//========================== Audio ==========================
 		
 		//Audio Support
@@ -218,6 +225,12 @@
 			//SETTING GAME DIMENSIONS
 			game.width = windowWidth;			
 			game.height = windowHeight;
+
+			//outer borders
+			game.outerLeft = -Math.round(game.width*0.1);			
+			game.outerRight = Math.round(game.width + game.width*0.1);			
+			game.outerTop = -Math.round(game.height*0.1);
+			game.outerBottom = Math.round(game.height + game.height*0.1);
 
 		}
 

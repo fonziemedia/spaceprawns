@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 2015-09-10 ver 0.9.1
+# 2015-09-10 ver 0.10.0
 
 # Explicitly cached entries
 index.html
@@ -57,7 +57,8 @@ _img/_dist/fighter/fighter_right2.png
 _img/_dist/fighter/fighter_right3.png
 _img/_dist/fighter/fighter_right4.png
 _img/_dist/fighter/fighter_right5.png
-_img/_dist/missile.png
+_img/_dist/e_missile.png
+_img/_dist/p_missile.png
 _img/_dist/enemies/_alienbase/alienbase1.png			
 _img/_dist/enemies/_alienbase/alienbase2.png
 _img/_dist/enemies/_miniboss/floater.png			

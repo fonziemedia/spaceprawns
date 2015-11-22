@@ -11,18 +11,26 @@ function loot(x, y) {
 
 	switch(this.type) {
     case 'health':
-        this.image = 'fighter.png';
+        this.image = game.images['fighter.png'];
         break;
     case 'laser':
-        this.image = 'laser.png';
+        this.image = game.images['laser.png'];
         break;
     case 'missile':    
-        this.image = 'missile.png';
+        this.image = game.images['p_missile.png'];
 	}
 	this.sfx1 = 'loot_powerUp' + fileFormat;
 	this.sfx2 = 'loot_powerUp2' + fileFormat;
 	this.sfx3 = 'loot_powerUp3' + fileFormat;
-	this.context = game.contextPlayer;
+	this.ctx = game.contextPlayer;
+
+	//====================== Caching Off-Screen canvas =================//
+	this.offCanvas = document.createElement('canvas');
+	this.offCanvas.width = this.size;
+	this.offCanvas.height = this.size;
+	this.offCtx = this.offCanvas.getContext('2d');
+
+	this.offCtx.drawImage(this.image, 0, 0, this.offCanvas.width, this.offCanvas.height);
 
 	this.update = function() {
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
@@ -77,7 +85,7 @@ function loot(x, y) {
 		// game.contextPlayer.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
 		if (!this.dead) {			
-			game.contextPlayer.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render			
+			this.ctx.drawImage(this.offCanvas, this.x, this.y); //render			
 		}
 	};
 }

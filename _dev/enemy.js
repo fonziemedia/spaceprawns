@@ -26,10 +26,18 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 
 	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
 	this.ctx = game.contextEnemies;
-	this.inCanvas = false;
+	// this.inCanvas = false;
 	this.speed = speed/pixelRatio;
 	this.direction = direction;
 	this.collided = false;
+
+	//====================== Caching Off-Screen canvas =================//
+	this.offCanvas = document.createElement('canvas');
+	this.offCanvas.width = this.size;
+	this.offCanvas.height = this.size;
+	this.offCtx = this.offCanvas.getContext('2d');
+
+	this.offCtx.drawImage(this.image, 0, 0, this.offCanvas.width, this.offCanvas.height);
 
 	this.update = function() {
 		// this.lastX = this.x;
@@ -107,7 +115,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 				bulletX = Math.round(this.x + this.size*0.42);
 				bulletY = Math.round(this.y + this.size);
 				bulletDirection = this.angleTo(playerShip);
-				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 'missile.png'));			
+				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 'e_missile.png'));			
 			}
 		}
 
@@ -118,7 +126,6 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	};
 
 	this.draw = function() {
-		
 		if(this.type == 'base'){ //making bases rotate
 			// //clear trails
 			// this.ctx.save();
@@ -138,15 +145,17 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 				this.ctx.rotate(this.rotation);
 
 				//draw image
-				this.ctx.drawImage(this.image, -this.spritePos, -this.spritePos, this.size, this.size);
+				this.ctx.drawImage(this.offCanvas, -this.spritePos, -this.spritePos);
 
 				this.ctx.restore();
 			}
 		}
 		else {
 			// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
-			if (!this.dead) {
-				this.ctx.drawImage(this.image, this.x, this.y, this.size, this.size); //render
+			if (!this.dead) {				
+				this.ctx.drawImage(this.offCanvas, this.x, this.y); //render
+
+
 			}
 		}
 

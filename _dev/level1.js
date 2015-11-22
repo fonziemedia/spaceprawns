@@ -14,11 +14,11 @@ var level1 = {};
 			};
 
 			level1.second5 = function () {
-			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));		
+			    game.enemies.push(new enemy(game.width * 0.7, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));		
 			};
 
 			level1.second7 = function () {
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 'alienbase1.png', 1));
+			    game.enemies.push(new enemy(game.width * 0.3, game.outerTop, 155, Math.PI/2, 10, 'base', 'alienbase1.png', 1));
 			};
 
 			level1.second8 = function () {
@@ -42,7 +42,7 @@ var level1 = {};
 			};
 
 			level1.second13 = function () {				
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 'alienbase2.png', 1));			
+			    game.enemies.push(new enemy(game.width * 0.3, game.outerTop, 155, Math.PI/2, 10, 'base', 'alienbase2.png', 1));			
 			};			
 			
 			level1.second15 = function () {
@@ -86,39 +86,39 @@ var level1 = {};
 			};
 
 			level1.second37 = function () {
-			    game.enemies.push(new enemy(game.width * 0.2, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.2, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second38 = function () {
-			    game.enemies.push(new enemy(game.width * 0.4, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.4, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second39 = function () {
-			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.6, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second40 = function () {
-			    game.enemies.push(new enemy(game.width * 0.8, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.8, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second41 = function () {
-			    game.enemies.push(new enemy(game.width * 0.5, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.5, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second42 = function () {
-			    game.enemies.push(new enemy(game.width * 0.2, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.2, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second43 = function () {
-			    game.enemies.push(new enemy(game.width * 0.4, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.4, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second44 = function () {
-			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.6, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second45 = function () {
-			    game.enemies.push(new enemy(game.width * 0.8, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.8, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.update = function () {
@@ -136,7 +136,7 @@ var level1 = {};
 						game.tracks[2].play();
 						game.tracks[2].loop = true;
 					}
-				    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 50, 'sectoidBoss.png'));
+				    game.enemies.push(new boss(game.width*0.3, game.outerTop, 150, Math.PI/2, 50, 'sectoidBoss.png'));
 				}
 
 				if (game.seconds > 55 && game.enemies.length === 0 && game.bossDead && game.tracks.length == 3) {

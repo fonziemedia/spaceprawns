@@ -8,17 +8,19 @@
 
 			setGameDimensions();
 
-			//set playerShip's dimensions/boundaries
-			playerShip.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
-			playerShip.limitX2 = Math.round(game.width - (playerShip.size*0.5));
-			playerShip.limitY2 = Math.round(game.height - (playerShip.size*0.5));
-			playerShip.movement = Math.round(game.height*0.007);
-
+			if(typeof window[playerShip] != "undefined")
+			{
+				//set playerShip's dimensions/boundaries
+				playerShip.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
+				playerShip.limitX2 = Math.round(game.width - (playerShip.size*0.5));
+				playerShip.limitY2 = Math.round(game.height - (playerShip.size*0.5));
+				playerShip.movement = Math.round(game.height*0.007);
+			}
 			//set game bosses' boundaries  !Need to give this enemy a name in the array
 			// this.yStop = Math.round(game.height*0.1);
 			// this.xBondary = Math.round(game.width - this.size/4);
 
-			if(!game.started)
+			if(!game.started && typeof window[playerShip] != "undefined")
 			{
 				playerShip.x = Math.round(game.width*0.46);
 				playerShip.y = Math.round(game.height*0.90);
@@ -28,8 +30,6 @@
 
 		}
 
-		//Run function whenever browser resizes
-		$(window).resize(respondCanvas);
 
 		//Keyboard		
 		$(document).keydown(function(e){    //using jquery to listen to pressed keys
@@ -40,17 +40,12 @@
 			delete game.keys[e.keyCode ? e.keyCode : e.which]; //once key is released, delete the key pressed action previously defined 
 		});
 		
-		//mouse and touch screens
-		var inputArea = document.getElementById("inputarea");
-		var inputAreaX = playerShip.x;
-		var inputAreaY = playerShip.y;
-		var mouseIsDown = 0;
-		var touchInitX = 0;
-		var touchInitY = 0;
- 
 
 		function addGamePlayInput()
-		{	                
+		{
+			inputAreaX = playerShip.x;
+			inputAreaY = playerShip.y;
+
 	        inputArea.addEventListener("mousedown",mouseDown, false);
 	        inputArea.addEventListener("mouseup", mouseUp, false);        
 	        inputArea.addEventListener("mousemove",mouseXY, false);
@@ -342,6 +337,11 @@
 		function startGame()
 		{						
 			game.loaded = true;
+
+			if (typeof window[playerShip] === "undefined")
+			{
+				playerShip = new player(10, 15);
+			}
 			
 			//preparing sound tracks (chromium fix)
 			game.tracks.push(game.soundTracks['tune1' + fileFormat]);
@@ -378,10 +378,7 @@
 		
 			game.sounds = [];
 
-			gameUI.updateAll();
 			loop();
-
-
 		}
 
 
@@ -611,7 +608,8 @@
 			
 			//Projectiles
 			"_img/_dist/laser.png",
-			"_img/_dist/missile.png",
+			"_img/_dist/p_missile.png",
+			"_img/_dist/e_missile.png",
 			"_img/_dist/explosion.png"						
 		]);
 
@@ -675,6 +673,9 @@
 		window.addEventListener("load", function load(event)
 		{
     		window.removeEventListener("load", load, false); //remove listener, no longer needed
+
+    		//Run function whenever browser resizes
+			$(window).resize(respondCanvas);
 
     		//appcache
     		window.applicationCache.addEventListener("updateready", function event() {

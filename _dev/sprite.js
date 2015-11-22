@@ -13,7 +13,13 @@ function sprite(image, imageSize, frameWidth, frameHeight, startFrame, endFrame,
 	this.counter = 0;
 	this.fpr = Math.floor(game.images[this.image].width / this.frameWidth);
 
-	// if (game.soundStatus == "ON"){game.enemyexplodeSound.play();}
+	//====================== Caching Off-Screen canvas =================//
+	this.offCanvas = document.createElement('canvas');
+	this.offCanvas.width = game.images[this.image].width;
+	this.offCanvas.height = game.images[this.image].height;
+	this.offCtx = this.offCanvas.getContext('2d');
+
+	this.offCtx.drawImage(game.images[this.image], 0, 0, this.offCanvas.width, this.offCanvas.height);
 
 	this.draw = function(x, y)
 	{
@@ -34,7 +40,7 @@ function sprite(image, imageSize, frameWidth, frameHeight, startFrame, endFrame,
 		this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
 
 		this.ctx.drawImage(
-			game.images[this.image],
+			this.offCanvas,
 			this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
 			this.frameWidth, this.frameHeight,
 			x, y,

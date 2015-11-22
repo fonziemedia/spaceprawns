@@ -428,6 +428,13 @@ var particle = function(x, y, speed, direction, grav) {
 
 		game.fullScreen = false;
 		
+		//========================== Input ==========================
+		var inputArea = document.getElementById("inputarea");
+		var inputAreaX, inputAreaY;
+		var mouseIsDown = 0;
+		var touchInitX = 0;
+		var touchInitY = 0;
+
 		//========================== Audio ==========================
 		
 		//Audio Support
@@ -557,6 +564,12 @@ var particle = function(x, y, speed, direction, grav) {
 			game.width = windowWidth;			
 			game.height = windowHeight;
 
+			//outer borders
+			game.outerLeft = -Math.round(game.width*0.1);			
+			game.outerRight = Math.round(game.width + game.width*0.1);			
+			game.outerTop = -Math.round(game.height*0.1);
+			game.outerBottom = Math.round(game.height + game.height*0.1);
+
 		}
 
 		setGameDimensions();		
@@ -577,7 +590,13 @@ function sprite(image, imageSize, frameWidth, frameHeight, startFrame, endFrame,
 	this.counter = 0;
 	this.fpr = Math.floor(game.images[this.image].width / this.frameWidth);
 
-	// if (game.soundStatus == "ON"){game.enemyexplodeSound.play();}
+	//====================== Caching Off-Screen canvas =================//
+	this.offCanvas = document.createElement('canvas');
+	this.offCanvas.width = game.images[this.image].width;
+	this.offCanvas.height = game.images[this.image].height;
+	this.offCtx = this.offCanvas.getContext('2d');
+
+	this.offCtx.drawImage(game.images[this.image], 0, 0, this.offCanvas.width, this.offCanvas.height);
 
 	this.draw = function(x, y)
 	{
@@ -598,7 +617,7 @@ function sprite(image, imageSize, frameWidth, frameHeight, startFrame, endFrame,
 		this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
 
 		this.ctx.drawImage(
-			game.images[this.image],
+			this.offCanvas,
 			this.spriteCol * this.frameWidth, this.spriteRow * this.frameHeight,
 			this.frameWidth, this.frameHeight,
 			x, y,
@@ -746,7 +765,17 @@ function player(hull, fireRate) {
 	this.hull = hull;
 	this.maxHull = hull;
 	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
-	this.image = 'fighter.png';
+	this.imageO = game.images['fighter.png'];
+	this.imageL1 = game.images['fighter_left1.png'];
+	this.imageL2 = game.images['fighter_left2.png'];
+	this.imageL3 = game.images['fighter_left3.png'];
+	this.imageL4 = game.images['fighter_left4.png'];
+	this.imageL5 = game.images['fighter_left5.png'];
+	this.imageR1 = game.images['fighter_right1.png'];
+	this.imageR2 = game.images['fighter_right2.png'];
+	this.imageR3 = game.images['fighter_right3.png'];
+	this.imageR4 = game.images['fighter_right4.png'];
+	this.imageR5 = game.images['fighter_right5.png'];
 	this.audioFire1 = 'laser' + fileFormat;
 	this.audioFire2 = 'laser2' + fileFormat;
 	this.audioFire3 = 'laser3' + fileFormat;
@@ -770,15 +799,90 @@ function player(hull, fireRate) {
 	this.limitY1 = Math.round(-this.size*0.5);
 	this.limitY2 = Math.round(game.height - this.size*0.5);
 	this.movement = Math.round(game.height*0.007);
+	this.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;	
+	if (this.canVibrate && !("vibrate" in navigator)){navigator.vibrate = navigator.mozVibrate;}	
 
-	this.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;
+	//====================== Caching Off-Screen canvas =================//
+	this.offCanvas = document.createElement('canvas');
+	this.offCanvas.width = this.size;
+	this.offCanvas.height = this.size;
+	this.offCtx = this.offCanvas.getContext('2d');
+
+	this.offCtx.drawImage(this.imageO, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.image = this.offCanvas;
+	this.playerImage = this.image;
+
+	this.offCanvasL1 = document.createElement('canvas');
+	this.offCanvasL1.width = this.size;
+	this.offCanvasL1.height = this.size;
+	this.offCtxL1 = this.offCanvasL1.getContext('2d');
+
+	this.offCtxL1.drawImage(this.imageL1, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.offCanvasL2 = document.createElement('canvas');
+	this.offCanvasL2.width = this.size;
+	this.offCanvasL2.height = this.size;
+	this.offCtxL2 = this.offCanvasL2.getContext('2d');
+
+	this.offCtxL2.drawImage(this.imageL2, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.offCanvasL3 = document.createElement('canvas');
+	this.offCanvasL3.width = this.size;
+	this.offCanvasL3.height = this.size;
+	this.offCtxL3 = this.offCanvasL3.getContext('2d');
+
+	this.offCtxL3.drawImage(this.imageL3, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.offCanvasL4 = document.createElement('canvas');
+	this.offCanvasL4.width = this.size;
+	this.offCanvasL4.height = this.size;
+	this.offCtxL4 = this.offCanvasL4.getContext('2d');
+
+	this.offCtxL4.drawImage(this.imageL4, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.offCanvasL5 = document.createElement('canvas');
+	this.offCanvasL5.width = this.size;
+	this.offCanvasL5.height = this.size;
+	this.offCtxL5 = this.offCanvasL5.getContext('2d');
+
+	this.offCtxL5.drawImage(this.imageL5, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.offCanvasR1 = document.createElement('canvas');
+	this.offCanvasR1.width = this.size;
+	this.offCanvasR1.height = this.size;
+	this.offCtxR1 = this.offCanvasR1.getContext('2d');
+
+	this.offCtxR1.drawImage(this.imageR1, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.offCanvasR2 = document.createElement('canvas');
+	this.offCanvasR2.width = this.size;
+	this.offCanvasR2.height = this.size;
+	this.offCtxR2 = this.offCanvasR2.getContext('2d');
+
+	this.offCtxR2.drawImage(this.imageR2, 0, 0, this.offCanvas.width, this.offCanvas.height);
 	
-	if (this.canVibrate && !("vibrate" in navigator))
-	{
-    navigator.vibrate = navigator.mozVibrate;
-    }	
+	this.offCanvasR3 = document.createElement('canvas');
+	this.offCanvasR3.width = this.size;
+	this.offCanvasR3.height = this.size;
+	this.offCtxR3 = this.offCanvasR3.getContext('2d');
 
-	// bulletspeed: X_BulletSpeed*game.height/1000,
+	this.offCtxR3.drawImage(this.imageR3, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.offCanvasR4 = document.createElement('canvas');
+	this.offCanvasR4.width = this.size;
+	this.offCanvasR4.height = this.size;
+	this.offCtxR4 = this.offCanvasR4.getContext('2d');
+
+	this.offCtxR4.drawImage(this.imageR4, 0, 0, this.offCanvas.width, this.offCanvas.height);
+	
+	this.offCanvasR5 = document.createElement('canvas');
+	this.offCanvasR5.width = this.size;
+	this.offCanvasR5.height = this.size;
+	this.offCtxR5 = this.offCanvasR5.getContext('2d');
+
+	this.offCtxR5.drawImage(this.imageR5, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
 
 	this.update = function() {		
 		// this.vx = Math.cos(this.direction) * (this.speed*dt);
@@ -791,7 +895,7 @@ function player(hull, fireRate) {
 		// this.x += this.vx;
 		// this.y += this.vy;
 		this.speed = 0; // !! check if you can optimise this !!
-		this.playerImage = game.images[this.image]; // !! check if you can optimise this !!
+		this.playerImage = this.image; // !! check if you can optimise this !!
 		this.speedX = Math.round(((touchInitX - inputAreaX)*0.1)/pixelRatio);
 		this.speedY = Math.round(((touchInitY - inputAreaY)*0.1)/pixelRatio);		
 		
@@ -898,26 +1002,26 @@ function player(hull, fireRate) {
 
 				
 				if (moveRight1) {
-					this.image = 'fighter_right1.png';
+					this.image = this.offCanvasR1;
 				} else if (moveRight2) {
-					this.image = 'fighter_right2.png';
+					this.image = this.offCanvasR2;
 				} else if (moveRight3) {
-					this.image = 'fighter_right3.png';
+					this.image = this.offCanvasR3;
 				} else if (moveRight4) {
-					this.image = 'fighter_right4.png';
+					this.image = this.offCanvasR4;
 				} else if (moveRight5) {
-					this.image = 'fighter_right5.png';
+					this.image = this.offCanvasR5;
 
 				} else if (moveLeft1) {
-					this.image = 'fighter_left1.png';
+					this.image = this.offCanvasL1;
 				} else if (moveLeft2) {
-					this.image = 'fighter_left2.png';
+					this.image = this.offCanvasL2;
 				} else if (moveLeft3) {
-					this.image = 'fighter_left3.png';
+					this.image = this.offCanvasL3;
 				} else if (moveLeft4) {
-					this.image = 'fighter_left4.png';
+					this.image = this.offCanvasL4;
 				} else if (moveLeft5) {
-					this.image = 'fighter_left5.png';
+					this.image = this.offCanvasL5;
 				}
 
 				this.rendered = false;		
@@ -925,7 +1029,7 @@ function player(hull, fireRate) {
 		}
 		else
 		{
-			this.image = 'fighter.png';	
+			this.image = this.offCanvas;	
 			document.getElementById('gamearea').style.cursor = 'crosshair';
 		}
 
@@ -939,7 +1043,7 @@ function player(hull, fireRate) {
 			if(game.keys[37] || game.keys[65] && !game.gameOver){ //if key pressed..				
 				if(this.x > 0){ // (keeping it within the boundaries of our canvas)				
 					this.speed = this.maxSpeed;							
-					this.image = 'fighter_left5.png';
+					this.image = this.offCanvasL5;
 					this.rendered = false;
 					this.x -= Math.round(this.speed*dt);
 				}
@@ -948,7 +1052,7 @@ function player(hull, fireRate) {
 			if(game.keys[39] || game.keys[68] && !game.gameOver){
 				if(this.x <= game.width - this.size){				
 					this.speed = this.maxSpeed;
-					this.image = 'fighter_right5.png';
+					this.image = this.offCanvasR5;
 					this.rendered = false;
 					this.x += Math.round(this.speed*dt);
 				}
@@ -1064,16 +1168,16 @@ function player(hull, fireRate) {
 				 	case 0:
 				 		break;
 				    case 1:
-				        game.playerBullets.push( new playerBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+				        game.playerBullets.push( new playerBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'p_missile.png', 64, 2));
 						break;
 				    case 2:
-				    	game.playerBullets.push( new playerBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
-						game.playerBullets.push( new playerBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+				    	game.playerBullets.push( new playerBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'p_missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'p_missile.png', 64, 2));
 						break;
 				    default:
-				        game.playerBullets.push( new playerBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
-						game.playerBullets.push( new playerBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
-						game.playerBullets.push( new playerBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+				        game.playerBullets.push( new playerBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'p_missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'p_missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'p_missile.png', 64, 2));
 						break;										
 				 }				
 				// this.bulletTimer = 1; //resetting our timer
@@ -1109,7 +1213,7 @@ function player(hull, fireRate) {
 				this.dead = false;
 				this.x = Math.round(game.width*0.46);
 				this.y = Math.round(game.height*0.90);
-				this.image = 'fighter.png';
+				this.image = this.offCanvas;
 				this.rendered = false;
 				this.hit = false;
 				this.hitTimer = 0;
@@ -1158,7 +1262,7 @@ function player(hull, fireRate) {
 				////////////////
 				if (this.imuneTimer >= 0 && this.imuneTimer < 15  || this.imuneTimer >= 20 && this.imuneTimer < 35 ||this.imuneTimer >= 40 && this.imuneTimer < 55 || this.imuneTimer >= 70 && this.imuneTimer < 75 || this.imuneTimer >= 90 && this.imuneTimer < 95 || this.imuneTimer >= 110 && this.imuneTimer < 115 || this.imuneTimer >= 130 && this.imuneTimer < 135 || this.imuneTimer >= 150 && this.imuneTimer < 155 || this.imuneTimer >= 160 && this.imuneTimer < 175 || this.imuneTimer > 180)
 				{
-					this.ctx.drawImage(this.playerImage, this.x, this.y, this.size, this.size); //rendering
+					this.ctx.drawImage(this.playerImage, this.x, this.y); //rendering
 				}
 			}
 
@@ -1170,7 +1274,7 @@ function player(hull, fireRate) {
 						this.ctx.globalAlpha += 0.1;				
 				}
 
-				this.ctx.drawImage(this.playerImage, this.x, this.y, this.size, this.size); //rendering
+				this.ctx.drawImage(this.playerImage, this.x, this.y); //rendering
 			}
 
 
@@ -1217,7 +1321,7 @@ function player(hull, fireRate) {
 		this.deadTimer = 0;				
 		this.x = Math.round(game.width*0.46);
 		this.y = Math.round(game.height*0.90);
-		this.image = 'fighter.png';
+		this.image = this.offCanvas;
 		this.hull = hull;
 		this.rendered = false;
 		this.hit = false;
@@ -1234,15 +1338,15 @@ function player(hull, fireRate) {
 // player.prototype.constructor = player; // Set the "constructor" property to refer to player
 
 
-playerShip = new player(10, 15);
+var playerShip;
 function playerBullet(x, y, speed, direction, bulletSize, power, friction, image, imageSize, endFrame) {
 	particle.call(this, x, y, speed, direction);
 	
 	this.size = Math.round(bulletSize/pixelRatio);
-	this.spriteX = -Math.round(this.size*0.5);
-	this.spriteY = -Math.round(this.size*0.5);
+	this.x = Math.round(x - this.size*0.5);
+	this.y = Math.round(y - this.size*0.5);
 	this.power = power;
-	this.image = image; 
+	this.image = image;
 	this.dead = false;
 	this.deadTime = 60;
 	this.friction = friction;
@@ -1263,27 +1367,19 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 		this.y += this.vy;
 	};
 	
-	this.draw = function() {		
-		
-		if (!this.dead) {			
+	this.draw = function() {
+		if (!this.dead) {
 
-			// this.ctx.save();
-			// this.ctx.translate(this.lastX, this.lastY);
-			// this.ctx.rotate(direction - Math.PI/2);
+			this.sprite.draw(this.x, this.y); //-this.size/2 because we're rotating ctx
 
-			// this.ctx.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
+			// for homing missiles
+				// this.ctx.save();
+				// this.ctx.translate(this.x, this.y);
+				// this.ctx.rotate(direction - Math.PI/2);
+				// ...
+				// this.ctx.restore();
 
-			// this.ctx.restore();
-
-			this.ctx.save();
-			this.ctx.translate(this.x, this.y);
-			this.ctx.rotate(direction - Math.PI/2);
-
-			this.sprite.draw(this.spriteX, this.spriteY); //-this.size/2 because we're rotating ctx
-			
-			this.ctx.restore();
-
-		}
+		}		
 	};
 }
 
@@ -1317,10 +1413,18 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 
 	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
 	this.ctx = game.contextEnemies;
-	this.inCanvas = false;
+	// this.inCanvas = false;
 	this.speed = speed/pixelRatio;
 	this.direction = direction;
 	this.collided = false;
+
+	//====================== Caching Off-Screen canvas =================//
+	this.offCanvas = document.createElement('canvas');
+	this.offCanvas.width = this.size;
+	this.offCanvas.height = this.size;
+	this.offCtx = this.offCanvas.getContext('2d');
+
+	this.offCtx.drawImage(this.image, 0, 0, this.offCanvas.width, this.offCanvas.height);
 
 	this.update = function() {
 		// this.lastX = this.x;
@@ -1398,7 +1502,7 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 				bulletX = Math.round(this.x + this.size*0.42);
 				bulletY = Math.round(this.y + this.size);
 				bulletDirection = this.angleTo(playerShip);
-				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 'missile.png'));			
+				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 'e_missile.png'));			
 			}
 		}
 
@@ -1409,7 +1513,6 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	};
 
 	this.draw = function() {
-		
 		if(this.type == 'base'){ //making bases rotate
 			// //clear trails
 			// this.ctx.save();
@@ -1429,15 +1532,17 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 				this.ctx.rotate(this.rotation);
 
 				//draw image
-				this.ctx.drawImage(this.image, -this.spritePos, -this.spritePos, this.size, this.size);
+				this.ctx.drawImage(this.offCanvas, -this.spritePos, -this.spritePos);
 
 				this.ctx.restore();
 			}
 		}
 		else {
 			// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
-			if (!this.dead) {
-				this.ctx.drawImage(this.image, this.x, this.y, this.size, this.size); //render
+			if (!this.dead) {				
+				this.ctx.drawImage(this.offCanvas, this.x, this.y); //render
+
+
 			}
 		}
 
@@ -1491,7 +1596,15 @@ function boss(x, y, speed, direction, hull, image) {
 	// this.fireRate = fireRate * 60; //bullets/sec
 	this.yStop = Math.round(game.height*0.1);
 	this.xBondary = Math.round(game.width - this.size/4);
-	this.context = game.contextEnemies;
+	this.ctx = game.contextEnemies;
+
+	//====================== Caching Off-Screen canvas =================//
+	this.offCanvas = document.createElement('canvas');
+	this.offCanvas.width = this.size;
+	this.offCanvas.height = this.size;
+	this.offCtx = this.offCanvas.getContext('2d');
+
+	this.offCtx.drawImage(this.image, 0, 0, this.offCanvas.width, this.offCanvas.height);
 
 
 	this.update = function() {
@@ -1556,8 +1669,8 @@ function boss(x, y, speed, direction, hull, image) {
 				mBulletX1 = Math.round(this.x);
 				mBulletX2 = Math.round(this.x + this.size);
 				mBulletY = Math.round(this.y + this.size*0.6);		
-				game.enemyBullets.push(new enemyBullet(mBulletX1, mBulletY, 50, this.bulletDirection, 1, 'missile.png'));			
-				game.enemyBullets.push(new enemyBullet(mBulletX2, mBulletY, 50, this.bulletDirection, 1, 'missile.png'));			
+				game.enemyBullets.push(new enemyBullet(mBulletX1, mBulletY, 50, this.bulletDirection, 1, 'e_missile.png'));			
+				game.enemyBullets.push(new enemyBullet(mBulletX2, mBulletY, 50, this.bulletDirection, 1, 'e_missile.png'));			
 			}
 		
 			// homing missiles, sort of
@@ -1592,7 +1705,7 @@ function boss(x, y, speed, direction, hull, image) {
 	this.draw = function() {
 		
 		if (!this.dead) {
-				game.contextEnemies.drawImage(this.image, this.x, this.y, this.size, this.size); //render
+				this.ctx.drawImage(this.offCanvas, this.x, this.y); //render
 		}		
 
 		// if (this.hit) {
@@ -1689,18 +1802,26 @@ function loot(x, y) {
 
 	switch(this.type) {
     case 'health':
-        this.image = 'fighter.png';
+        this.image = game.images['fighter.png'];
         break;
     case 'laser':
-        this.image = 'laser.png';
+        this.image = game.images['laser.png'];
         break;
     case 'missile':    
-        this.image = 'missile.png';
+        this.image = game.images['p_missile.png'];
 	}
 	this.sfx1 = 'loot_powerUp' + fileFormat;
 	this.sfx2 = 'loot_powerUp2' + fileFormat;
 	this.sfx3 = 'loot_powerUp3' + fileFormat;
-	this.context = game.contextPlayer;
+	this.ctx = game.contextPlayer;
+
+	//====================== Caching Off-Screen canvas =================//
+	this.offCanvas = document.createElement('canvas');
+	this.offCanvas.width = this.size;
+	this.offCanvas.height = this.size;
+	this.offCtx = this.offCanvas.getContext('2d');
+
+	this.offCtx.drawImage(this.image, 0, 0, this.offCanvas.width, this.offCanvas.height);
 
 	this.update = function() {
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
@@ -1755,7 +1876,7 @@ function loot(x, y) {
 		// game.contextPlayer.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
 		
 		if (!this.dead) {			
-			game.contextPlayer.drawImage(game.images[this.image], this.x, this.y, this.size, this.size); //render			
+			this.ctx.drawImage(this.offCanvas, this.x, this.y); //render			
 		}
 	};
 }
@@ -1778,16 +1899,16 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 	switch (this.side){
 		case 'top':
 			this.x = pos;
-			this.y = -Math.round(game.height*0.1);
+			this.y = game.outerTop;
 			this.direction = Math.PI/2;
 			break;
 		case 'left':
-			this.x = -Math.round(game.width*0.2);
+			this.x = game.outerLeft;
 			this.y = pos;
 			this.direction = 0;
 			break;
 		case 'right':
-			this.x = Math.round(game.width*1.2);
+			this.x = game.outerRight;
 			this.y = pos;
 			this.direction = Math.PI;
 			break;
@@ -2175,13 +2296,13 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 	this.pause = function()
 	{
 		game.paused = true;
-		gameUI.updateAll();
 		gameUI.fade('out');		
 	};
 
 	this.unPause = function()
 	{
-		game.paused = false;
+		game.paused = false;		
+		gameUI.updateAll();
 		gameUI.fade('in');	
 	};
 
@@ -2538,7 +2659,8 @@ gameMenu = new menu();
 			//////////////////////// 
 			// Init
 			///////////////////////
-			clrCanvas();	
+			clrCanvas();
+			gameBackground.update();
 
 			//obtaining an average deltaTime
 			if(dtTimer <= 100){
@@ -2571,14 +2693,6 @@ gameMenu = new menu();
 
 			playerShip.load();
 
-
-			//////////////////////// 
-			// Background
-			///////////////////////
-
-			// addStars(1);		
-
-			gameBackground.update();
 
 			/////////////////////////////////////////////////////////////////////////////////
 			// LEVELS
@@ -2618,9 +2732,9 @@ gameMenu = new menu();
 			if (game.playerBullets.length >= 1)
 			{
 				for (var k in game.playerBullets)
-				{					
+				{				
 					if (!game.playerBullets[k].dead)
-					{
+					{						
 						game.playerBullets[k].update();					
 						game.playerBullets[k].draw();
 					}
@@ -2628,8 +2742,9 @@ gameMenu = new menu();
 
 				for (var r in game.playerBullets)
 				{					
-					if (game.playerBullets[r].dead || game.playerBullets[r].x > game.width + game.playerBullets[r].size || game.playerBullets[r].x < 0 - game.playerBullets[r].size || game.playerBullets[r].y > game.height + game.playerBullets[r].size || game.playerBullets[r].y < 0 - 30)
-					{
+					if (game.playerBullets[r].dead || game.playerBullets[r].x > game.outerRight || game.playerBullets[r].x < game.outerLeft || game.playerBullets[r].y > game.outerBottom || game.playerBullets[r].y < game.outerTop)
+					{						
+						game.playerBullets[r] = null;
 						game.playerBullets.splice(r,1);
 					}
 				}
@@ -2646,21 +2761,21 @@ gameMenu = new menu();
 
 			if (game.enemies.length > 0){
 				
-				for (var c in game.enemies){
-					game.enemies[c].update();
-					game.enemies[c].draw();
+				for (var c1 in game.enemies){
+					game.enemies[c1].update();
+					game.enemies[c1].draw();
 				}
 
 				if (game.playerBullets.length >= 1){				
 					//projectiles collision
-					for (var j in game.enemies){
+					for (var c2 in game.enemies){
 						for (var f in game.playerBullets){
-							if (Collision(game.enemies[j], game.playerBullets[f]) && !game.enemies[j].dead){ //dead check avoids ghost scoring														
-								game.enemies[j].hit = true;	
-								game.enemies[j].hull -= game.playerBullets[f].power;
+							if (Collision(game.enemies[c2], game.playerBullets[f]) && !game.enemies[c2].dead){ //dead check avoids ghost scoring														
+								game.enemies[c2].hit = true;	
+								game.enemies[c2].hull -= game.playerBullets[f].power;
 								// game.contextEnemies.clearRect(game.playerBullets[f].x, game.playerBullets[f].y, game.playerBullets[f].size, game.playerBullets[f].size*1.8);								
-								if(game.enemies[j].hull > 0) {
-									game.explosions.push(new explosion(game.enemies[j].x + game.enemies[j].size*0.5, game.enemies[j].y + game.enemies[j].size*0.5, 0, 1, game.enemies[j].size*0.25, 'chasis'));
+								if(game.enemies[c2].hull > 0) {
+									game.explosions.push(new explosion(game.enemies[c2].x + game.enemies[c2].size*0.5, game.enemies[c2].y + game.enemies[c2].size*0.5, 0, 1, game.enemies[c2].size*0.25, 'chasis'));
 								}
 								game.playerBullets[f].dead = true;
 								// game.playerBullets.splice(f,1);
@@ -2780,7 +2895,7 @@ gameMenu = new menu();
 
 
 				for (var o in game.enemies){
-					if(game.enemies[o].dead || game.enemies[o].y > game.height + game.enemies[o].size ||  game.enemies[o].x < -game.width*0.3 ||  game.enemies[o].x > game.width*1.3){					
+					if(game.enemies[o].dead || game.enemies[o].x > game.outerRight || game.enemies[o].x < game.outerLeft || game.enemies[o].y > game.outerBottom || game.enemies[o].y < game.outerTop){					
 						if(game.enemies[o].dead){
 							// game.contextEnemies.clearRect(game.enemies[o].x, game.enemies[o].y, game.enemies[o].size, game.enemies[o].size);
 							lootchance = Math.random();
@@ -2788,7 +2903,7 @@ gameMenu = new menu();
 								game.loot.push(new loot(game.enemies[o].x, game.enemies[o].y));					
 							}
 						}	
-
+						game.enemies[o] = null;
 						game.enemies.splice(o,1);				
 					}
 				}
@@ -2803,7 +2918,8 @@ gameMenu = new menu();
 
 					game.waves[h].update();
 
-					if(game.waves[h].over){					
+					if(game.waves[h].over){	
+						game.waves[h] = null;				
 						game.waves.splice(h,1);				
 					}
 				}
@@ -2821,6 +2937,7 @@ gameMenu = new menu();
 
 				for (var v in game.loot){
 					if(game.loot[v].dead || game.loot[v].x > game.width + game.loot[v].size || game.loot[v].x < 0 - game.loot[v].size || game.loot[v].y > game.height + game.loot[v].size || game.loot[v].y < 0 - 30){
+						game.loot[v] = null;
 						game.loot.splice(v,1);
 					}
 				}
@@ -2861,6 +2978,7 @@ gameMenu = new menu();
 
 				for (var w in game.enemyBullets){
 					if(game.enemyBullets[w].dead || game.enemyBullets[w].x > game.width + game.enemyBullets[w].size || game.enemyBullets[w].x < 0 - game.enemyBullets[w].size || game.enemyBullets[w].y > game.height + game.enemyBullets[w].size || game.enemyBullets[w].y < 0 - 30){
+						game.enemyBullets[w] = null;
 						game.enemyBullets.splice(w,1);
 					}
 				}
@@ -2881,6 +2999,7 @@ gameMenu = new menu();
 				for(var p in game.explosions){
 
 					if (game.explosions[p].sprite.currentFrame >= game.explosions[p].sprite.endFrame){
+						game.explosions[p] = null;
 						game.explosions.splice(p,1);
 					}
 				}
@@ -2896,6 +3015,7 @@ gameMenu = new menu();
 				for(var s in game.sounds){
 
 					game.sounds[s].play();
+					// game.sounds[s].addEventListener("paused", game.sounds[s] = null);
 					game.sounds[s].addEventListener("paused", game.sounds.splice(s,1));
 				}
 			}
@@ -2943,11 +3063,11 @@ var level1 = {};
 			};
 
 			level1.second5 = function () {
-			    game.enemies.push(new enemy(game.width * 0.7, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));		
+			    game.enemies.push(new enemy(game.width * 0.7, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));		
 			};
 
 			level1.second7 = function () {
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 'alienbase1.png', 1));
+			    game.enemies.push(new enemy(game.width * 0.3, game.outerTop, 155, Math.PI/2, 10, 'base', 'alienbase1.png', 1));
 			};
 
 			level1.second8 = function () {
@@ -2971,7 +3091,7 @@ var level1 = {};
 			};
 
 			level1.second13 = function () {				
-			    game.enemies.push(new enemy(game.width * 0.3, -game.height*0.1, 155, Math.PI/2, 10, 'base', 'alienbase2.png', 1));			
+			    game.enemies.push(new enemy(game.width * 0.3, game.outerTop, 155, Math.PI/2, 10, 'base', 'alienbase2.png', 1));			
 			};			
 			
 			level1.second15 = function () {
@@ -3015,39 +3135,39 @@ var level1 = {};
 			};
 
 			level1.second37 = function () {
-			    game.enemies.push(new enemy(game.width * 0.2, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.2, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second38 = function () {
-			    game.enemies.push(new enemy(game.width * 0.4, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.4, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second39 = function () {
-			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.6, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second40 = function () {
-			    game.enemies.push(new enemy(game.width * 0.8, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.8, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second41 = function () {
-			    game.enemies.push(new enemy(game.width * 0.5, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.5, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second42 = function () {
-			    game.enemies.push(new enemy(game.width * 0.2, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.2, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second43 = function () {
-			    game.enemies.push(new enemy(game.width * 0.4, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.4, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second44 = function () {
-			    game.enemies.push(new enemy(game.width * 0.6, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.6, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.second45 = function () {
-			    game.enemies.push(new enemy(game.width * 0.8, -game.height*0.1, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    game.enemies.push(new enemy(game.width * 0.8, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
 			};
 
 			level1.update = function () {
@@ -3065,7 +3185,7 @@ var level1 = {};
 						game.tracks[2].play();
 						game.tracks[2].loop = true;
 					}
-				    game.enemies.push(new boss(game.width*0.3, -game.height*0.1, 150, Math.PI/2, 50, 'sectoidBoss.png'));
+				    game.enemies.push(new boss(game.width*0.3, game.outerTop, 150, Math.PI/2, 50, 'sectoidBoss.png'));
 				}
 
 				if (game.seconds > 55 && game.enemies.length === 0 && game.bossDead && game.tracks.length == 3) {
@@ -3093,17 +3213,19 @@ var level1 = {};
 
 			setGameDimensions();
 
-			//set playerShip's dimensions/boundaries
-			playerShip.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
-			playerShip.limitX2 = Math.round(game.width - (playerShip.size*0.5));
-			playerShip.limitY2 = Math.round(game.height - (playerShip.size*0.5));
-			playerShip.movement = Math.round(game.height*0.007);
-
+			if(typeof window[playerShip] != "undefined")
+			{
+				//set playerShip's dimensions/boundaries
+				playerShip.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
+				playerShip.limitX2 = Math.round(game.width - (playerShip.size*0.5));
+				playerShip.limitY2 = Math.round(game.height - (playerShip.size*0.5));
+				playerShip.movement = Math.round(game.height*0.007);
+			}
 			//set game bosses' boundaries  !Need to give this enemy a name in the array
 			// this.yStop = Math.round(game.height*0.1);
 			// this.xBondary = Math.round(game.width - this.size/4);
 
-			if(!game.started)
+			if(!game.started && typeof window[playerShip] != "undefined")
 			{
 				playerShip.x = Math.round(game.width*0.46);
 				playerShip.y = Math.round(game.height*0.90);
@@ -3113,8 +3235,6 @@ var level1 = {};
 
 		}
 
-		//Run function whenever browser resizes
-		$(window).resize(respondCanvas);
 
 		//Keyboard		
 		$(document).keydown(function(e){    //using jquery to listen to pressed keys
@@ -3125,17 +3245,12 @@ var level1 = {};
 			delete game.keys[e.keyCode ? e.keyCode : e.which]; //once key is released, delete the key pressed action previously defined 
 		});
 		
-		//mouse and touch screens
-		var inputArea = document.getElementById("inputarea");
-		var inputAreaX = playerShip.x;
-		var inputAreaY = playerShip.y;
-		var mouseIsDown = 0;
-		var touchInitX = 0;
-		var touchInitY = 0;
- 
 
 		function addGamePlayInput()
-		{	                
+		{
+			inputAreaX = playerShip.x;
+			inputAreaY = playerShip.y;
+
 	        inputArea.addEventListener("mousedown",mouseDown, false);
 	        inputArea.addEventListener("mouseup", mouseUp, false);        
 	        inputArea.addEventListener("mousemove",mouseXY, false);
@@ -3427,6 +3542,11 @@ var level1 = {};
 		function startGame()
 		{						
 			game.loaded = true;
+
+			if (typeof window[playerShip] === "undefined")
+			{
+				playerShip = new player(10, 15);
+			}
 			
 			//preparing sound tracks (chromium fix)
 			game.tracks.push(game.soundTracks['tune1' + fileFormat]);
@@ -3463,10 +3583,7 @@ var level1 = {};
 		
 			game.sounds = [];
 
-			gameUI.updateAll();
 			loop();
-
-
 		}
 
 
@@ -3696,7 +3813,8 @@ var level1 = {};
 			
 			//Projectiles
 			"_img/_dist/laser.png",
-			"_img/_dist/missile.png",
+			"_img/_dist/p_missile.png",
+			"_img/_dist/e_missile.png",
 			"_img/_dist/explosion.png"						
 		]);
 
@@ -3760,6 +3878,9 @@ var level1 = {};
 		window.addEventListener("load", function load(event)
 		{
     		window.removeEventListener("load", load, false); //remove listener, no longer needed
+
+    		//Run function whenever browser resizes
+			$(window).resize(respondCanvas);
 
     		//appcache
     		window.applicationCache.addEventListener("updateready", function event() {

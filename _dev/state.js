@@ -135,13 +135,13 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 	this.pause = function()
 	{
 		game.paused = true;
-		gameUI.updateAll();
 		gameUI.fade('out');		
 	};
 
 	this.unPause = function()
 	{
-		game.paused = false;
+		game.paused = false;		
+		gameUI.updateAll();
 		gameUI.fade('in');	
 	};
 

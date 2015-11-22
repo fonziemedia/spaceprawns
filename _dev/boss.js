@@ -19,7 +19,15 @@ function boss(x, y, speed, direction, hull, image) {
 	// this.fireRate = fireRate * 60; //bullets/sec
 	this.yStop = Math.round(game.height*0.1);
 	this.xBondary = Math.round(game.width - this.size/4);
-	this.context = game.contextEnemies;
+	this.ctx = game.contextEnemies;
+
+	//====================== Caching Off-Screen canvas =================//
+	this.offCanvas = document.createElement('canvas');
+	this.offCanvas.width = this.size;
+	this.offCanvas.height = this.size;
+	this.offCtx = this.offCanvas.getContext('2d');
+
+	this.offCtx.drawImage(this.image, 0, 0, this.offCanvas.width, this.offCanvas.height);
 
 
 	this.update = function() {
@@ -84,8 +92,8 @@ function boss(x, y, speed, direction, hull, image) {
 				mBulletX1 = Math.round(this.x);
 				mBulletX2 = Math.round(this.x + this.size);
 				mBulletY = Math.round(this.y + this.size*0.6);		
-				game.enemyBullets.push(new enemyBullet(mBulletX1, mBulletY, 50, this.bulletDirection, 1, 'missile.png'));			
-				game.enemyBullets.push(new enemyBullet(mBulletX2, mBulletY, 50, this.bulletDirection, 1, 'missile.png'));			
+				game.enemyBullets.push(new enemyBullet(mBulletX1, mBulletY, 50, this.bulletDirection, 1, 'e_missile.png'));			
+				game.enemyBullets.push(new enemyBullet(mBulletX2, mBulletY, 50, this.bulletDirection, 1, 'e_missile.png'));			
 			}
 		
 			// homing missiles, sort of
@@ -120,7 +128,7 @@ function boss(x, y, speed, direction, hull, image) {
 	this.draw = function() {
 		
 		if (!this.dead) {
-				game.contextEnemies.drawImage(this.image, this.x, this.y, this.size, this.size); //render
+				this.ctx.drawImage(this.offCanvas, this.x, this.y); //render
 		}		
 
 		// if (this.hit) {

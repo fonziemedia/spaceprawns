@@ -2,10 +2,10 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 	particle.call(this, x, y, speed, direction);
 	
 	this.size = Math.round(bulletSize/pixelRatio);
-	this.spriteX = -Math.round(this.size*0.5);
-	this.spriteY = -Math.round(this.size*0.5);
+	this.x = Math.round(x - this.size*0.5);
+	this.y = Math.round(y - this.size*0.5);
 	this.power = power;
-	this.image = image; 
+	this.image = image;
 	this.dead = false;
 	this.deadTime = 60;
 	this.friction = friction;
@@ -26,27 +26,19 @@ function playerBullet(x, y, speed, direction, bulletSize, power, friction, image
 		this.y += this.vy;
 	};
 	
-	this.draw = function() {		
-		
-		if (!this.dead) {			
+	this.draw = function() {
+		if (!this.dead) {
 
-			// this.ctx.save();
-			// this.ctx.translate(this.lastX, this.lastY);
-			// this.ctx.rotate(direction - Math.PI/2);
+			this.sprite.draw(this.x, this.y); //-this.size/2 because we're rotating ctx
 
-			// this.ctx.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
+			// for homing missiles
+				// this.ctx.save();
+				// this.ctx.translate(this.x, this.y);
+				// this.ctx.rotate(direction - Math.PI/2);
+				// ...
+				// this.ctx.restore();
 
-			// this.ctx.restore();
-
-			this.ctx.save();
-			this.ctx.translate(this.x, this.y);
-			this.ctx.rotate(direction - Math.PI/2);
-
-			this.sprite.draw(this.spriteX, this.spriteY); //-this.size/2 because we're rotating ctx
-			
-			this.ctx.restore();
-
-		}
+		}		
 	};
 }
 

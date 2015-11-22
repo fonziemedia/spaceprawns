@@ -10,7 +10,17 @@ function player(hull, fireRate) {
 	this.hull = hull;
 	this.maxHull = hull;
 	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
-	this.image = 'fighter.png';
+	this.imageO = game.images['fighter.png'];
+	this.imageL1 = game.images['fighter_left1.png'];
+	this.imageL2 = game.images['fighter_left2.png'];
+	this.imageL3 = game.images['fighter_left3.png'];
+	this.imageL4 = game.images['fighter_left4.png'];
+	this.imageL5 = game.images['fighter_left5.png'];
+	this.imageR1 = game.images['fighter_right1.png'];
+	this.imageR2 = game.images['fighter_right2.png'];
+	this.imageR3 = game.images['fighter_right3.png'];
+	this.imageR4 = game.images['fighter_right4.png'];
+	this.imageR5 = game.images['fighter_right5.png'];
 	this.audioFire1 = 'laser' + fileFormat;
 	this.audioFire2 = 'laser2' + fileFormat;
 	this.audioFire3 = 'laser3' + fileFormat;
@@ -34,15 +44,90 @@ function player(hull, fireRate) {
 	this.limitY1 = Math.round(-this.size*0.5);
 	this.limitY2 = Math.round(game.height - this.size*0.5);
 	this.movement = Math.round(game.height*0.007);
+	this.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;	
+	if (this.canVibrate && !("vibrate" in navigator)){navigator.vibrate = navigator.mozVibrate;}	
 
-	this.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;
+	//====================== Caching Off-Screen canvas =================//
+	this.offCanvas = document.createElement('canvas');
+	this.offCanvas.width = this.size;
+	this.offCanvas.height = this.size;
+	this.offCtx = this.offCanvas.getContext('2d');
+
+	this.offCtx.drawImage(this.imageO, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.image = this.offCanvas;
+	this.playerImage = this.image;
+
+	this.offCanvasL1 = document.createElement('canvas');
+	this.offCanvasL1.width = this.size;
+	this.offCanvasL1.height = this.size;
+	this.offCtxL1 = this.offCanvasL1.getContext('2d');
+
+	this.offCtxL1.drawImage(this.imageL1, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.offCanvasL2 = document.createElement('canvas');
+	this.offCanvasL2.width = this.size;
+	this.offCanvasL2.height = this.size;
+	this.offCtxL2 = this.offCanvasL2.getContext('2d');
+
+	this.offCtxL2.drawImage(this.imageL2, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.offCanvasL3 = document.createElement('canvas');
+	this.offCanvasL3.width = this.size;
+	this.offCanvasL3.height = this.size;
+	this.offCtxL3 = this.offCanvasL3.getContext('2d');
+
+	this.offCtxL3.drawImage(this.imageL3, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.offCanvasL4 = document.createElement('canvas');
+	this.offCanvasL4.width = this.size;
+	this.offCanvasL4.height = this.size;
+	this.offCtxL4 = this.offCanvasL4.getContext('2d');
+
+	this.offCtxL4.drawImage(this.imageL4, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.offCanvasL5 = document.createElement('canvas');
+	this.offCanvasL5.width = this.size;
+	this.offCanvasL5.height = this.size;
+	this.offCtxL5 = this.offCanvasL5.getContext('2d');
+
+	this.offCtxL5.drawImage(this.imageL5, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.offCanvasR1 = document.createElement('canvas');
+	this.offCanvasR1.width = this.size;
+	this.offCanvasR1.height = this.size;
+	this.offCtxR1 = this.offCanvasR1.getContext('2d');
+
+	this.offCtxR1.drawImage(this.imageR1, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.offCanvasR2 = document.createElement('canvas');
+	this.offCanvasR2.width = this.size;
+	this.offCanvasR2.height = this.size;
+	this.offCtxR2 = this.offCanvasR2.getContext('2d');
+
+	this.offCtxR2.drawImage(this.imageR2, 0, 0, this.offCanvas.width, this.offCanvas.height);
 	
-	if (this.canVibrate && !("vibrate" in navigator))
-	{
-    navigator.vibrate = navigator.mozVibrate;
-    }	
+	this.offCanvasR3 = document.createElement('canvas');
+	this.offCanvasR3.width = this.size;
+	this.offCanvasR3.height = this.size;
+	this.offCtxR3 = this.offCanvasR3.getContext('2d');
 
-	// bulletspeed: X_BulletSpeed*game.height/1000,
+	this.offCtxR3.drawImage(this.imageR3, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
+	this.offCanvasR4 = document.createElement('canvas');
+	this.offCanvasR4.width = this.size;
+	this.offCanvasR4.height = this.size;
+	this.offCtxR4 = this.offCanvasR4.getContext('2d');
+
+	this.offCtxR4.drawImage(this.imageR4, 0, 0, this.offCanvas.width, this.offCanvas.height);
+	
+	this.offCanvasR5 = document.createElement('canvas');
+	this.offCanvasR5.width = this.size;
+	this.offCanvasR5.height = this.size;
+	this.offCtxR5 = this.offCanvasR5.getContext('2d');
+
+	this.offCtxR5.drawImage(this.imageR5, 0, 0, this.offCanvas.width, this.offCanvas.height);
+
 
 	this.update = function() {		
 		// this.vx = Math.cos(this.direction) * (this.speed*dt);
@@ -55,7 +140,7 @@ function player(hull, fireRate) {
 		// this.x += this.vx;
 		// this.y += this.vy;
 		this.speed = 0; // !! check if you can optimise this !!
-		this.playerImage = game.images[this.image]; // !! check if you can optimise this !!
+		this.playerImage = this.image; // !! check if you can optimise this !!
 		this.speedX = Math.round(((touchInitX - inputAreaX)*0.1)/pixelRatio);
 		this.speedY = Math.round(((touchInitY - inputAreaY)*0.1)/pixelRatio);		
 		
@@ -162,26 +247,26 @@ function player(hull, fireRate) {
 
 				
 				if (moveRight1) {
-					this.image = 'fighter_right1.png';
+					this.image = this.offCanvasR1;
 				} else if (moveRight2) {
-					this.image = 'fighter_right2.png';
+					this.image = this.offCanvasR2;
 				} else if (moveRight3) {
-					this.image = 'fighter_right3.png';
+					this.image = this.offCanvasR3;
 				} else if (moveRight4) {
-					this.image = 'fighter_right4.png';
+					this.image = this.offCanvasR4;
 				} else if (moveRight5) {
-					this.image = 'fighter_right5.png';
+					this.image = this.offCanvasR5;
 
 				} else if (moveLeft1) {
-					this.image = 'fighter_left1.png';
+					this.image = this.offCanvasL1;
 				} else if (moveLeft2) {
-					this.image = 'fighter_left2.png';
+					this.image = this.offCanvasL2;
 				} else if (moveLeft3) {
-					this.image = 'fighter_left3.png';
+					this.image = this.offCanvasL3;
 				} else if (moveLeft4) {
-					this.image = 'fighter_left4.png';
+					this.image = this.offCanvasL4;
 				} else if (moveLeft5) {
-					this.image = 'fighter_left5.png';
+					this.image = this.offCanvasL5;
 				}
 
 				this.rendered = false;		
@@ -189,7 +274,7 @@ function player(hull, fireRate) {
 		}
 		else
 		{
-			this.image = 'fighter.png';	
+			this.image = this.offCanvas;	
 			document.getElementById('gamearea').style.cursor = 'crosshair';
 		}
 
@@ -203,7 +288,7 @@ function player(hull, fireRate) {
 			if(game.keys[37] || game.keys[65] && !game.gameOver){ //if key pressed..				
 				if(this.x > 0){ // (keeping it within the boundaries of our canvas)				
 					this.speed = this.maxSpeed;							
-					this.image = 'fighter_left5.png';
+					this.image = this.offCanvasL5;
 					this.rendered = false;
 					this.x -= Math.round(this.speed*dt);
 				}
@@ -212,7 +297,7 @@ function player(hull, fireRate) {
 			if(game.keys[39] || game.keys[68] && !game.gameOver){
 				if(this.x <= game.width - this.size){				
 					this.speed = this.maxSpeed;
-					this.image = 'fighter_right5.png';
+					this.image = this.offCanvasR5;
 					this.rendered = false;
 					this.x += Math.round(this.speed*dt);
 				}
@@ -328,16 +413,16 @@ function player(hull, fireRate) {
 				 	case 0:
 				 		break;
 				    case 1:
-				        game.playerBullets.push( new playerBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+				        game.playerBullets.push( new playerBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'p_missile.png', 64, 2));
 						break;
 				    case 2:
-				    	game.playerBullets.push( new playerBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
-						game.playerBullets.push( new playerBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+				    	game.playerBullets.push( new playerBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'p_missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'p_missile.png', 64, 2));
 						break;
 				    default:
-				        game.playerBullets.push( new playerBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
-						game.playerBullets.push( new playerBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
-						game.playerBullets.push( new playerBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'missile.png', 64, 2));
+				        game.playerBullets.push( new playerBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'p_missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'p_missile.png', 64, 2));
+						game.playerBullets.push( new playerBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 45, 2, 1.03, 'p_missile.png', 64, 2));
 						break;										
 				 }				
 				// this.bulletTimer = 1; //resetting our timer
@@ -373,7 +458,7 @@ function player(hull, fireRate) {
 				this.dead = false;
 				this.x = Math.round(game.width*0.46);
 				this.y = Math.round(game.height*0.90);
-				this.image = 'fighter.png';
+				this.image = this.offCanvas;
 				this.rendered = false;
 				this.hit = false;
 				this.hitTimer = 0;
@@ -422,7 +507,7 @@ function player(hull, fireRate) {
 				////////////////
 				if (this.imuneTimer >= 0 && this.imuneTimer < 15  || this.imuneTimer >= 20 && this.imuneTimer < 35 ||this.imuneTimer >= 40 && this.imuneTimer < 55 || this.imuneTimer >= 70 && this.imuneTimer < 75 || this.imuneTimer >= 90 && this.imuneTimer < 95 || this.imuneTimer >= 110 && this.imuneTimer < 115 || this.imuneTimer >= 130 && this.imuneTimer < 135 || this.imuneTimer >= 150 && this.imuneTimer < 155 || this.imuneTimer >= 160 && this.imuneTimer < 175 || this.imuneTimer > 180)
 				{
-					this.ctx.drawImage(this.playerImage, this.x, this.y, this.size, this.size); //rendering
+					this.ctx.drawImage(this.playerImage, this.x, this.y); //rendering
 				}
 			}
 
@@ -434,7 +519,7 @@ function player(hull, fireRate) {
 						this.ctx.globalAlpha += 0.1;				
 				}
 
-				this.ctx.drawImage(this.playerImage, this.x, this.y, this.size, this.size); //rendering
+				this.ctx.drawImage(this.playerImage, this.x, this.y); //rendering
 			}
 
 
@@ -481,7 +566,7 @@ function player(hull, fireRate) {
 		this.deadTimer = 0;				
 		this.x = Math.round(game.width*0.46);
 		this.y = Math.round(game.height*0.90);
-		this.image = 'fighter.png';
+		this.image = this.offCanvas;
 		this.hull = hull;
 		this.rendered = false;
 		this.hit = false;
@@ -498,4 +583,4 @@ function player(hull, fireRate) {
 // player.prototype.constructor = player; // Set the "constructor" property to refer to player
 
 
-playerShip = new player(10, 15);
+var playerShip;
