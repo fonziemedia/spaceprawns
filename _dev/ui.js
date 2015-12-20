@@ -3,10 +3,10 @@ function ui() {
 	var uiAll = $('#ui');
 
 	//avoiding jQuery inside the loop
-	var uiLevel = document.getElementById("uiLevel");
-	var uiScore = document.getElementById("uiScore");
-	var uiEBar = document.getElementById("uiEBar");
-	var uiHangar = document.getElementById("uiHangarList");	
+	var uiLevel = doc.getElementById("uiLevel");
+	var uiScore = doc.getElementById("uiScore");
+	var uiEBar = doc.getElementById("uiEBar");
+	var uiHangar = doc.getElementById("uiHangarList");	
 
 	var effectDuration = 800;	
 

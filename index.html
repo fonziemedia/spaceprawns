@@ -19,28 +19,25 @@
 		<link rel="stylesheet" href="_css/style.css" type="text/css" media="screen"/>
 	</head>
 	<body>
-		<section id="container gpu">
+		<section id="container">
 			<div id="gamearea" class="gpu no-select">
 				<!-- MAIN MENU BACKGROUND -->
 				<div id="menuBackground"></div>
 				<!-- INPUT AREA -->
 				<div id="inputarea"></div>
-				<!-- GAME BACKGROUND -->
-				<div id="levelBackground" class="gpu"></div>
 				<!-- CANVAS -->
 				<!-- <canvas id = "backgroundCanvas" moz-opaque>Sorry, your browser doesn't support canvas technology.</canvas> -->
-				<canvas id="enemiesCanvas" class="gpu"></canvas>
-				<canvas id="playerCanvas" class="gpu"></canvas>
+				<canvas id="gameCanvas" class="gpu no-select"></canvas>
 				
 				<!-- UI -->
-				<div id="ui" class="gpu">
+				<div id="ui">
 					<div id="uiLevel" class="ui-item no-select"></div>
-					<div id="uiScore" class="ui-item gpu no-select"></div>
+					<div id="uiScore" class="ui-item no-select"></div>
 					<div id="uiEContainer" class="ui-item no-select">
 						<div id="uiEBarContainer" class="ui-item no-select"></div>
 						<div id="uiEBarMask" class="ui-item no-select">
-							<div id="uiEBarText" class="ui-item gpu no-select">S H I E L D S</div>
-							<div id="uiEBar" class="ui-item gpu no-select eBar-blue"></div>
+							<div id="uiEBarText" class="ui-item no-select">S H I E L D S</div>
+							<div id="uiEBar" class="ui-item no-select eBar-blue"></div>
 						</div>						
 					</div>					
 					<div id="uiHangar" class="ui-item no-select">
@@ -57,25 +54,24 @@
 
 				<!-- TEXT MESSAGES -->
 				<div id ="textContainer">
-					<div id="h1" class="all-text gpu no-select"></div>
-					<div id="h2" class="all-text gpu no-select"></div>
-					<div id="h3" class="all-text gpu no-select"></div>					
+					<div id="h1" class="all-text no-select"></div>
+					<div id="h2" class="all-text no-select"></div>
+					<div id="h3" class="all-text no-select"></div>					
 				</div>
-				<div id="loadingBar" class="gpu no-select">
+				<div id="loadingBar" class="no-select">
 					<div id="loadingBarContainer" class="no-select"></div>
 					<div id="loadingBarMask" class="no-select">
-						<div id="loadingBarFiller" class="gpu no-select"></div>
+						<div id="loadingBarFiller" class="no-select"></div>
 					</div>					
 				</div>
 				
 				<!-- STAGE CURTAIN -->
-				<div id="fader" class="gpu no-select"></div>
-
+				<div id="fader" class="no-select"></div>
 
 
 				<!-- HOME SCREEN -->
-				<div id="homeTop gpu no-select"></div>
-				<div id="homeBottom gpu no-select"></div>
+				<div id="homeTop no-select"></div>
+				<div id="homeBottom no-select"></div>
 
 				<!-- MENU BUTTONS -->
 				<!-- <div class="btn"> -->
@@ -84,26 +80,7 @@
 				<button type="button" id="toggleSound" class="btn menu-option-btn toggle hvr-pulse gpu no-select" pos="left" onclick="gameMenu.toggleSound()">Sound: OFF</button>
 				<button type="button" id="toggleMusic" class="btn menu-option-btn toggle hvr-pulse gpu no-select" pos="right" onclick="gameMenu.toggleMusic()">Music: OFF</button>
 				<button type="button" id="toggleFullScreen" class="btn menu-option-btn hvr-pulse gpu no-select" pos="left" onclick="gameMenu.toggleFullScreen()">Fullscreen: OFF</button>
-				<button type="button" id="credits" class="btn menu-option-btn hvr-pulse gpu no-select" pos="right" onclick="">Credits</button>				
-
-				<!-- having multiple canvas helps us optimise resources by separating elements of our game and avoiding unnecessary rendering -->
-				<!-- </div> -->
-				
-				<!--
-				<div class = "aright">
-					<h4>+CONTROLS</h4>
-					<div id = "controls">
-						<h4>MOVEMENT:</h4>
-						<p><b>UP -</b> W or   ↑</p>
-						<p><b>DOWN -</b> S or   ↓</p>
-						<p><b>LEFT -</b> A or   ←</p>
-						<p><b>RIGHT -</b> D or   →</p>
-						<h4>ACTIONS:</h4>
-						<p><b>FIRE -</b> Space bar</p>
-						<p><b>RESTART -</b> Esc</p>
-					</div>
-				</div>
-					-->
+				<button type="button" id="credits" class="btn menu-option-btn hvr-pulse gpu no-select" pos="right" onclick="">Credits</button>
 			</div>
 		</section>
 	</body>

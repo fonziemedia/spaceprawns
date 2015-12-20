@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 2015-09-10 ver 0.10.0
+# 2015-12-15 ver 0.11.0
 
 # Explicitly cached entries
 index.html
@@ -11,16 +11,6 @@ main.js
 main.min.js
 game.xml
 
-
-FALLBACK:
-# The FALLBACK section below specifies that "offline.html" will be served in place of all files in the /html/ catalog, in case an internet connection cannot be established
-# /html/ /offline.html
-
-NETWORK:
-*
-
-# Additional resources to cache
-CACHE:
 #GFX
 
 #CSS GFX
@@ -42,27 +32,77 @@ _css/_src/assets/fonts/icons/icons.ttf
 _css/_src/assets/fonts/icons/icons.woff
 _css/_src/assets/fonts/icons/icons.woff2
 
-#CANVAS GFX
-_img/_dist/explosion.png
-_img/_dist/enemies/sectoid.png
-_img/_dist/laser.png
-_img/_dist/fighter/fighter.png
-_img/_dist/fighter/fighter_left1.png
-_img/_dist/fighter/fighter_left2.png
-_img/_dist/fighter/fighter_left3.png
-_img/_dist/fighter/fighter_left4.png
-_img/_dist/fighter/fighter_left5.png
-_img/_dist/fighter/fighter_right1.png
-_img/_dist/fighter/fighter_right2.png
-_img/_dist/fighter/fighter_right3.png
-_img/_dist/fighter/fighter_right4.png
-_img/_dist/fighter/fighter_right5.png
-_img/_dist/e_missile.png
-_img/_dist/p_missile.png
-_img/_dist/enemies/_alienbase/alienbase1.png			
-_img/_dist/enemies/_alienbase/alienbase2.png
-_img/_dist/enemies/_miniboss/floater.png			
-_img/_dist/enemies/_bigboss/sectoidBoss.png
+#CANVAS DESKTOP GFX
+
+#backgrounds
+_img/bg_intro.dkt.jpg
+_img/bg_level1_a.dkt.jpg
+_img/bg_level1_b.dkt.jpg
+_img/bg_level1_c.dkt.jpg
+
+#player
+_img/player_ship.dkt.png
+_img/player_ship_i.dkt.png
+_img/player_shields.dkt.png
+
+#enemies
+_img/enemy_sectoid.dkt.png
+_img/enemy_floater.dkt.png
+_img/enemy_base_sectoid.dkt.png			
+_img/enemy_base_floater.dkt.png
+_img/boss_sectoid.dkt.png
+
+#projectiles
+_img/bullet_p_laser.dkt.png
+_img/bullet_p_missile.dkt.png
+_img/bullet_e_missile.dkt.png
+_img/explosion_s0.dkt.png						
+_img/explosion_s1.dkt.png						
+_img/explosion_s2.dkt.png						
+_img/explosion_s3.dkt.png						
+_img/explosion_s4.dkt.png
+
+#loot					
+_img/loot_lasers.dkt.png					
+_img/loot_missiles.dkt.png				
+_img/loot_shields.dkt.png
+
+
+#CANVAS MOBILE GFX
+
+#backgrounds
+_img/bg_intro.mob.jpg
+_img/bg_level1_a.mob.jpg
+_img/bg_level1_b.mob.jpg
+_img/bg_level1_c.mob.jpg
+
+#player
+_img/player_ship.mob.png
+_img/player_ship_i.mob.png
+_img/player_shields.mob.png
+
+#enemies
+_img/enemy_sectoid.mob.png
+_img/enemy_floater.mob.png
+_img/enemy_base_sectoid.mob.png			
+_img/enemy_base_floater.mob.png
+_img/boss_sectoid.mob.png
+
+#projectiles
+_img/bullet_p_laser.mob.png
+_img/bullet_p_missile.mob.png
+_img/bullet_e_missile.mob.png
+_img/explosion_s0.mob.png						
+_img/explosion_s1.mob.png						
+_img/explosion_s2.mob.png						
+_img/explosion_s3.mob.png						
+_img/explosion_s4.mob.png
+
+#loot					
+_img/loot_lasers.mob.png					
+_img/loot_missiles.mob.png				
+_img/loot_shields.mob.png
+
 #SOUND
 _sounds/_sfx/hit.mp3
 _sounds/_sfx/hit.m4a
@@ -92,11 +132,15 @@ _sounds/_soundTracks/_lvl1/victory.mp3
 _sounds/_soundTracks/_lvl1/victory.m4a
 _sounds/_soundTracks/_lvl1/victory.ogg
 
+NETWORK:
+*
 
-
+FALLBACK:
+# The FALLBACK section below specifies that "offline.html" will be served in place of all files in the /html/ catalog, in case an internet connection cannot be established
+# /html/ /offline.html
 
 # Updating the cache
 #
 # Once an application is offline it remains cached until one of the following happens:
 # 	-The user clears their browser's data storage for your site.
-# 	-The manifest file (this file) is modified. Note: updating a file listed in the manifest doesn't mean the browser will re-cache that resource. The manifest file itself must be altered.
+# 	-The manifest file (this file) is modified. Note: updating a file listed in the manifest doesn't mean the browser will re-cache that resource. The manifest file itself must be altered

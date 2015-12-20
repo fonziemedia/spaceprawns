@@ -1,6 +1,6 @@
 function text(header1, header2, inputRequired) {
 
-	var h1 = $('#h1');
+	var h1 = $('#h1'); //remove jquery here
 	var h2 = $('#h2');
 	var h3 = $('#h3');
 

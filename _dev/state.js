@@ -3,6 +3,11 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 
 	this.start = function()
 	{
+		if (game.canVibrate) navigator.vibrate(15);
+		//disabling buttons so we don't this function more than once
+		document.getElementById("resumeGame").disabled = true;
+		document.getElementById("startGame").disabled = true;
+
 		gameState.pause();		  
 		gameLights.switch('off');
 
@@ -25,13 +30,13 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 		}
 
 		introBriefing = ['Outside the galaxy', 'The outer space', 'AlphaPI 2034' ];
-		introText = new text('Stage ' + game.level, introBriefing[game.level - 1], true);
+		introText = new text('Stage ' + game.level, introBriefing[game.level - 1], true);  //needs reclying centre!
 
 		$('.menu-option-btn').promise().done(function()
 		{
 			$('#menuBackground').promise().done(function()
-			{					
-				gameBackground.load();
+			{
+				gameBackground.update();
 				introText.fade('in');
 
 				$('.all-text').promise().done(function()
@@ -46,6 +51,8 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 						resetGame();
 						gameLights.fade('in');
 						gameState.unPause();
+						document.getElementById("resumeGame").disabled = false;
+						document.getElementById("startGame").disabled = false;
 					} 
 					else
 					{			
@@ -62,6 +69,8 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 								resetGame();
 								gameLights.fade('in');
 								gameState.unPause();
+								document.getElementById("resumeGame").disabled = false;
+								document.getElementById("startGame").disabled = false;
 							});
 						});
 					}

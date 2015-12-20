@@ -1,31 +1,80 @@
-function explosion(x, y, speed, direction, size, target) {
-	particle.call(this, x, y, speed, direction);
-
-	this.x = Math.round(x - (size*0.2));
-	this.y = Math.round(y - (size*0.2));
+explosion = function (x, y, speed, direction, size, target)
+{
+	switch(size)
+	{
+		case 'xSmall':
+			this.image = 'explosion_s0';
+		break;
+		case 'small':
+			this.image = 'explosion_s1';
+		break;
+		case 'medium':
+			this.image = 'explosion_s2';
+		break;
+		case 'large':
+			this.image = 'explosion_s3';
+		break;
+		case 'xLarge':
+			this.image = 'explosion_s4';
+		break;										
+	}
+	this.sprite = new sprite(this.image, 5, 4, 2);	
+	this.width = this.sprite.frameWidth;
+	this.height = this.sprite.frameHeight;
 	this.speed = speed;
-	this.size = Math.round(size*1.5);
-	this.hitTimer = 0; 
+	this.direction = direction;
+	this.target = target;
+
+
+};
+
+//invariables (note: any other object properties that require these need to be declared in the prototype function)
+explosion.prototype.dead = false;
+explosion.prototype.audioHit1 = 'hit' + fileFormat;	
+explosion.prototype.audioHit2 = 'hit2' + fileFormat;	
+explosion.prototype.audioHit3 = 'hit3' + fileFormat;		
+explosion.prototype.audioDead1 = 'explosion' + fileFormat;
+explosion.prototype.audioDead2 = 'explosion2' + fileFormat;
+explosion.prototype.audioDead3 = 'explosion3' + fileFormat;	
+explosion.prototype.audioExplode = 'blast' + fileFormat;
+
+explosion.prototype.reset = function(x, y, speed, direction, size, target)
+{
+	switch(size)
+	{
+		case 'xSmall':
+			this.image = 'explosion_s0';
+		break;
+		case 'small':
+			this.image = 'explosion_s1';
+		break;
+		case 'medium':
+			this.image = 'explosion_s2';
+		break;
+		case 'large':
+			this.image = 'explosion_s3';
+		break;
+		case 'xLarge':
+			this.image = 'explosion_s4';
+		break;										
+	}
+	this.x = Math.round(x - (this.width*0.2));
+	this.y = Math.round(y - (this.height*0.2));	
+	this.speed = speed;
+	this.direction = direction;
+	this.target = target;
 	this.dead = false;
-	this.deadTime = 60;
-	this.image = 'explosion.png';
-	this.target = target;	
-	this.audioHit1 = 'hit' + fileFormat;	
-	this.audioHit2 = 'hit2' + fileFormat;	
-	this.audioHit3 = 'hit3' + fileFormat;		
-	this.audioDead1 = 'explosion' + fileFormat;
-	this.audioDead2 = 'explosion2' + fileFormat;
-	this.audioDead3 = 'explosion3' + fileFormat;	
-	this.audioExplode = 'blast' + fileFormat;
-	this.ctx = game.contextPlayer;
-	this.sprite = new sprite(this.image, this.size, 96, 96, 0, 19, 2, this.ctx);
+
+	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
+	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
+};
 
 
-	// if (game.soundStatus == "ON"){game.enemyexplodeSound.play();}
-
-	this.update = function() {
-		this.vx = Math.cos(direction) * (this.speed*dt);
-		this.vy = Math.sin(direction) * (this.speed*dt);	
+explosion.prototype.update = function() {
+	if (!this.dead)
+	{
+		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
+		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);	
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;
@@ -33,57 +82,112 @@ function explosion(x, y, speed, direction, size, target) {
 		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
-	};
 
-	this.draw = function() {
-		// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
-		
-		this.sprite.draw(this.x, this.y);
+		this.draw(this.x, this.y);
 
-	};
-
-	this.load = function() {	
-		
-		if (game.sound)
-	    {
-	    	if (this.target == 'chasis')
-	    	{
-	        	if (game.sfx[this.audioHit1].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioHit1]);
-	        	}
-	        	else if (game.sfx[this.audioHit2].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioHit2]);
-	        	}
-	        	else if (game.sfx[this.audioHit3].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioHit3]);
-	        	}				        	
-	        }
-
-	         else if (this.target == 'enemy')
-	         {
-	        	if (game.sfx[this.audioDead1].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioDead1]);
-	        	}
-	        	else if (game.sfx[this.audioDead2].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioDead2]);
-	        	}
-	        	else if (game.sfx[this.audioDead3].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.audioDead3]);
-	        	}				        	
-	        }	
-			else if (this.target == 'player' || this.target == 'boss'){game.sounds.push(game.sfx[this.audioExplode]);}
-			
+		if (this.sprite.currentFrame >= this.sprite.endFrame)
+		{
+			this.dead = true;
 		}
-	};
+	}
+	else
+	{
+		freeExplosion(this);
+	}
+};
 
-	this.load();
+explosion.prototype.draw = function(x, y) {
+	
+	this.sprite.draw(x, y);
+
+};
+
+explosion.prototype.loadSound = function() {	
+	
+	if (game.sound)
+    {
+    	if (this.target == 'chasis')
+    	{
+        	if (game.sfx[this.audioHit1].paused)
+        	{
+        		game.sounds.push(game.sfx[this.audioHit1]);
+        	}
+        	else if (game.sfx[this.audioHit2].paused)
+        	{
+        		game.sounds.push(game.sfx[this.audioHit2]);
+        	}
+        	else if (game.sfx[this.audioHit3].paused)
+        	{
+        		game.sounds.push(game.sfx[this.audioHit3]);
+        	}				        	
+        }
+
+         else if (this.target == 'enemy')
+         {
+        	if (game.sfx[this.audioDead1].paused)
+        	{
+        		game.sounds.push(game.sfx[this.audioDead1]);
+        	}
+        	else if (game.sfx[this.audioDead2].paused)
+        	{
+        		game.sounds.push(game.sfx[this.audioDead2]);
+        	}
+        	else if (game.sfx[this.audioDead3].paused)
+        	{
+        		game.sounds.push(game.sfx[this.audioDead3]);
+        	}				        	
+        }	
+		else if (this.target == 'player' || this.target == 'boss'){game.sounds.push(game.sfx[this.audioExplode]);}
+		
+	}
+};
+
+
+////////////
+// Factory
+////////////
+
+function getNewExplosion(x, y, speed, direction, size, target)
+{
+    var e = null;
+
+    // check to see if there is a spare one
+    if (game.explosionsPool.length > 0)
+    {
+    	//recycle		    	
+        e = game.explosionsPool.pop();
+
+		e.reset(x, y, speed, direction, size, target);
+		//(image, frameWidth, frameHeight, startFrame, endFrame, frameSpeed)
+		e.sprite.reset(e.image, 5, 4, 2);
+
+		//watch out for this, maybe we can avoid it?
+		e.width = e.sprite.frameWidth;
+		e.height = e.sprite.frameHeight;
+
+		e.loadSound();
+
+    	game.explosions.push(e);
+    }
+    else
+    { 
+        // none available, construct a new one
+		e = new explosion(x, y, speed, direction, size, target);
+		e.loadSound();
+    	game.explosions.push(e);
+    }
+
+    // console.log('pool: ' + game.explosionsPool.length);
+    // console.log('active: ' + game.explosions.length);
+
 }
 
-explosion.prototype = Object.create(particle.prototype); // Creating a explosion.prototype object that inherits from particle.prototype.
-explosion.prototype.constructor = explosion; // Set the "constructor" property to refer to explosion
+
+function freeExplosion(e)
+{
+    // find the active explosion and remove it
+    game.explosions.splice(game.explosions.indexOf(e),1);
+
+    // return the explosion back into the pool
+	game.explosionsPool.push(e);
+}

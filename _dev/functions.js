@@ -1,30 +1,12 @@
 		//====================== Game functions =================//
 
-		//making our canvases dynamically resize according to the size of the browser window	//! USE THIS TO SHOW ROTATE SCREEN MSG IF MOBILE AND GAME.WIDTH > GAME HEIGHT
+		//making our canvases dynamically resize according to the size of the browser win	//! USE THIS TO SHOW ROTATE SCREEN MSG IF MOBILE AND GAME.WIDTH > GAME HEIGHT
 		function respondCanvas()
 		{ 
 
 			game.paused = gameMenu.toggled ? game.paused : true; //promtp to pause the game if called outside game menu
 
 			setGameDimensions();
-
-			if(typeof window[playerShip] != "undefined")
-			{
-				//set playerShip's dimensions/boundaries
-				playerShip.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
-				playerShip.limitX2 = Math.round(game.width - (playerShip.size*0.5));
-				playerShip.limitY2 = Math.round(game.height - (playerShip.size*0.5));
-				playerShip.movement = Math.round(game.height*0.007);
-			}
-			//set game bosses' boundaries  !Need to give this enemy a name in the array
-			// this.yStop = Math.round(game.height*0.1);
-			// this.xBondary = Math.round(game.width - this.size/4);
-
-			if(!game.started && typeof window[playerShip] != "undefined")
-			{
-				playerShip.x = Math.round(game.width*0.46);
-				playerShip.y = Math.round(game.height*0.90);
-			}		
 
 			game.paused = gameMenu.toggled ? game.paused : false; //prompt to unpause the game if called outside game menu
 
@@ -161,73 +143,49 @@
 			}
 		}
 
+		function getDeltaTime()
+		{
+			//disabling UI menu button so dt calculation doesn't get interrupted
+			document.getElementById("toggle-menu-btn").disabled = true;
+		    //obtaining an average deltaTime
+			if(dtTimer <= 200)
+			{
+				var timeNow = new Date().getTime();
+				var timeDiff = timeNow - (timeThen);
+	    		dtArray.push(timeDiff); // seconds since last frame
+	    		timeThen = timeNow;
+	    		dtTimer++;
 
-		//testing using DOM audio sources
+	    		if(dtTimer == 200)
+	    		{
+    				var dtSum = 0;
+	    			for( var i = 0; i < dtArray.length-10; i++)
+	    			{
+						dtSum += dtArray[i+10]; //+10 skips first values which might be deviant
+						// console.log (dtSum);
+					}
 
-		// function setSource() {
-  // 			audio1 = document.querySelector('#audio1');
-  // 			audio2 = document.querySelector('#audio2');
-  // 			audio3 = document.querySelector('#audio3');
-  // 			audio1.src = '_sounds/_sfx/laser' + fileFormat;
-  // 			audio2.src = '_sounds/_sfx/laser' + fileFormat;
-  // 			audio3.src = '_sounds/_sfx/laser' + fileFormat;
-		// }
+					dt = Math.ceil(dtSum / dtArray.length)/1000;				
+					dtTimerSet = true;
+					document.getElementById("toggle-menu-btn").disabled = false;				
+    			}
+    		}
+		}
 
-		// function mediaPlaybackRequiresUserGesture() {
-		// 	// test if play() is ignored when not called from an input event handler
-		// 	audio_test = document.createElement('audio');
-		// 	audio_test.play();
-		// 	return audio_test.paused;		  
-		// }
+		function updateGameTime()
+		{
+		    //game time
+    		//! CHECK OUT 'timeupdate' js event !
+			game.timer++;
+			game.seconds = game.timer/60 || 0;
+			// console.log(game.seconds);
+		}
 
-		// function removeBehaviorsRestrictions() {
-		// 	// audio1 = document.querySelector('#audio1');
-		// 	// audio2 = document.querySelector('#audio2');
-		// 	// audio3 = document.querySelector('#audio3');
-		// 	sfxTest.load();
-		// 	sfxBlast.load();
-		// 	sfxExplosion.load();
-		// 	sfxHit.load();
-		// 	sfxLaser.load();
-		// 	sfxLoot.load();
-		// 	sfxHit.load();
-		// 	stBoss.load();
-		// 	stLvl1a.load();
-		// 	stLvl1b.load();
-		// 	stVictory.load();
-		// 	window.removeEventListener('keydown', removeBehaviorsRestrictions);
-		// 	window.removeEventListener('mousedown', removeBehaviorsRestrictions);
-		// 	window.removeEventListener('touchstart', removeBehaviorsRestrictions);
-		   	
-  // 			setTimeout(setSource, 1000);
-		// }
-
-		// if (mediaPlaybackRequiresUserGesture()) {
-		// 	window.addEventListener('keydown', removeBehaviorsRestrictions);
-		// 	window.addEventListener('mousedown', removeBehaviorsRestrictions);
-		// 	window.addEventListener('touchstart', removeBehaviorsRestrictions);
-		// }
-		// else
-		// {
-		// 	setSource();
-		// }
-				
-		// function addStars(num){ //this function is going to take a number thus num
-		// 	for(var i=0; i<num; i+=4) {
-		// 		game.stars.push({ //push values to the game.stars array
-		// 			x:Math.floor(Math.random() * game.width), //floor will round down x which will be a random number between 0 and 550
-		// 			y:game.height + 10, //+10 to spawn then outside the screen so players can't see them spawning
-		// 			size: Math.random()*game.width*0.003,
-		// 			image: Math.floor(Math.random()*(19-14+1)+14) // a random number between 14 and 18	
-		// 		});
-		// 	}
-		// }
-
-
-		function clrCanvas(){
+		function clrCanvas()
+		{
 			// game.contextBackground.clearRect(0, 0, game.width, game.height); 
-			game.contextPlayer.clearRect(0, 0, game.width, game.height); 
-			game.contextEnemies.clearRect(0, 0, game.width, game.height);
+			game.context.clearRect(0, 0, game.width, game.height); 
+			// game.contextEnemies.clearRect(0, 0, game.width, game.height);
 		}
 
 		function resetGame(){	//called on level start			
@@ -248,8 +206,7 @@
 
 			//Objects
 			playerShip.reset();			
-			game.playerBullets = [];
-			game.enemyBullets = [];
+			game.bullets = [];
 			game.explosions = [];
 			game.enemies = [];
 			game.waves = [];
@@ -302,28 +259,23 @@
 		// }
 
 		
-		function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
-			return !(first.x > second.x + second.size ||
-				first.x + first.size < second.x ||
-				first.y > second.y + second.size ||
-				first.y + first.size < second.y);
+		function Collision(first, second)
+		{ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
+			return !(first.x > second.x + second.width ||
+				first.x + first.width < second.x ||
+				first.y > second.y + second.height ||
+				first.y + first.height < second.y);
 		}
 
-		
-		// //Init	
-		// function init(){ //initialising our game full of stars all over the screen
-		// 	for(var i=0; i<600; i++) {
-		// 		game.stars.push({ //push values to the game.stars array
-		// 			x:Math.floor(Math.random() * game.width), //floor will round down x which will be a random number between 0 and 550
-		// 			y:Math.floor(Math.random() * game.height),
-		// 			size:Math.random()*game.width*0.003, //size of the stars
-		// 			image: Math.floor(Math.random()*(19-14+1)+14) //returns a random number between and 
-		// 		});
-		// 	}
-						
-		// 	loop();
-			
-		// }
+		function angleTo(p1, p2)
+		{	//used to calculate enemy bullets' angle to playership
+			return Math.atan2(p2.y - p1.y, p2.x - p1.x);
+		}
+
+
+
+
+		// LOOOOOOOOOOOOOOOOOOOOP
 
 			
 		function loop(){ //the loop		
@@ -338,7 +290,7 @@
 		{						
 			game.loaded = true;
 
-			if (typeof window[playerShip] === "undefined")
+			if (typeof win[playerShip] === "undefined")
 			{
 				playerShip = new player(10, 15);
 			}
@@ -392,23 +344,44 @@
 
 		//====================== Images engine =================//
 
+		function imgEventHandler ()
+		{
+			this.removeEventListener("load", imgEventHandler, false);
+
+			var indexName, ctxName, offCanvas, offCtx;
+
+			indexName = this.src.split("/").pop();
+			indexName = indexName.substr(0, indexName.indexOf('.')) || indexName;
+
+			offCanvas = doc.createElement('canvas');
+			offCanvas.width = Math.round(this.width);
+			offCanvas.height = Math.round(this.height);
+			
+			offCtx = offCanvas.getContext('2d');
+
+			offCtx.drawImage(this, 0, 0, offCanvas.width, offCanvas.height);
+
+			game.offCtx[indexName] = offCanvas;
+			
+			game.doneImages++;
+		}
+
 		function initImages(ipaths) { //our images engine: passing the array 'ipaths' to the function
 			game.requiredImages = ipaths.length; //the number of required images will be equal to the length of the ipaths array
 			for(var i in ipaths)
 			{
-				var img = new Image(); //defining img as a new image
+				var img = new Image(); //defining img as a new image				
+
+				img.addEventListener("load", imgEventHandler, false); // !event listner needs to be set before loading the image (defining .src)
+
 				img.src = ipaths[i]; //defining new image src as ipaths[i]
 
 				var imgIndex = img.src.split("/").pop(); //obtaining file name from path
 				// var imgIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
 
+				//!check if you should change this to object notation! you can't access array functions like this anyway
 				game.images[imgIndex] = img; //defining game.image[index] as a new image (with ipaths)
 
-				/*jshint -W083 */
-				game.images[imgIndex].onload = function()
-				{ //once an image loads..
-					game.doneImages++; //  ..increment the doneImages variable by 1
-				};
 				// console.log('reqImages: ' + game.requiredImages);
 				// console.log('doneImages: ' + game.doneImages);
 			}
@@ -416,17 +389,15 @@
 
 		//====================== Audio engine =================//
 
-		function sfxEventHandler(sfx)
+		function sfxEventHandler()
 		{
-			this.sfx = sfx;
-			this.sfx.removeEventListener("canplaythrough", sfxEventHandler, false);
+			this.removeEventListener("canplaythrough", sfxEventHandler, false);
 			game.doneSfx++;
 		}
 
-		function stEventHandler(st)
+		function stEventHandler()
 		{
-			this.st = st;
-			this.st.removeEventListener("canplaythrough", stEventHandler, false);
+			this.removeEventListener("canplaythrough", stEventHandler, false);
 			game.doneSoundTracks++;
 		}
 
@@ -460,7 +431,7 @@
 				{
 					game.sfx[sfxIndex].preload = "auto";
 					//checking if sfx have loaded
-					game.sfx[sfxIndex].addEventListener("canplaythrough", sfxEventHandler.bind(window, this), false); //!!!!!! this is how you pass on args for event handler functions yo!!!
+					game.sfx[sfxIndex].addEventListener("canplaythrough", sfxEventHandler, false); 
 				}
 				else
 				{
@@ -487,7 +458,7 @@
 				{
 					game.soundTracks[soundTracksIndex].preload = "auto";
 					//checking if st's have loaded
-					game.soundTracks[soundTracksIndex].addEventListener("canplaythrough", stEventHandler.bind(window, this, false));				
+					game.soundTracks[soundTracksIndex].addEventListener("canplaythrough", stEventHandler, false);				
 				}
 				else
 				{
@@ -503,22 +474,7 @@
 			if(game.doneImages >= game.requiredImages){
 				loadingText = new text('Loading Sfx.. ', '', false);
 				loadingBarFiller.css({"width": "0"});
-				initSfx([	//using initSfx function to load our sounds
-					"_sounds/_sfx/laser" + fileFormat,			
-					"_sounds/_sfx/laser" + fileFormat,			
-					"_sounds/_sfx/laser" + fileFormat,			
-					"_sounds/_sfx/hit" + fileFormat,			
-					"_sounds/_sfx/hit" + fileFormat,			
-					"_sounds/_sfx/hit" + fileFormat,			
-					"_sounds/_sfx/loot_powerUp" + fileFormat,			
-					"_sounds/_sfx/loot_powerUp" + fileFormat,			
-					"_sounds/_sfx/loot_powerUp" + fileFormat,			
-					"_sounds/_sfx/explosion" + fileFormat,			
-					"_sounds/_sfx/explosion" + fileFormat,			
-					"_sounds/_sfx/explosion" + fileFormat,			
-					"_sounds/_sfx/blast" + fileFormat		
-				]);
-
+				initSfx(game.sfxPaths);
 				checkSfx();
 			} 
 			else
@@ -537,13 +493,7 @@
 				loadingBarFiller.css({"width": "0"});
 
 				//start loading sound tracks
-				initSoundTracks([	//using initSfx function to load our sound tracks
-					"_sounds/_soundTracks/_lvl1/tune1" + fileFormat,			
-					"_sounds/_soundTracks/_lvl1/tune2" + fileFormat,			
-					"_sounds/_soundTracks/_lvl1/victory" + fileFormat,			
-					"_sounds/_soundTracks/_lvl1/boss" + fileFormat	
-				]);
-
+				initSoundTracks(game.soundTrackPaths);
 				checkSoundTracks();
 			} 
 			else
@@ -558,10 +508,11 @@
 
 		function checkSoundTracks(){	//checking if all Sfx have been loaded. Once all loaded run init
 			if(game.doneSoundTracks >= game.requiredSoundTracks){
-				loadingText.switch('off');
-				loadingBar.hide();
+				loadingText = new text('Loading Assets.. ', '', false);
+				loadingBarFiller.css({"width": "0"});
 				//starting game menu				
-				gameMenu.init();				
+				initObjects();
+				checkObjects();
 			} 
 			else
 			{
@@ -572,46 +523,69 @@
 				}, 1);
 			}
 		}
-			
-		initImages([	//using initimages function to load our images
-			//backgrounds
-			"_img/_dist/background/intro_bg.jpg",
-			// "_img/_dist/background/level1_small.jpg",
-			
-			//UI
-			"_img/_dist/ui/energybar.png",			
-			"_img/_dist/ui/energypoint.png",
-			
-			//Player
-			"_img/_dist/fighter/fighter.png",
-			"_img/_dist/fighter/fighter_right1.png",
-			"_img/_dist/fighter/fighter_right2.png",
-			"_img/_dist/fighter/fighter_right3.png",
-			"_img/_dist/fighter/fighter_right4.png",
-			"_img/_dist/fighter/fighter_right5.png",
-			"_img/_dist/fighter/fighter_left1.png",
-			"_img/_dist/fighter/fighter_left2.png",
-			"_img/_dist/fighter/fighter_left3.png",
-			"_img/_dist/fighter/fighter_left4.png",
-			"_img/_dist/fighter/fighter_left5.png",
-			
-			//Enemies
-			////Pawns
-			"_img/_dist/enemies/sectoid.png",
-			////Minibosses
-			"_img/_dist/enemies/_miniboss/floater.png",			
-			////Enemy Bases
-			"_img/_dist/enemies/_alienbase/alienbase1.png",			
-			"_img/_dist/enemies/_alienbase/alienbase2.png",
-			////Big bosses
-			"_img/_dist/enemies/_bigboss/sectoidBoss.png",			
-			
-			//Projectiles
-			"_img/_dist/laser.png",
-			"_img/_dist/p_missile.png",
-			"_img/_dist/e_missile.png",
-			"_img/_dist/explosion.png"						
-		]);
+
+		function checkObjects(){	//checking if all Sfx have been loaded. Once all loaded run init
+			if(game.doneObjects >= game.requiredObjects){
+				loadingText.switch('off');
+				loadingBar.hide();
+				//starting game menu				
+				gameMenu.init();
+				gameBackground = new background();				
+			} 
+			else
+			{
+				loadingBarWidth = (game.doneObjects / game.requiredObjects) * 100 + '%';
+				loadingBarFiller.css({"width": loadingBarWidth});					
+				setTimeout(function(){
+					checkObjects();
+				}, 1);
+			}
+		}
+
+		function initObjects ()			//   !!! make this a function inside each object class
+		{
+			//waves
+			for (var w = 1 ; w <= game.requiredWaves; w++) {				
+				ew = new enemyWave(null, null, 'enemy_sectoid', 'pawn', 0, 0, 0, 0);
+    			game.wavesPool.push(ew);
+    			game.doneObjects++;
+			}
+
+			//enemies
+			for (var e = 1 ; e <= game.requiredEnemies; e++) {				
+				en = new enemy(0, 0, 0, 0, 0, 'pawn', 'enemy_sectoid', 0);
+    			game.enemiesPool.push(en);
+    			game.doneObjects++;
+			}
+
+			//player bullets
+			for (var pb = 1 ; pb <= game.requiredPlayerBullets; pb++) {				
+				b = new playerBullet(null, null, null, -Math.PI/2, null, null, 'bullet_p_laser');
+    			game.playerBulletsPool.push(b);
+    			game.doneObjects++;
+			}
+
+			//enemy bullets
+			for (var ebul = 1 ; ebul <= game.requiredEnemyBullets; ebul++) {				
+				eb = new enemyBullet(null, null, null, null, null, 'bullet_e_missile');
+    			game.enemyBulletsPool.push(eb);
+    			game.doneObjects++;
+			}
+
+			//loot
+			for (var loo = 1 ; loo <= game.requiredLoot; loo++) {				
+				l = new loot(null, null);
+    			game.lootPool.push(l);
+    			game.doneObjects++;
+			}
+
+			//explosions
+			for (var ex = 1 ; ex <= game.requiredExplosions; ex++) {				
+				e = new explosion(null, null, null, null, 'small', null);
+    			game.explosionsPool.push(e);
+    			game.doneObjects++;
+			}
+		}
 
 
 
@@ -621,7 +595,7 @@
 
 		// function loadOsCanvas() {
 
-		// 	m_canvas = document.createElement('canvas');
+		// 	m_canvas = doc.createElement('canvas');
 		// 	m_canvas.width = game.width;
 		// 	m_canvas.height = game.height;
 		// 	var m_context = m_canvas.getContext('2d');
@@ -670,31 +644,46 @@
 
 
 		
-		window.addEventListener("load", function load(event)
+		//ON WINDOW LOAD
+
+		//Handler functions
+
+		function windowLoadEvent()
 		{
-    		window.removeEventListener("load", load, false); //remove listener, no longer needed
+			win.removeEventListener("load", windowLoadEvent, false); //remove listener, no longer needed
 
-    		//Run function whenever browser resizes
-			$(window).resize(respondCanvas);
+			//Run function whenever browser resizes
+			window.onresize = respondCanvas;
 
-    		//appcache
-    		window.applicationCache.addEventListener("updateready", function event() {
+			//check for updates appcache
+			win.applicationCache.addEventListener("updateready", appCacheEvent, false);
 
-    			window.applicationCache.removeEventListener("updateready", event);
+			//load images
+			initImages(game.imagePaths);
 
-			    if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
-			      // Browser downloaded a new app cache.
-			      if (confirm('A new version of InVaDeRs is available. Load it?')) {
-			        window.location.reload();
-			      }
-			    } else {
-			      // Manifest didn't changed. Nothing new to server.
-			    }
-		  	}, false);
+			//start checking loaded game assets
+			checkImages();
+		}
 
- 			// loadOsCanvas();
 
-		},false);
+		function appCacheEvent()
+		{
+		    win.applicationCache.removeEventListener("updateready", appCacheEvent, false);
+
+		    if (win.applicationCache.status == win.applicationCache.UPDATEREADY)
+		    {
+				// Browser downloaded a new app cache.
+				if (confirm('A new version of InVaDeRs is available. Load it?')) win.location.reload();
+
+		    }
+		    else
+		    {
+		    	// Manifest didn't changed. Nothing new to server.
+		    }
+		}
+
+		//on window load function
+		win.addEventListener("load", windowLoadEvent,false);
 
 
 
@@ -726,15 +715,10 @@
 			clearTimeout(timeout);
 			audioTest.removeEventListener('loadeddata', testpreload);
 			audiopreload = event !== undefined && event.type === 'loadeddata' ? true : false;
-			 //this function call starts our game
- 			checkImages(); 
 		}
 
-		setTimeout(function()
-		{
-			audioTest.addEventListener('loadeddata', testpreload);
-			timeout = setTimeout(testpreload, waitTime);
-		}, 0);
+		audioTest.addEventListener('loadeddata', testpreload);
+		timeout = setTimeout(testpreload, waitTime);
  
 		
 	/* jshint ignore:start */
@@ -747,13 +731,13 @@
 Provides requestAnimationFrame in a cross browser way.
 http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 */
-window.requestAnimFrame = (function(){  // Creating a request animAnimeFrame function and making it work across browsers.  window.requestAnimationFrame is an HTML built in 60fps anim function
-	return  window.requestAnimationFrame       ||
-			window.webkitRequestAnimationFrame ||
-			window.mozRequestAnimationFrame    ||
-			window.oRequestAnimationFrame    ||
-			window.msRequestAnimationFrame    ||
+win.requestAnimFrame = (function(){  // Creating a request animAnimeFrame function and making it work across browsers.  win.requestAnimationFrame is an HTML built in 60fps anim function
+	return  win.requestAnimationFrame       ||
+			win.webkitRequestAnimationFrame ||
+			win.mozRequestAnimationFrame    ||
+			win.oRequestAnimationFrame    ||
+			win.msRequestAnimationFrame    ||
 			function( callback ){
-				window.setTimeout(callback, 1000 / 60);			
+				win.setTimeout(callback, 1000 / 30);			
 			};
 })(); // jshint ignore:line

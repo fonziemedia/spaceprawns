@@ -18,7 +18,8 @@ html {
 }
 
 html, body {
-	overflow: hidden;
+  overflow-x: hidden;
+	overflow-y: hidden;
 }
 
 body {
@@ -46,10 +47,14 @@ input, button {
   -o-user-select: none; 
 }
 
-.gpu { 
+/* Do not over use this. Maybe only required in parent element? */
+.gpu {
     -webkit-transform:translate3d(0, 0, 0);
     -moz-transform:translate3d(0, 0, 0);
     transform:translate3d(0, 0, 0);
+    /*-webkit-transform: translateZ(0);
+    -moz-transform: translateZ(0);
+    transform: translateZ(0);*/
 /*    -webkit-transform: rotateZ(360deg);
     transform: rotateZ(360deg);*/
     -webkit-transform-style: preserve-3d;
@@ -58,7 +63,9 @@ input, button {
     font-smoothing: antialiased;
     -webkit-font-smoothing: antialiased;
     -moz-font-smoothing: antialiased;
-    box-shadow: 0 0 0 #000
+    box-shadow: 0 0 0 #000;
+    -webkit-box-shadow: 0 0 0 #000;
+    -moz-box-shadow: 0 0 0 #000;
 }
 
 #container {
@@ -132,7 +139,7 @@ canvas {
   -webkit-backface-visibility: hidden; /* old android browsers fix */
 }
 
-#levelBackground {
+/*#levelBackground {
     position: absolute;
     background-repeat: repeat-y;
     box-shadow:0 0 1px rgba(0,0,0,0.7);
@@ -147,7 +154,7 @@ canvas {
     backface-visibility: hidden;
     -moz-perspective: 1000;
     perspective: 1000;
-}
+}*/
 
 #enemiesCanvas { z-index: 2 }
 #playerCanvas { z-index: 3 }
@@ -388,7 +395,9 @@ canvas {
           transition: opacity 0.1s ease, background-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;*/
   will-change: '';
   -webkit-tap-highlight-color: transparent;
+  perspective: 1000;
   -webkit-perspective: 1000;
+  -moz-perspective: 1000;
   -webkit-backface-visibility: hidden; /* old android browsers fix */
 }
 
@@ -439,8 +448,6 @@ canvas {
     -webkit-perspective: 1000;
     backface-visibility: hidden;
     perspective: 1000;
-    -webkit-transform-style: preserve-3d;
-    transform-style: preserve-3d;
   }
 
   #menuBackground {
@@ -465,7 +472,7 @@ canvas {
     }
   }*/
 
-  .level1 {
+/*  .level1 {
     top: -2560px;
     background: url('assets/images/level1_m.jpg');
     background-size: 360px 2560px;
@@ -481,7 +488,7 @@ canvas {
     top: -2560px;
     background: url('assets/images/level1_m.jpg');
     background-size: 360px 2560px;
-  }
+  }*/
 
 /*  .level1 {
     top: -2560px;
@@ -592,7 +599,7 @@ canvas {
     background-image: url('assets/images/intro_bg.jpg');
   }
 
-  .level1 {
+  /*.level1 {
     top: -5120px;
     background: url('assets/images/level1.jpg');
     background-size: 720px 5120px;
@@ -608,7 +615,7 @@ canvas {
     top: -5120px;
     background: url('assets/images/level1.jpg');
     background-size: 720px 5120px;
-  }  
+  }  */
 
 	.menu-option-btn {
 		width: 30%;

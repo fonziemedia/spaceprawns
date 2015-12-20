@@ -2,8 +2,22 @@
 	// $(document).ready(function(){ // jshint ignore:line
 // function startGame(){	// jshint ignore:line
 		
+		function log(label, variable)
+		{
+			var txt = label;
+			console.log(txt + ': ' + variable);
+		}
 
-		
+		//iOS viewport fix
+		if(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream)
+		{
+		  document.querySelector('meta[name=viewport]')
+		    .setAttribute(
+		      'content', 
+		      'initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no'
+		    );
+		}
+				
 		// /* Connect to XML */
 		$.ajax({
 		type: "GET",
@@ -39,7 +53,9 @@
 
 		/*GLOBAL VARS*/
 
-		var game = {}; //this is a global var which will contain other game vars
+		var doc = document,
+		win = window,
+		game = {}; //this is a global var which will contain other game vars
 
 		game.isMobile = false;
 		// device detection
@@ -50,7 +66,7 @@
 
 
 		// game.stars = []; //this is an array which will contain our stars info: position in space and size
-		// game.background = [];		
+		game.background = [];		
 		game.score = 0; //the game score
 		game.levelScore = 0; //the score for each level
 		game.level = X_Level; //starting at level X...
@@ -59,18 +75,37 @@
 		game.levelUpTimer = 0;
 		game.lives = X_Lives; //with X ships (lives)
 		game.keys = []; //the keyboard array
-		game.playerBullets = []; //Our proton torpedoes!
-		game.enemyBullets = []; //Enemy missiles!
+
+		game.bullets = []; //Our proton torpedoes!
+			game.playerBulletsPool = []; //Our proton torpedoes!
+			game.enemyBulletsPool = []; //Enemy missiles!		
+			game.lootPool = [];
+
 		game.enemies = []; //The InVaDeRs
-		game.waves = [];
-		game.loot = [];
+			game.enemiesPool = []; //The InVaDeRs
+
+		game.waves = [];	//Doesn't have a draw method!
+			game.wavesPool = [];
+
 		game.explosions = [];
+			game.explosionsPool = [];
+
+
+		game.requiredWaves = 5;
+		game.requiredEnemies = 12;
+		game.requiredPlayerBullets = 70;
+		game.requiredEnemyBullets = 15;
+		game.requiredLoot = 5;
+		game.requiredExplosions = 20;
+
+		game.requiredObjects = game.requiredWaves + game.requiredEnemies + game.requiredPlayerBullets + game.requiredEnemyBullets + game.requiredLoot + game.requiredExplosions;
+		game.doneObjects = 0;
 		
-		dt = 0.017; // defining dt globally
-		dtTimer = 0;		
-		dtArray = [];
+		var dt = 0.017, // defining dt globally
+		dtTimer = 0,		
+		dtArray = [],
 		timeThen = new Date().getTime();
-		
+		dtTimerSet = false;
 		
 		//====================== Game state ========================
 		
@@ -88,14 +123,22 @@
 		game.textFadingOut = false;
 		game.textFaded = true;
 
+		//========================== Display ==========================
+
+		game.windowWidth = doc.documentElement.clientWidth;
+		game.windowHeight = doc.documentElement.clientHeight;
+
 		game.fullScreen = false;
 		
 		//========================== Input ==========================
-		var inputArea = document.getElementById("inputarea");
+		var inputArea = doc.getElementById("inputarea");
 		var inputAreaX, inputAreaY;
 		var mouseIsDown = 0;
 		var touchInitX = 0;
 		var touchInitY = 0;
+
+		game.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;	
+		if (game.canVibrate && !("vibrate" in navigator)) navigator.vibrate = navigator.mozVibrate;
 
 		//========================== Audio ==========================
 		
@@ -138,7 +181,7 @@
 
 		// Obtaining Audio ON/OFF status from local storage		
 		
-		if ("localStorage" in window && window.localStorage !== null) //checking browser support for local storage
+		if ("localStorage" in win && win.localStorage !== null) //checking browser support for local storage
 		{	
 			//NOTE: localStorage won't accept boolean values! so we need to 'convert' these
 			if (localStorage.prawnsSound === "true")
@@ -166,40 +209,149 @@
 		}
 
 		//SFX vars
+		game.sfxPaths = [	//using initSfx function to load our sounds
+			"_sounds/_sfx/laser" + fileFormat,			
+			"_sounds/_sfx/laser" + fileFormat,			
+			"_sounds/_sfx/laser" + fileFormat,			
+			"_sounds/_sfx/hit" + fileFormat,			
+			"_sounds/_sfx/hit" + fileFormat,			
+			"_sounds/_sfx/hit" + fileFormat,			
+			"_sounds/_sfx/loot_powerUp" + fileFormat,			
+			"_sounds/_sfx/loot_powerUp" + fileFormat,			
+			"_sounds/_sfx/loot_powerUp" + fileFormat,			
+			"_sounds/_sfx/explosion" + fileFormat,			
+			"_sounds/_sfx/explosion" + fileFormat,			
+			"_sounds/_sfx/explosion" + fileFormat,			
+			"_sounds/_sfx/blast" + fileFormat		
+		];
 		game.sfx = [];		
-		game.doneSfx  = 0; // will contain how many images have been loaded
-		game.requiredSfx = 0; // will contain how many images should be loadedgame.doneSfx  = 0; // will contain how many images have been loaded
+		game.doneSfx  = 0;
+		game.requiredSfx = 0;
 
 		//Sound Tracks vars
+		game.soundTrackPaths = [	//using initSfx function to load our sound tracks
+			"_sounds/_soundTracks/_lvl1/tune1" + fileFormat,			
+			"_sounds/_soundTracks/_lvl1/tune2" + fileFormat,			
+			"_sounds/_soundTracks/_lvl1/victory" + fileFormat,			
+			"_sounds/_soundTracks/_lvl1/boss" + fileFormat	
+		];
 		game.soundTracks = [];		
-		game.doneSoundTracks = 0; // will contain how many images should be loadedgame.doneSfx  = 0; // will contain how many images have been loaded
-		game.requiredSoundTracks = 0; // will contain how many images should be loaded
+		game.doneSoundTracks = 0;
+		game.requiredSoundTracks = 0;
 		
 		//Our main SOUND players arrays
 		game.sounds = [];
 		game.tracks = [];		
 			
 		//======================== Images ========================		
-			
+		
+		if (!game.isMobile || win.innerHeight >= 900)
+		{
+			game.imagePaths = [
+				//backgrounds
+				"_img/bg_level1_a.dkt.jpg",
+				"_img/bg_level1_b.dkt.jpg",
+				"_img/bg_level1_c.dkt.jpg",
+				
+				//UI
+				//see CSS assets
+				
+				//Player
+				"_img/player_ship.dkt.png",
+				"_img/player_ship_i.dkt.png",
+				"_img/player_shields.dkt.png",
+				
+				//Enemies
+				////Pawns
+				"_img/enemy_sectoid.dkt.png",
+				////Minibosses
+				"_img/enemy_floater.dkt.png",		
+				////Enemy Bases
+				"_img/enemy_base_sectoid.dkt.png",			
+				"_img/enemy_base_floater.dkt.png",
+				////Big bosses
+				"_img/boss_sectoid.dkt.png",
+
+				//Projectiles
+				"_img/bullet_p_laser.dkt.png",
+				"_img/bullet_p_missile.dkt.png",
+				"_img/bullet_e_missile.dkt.png",
+				"_img/explosion_s0.dkt.png",						
+				"_img/explosion_s1.dkt.png",						
+				"_img/explosion_s2.dkt.png",						
+				"_img/explosion_s3.dkt.png",						
+				"_img/explosion_s4.dkt.png",
+
+				//Loot					
+				"_img/loot_lasers.dkt.png",					
+				"_img/loot_missiles.dkt.png",					
+				"_img/loot_shields.dkt.png"					
+			];
+		}
+		else
+		{
+			game.imagePaths = [
+				//backgrounds
+				"_img/bg_level1_a.mob.jpg",
+				"_img/bg_level1_b.mob.jpg",
+				"_img/bg_level1_c.mob.jpg",
+				
+				//UI
+				//see CSS assets
+				
+				//Player
+				"_img/player_ship.mob.png",
+				"_img/player_ship_i.mob.png",
+				"_img/player_shields.mob.png",
+				
+				//Enemies
+				////Pawns
+				"_img/enemy_sectoid.mob.png",
+				////Minibosses
+				"_img/enemy_floater.mob.png",		
+				////Enemy Bases
+				"_img/enemy_base_sectoid.mob.png",			
+				"_img/enemy_base_floater.mob.png",
+				////Big bosses
+				"_img/boss_sectoid.mob.png",
+
+				//Projectiles
+				"_img/bullet_p_laser.mob.png",
+				"_img/bullet_p_missile.mob.png",
+				"_img/bullet_e_missile.mob.png",
+				"_img/explosion_s0.mob.png",						
+				"_img/explosion_s1.mob.png",						
+				"_img/explosion_s2.mob.png",						
+				"_img/explosion_s3.mob.png",						
+				"_img/explosion_s4.mob.png",
+
+				//Loot					
+				"_img/loot_lasers.mob.png",					
+				"_img/loot_missiles.mob.png",					
+				"_img/loot_shields.mob.png"						
+			];
+		}
+
 		game.images = [];
 		game.doneImages  = 0; // will contain how many images have been loaded
 		game.requiredImages = 0; // will contain how many images should be loaded
+		game.offCtx = []; // will contain how many images should be loaded
 
 		game.font = game.isMobile ? "Helvetica" : "Monaco";
 		// game.res = 4*5; //check the 4th index every 5 frames
 		
-		//====================== Canvases + Images + responsiveness  ============================
+		//====================== Canvases + Responsiveness  ============================
 		
-		// game.contextBackground = document.getElementById("backgroundCanvas").getContext("2d"); //defining the 4 different canvas
-		game.canvas1 = document.getElementById("enemiesCanvas");
-		game.canvas2 = document.getElementById("playerCanvas");	
-		game.contextEnemies = game.canvas1.getContext("2d");
-		game.contextPlayer = game.canvas2.getContext("2d");
-		// m_canvas = document.createElement('canvas');
+		// game.contextBackground = doc.getElementById("backgroundCanvas").getContext("2d"); //defining the 4 different canvas
+		game.canvas = doc.getElementById("gameCanvas");	
+		game.context = game.canvas.getContext("2d");
+		// m_canvas = doc.createElement('canvas');
 
 		
-		var pixelRatio = window.devicePixelRatio > 1.5 ? 2 : 1; // This is our game size delta to keep the size of our game + objects proportional to the display
-		
+		var pixelRatio = win.devicePixelRatio > 1.5 ? 2 : 1; // This is our game size delta to keep the size of our game + objects proportional to the display
+		pixelRatio = game.isMobile && pixelRatio < 1.5 ? 2 : pixelRatio; //adjustment for mobile devices with low pixel ratio
+		pixelRatio = game.isMobile && win.innerHeight >= 900 ? 1 : pixelRatio; //adjusment for tablets
+
 		function setGameDimensions()
 		{
 			//SETTING CANVASES ATTRIBUTES
@@ -208,23 +360,22 @@
 			//get the gameArea and the canvases 
 			var gameArea = $('#gamearea');
 			var allCanvas = $('canvas');
-			var windowWidth = window.innerWidth;
-			var windowHeight = window.innerHeight;
 
 			if (!game.isMobile)
 			{
-				windowWidth = parseInt(gameArea.css("width"))*pixelRatio;  //using parseInt here to remove 'px'
+				game.windowWidth = parseInt(gameArea.css("width"))*pixelRatio;  //using parseInt here to remove 'px'
 			}
 
-			allCanvas.attr('width', windowWidth*pixelRatio);
-			allCanvas.attr('height', windowHeight*pixelRatio);
+			allCanvas.attr('width', game.windowWidth*pixelRatio);
+			allCanvas.attr('height', game.windowHeight*pixelRatio);
 
-			game.contextEnemies.scale(pixelRatio,pixelRatio);
-			game.contextPlayer.scale(pixelRatio,pixelRatio);
+			game.context.scale(pixelRatio,pixelRatio);
 
 			//SETTING GAME DIMENSIONS
-			game.width = windowWidth;			
-			game.height = windowHeight;
+			game.width = Math.round(game.windowWidth);			
+			game.height = Math.round(game.windowHeight);
+			log('with: ', game.width);
+			log('height: ', game.height);
 
 			//outer borders
 			game.outerLeft = -Math.round(game.width*0.1);			
@@ -232,8 +383,32 @@
 			game.outerTop = -Math.round(game.height*0.1);
 			game.outerBottom = Math.round(game.height + game.height*0.1);
 
+
+			if (playerShip && typeof playerShip != 'undefined')
+			{
+				//set playerShip's dimensions/boundaries
+				playerShip.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
+				playerShip.limitX2 = Math.round(game.width - (playerShip.width*0.5));
+				playerShip.limitY2 = Math.round(game.height - (playerShip.height*0.5));
+				playerShip.movement = Math.round(game.height*0.007);
+			}
+			
+			//set game bosses' boundaries  !Need to give this enemy a name in the array
+			// this.yStop = Math.round(game.height*0.1);
+			// this.xBondary = Math.round(game.width - this.size/4);
+
+			if(!game.started && playerShip && typeof playerShip != 'undefined')
+			{
+				playerShip.x = Math.round(game.width*0.46);
+				playerShip.y = Math.round(game.height*0.90);
+			}	
+
 		}
 
 		setGameDimensions();		
+
+		//delta size will keep the size of our game objects proportional to the display - NOT REQUIRED, see pixelRatio above
+		// var dtSize = game.height*0.001;
+		// console.log (dtSize);
 
 	// jshint ignore:line

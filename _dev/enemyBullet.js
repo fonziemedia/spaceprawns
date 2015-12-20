@@ -1,57 +1,122 @@
-function enemyBullet(x, y, speed, direction, power, image) {
-	particle.call(this, x, y, speed, direction);
-	
-	this.size = Math.round(30/pixelRatio);
-	this.spriteX = -Math.round(this.size*0.5);
-	this.spriteY = -Math.round(this.size*0.5);
+enemyBullet = function(x, y, speed, direction, power, image)
+{		
+	this.sprite = new sprite(image, 3, 1, 5);
+	this.x = x;
+	this.y = y;
 	this.power = power;
-	this.image = image; 
-	this.dead = false;
-	this.deadTime = 60;
-	this.friction = 1.02;
-	this.dtSet = false;
-	this.ctx = game.contextEnemies;
-	this.sprite = new sprite(this.image, this.size, 64, 64, 0, 2, 5, this.ctx);
+	this.speed = speed;
+	this.direction = direction;
+	this.width = this.sprite.frameWidth;
+	this.height = this.sprite.frameHeight;
 
-	this.update = function()
-	{ 	
-		// Replacing the default 'update' method
-		if (dt !== 0 && !this.dtSet){
-			this.vx = Math.cos(direction) * ((speed/pixelRatio)*dt);
-			this.vy = Math.sin(direction) * ((speed/pixelRatio)*dt);
-			this.dtSet = true;
-		}		
+	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
+	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
+
+	this.spriteX = -Math.round(this.width*0.5);  //-this.size/2 because we're rotating ctx
+	this.spriteY = -Math.round(this.height*0.5);  //-this.size/2 because we're rotating ctx
+};
+
+//invariables (note: any other object properties that require these need to be declared in the prototype function)
+enemyBullet.prototype.dead = false;
+enemyBullet.prototype.friction = 1.02;
+enemyBullet.prototype.ctx = game.context;
+
+enemyBullet.prototype.reset = function(x, y, speed, direction, power)	//fix this with sprites with diferent angles
+{
+    //change variable properties only
+	this.x = x;
+	this.y = y;	
+	this.width = this.sprite.frameWidth;
+	this.height = this.sprite.frameHeight;
+	this.speed = speed;
+	this.direction = direction;
+	this.power = power;
+	this.dead = false;
+
+	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
+	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
+};
+
+enemyBullet.prototype.update = function()
+{		
+	if (!this.dead)
+	{	
 		this.vx *= this.friction;
 		this.vy *= this.friction;
 		this.x += this.vx;
 		this.y += this.vy;
 
-	};
-	
-	this.draw = function() {
-		
-		
-		if (!this.dead) {			
+		this.draw(this.x, this.y);
 
-			// this.ctx.save();
-			// this.ctx.translate(this.lastX, this.lastY);
-			// this.ctx.rotate(direction - Math.PI/2);
-
-			// this.ctx.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
-
-			// this.ctx.restore();
-
-			this.ctx.save();
-			this.ctx.translate(this.x, this.y);
-			this.ctx.rotate(direction - Math.PI/2);
-
-			this.sprite.draw(this.spriteX, this.spriteY); //-this.size/2 because we're rotating ctx
-			
-			this.ctx.restore();
-
+		if (Collision(this, playerShip) && !playerShip.imune && !game.gameOver)
+		{
+			getNewExplosion(this.x, this.y, 0, 1, 'xSmall', 'chasis');
+			playerShip.hull -= this.power;
+			gameUI.updateEnergy();	
+			playerShip.hit = true;
+			this.dead = true;
 		}
-	};
-}
 
-enemyBullet.prototype = Object.create(particle.prototype); // Creating a enemyBullet.prototype object that inherits from particle.prototype.
-enemyBullet.prototype.constructor = enemyBullet; // Set the "constructor" property to refer to enemyBullet
+		if(this.x > game.outerRight || this.x < game.outerLeft || this.y > game.outerBottom || this.y < game.outerTop)
+		{
+			this.dead = true;
+		}
+	}
+	else
+	{
+		freeEnemyBullet(this);
+	}
+};
+
+enemyBullet.prototype.draw = function(x, y)	//fix this with sprites with diferent angles
+{
+	this.ctx.save();
+	this.ctx.translate(x, y);
+	this.ctx.rotate(this.direction - Math.PI/2);
+
+	this.sprite.draw(this.spriteX, this.spriteY);
+	
+	this.ctx.restore();
+};
+
+////////////
+// Factory
+////////////
+
+getNewEnemyBullet = function(x, y, speed, direction, power, image)
+{
+    var eb = null;
+
+    // check to see if there is a spare one
+    if (game.enemyBulletsPool.length > 0)
+    {
+    	//recycle
+
+        eb = game.enemyBulletsPool.pop();
+
+        eb.sprite.reset(image, 3, 1, 4);
+
+        eb.reset(x, y, speed, direction, power);
+
+    	game.bullets.push(eb);
+    }
+    else
+    {
+    	// none available, construct a new one
+    	eb = new enemyBullet(x, y, speed, direction, power, image);
+
+    	game.bullets.push(eb);
+    }
+
+    // console.log('pool: ' + game.enemyBulletsPool.length);
+    // console.log('active: ' + game.bullets.length);
+};
+
+freeEnemyBullet = function(eb)
+{
+    // find the active bullet and remove it
+    game.bullets.splice(game.bullets.indexOf(eb),1);
+
+    // return the bullet back into the pool
+	game.enemyBulletsPool.push(eb);
+};

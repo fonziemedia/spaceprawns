@@ -1,39 +1,58 @@
-function background() {
-	//no jquery here for increased fps
-	this.element = document.getElementById("levelBackground");
-	this.elementStyle = window.getComputedStyle(this.element);
-    this.elementTop = -parseInt(this.elementStyle.getPropertyValue("top"));
-	this.elementYpos = 1;
-	this.speed = 4;
+background = function(section)
+{
+	this.imageA = game.offCtx['bg_level' + game.level + '_a'];
+	this.imageB = game.offCtx['bg_level' + game.level + '_b'];
+	this.imageC = game.offCtx['bg_level' + game.level + '_c'];
+	this.height = Math.round(this.imageA.height);
+	this.width = Math.round(this.imageA.width);
+	this.x = this.width <= game.windowWidth ? 0 : Math.round(0 - (this.width-game.windowWidth)/2);
+	this.y1 = 0;
+	this.y2 = this.y1-this.height;
+	this.y3 = this.y2-this.height;
+	this.yDrawLimit = !game.isMobile || win.innerHeight >= 900 ? -1080 : -640;
+	this.speed = Math.round(200*dt);
+	this.ctx = game.context;
+};
 
-	this.update = function() {
 
-		if(this.elementYpos <= this.elementTop)
-		{
-			this.elementYpos += this.speed;
-			this.element.style.transform = 'translate3d(0,' + this.elementYpos + 'px, 0)';
-			// this.element.style.webkitTransform = 'translate3d(0,' + this.elementYpos + 'px, 0) rotate(0.0000001deg)';
-		}
-		else
-		{
-			this.elementYpos = 1;
-		}  
+background.prototype.update = function()
+{
 
-		//testing using an off-screen canvas
-		// game.contextBackground.drawImage(m_canvas, this.x, this.y, this.width, this.height);
-		// game.contextBackground.drawImage(game.images[this.image], this.x, this.y, this.width, this.height);
-	};
+	this.y1 += this.speed;
+	this.y2 += this.speed;
+	this.y3 += this.speed;
 
-	this.load = function() {
+	
+	if (this.y1 >= this.yDrawLimit && this.y1 < game.height)
+	{
+		this.draw(this.imageA, this.x, this.y1);
+	}	
+	else
+	{
+		this.y1 = this.y3-this.height;
+	}
 
-		for (var i = 1; i <= 3; i++) {
-			this.element.classList.remove('level' + i);
-		}
-		
-		this.element.classList.add('level' + game.level);
+	if (this.y2 >= this.yDrawLimit && this.y2 < game.height)
+	{
+		this.draw(this.imageB, this.x, this.y2);
+	}	
+	else
+	{
+		this.y2 = this.y1-this.height;
+	}
 
-		this.elementTop = -parseInt(this.elementStyle.getPropertyValue("top"));
-	};
-}
+	if (this.y3 >= this.yDrawLimit && this.y3 < game.height)
+	{
+		this.draw(this.imageC, this.x, this.y3);
+	}	
+	else
+	{
+		this.y3 = this.y2-this.height;
+	}
 
-gameBackground = new background();
+};
+
+background.prototype.draw = function(image, x, y)
+{
+	this.ctx.drawImage(image, x, y);
+};

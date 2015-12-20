@@ -4,121 +4,121 @@ var level1 = {};
 			// enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate)
 
 			level1.second1 = function () {
-				game.waves.push(new enemyWave('left', game.width*0.3, 'sectoid.png', 'pawn', 1, 300, 1, 0));
-			    game.waves.push(new enemyWave('right', game.width*0.3, 'sectoid.png', 'pawn', 1, 250, 1, 0));
+				getNewEnemyWave('left', game.width*0.3, 'enemy_sectoid', 'pawn', 1, 300, 1, 0);
+			    getNewEnemyWave('right', game.width*0.3, 'enemy_sectoid', 'pawn', 1, 250, 1, 0);
 			};
 
 			level1.second3 = function () {
-			    game.waves.push(new enemyWave('left', game.height*0.5, 'sectoid.png', 'pawn', 1, 250, 1, 0));
-			    game.waves.push(new enemyWave('right', game.height*0.5, 'sectoid.png', 'pawn', 1, 300, 1, 0));		
+			    getNewEnemyWave('left', game.height*0.5, 'enemy_sectoid', 'pawn', 1, 250, 1, 0);
+			    getNewEnemyWave('right', game.height*0.5, 'enemy_sectoid', 'pawn', 1, 300, 1, 0);		
 			};
 
 			level1.second5 = function () {
-			    game.enemies.push(new enemy(game.width * 0.7, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));		
+			    getNewEnemy(game.width * 0.7, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);		
 			};
 
 			level1.second7 = function () {
-			    game.enemies.push(new enemy(game.width * 0.3, game.outerTop, 155, Math.PI/2, 10, 'base', 'alienbase1.png', 1));
+			    getNewEnemy(game.width * 0.3, game.outerTop, 155, Math.PI/2, 10, 'base', 'enemy_base_sectoid', 1);
 			};
 
 			level1.second8 = function () {
-			    game.waves.push(new enemyWave('left', game.height*0.3, 'sectoid.png', 'pawn', 4, 250, 1, 2));
+			    getNewEnemyWave('left', game.height*0.3, 'enemy_sectoid', 'pawn', 4, 250, 1, 2);
 			};
 
 			level1.second9 = function () {
-			    game.waves.push(new enemyWave('right', game.height*0.2, 'sectoid.png', 'pawn', 3, 300, 1, 2));
+			    getNewEnemyWave('right', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 2);
 			};
 
 			level1.second10 = function () {
-			    game.waves.push(new enemyWave('top', game.width*0.5, 'sectoid.png', 'pawn', 6, 300, 1, 2));
+			    getNewEnemyWave('top', game.width*0.5, 'enemy_sectoid', 'pawn', 6, 300, 1, 2);
 			};
 
 			level1.second11 = function () {
-			    game.waves.push(new enemyWave('top', game.width*0.7, 'sectoid.png', 'pawn', 4, 300, 1, 2));
+			    getNewEnemyWave('top', game.width*0.7, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
 			};
 
 			level1.second12 = function () {
-			    game.waves.push(new enemyWave('left', game.height*0.2, 'sectoid.png', 'pawn', 3, 300, 1, 2));
+			    getNewEnemyWave('left', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 2);
 			};
 
 			level1.second13 = function () {				
-			    game.enemies.push(new enemy(game.width * 0.3, game.outerTop, 155, Math.PI/2, 10, 'base', 'alienbase2.png', 1));			
+			    getNewEnemy(game.width * 0.3, game.outerTop, 155, Math.PI/2, 10, 'base', 'enemy_base_floater', 1);			
 			};			
 			
 			level1.second15 = function () {
-			    game.waves.push(new enemyWave('top', game.width*0.2, 'sectoid.png', 'pawn', 2, 300, 1, 2));
+			    getNewEnemyWave('top', game.width*0.2, 'enemy_sectoid', 'pawn', 2, 300, 1, 2);
 			};
 
 			level1.second16 = function () {
-			    game.waves.push(new enemyWave('top', game.width*0.4, 'sectoid.png', 'pawn', 3, 300, 1, 2));
+			    getNewEnemyWave('top', game.width*0.4, 'enemy_sectoid', 'pawn', 3, 300, 1, 2);
 			};
 
 			level1.second17 = function () {
-			    game.waves.push(new enemyWave('top', game.width*0.6, 'sectoid.png', 'pawn', 4, 300, 1, 2));
+			    getNewEnemyWave('top', game.width*0.6, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
 			};
 
 			level1.second18 = function () {
-			    game.waves.push(new enemyWave('top', game.width*0.8, 'sectoid.png', 'pawn', 5, 300, 1, 2));
+			    getNewEnemyWave('top', game.width*0.8, 'enemy_sectoid', 'pawn', 5, 300, 1, 2);
 			};
 
 			level1.second22 = function () {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 'sectoid.png', 'pawn', 4, 300, 1, 2));
+			    getNewEnemyWave('top', game.width*0.3, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
 			};
 
 			level1.second25 = function () {
-			    game.waves.push(new enemyWave('left', game.width*0.4, 'sectoid.png', 'pawn', 4, 300, 1, 2));
+			    getNewEnemyWave('left', game.width*0.4, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
 			};
 
 			level1.second27 = function () {
-			    game.waves.push(new enemyWave('right', game.width*0.3, 'sectoid.png', 'pawn', 4, 300, 1, 2));
+			    getNewEnemyWave('right', game.width*0.3, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
 			};
 
 			level1.second30 = function () {
-			    game.waves.push(new enemyWave('top', game.width*0.3, 'sectoid.png', 'pawn', 4, 300, 1, 2));
+			    getNewEnemyWave('top', game.width*0.3, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
 			};
 
 			level1.second33 = function () {
-			    game.waves.push(new enemyWave('top', game.width*0.6, 'sectoid.png', 'pawn', 4, 300, 1, 2));
+			    getNewEnemyWave('top', game.width*0.6, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
 			};
 
 			level1.second35 = function () {
-			    game.waves.push(new enemyWave('right', game.width*0.2, 'sectoid.png', 'pawn', 4, 300, 1, 2));
+			    getNewEnemyWave('right', game.width*0.2, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
 			};
 
 			level1.second37 = function () {
-			    game.enemies.push(new enemy(game.width * 0.2, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    getNewEnemy(game.width * 0.2, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
 			};
 
 			level1.second38 = function () {
-			    game.enemies.push(new enemy(game.width * 0.4, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    getNewEnemy(game.width * 0.4, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
 			};
 
 			level1.second39 = function () {
-			    game.enemies.push(new enemy(game.width * 0.6, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    getNewEnemy(game.width * 0.6, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
 			};
 
 			level1.second40 = function () {
-			    game.enemies.push(new enemy(game.width * 0.8, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    getNewEnemy(game.width * 0.8, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
 			};
 
 			level1.second41 = function () {
-			    game.enemies.push(new enemy(game.width * 0.5, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    getNewEnemy(game.width * 0.5, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
 			};
 
 			level1.second42 = function () {
-			    game.enemies.push(new enemy(game.width * 0.2, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    getNewEnemy(game.width * 0.2, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
 			};
 
 			level1.second43 = function () {
-			    game.enemies.push(new enemy(game.width * 0.4, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    getNewEnemy(game.width * 0.4, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
 			};
 
 			level1.second44 = function () {
-			    game.enemies.push(new enemy(game.width * 0.6, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    getNewEnemy(game.width * 0.6, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
 			};
 
 			level1.second45 = function () {
-			    game.enemies.push(new enemy(game.width * 0.8, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'floater.png', 2));
+			    getNewEnemy(game.width * 0.8, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
 			};
 
 			level1.update = function () {
@@ -136,7 +136,7 @@ var level1 = {};
 						game.tracks[2].play();
 						game.tracks[2].loop = true;
 					}
-				    game.enemies.push(new boss(game.width*0.3, game.outerTop, 150, Math.PI/2, 50, 'sectoidBoss.png'));
+				    game.enemies.push(new boss(game.width*0.3, game.outerTop, 150, Math.PI/2, 100, 'boss_sectoid'));
 				}
 
 				if (game.seconds > 55 && game.enemies.length === 0 && game.bossDead && game.tracks.length == 3) {

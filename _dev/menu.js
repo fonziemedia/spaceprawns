@@ -13,10 +13,10 @@ function menu()
 
 	this.toggled = false;
 	
-	document.addEventListener("fullscreenchange", FShandler);
-	document.addEventListener("webkitfullscreenchange", FShandler);
-	document.addEventListener("mozfullscreenchange", FShandler);
-	document.addEventListener("MSFullscreenChange", FShandler);
+	doc.addEventListener("fullscreenchange", FShandler);
+	doc.addEventListener("webkitfullscreenchange", FShandler);
+	doc.addEventListener("mozfullscreenchange", FShandler);
+	doc.addEventListener("MSFullscreenChange", FShandler);
 
 	function FShandler()
 	{
@@ -36,43 +36,45 @@ function menu()
 
 	this.toggleFullScreen = function(trigger)  //experimental   only works with user input
 	{
-		if (!document.fullscreenElement &&    // alternative standard method
-		!document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement)   // current working methods
+		if (game.canVibrate) navigator.vibrate(15);
+
+		if (!doc.fullscreenElement &&    // alternative standard method
+		!doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement)   // current working methods
 		{
-			if (document.documentElement.requestFullscreen)
+			if (doc.documentElement.requestFullscreen)
 			{
-			document.documentElement.requestFullscreen();
+			doc.documentElement.requestFullscreen();
 			}
-			else if (document.documentElement.msRequestFullscreen)
+			else if (doc.documentElement.msRequestFullscreen)
 			{
-			document.documentElement.msRequestFullscreen();
+			doc.documentElement.msRequestFullscreen();
 			}
-			else if (document.documentElement.mozRequestFullScreen)
+			else if (doc.documentElement.mozRequestFullScreen)
 			{
-			document.documentElement.mozRequestFullScreen();
+			doc.documentElement.mozRequestFullScreen();
 			}
-			else if (document.documentElement.webkitRequestFullscreen)
+			else if (doc.documentElement.webkitRequestFullscreen)
 			{
-			document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+			doc.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
 			}
 		}
 		else
 		{
-			if (document.exitFullscreen)
+			if (doc.exitFullscreen)
 			{
-			  document.exitFullscreen();
+			  doc.exitFullscreen();
 			}
-			else if (document.msExitFullscreen)
+			else if (doc.msExitFullscreen)
 			{
-			  document.msExitFullscreen();
+			  doc.msExitFullscreen();
 			}
-			else if (document.mozCancelFullScreen)
+			else if (doc.mozCancelFullScreen)
 			{
-			  document.mozCancelFullScreen();
+			  doc.mozCancelFullScreen();
 			}
-			else if (document.webkitExitFullscreen)
+			else if (doc.webkitExitFullscreen)
 			{
-			  document.webkitExitFullscreen();
+			  doc.webkitExitFullscreen();
 			}
 		}
 	};
@@ -80,6 +82,8 @@ function menu()
 
 	this.toggleSound = function()
 	{
+		if (game.canVibrate) navigator.vibrate(15);
+
 		game.sound = game.sound ? false : true ;
 
 		localStorage.prawnsSound =  game.sound;
@@ -100,6 +104,8 @@ function menu()
 
 	this.toggleMusic = function()
 	{
+		if (game.canVibrate) navigator.vibrate(15);
+
 		game.music = game.music ? false : true ;
 
 		localStorage.prawnsMusic =  game.music;
@@ -139,6 +145,7 @@ function menu()
 
 	this.toggle = function()
 	{
+		document.getElementById("toggle-menu-btn").disabled = true;
 
 		this.toggled = this.toggled ? false : true;
 
@@ -166,28 +173,35 @@ function menu()
 				}	
 				else
 				{
-				startBtn.text('Start');
-				}			
+					startBtn.text('Start');
+				}
+
 				startBtn.animate({
 					opacity: 1,
 					"left": "-=50%",
 				},800);
+
 				soundFx.animate({
 					opacity: 1,
 					"right": "-=50%",
 				},800);
+
 				music.animate({
 					opacity: 1,
 					"left": "-=50%",
 				},800);
+
 				fullScreen.animate({
 					opacity: 1,
 					"right": "-=50%",
 				},800);
+
 				credits.animate({
 					opacity: 1,
 					"left": "-=50%",
 				},800);
+
+				document.getElementById("toggle-menu-btn").disabled = false;
 			});
 		}
 		else
@@ -199,22 +213,27 @@ function menu()
 					"right": "+=50%",
 				},800);
 			}
+
 			startBtn.animate({
 				opacity: 0,
 				"left": "+=50%",
 			},800);
+
 			soundFx.animate({
 				opacity: 0,
 				"right": "+=50%",
 			},800);
+
 			music.animate({
 				opacity: 0,
 				"left": "+=50%",
 			},800);
+
 			fullScreen.animate({
 				opacity: 0,
 				"right": "+=50%",
 			},800);
+
 			credits.animate({
 				opacity: 0,
 				"left": "+=50%",
@@ -223,15 +242,16 @@ function menu()
 
 			allButtons.promise().done(function()
 			{
+				allButtons.hide();
 				menuBg.fadeOut(animationSpeed);
 				menuBg.promise().done(function()
 				{
-					if(game.loaded && !game.faded){gameState.unPause();}
+					if(game.loaded && !game.faded)	gameState.unPause();
+					document.getElementById("toggle-menu-btn").disabled = false;
 				});				
 			});
 		}
 
-		// startBtn.css({"left": ($(gameArea).width()-widthProp)*0.55});		
 	};
 
 	this.init = function()

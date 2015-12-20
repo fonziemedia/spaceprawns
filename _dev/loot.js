@@ -1,38 +1,62 @@
-function loot(x, y) {
-	particle.call(this, x, y);
+loot = function(x, y) {
 
-	this.speed = Math.round(250/pixelRatio);
-	this.direction = Math.PI/2;
-	this.size = Math.round(45/pixelRatio);
+	this.x = x;
+	this.y = y;
 	this.dead = false;
-	this.drops = ['health', 'laser', 'missile'];
-	var key = Math.floor(Math.random() * this.drops.length);
-	this.type = this.drops[key];
+	this.key = Math.floor(Math.random() * this.drops.length);
+	this.type = this.drops[this.key];
+	switch(this.type)
+	{	
+		/* jshint ignore:start */
+		case 'health':
+			this.image = game.offCtx['loot_shields'];
+		break;
+		case 'laser':
+			this.image = game.offCtx['loot_lasers'];
+		break;
+		case 'missile':    
+			this.image = game.offCtx['loot_missiles'];
+		break;
+		/* jshint ignore:end */
+	}		
+	this.width = this.image.width;
+	this.height = this.image.height;
+};
 
+//invariables
+loot.prototype.speed = Math.round(250/pixelRatio);
+loot.prototype.direction = Math.PI/2;
+loot.prototype.dead = false;
+loot.prototype.drops = ['health', 'laser', 'missile'];
+loot.prototype.sfx1 = 'loot_powerUp' + fileFormat;
+loot.prototype.sfx2 = 'loot_powerUp2' + fileFormat;
+loot.prototype.sfx3 = 'loot_powerUp3' + fileFormat;
+loot.prototype.ctx = game.context;
+
+loot.prototype.reset = function(x, y) {			
+	this.x = x;
+    this.y = y;
+    this.dead = false;
+	this.key = Math.floor(Math.random() * this.drops.length);
+	this.type = this.drops[this.key];
 	switch(this.type) {
-    case 'health':
-        this.image = game.images['fighter.png'];
-        break;
-    case 'laser':
-        this.image = game.images['laser.png'];
-        break;
-    case 'missile':    
-        this.image = game.images['p_missile.png'];
+		/* jshint ignore:start */
+		case 'health':
+			this.image = game.offCtx['loot_shields'];
+		break;
+		case 'laser':
+			this.image = game.offCtx['loot_lasers'];
+		break;
+		case 'missile':    
+			this.image = game.offCtx['loot_missiles'];
+		break;
+		/* jshint ignore:end */
 	}
-	this.sfx1 = 'loot_powerUp' + fileFormat;
-	this.sfx2 = 'loot_powerUp2' + fileFormat;
-	this.sfx3 = 'loot_powerUp3' + fileFormat;
-	this.ctx = game.contextPlayer;
+};
 
-	//====================== Caching Off-Screen canvas =================//
-	this.offCanvas = document.createElement('canvas');
-	this.offCanvas.width = this.size;
-	this.offCanvas.height = this.size;
-	this.offCtx = this.offCanvas.getContext('2d');
-
-	this.offCtx.drawImage(this.image, 0, 0, this.offCanvas.width, this.offCanvas.height);
-
-	this.update = function() {
+loot.prototype.update = function() {
+	if(!this.dead)
+	{
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
 		this.vy = Math.sin(this.direction) * (this.speed*dt);	
 		// this.handleSprings();
@@ -43,9 +67,12 @@ function loot(x, y) {
 		this.x += this.vx;
 		this.y += this.vy;
 
-		// player-loot collision
-		if (Collision(this, playerShip) && !this.dead && !game.gameOver){			
-			switch(this.type) {
+		this.draw(this.x, this.y);
+
+		if (Collision(this, playerShip))
+		{			
+			switch(this.type)
+			{
 			    case 'health':
 			    	if (this.hull <= 7.5) {
 			    		playerShip.hull += 2.5;
@@ -54,12 +81,13 @@ function loot(x, y) {
 						playerShip.hull = 10;
 					}
 			        gameUI.updateEnergy();
-			        break;
+			    break;
 			    case 'laser':
-			        playerShip.laserLevel += 1;
-			        break;
+			        playerShip.laserLevel = playerShip.laserLevel < 3 ? playerShip.laserLevel + 1 : playerShip.laserLevel;
+			    break;
 			    case 'missile':
-			        playerShip.missileLevel += 1;
+			        playerShip.missileLevel = playerShip.missileLevel < 3 ? playerShip.missileLevel + 1 : playerShip.missileLevel;
+			    break;
 			}
 			if (game.sound)
 	        {
@@ -79,16 +107,59 @@ function loot(x, y) {
 			this.dead = true;
 		}
 
-	};
-
-	this.draw = function() {
-		// game.contextPlayer.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
-		
-		if (!this.dead) {			
-			this.ctx.drawImage(this.offCanvas, this.x, this.y); //render			
+		if (this.y > game.outerBottom) //always goes down
+		{
+			this.dead = true;
 		}
-	};
+	}
+	else
+	{
+		freeLoot(this);
+	}
+};
+
+loot.prototype.draw = function(x, y) {			
+	this.ctx.drawImage(this.image, x, y);
+};
+
+
+////////////
+// Factory
+////////////
+
+function getNewLoot(x, y)
+{
+    var l = null;
+
+    // check to see if there is a spare one
+    if (game.lootPool.length > 0)
+    {	
+    	//recycle
+        l = game.lootPool.pop();
+
+        l.reset(x, y);
+
+    	game.bullets.push(l);
+    }
+    else
+    { 
+        // none available, construct a new one
+		l = new loot(x, y);
+
+    	game.bullets.push(l);
+    }
+
+    // console.log('pool: ' + game.lootPool.length);
+    // console.log('active: ' + game.bullets.length);
+
 }
 
-loot.prototype = Object.create(particle.prototype); // Creating a loot.prototype object that inherits from particle.prototype.
-loot.prototype.constructor = loot; // Set the "constructor" property to refer to loot
+
+function freeLoot(l)
+{
+    // find the active bullet and remove it
+    game.bullets.splice(game.bullets.indexOf(l),1);
+
+    // return the bullet back into the pool
+	game.lootPool.push(l);
+}

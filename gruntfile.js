@@ -76,13 +76,62 @@ module.exports = function(grunt) {
         },
         imagemin: {
             dynamic: {
+                options: {                       // Target options
+                    optimizationLevel: 4
+                },
                 files: [{
-                    expand: true,
-                    cwd: '_img/_dev/',
-                    src: ['**/*.{png,jpg,gif}'],
-                    dest: '_img/_dist/' //DIST NEEDS TO BE A DIFFERENT FOLDER APARENTLY
-                }]
+                    expand: true,                    
+                    flatten: true,
+                    src: '_img/_dev/mobile/**/*.jpg',
+                    dest: '_img/',
+                    ext: '.mob.jpg'
+                },
+                {
+                    expand: true,                    
+                    flatten: true,
+                    src: '_img/_dev/desktop/**/*.jpg',
+                    dest: '_img/',
+                    ext: '.dkt.jpg'
+                },
+                {
+                    expand: true,                    
+                    flatten: true,
+                    src: '_img/_dev/mobile/**/*.gif',
+                    dest: '_img/',
+                    ext: '.mob.gif'
+                },
+                {
+                    expand: true,                    
+                    flatten: true,
+                    src: '_img/_dev/desktop/**/*.gif',
+                    dest: '_img/',
+                    ext: '.dkt.gif'
+                }]               
             }
+        },
+        tinypng: {
+            options: {
+                apiKey: "vksUF-rjWb-32GKKtBw-lqR9gRShvLNJ",
+                checkSigs: true,
+                sigFile: '_img/file_sigs.json', //checks for image minification signatures avoiding minifying files which are already minified
+                summarize: true,
+                showProgress: true,
+                stopOnImageError: true
+            },
+            compress1: {
+                expand: true,
+                flatten: true, 
+                src: '_img/_dev/mobile/**/*.png', 
+                dest: '_img/',
+                ext: '.mob.png'
+            },
+            compress2: {
+                expand: true,
+                flatten: true, 
+                src: '_img/_dev/desktop/**/*.png', 
+                dest: '_img/',
+                ext: '.dkt.png'
+            },            
         },
         watch: {
             options: {
@@ -110,8 +159,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-imagemin');
+    grunt.loadNpmTasks('grunt-contrib-imagemin');
+    grunt.loadNpmTasks('grunt-tinypng');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     // 4. Where we tell Grunt what to do when we type "grunt" into the terminal.
-    grunt.registerTask('default', ['concat', 'jshint', 'uglify', 'imagemin', 'watch']);
+    grunt.registerTask('default', ['concat', 'jshint', 'uglify', 'imagemin', 'tinypng', 'watch']);
 };

@@ -1,49 +1,92 @@
-function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
-	particle.call(this, x, y, speed, direction);
+enemy = function(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 
-	this.type = type;
-	switch (this.type){
-		case 'pawn':
-				this.size = Math.round(65/pixelRatio);
-			break;
-		case 'miniboss':
-				this.size = Math.round(120/pixelRatio);	
-			break;
-		case 'base':
-				this.size = Math.round(170/pixelRatio);
-				this.rotation = 0;	
-			break;
-	}
-	this.spritePos = Math.round(this.size * 0.5);
+	this.x = x;
+	this.y = y;
+	this.image = game.offCtx[image];
+	this.width = game.offCtx[image].width;	
+	this.height = game.offCtx[image].height;
 	this.hull = hull;
-	this.image = game.images[image];
-	// this.hit = false;
-	this.hitTimer = 0; 
-	this.dead = false;
-	this.bulletTimer = 1;
+	this.sprite = new sprite(image, 6, 5, 5);
+	this.type = type;
+	switch (type)
+	{
+		case 'pawn':
+			this.explosionSize = 'medium';
+		break;
+		case 'miniboss':
+			this.explosionSize = 'large';
+		break;
+		case 'base':
+			this.width = this.sprite.frameWidth;
+			this.height = this.sprite.frameHeight;
+			this.explosionSize = 'xLarge';	
+		break;
+	}
 	this.sheep = sheep || false;
-	this.fireRate = fireRate * 60; //bullets/sec
-
+	this.fireRate = fireRate * 60 || 0; //bullets/sec
+	/// *** WTF!!?? ///	
 	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
-	this.ctx = game.contextEnemies;
-	// this.inCanvas = false;
 	this.speed = speed/pixelRatio;
 	this.direction = direction;
-	this.collided = false;
+};
 
-	//====================== Caching Off-Screen canvas =================//
-	this.offCanvas = document.createElement('canvas');
-	this.offCanvas.width = this.size;
-	this.offCanvas.height = this.size;
-	this.offCtx = this.offCanvas.getContext('2d');
+//invariables (note: any other object properties that require these need to be declared in the prototype function)
+enemy.prototype.bulletTimer = 1;
+enemy.prototype.hitTimer = 0;
+enemy.prototype.ctx = game.context;
+enemy.prototype.dead = false;
+enemy.prototype.collided = false;
 
-	this.offCtx.drawImage(this.image, 0, 0, this.offCanvas.width, this.offCanvas.height);
+enemy.prototype.angleTo = function(p2)
+{
+	return Math.atan2(p2.y - this.y, p2.x - this.x);
+};
 
-	this.update = function() {
+enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fireRate, sheep) //only variable arguments here
+{
+	this.x = x;
+    this.y = y;
+    this.speed = speed;
+	this.direction = direction;	
+	this.hull = hull;
+	this.type = type;
+	this.image = game.offCtx[image];	
+	this.sheep = sheep || false;
+	this.fireRate = fireRate * 60 || 0; //bullets/sec
+	this.width = game.offCtx[image].width;	
+	this.height = game.offCtx[image].height;
+	switch (type)
+	{
+		case 'pawn':
+			this.explosionSize = 'medium';
+		break;
+		case 'miniboss':
+			this.explosionSize = 'large';
+		break;
+		case 'base':
+			this.width = this.sprite.frameWidth;
+			this.height = this.sprite.frameHeight;
+			this.explosionSize = 'xLarge';	
+		break;
+	}
+	this.bulletTimer = 1;
+	this.hitTimer = 0;	
+	this.collided = false;		//do we need this??
+	this.dead = false;
+
+	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
+
+	this.vx = Math.cos(this.direction) * ((this.speed)*dt);
+	this.vy = Math.sin(this.direction) * ((this.speed)*dt);
+};
+
+enemy.prototype.update = function() {
+	if (!this.dead) 
+	{
 		// this.lastX = this.x;
 		// this.lastY = this.y;
-		this.vx = Math.cos(this.direction) * (this.speed*dt);
-		this.vy = Math.sin(this.direction) * (this.speed*dt);		
+		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
+		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);		
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;
@@ -51,140 +94,121 @@ function enemy(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
-		this.spriteX = this.x + this.spritePos;
-		this.spriteY = this.y + this.spritePos;
+
+		if (this.type !== 'base' )
+		{	
+			this.direction -= utils.randomRange(-0.05, 0.05);
+		}
+
+		this.draw(this.x, this.y);
+
+		if(this.fireRate !== 0)
+		{
+			this.bulletTimer++;
+			if (this.bulletTimer % this.bulletDivision == 1)
+			{
+				this.bulletTimer = 1;				
+				bulletX = Math.round(this.x + this.width*0.42);
+				bulletY = Math.round(this.y + this.height);
+				getNewEnemyBullet(bulletX, bulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');			
+			}
+		}
+				
+		// player-enemy collision
+		if (Collision(this, playerShip) && !this.dead && !playerShip.imune && !game.gameOver)
+		{
+			getNewExplosion(playerShip.x, playerShip.y, 0, 1, 'small', 'chasis');	//get new explosion sound for hiting player		
+			playerShip.hull -= this.hull;
+			gameUI.updateEnergy();						
+			playerShip.hit = true;			
+			this.hull -= playerShip.hull;
+		}
 
 
-		//check if it got inside canvas
-		// if (this.type == 'miniboss')
-		// {
-		// 	if (this.x >= this.size*0.2 || this.x <= game.width - this.size*0.2 || this.y >= this.size || this.y <= game.height - this.size*0.2)
-		// 	{
-		// 		this.inCanvas = true;
-		// 	}
-
-		// 	//once in canvas start controlling bondaries
-		// 	if (this.inCanvas)
-		// 	{
-		// 		if (this.x < this.size*0.5 || this.x > game.width - this.size*0.5 || this.y < this.size*0.5)
-		// 		{
-		// 			//go right
-		// 			this.direction = -this.direction;	
-		// 		}
-		// 	}
-		// 	else
-		// 	{
-		// 		this.direction = Math.PI/2;
-		// 	}
-		// }
-
-		// if(this.hit && this.hull > 0 ){
-		// 	if (game.sound)
-	 //        {
-	 //        	if (game.sfx[this.audioHit1].paused)
-	 //        	{
-	 //        		game.sounds.push(game.sfx[this.audioHit1]);
-	 //        	}
-	 //        	else if (game.sfx[this.audioHit2].paused)
-	 //        	{
-	 //        		game.sounds.push(game.sfx[this.audioHit2]);
-	 //        	}
-	 //        	else if (game.sfx[this.audioHit3].paused)
-	 //        	{
-	 //        		game.sounds.push(game.sfx[this.audioHit3]);
-	 //        	}				        	
-	 //        }
-		// 	//change image here		
-		// 	this.hit = false;
-		// }
-
-		if (this.hull <= 0) {
+		if (this.hull <= 0)
+		{			
 			this.dead = true;
-			game.explosions.push(new explosion(this.x, this.y, this.speed, this.direction, this.size, 'enemy'));		        
-			if (!playerShip.crashed){
+			getNewExplosion(this.x, this.y, this.speed, this.direction, this.explosionSize, 'enemy');
+
+			lootchance = Math.random();			
+			if (lootchance < 0.4)
+			{
+				getNewLoot(this.x, this.y);					
+			}
+
+			if (!playerShip.crashed)
+			{
 				game.score++;
 				game.levelScore++;
 				gameUI.updateScore();								
 			}
 		}
 
-		if(this.fireRate !== 0){
-			this.bulletTimer++;
-			if (this.bulletTimer % this.bulletDivision == 1){
-				this.bulletTimer = 1;				
-				bulletX = Math.round(this.x + this.size*0.42);
-				bulletY = Math.round(this.y + this.size);
-				bulletDirection = this.angleTo(playerShip);
-				game.enemyBullets.push(new enemyBullet(bulletX, bulletY, 50, bulletDirection, 1, 'e_missile.png'));			
-			}
+		if(this.x > game.outerRight || this.x < game.outerLeft || this.y > game.outerBottom || this.y < game.outerTop)
+		{
+			this.dead = true;				
 		}
+	}
+	else
+	{	
+		freeEnemy(this);
+	}
 
-		if(this.type != 'base' )
-		{	
-		this.direction -= utils.randomRange(-0.05, 0.05);
-		}
-	};
+};
 
-	this.draw = function() {
-		if(this.type == 'base'){ //making bases rotate
-			// //clear trails
-			// this.ctx.save();
-			// this.ctx.translate(this.lastX, this.lastY);
-			// this.ctx.rotate(this.rotation);
-			// this.ctx.clearRect(-this.size/2, -this.size/2, this.size, this.size); //clear trails
-			// this.ctx.restore();
+enemy.prototype.draw = function(x, y) {
+	
+	if (this.type !== 'base')
+	{
+		this.ctx.drawImage(this.image, x, y);
+	}
+	else
+	{
+		this.sprite.draw(x, y);	
+	}
 
-			if (!this.dead) {				
-
-				//set rotation this.speed
-				this.rotation += 0.01;
-
-				//rotate canvas
-				this.ctx.save();
-				this.ctx.translate(this.spriteX, this.spriteY);
-				this.ctx.rotate(this.rotation);
-
-				//draw image
-				this.ctx.drawImage(this.offCanvas, -this.spritePos, -this.spritePos);
-
-				this.ctx.restore();
-			}
-		}
-		else {
-			// this.ctx.clearRect(this.x - this.vx, this.y - this.vy, this.size, this.size); //clear trails
-			if (!this.dead) {				
-				this.ctx.drawImage(this.offCanvas, this.x, this.y); //render
+};
 
 
-			}
-		}
+////////////
+// Factory
+////////////
 
-		// if (this.hit) {
-		// 	this.hitTimer++;
-		// 	var imgData = (this.type == 'base') ? game.contextEnemies.getImageData(this.x-this.size/2, this.y-this.size/2, this.size, this.size) : game.contextEnemies.getImageData(this.x, this.y, this.size, this.size);
+function getNewEnemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
+{
+    var en = null;
 
-		// 	var d = imgData.data;
-		//     for (var i = 0; i < d.length; i += 4) {
-		//       var r = d[i];
-		//       var g = d[i + 1];
-		//       var b = d[i + 2];
-		//       d[i] = d[i + 1] = d[i + 2] = 255;
-		//     }
+    // check to see if there is a spare one
+    if (game.enemiesPool.length > 0)
+    {	
+    	//recycle
+        en = game.enemiesPool.pop();
 
-		//     if (this.type == 'base'){
-		//    		game.contextEnemies.putImageData(imgData, this.x-this.size/2, this.y-this.size/2);
-		//    	}
-		//    	else{
-		// 		game.contextEnemies.putImageData(imgData, this.x, this.y);
-		// 	}
+        en.sprite.reset(image, 6, 5, 6);
 
-		// 	if (this.hitTimer > 4){
-		// 		this.hit = false;
-		// 		this.hitTimer = 0;
-		// 	} 
-		// }
-	};
+		en.reset(x, y, speed, direction, hull, type, image, fireRate, sheep);
+
+    	game.enemies.push(en);
+    }
+    else
+    { 
+        // none available, construct a new one
+		en = new enemy(x, y, speed, direction, hull, type, image, fireRate, sheep);
+		// en.offDraw();
+    	game.enemies.push(en);
+    }
+
+    // console.log('pool: ' + game.enemiesPool.length);
+    // console.log('active: ' + game.enemies.length);
+
 }
 
-enemy.prototype = Object.create(particle.prototype); // Creating a enemy.prototype object that inherits from particle.prototype.
-enemy.prototype.constructor = enemy; // Set the "constructor" property to refer to enemy
+
+function freeEnemy(en)
+{
+    // find the active bullet and remove it
+    game.enemies.splice(game.enemies.indexOf(en),1);
+
+    // return the bullet back into the pool
+	game.enemiesPool.push(en);
+}
