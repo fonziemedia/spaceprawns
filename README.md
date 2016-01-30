@@ -1,4 +1,4 @@
 invaders
 ========
 
-an html 5 game excercise
+an html 5 game exercise

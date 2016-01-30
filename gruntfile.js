@@ -22,7 +22,6 @@ module.exports = function(grunt) {
                 '_dev/loot.js',                                
                 '_dev/wave.js',
                 '_dev/ui.js',                                 
-                '_dev/lights.js',                                
                 '_dev/lights.js',                                 
                 '_dev/text.js',    
                 '_dev/state.js',                             
@@ -158,7 +157,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-imagemin');
     grunt.loadNpmTasks('grunt-contrib-imagemin');
     grunt.loadNpmTasks('grunt-tinypng');
     grunt.loadNpmTasks('grunt-contrib-watch');

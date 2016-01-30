@@ -48,8 +48,8 @@ _img/_src/
 _sounds/_src/
 node_modules/
 npm-debug.log
-package.json
-spaceprawns.bat
-dploy.yaml
+*.yaml
 *.sublime-project
 *.sublime-workspace
+*.command
+*.bat
