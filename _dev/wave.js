@@ -1,5 +1,5 @@
 var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate) {
-	
+
 	this.side = side;
 	this.spawnedShips = 0;
 	this.race = race;
@@ -31,25 +31,25 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 	// this.bulletTimer = 1;
 	// this.bulletDivision = fireRate || 99999;
 	// this.loot = [];
-	
+
 
 
 	this.update = function() {
 		if(!this.over)
-		{					
+		{
 			// if (dt !== 0 && !this.spawnDivisionSet){
 			// 	this.spawnDivision = Math.round(700 * dt);
 			// 	this.spawnDivisionSet = true;
-			// }							
-				
+			// }
+
 			this.spawnTimer++;
-					
+
 			if (this.spawnedShips <= this.fleetSize){
-				if (this.spawnTimer == this.spawnDivision){   
+				if (this.spawnTimer == this.spawnDivision){
 					this.spawnTimer = 1;
 
 					getNewEnemy(this.x, this.y, this.speed, this.direction, this.hull, this.type, this.race, this.fireRate, true);
-					
+
 					this.spawnedShips++;
 				}
 			}
@@ -63,7 +63,7 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 			freeEnemyWave(this);
 		}
 	};
-	
+
 };
 
 ////////////
@@ -76,7 +76,7 @@ function getNewEnemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate
 
     // check to see if there is a spare one
     if (game.wavesPool.length > 0)
-    {	
+    {
     	//recycle
         ew = game.wavesPool.pop();
 
@@ -113,7 +113,7 @@ function getNewEnemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate
     	game.waves.push(ew);
     }
     else
-    { 
+    {
         // none available, construct a new one
 		ew = new enemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate);
     	game.waves.push(ew);

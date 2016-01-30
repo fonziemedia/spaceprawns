@@ -4,7 +4,7 @@ player = function(hull, fireRate)
 	this.y = Math.round(game.height*0.90);
 	this.speed = 0;
 	this.maxSpeed = 400;
-	
+
 	// this.size = Math.round(100/pixelRatio);
 	this.hull = hull;
 	this.maxHull = hull;
@@ -31,7 +31,7 @@ player = function(hull, fireRate)
 	this.limitX2 = Math.round(game.width - this.width*0.5);
 	this.limitY1 = Math.round(-this.height*0.5);
 	this.limitY2 = Math.round(game.height - this.height*0.5);
-	this.movement = Math.round(game.height*0.007);	
+	this.movement = Math.round(game.height*0.007);
 
 	//====================== Laser bullets =================//
 	this.bulletTimer = 1;
@@ -43,11 +43,11 @@ player = function(hull, fireRate)
 	this.leftlaserX = Math.round(this.x + this.width*0.25);
 	this.rightlaserX = Math.round(this.x + this.width*0.75);
 	this.LaserY = Math.round(this.y - this.height*0.2);
-	
+
 };
 
 
-player.prototype.update = function() {		
+player.prototype.update = function() {
 	// this.vx = Math.cos(this.direction) * (this.speed*dt);
 	// this.vy = Math.sin(this.direction) * (this.speed*dt);
 	// this.handleSprings();
@@ -60,8 +60,8 @@ player.prototype.update = function() {
 	this.speed = 0; // !! check if you can optimise this !!
 	// this.playerImage = this.image; // !! check if you can optimise this !!
 	this.speedX = Math.round(((touchInitX - inputAreaX)*0.1)/pixelRatio);
-	this.speedY = Math.round(((touchInitY - inputAreaY)*0.1)/pixelRatio);		
-	
+	this.speedY = Math.round(((touchInitY - inputAreaY)*0.1)/pixelRatio);
+
 	//////////////////////////////
 	//	Mouse and Touch controls
 	/////////////////////////////
@@ -72,9 +72,9 @@ player.prototype.update = function() {
 		if (!game.isMobile) {doc.getElementById('gamearea').style.cursor = 'none';}
 
 
-		//defining the boundaries	
-				
-			
+		//defining the boundaries
+
+
 			moveRight1 = (this.speedX < -2 && this.speedX >= -4) ? true : false;
 			moveRight2 = (this.speedX < -4 && this.speedX >= -6) ? true : false;
 			moveRight3 = (this.speedX < -6 && this.speedX >= -8) ? true : false;
@@ -86,14 +86,14 @@ player.prototype.update = function() {
 			moveLeft3 = (this.speedX > 6 && this.speedX <= 8) ? true : false;
 			moveLeft4 = (this.speedX > 8 && this.speedX <= 10) ? true : false;
 			moveLeft5 = (this.speedX > 10) ? true : false;
-			
+
 			//making it move to touch or click point
 			// if (inputAreaX != moveX || inputAreaY != moveY) {
 				//the distance between the current ship pos and the user touch/click pos
-				
-				
+
+
 				// console.log('inputAreax:'+ inputAreaX);
-				// console.log('inputAreay:'+ inputAreaY);				
+				// console.log('inputAreay:'+ inputAreaY);
 				// console.log('touchx:'+ touchInitX);
 				// console.log('touchy:'+ touchInitY);
 				// console.log (this.speedX);
@@ -104,28 +104,28 @@ player.prototype.update = function() {
 
 
 				// console.log('movement:' + this.movement);
-				
+
 				//this needs to come after movement vars above because he redefine this.speedX here
-				this.speedX = this.speedX < this.movement ? this.speedX : this.movement;					
+				this.speedX = this.speedX < this.movement ? this.speedX : this.movement;
 				this.speedY = this.speedY < this.movement ? this.speedY : this.movement;
-				this.speedX = this.speedX > -this.movement ? this.speedX : -this.movement;					
+				this.speedX = this.speedX > -this.movement ? this.speedX : -this.movement;
 				this.speedY = this.speedY > -this.movement ? this.speedY : -this.movement;
 
 				// console.log('touchInitX:'+ touchInitX);
 				// console.log('touchInitY:'+ touchInitY);
 				// console.log('inputAreaX:'+ inputAreaX);
-				// console.log('inputAreaY:'+ inputAreaY);					
+				// console.log('inputAreaY:'+ inputAreaY);
 				// console.log('this.speedX:'+ this.speedX);
-				// console.log('this.speedY:'+ this.speedY);	
-				
-				if (this.speedX !== 0 || this.speedY !== 0) 
+				// console.log('this.speedY:'+ this.speedY);
+
+				if (this.speedX !== 0 || this.speedY !== 0)
 				{
-					//the bondaries and edge portals				
+					//the bondaries and edge portals
 					if (this.x >= this.limitX1 && this.x <= this.limitX2 && this.y >= this.limitY1 && this.y <= this.limitY2)
-					{			
+					{
 					this.x = this.x - this.speedX;
 					this.y = this.y - this.speedY;
-					}						
+					}
 					else if(this.x < this.limitX1)
 					{
 					 this.x = this.limitX2;
@@ -147,23 +147,23 @@ player.prototype.update = function() {
 
 				this.speedX = 0;
 				this.speedY = 0; //not needed but..
-				
-				// B ALTERNATIVE CONTROLS 
+
+				// B ALTERNATIVE CONTROLS
 				// this.speedX = (touchInitX - canvasX);
 				// this.speedY = (touchInitY - canvasY);
-				
-				
+
+
 				// this.x = this.x - this.speedX;
-				// this.y = this.y - this.speedY;					
+				// this.y = this.y - this.speedY;
 
 
 				// touchInitX = canvasX;
 				// touchInitY = canvasY;
 
 
-		
 
-			
+
+
 			if (moveRight1) {
 				this.spriteFrame = 5;
 			} else if (moveRight2) {
@@ -187,12 +187,12 @@ player.prototype.update = function() {
 				this.spriteFrame = 4;
 			}
 
-			this.rendered = false;		
+			this.rendered = false;
 
 	}
 	else
 	{
-		this.spriteFrame = 10;	
+		this.spriteFrame = 10;
 		doc.getElementById('gamearea').style.cursor = 'crosshair';
 	}
 
@@ -203,9 +203,9 @@ player.prototype.update = function() {
 	if(!game.isMobile)
 	{
 		//left
-		if(game.keys[37] || game.keys[65] && !game.gameOver){ //if key pressed..				
-			if(this.x > 0){ // (keeping it within the boundaries of our canvas)				
-				this.speed = this.maxSpeed;							
+		if(game.keys[37] || game.keys[65] && !game.gameOver){ //if key pressed..
+			if(this.x > 0){ // (keeping it within the boundaries of our canvas)
+				this.speed = this.maxSpeed;
 				this.image = this.offCanvasL5;
 				this.rendered = false;
 				this.x -= Math.round(this.speed*dt);
@@ -213,7 +213,7 @@ player.prototype.update = function() {
 		}
 		//right
 		if(game.keys[39] || game.keys[68] && !game.gameOver){
-			if(this.x <= game.width - this.width){				
+			if(this.x <= game.width - this.width){
 				this.speed = this.maxSpeed;
 				this.image = this.offCanvasR5;
 				this.rendered = false;
@@ -222,25 +222,25 @@ player.prototype.update = function() {
 		}
 		//up
 		if((game.keys[38] || game.keys[87]) && !game.gameOver){
-			if(this.y > 0){				
-				this.speed = this.maxSpeed;					
+			if(this.y > 0){
+				this.speed = this.maxSpeed;
 				this.rendered = false;
 				this.y -= Math.round(this.speed*dt);
 			}
 		}
 		//down
 		if(game.keys[40] || game.keys[83] && !game.gameOver){
-			if(this.y <= game.height - this.height){				
-				this.speed = this.maxSpeed;					
+			if(this.y <= game.height - this.height){
+				this.speed = this.maxSpeed;
 				this.rendered = false;
 				this.y += Math.round(this.speed*dt);
-			}	
+			}
 		}
 	}
 
-	
-	if(game.levelComplete){			
-		this.speed = this.maxSpeed*2;			
+
+	if(game.levelComplete){
+		this.speed = this.maxSpeed*2;
 		this.rendered = false;
 		this.y -= Math.round(this.speed*dt);
 	}
@@ -283,12 +283,12 @@ player.prototype.update = function() {
 			        	else if (game.sfx[this.audioFire3].paused)
 			        	{
 			        		game.sounds.push(game.sfx[this.audioFire3]);
-			        	}				        	
+			        	}
 			        }
 			    break;
 			    case 2:
 			    	getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			    	getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');			
+			    	getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
 			        if (game.sound)
 			        {
 			        	if (game.sfx[this.audioFire1].paused)
@@ -302,7 +302,7 @@ player.prototype.update = function() {
 			        	else if (game.sfx[this.audioFire3].paused)
 			        	{
 			        		game.sounds.push(game.sfx[this.audioFire3]);
-			        	}				        	
+			        	}
 			        }
 			    break;
 			    case 3:
@@ -322,7 +322,7 @@ player.prototype.update = function() {
 			        	else if (game.sfx[this.audioFire3].paused)
 			        	{
 			        		game.sounds.push(game.sfx[this.audioFire3]);
-			        	}				        	
+			        	}
 			        }
 			    break;
 			 }
@@ -341,8 +341,8 @@ player.prototype.update = function() {
 			     	getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
 			    	getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
 			    	getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-				break;										
-			 }				
+				break;
+			 }
 			// this.bulletTimer = 1; //resetting our timer
 		}
 	}
@@ -357,19 +357,19 @@ player.prototype.update = function() {
 
 	if (this.hull <= 0 && !this.dead)
 	{
-		this.dead = true;			
+		this.dead = true;
 		this.lives -= 1;
-		getNewExplosion(this.x, this.y, 0, 0, 'large', 'player'); //need to obtain player direction if we want dinamic explosions, for now we just blow it still			
+		getNewExplosion(this.x, this.y, 0, 0, 'large', 'player'); //need to obtain player direction if we want dinamic explosions, for now we just blow it still
 		gameUI.updateHangar();
-	}	
+	}
 
 
-	if (this.dead && this.deadTimer <= 100) 
+	if (this.dead && this.deadTimer <= 100)
 	{
 		//waiting a few secs before any action
-		this.deadTimer++; 
+		this.deadTimer++;
 
-		if (this.deadTimer > 100 && this.lives > 0) 
+		if (this.deadTimer > 100 && this.lives > 0)
 		{
 			mouseIsDown = 0;
 			this.hull = 10;
@@ -381,14 +381,14 @@ player.prototype.update = function() {
 			this.hit = false;
 			this.friction = 0;
 			this.laserLevel = 1;
-			this.missileLevel = 0;						
+			this.missileLevel = 0;
 			gameUI.updateEnergy();
 			this.deadTimer = 0;
 			this.imune = true;
 			this.imuneTimer = 0;
 		}
 		else if (this.deadTimer > 100 && this.lives === 0 && !game.gameOver)
-		{	
+		{
 			mouseIsDown = 0;
 			game.keys[13] = false;
 			this.deadTimer = 0;
@@ -415,8 +415,8 @@ player.prototype.draw = function() {
 
 
 	if(!this.dead)
-	{		
-		
+	{
+
 		if (!this.imune)
 		{
 
@@ -433,11 +433,11 @@ player.prototype.draw = function() {
 
 		if (this.hit && !this.imune)
 		{
-			if (game.canVibrate) 
+			if (game.canVibrate)
 			{
 				if (this.sprite_s.currentFrame < 1)	navigator.vibrate(30);
 			}
-			
+
 			this.sprite_s.draw(this.x - this.width*0.7, this.y - this.height*0.1);
 			if (this.sprite_s.currentFrame >= this.sprite_s.endFrame)
 			{
@@ -458,7 +458,7 @@ player.prototype.load = function()
 player.prototype.reset = function() {
 	game.gameOver = false;
 	this.dead = false;
-	this.deadTimer = 0;				
+	this.deadTimer = 0;
 	this.x = Math.round(game.width*0.46);
 	this.y = Math.round(game.height*0.90);
 	// this.image = this.offCanvas;

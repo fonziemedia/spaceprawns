@@ -5,14 +5,14 @@ function menu()
 	var resumeBtn = $('#resumeGame');
 	var startBtn = $('#startGame');
 	var soundFx = $('#toggleSound');
-	var music = $('#toggleMusic');	
+	var music = $('#toggleMusic');
 	var fullScreen = $('#toggleFullScreen');
 	var credits = $('#credits');
 	var allButtons = $('.menu-option-btn');
 	var animationSpeed = 800;
 
 	this.toggled = false;
-	
+
 	doc.addEventListener("fullscreenchange", FShandler);
 	doc.addEventListener("webkitfullscreenchange", FShandler);
 	doc.addEventListener("mozfullscreenchange", FShandler);
@@ -95,7 +95,7 @@ function menu()
 			soundFx.text('Sound: ON');
 		}
 		else
-		{			
+		{
 		soundFx.removeClass('active');
 		soundFx.text('Sound: OFF');
 		}
@@ -125,7 +125,7 @@ function menu()
 			for(var w in game.tracks)
 			{
 				game.tracks[w].play();
-				game.tracks[w].loop = true;							
+				game.tracks[w].loop = true;
 			}
 		}
 
@@ -135,7 +135,7 @@ function menu()
 			music.text('Music: ON');
 		}
 		else
-		{			
+		{
 			music.removeClass('active');
 			music.text('Music: OFF');
 		}
@@ -170,7 +170,7 @@ function menu()
 						opacity: 1,
 						"right": "-=50%",
 					},800);
-				}	
+				}
 				else
 				{
 					startBtn.text('Start');
@@ -248,7 +248,7 @@ function menu()
 				{
 					if(game.loaded && !game.faded)	gameState.unPause();
 					document.getElementById("toggle-menu-btn").disabled = false;
-				});				
+				});
 			});
 		}
 
@@ -262,7 +262,7 @@ function menu()
 			soundFx.text('Sound: ON');
 		}
 		else
-		{			
+		{
 		soundFx.removeClass('active');
 		soundFx.text('Sound: OFF');
 		}
@@ -273,7 +273,7 @@ function menu()
 			music.text('Music: ON');
 		}
 		else
-		{			
+		{
 			music.removeClass('active');
 			music.text('Music: OFF');
 		}
@@ -284,7 +284,7 @@ function menu()
 			fullScreen.text('Fullscreen: ON');
 		}
 		else
-		{			
+		{
 			fullScreen.removeClass('active');
 			fullScreen.text('Fullscreen: OFF');
 		}
@@ -292,7 +292,7 @@ function menu()
 		gameMenu.toggle();
 
 	};
-	
+
 }
 
 gameMenu = new menu();

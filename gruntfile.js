@@ -1,6 +1,6 @@
 module.exports = function(grunt) {
 
-    // 1. All configuration goes here 
+    // 1. All configuration goes here
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         // concatinating
@@ -9,28 +9,28 @@ module.exports = function(grunt) {
                 src: [
                 '_dev/vector.js',
                 '_dev/utils.js',
-                '_dev/particle.js',                               
+                '_dev/particle.js',
                 '_dev/init.js',
                 '_dev/sprite.js',
                 '_dev/background.js',
                 '_dev/explosion.js',
                 '_dev/player.js',
-                '_dev/playerBullet.js',                                
+                '_dev/playerBullet.js',
                 '_dev/enemy.js',
                 '_dev/boss.js',
                 '_dev/enemyBullet.js',
-                '_dev/loot.js',                                
+                '_dev/loot.js',
                 '_dev/wave.js',
-                '_dev/ui.js',                                 
-                '_dev/lights.js',                                 
-                '_dev/text.js',    
-                '_dev/state.js',                             
+                '_dev/ui.js',
+                '_dev/lights.js',
+                '_dev/text.js',
+                '_dev/state.js',
                 '_dev/menu.js',
                 '_dev/update.js',
-                '_dev/level1.js',  
-                '_dev/functions.js',                              
+                '_dev/level1.js',
+                '_dev/functions.js',
                 ],
-                dest: 'main.js',                
+                dest: 'main.js',
             }
         },
         //jshint
@@ -40,7 +40,7 @@ module.exports = function(grunt) {
             },
             beforeconcat: [
             '_dev/vector.js',
-            '_dev/utils.js', 
+            '_dev/utils.js',
             '_dev/particle.js',
             '_dev/init.js',
             '_dev/sprite.js',
@@ -79,33 +79,33 @@ module.exports = function(grunt) {
                     optimizationLevel: 4
                 },
                 files: [{
-                    expand: true,                    
+                    expand: true,
                     flatten: true,
                     src: '_img/_dev/mobile/**/*.jpg',
                     dest: '_img/',
                     ext: '.mob.jpg'
                 },
                 {
-                    expand: true,                    
+                    expand: true,
                     flatten: true,
                     src: '_img/_dev/desktop/**/*.jpg',
                     dest: '_img/',
                     ext: '.dkt.jpg'
                 },
                 {
-                    expand: true,                    
+                    expand: true,
                     flatten: true,
                     src: '_img/_dev/mobile/**/*.gif',
                     dest: '_img/',
                     ext: '.mob.gif'
                 },
                 {
-                    expand: true,                    
+                    expand: true,
                     flatten: true,
                     src: '_img/_dev/desktop/**/*.gif',
                     dest: '_img/',
                     ext: '.dkt.gif'
-                }]               
+                }]
             }
         },
         tinypng: {
@@ -119,18 +119,18 @@ module.exports = function(grunt) {
             },
             compress1: {
                 expand: true,
-                flatten: true, 
-                src: '_img/_dev/mobile/**/*.png', 
+                flatten: true,
+                src: '_img/_dev/mobile/**/*.png',
                 dest: '_img/',
                 ext: '.mob.png'
             },
             compress2: {
                 expand: true,
-                flatten: true, 
-                src: '_img/_dev/desktop/**/*.png', 
+                flatten: true,
+                src: '_img/_dev/desktop/**/*.png',
                 dest: '_img/',
                 ext: '.dkt.png'
-            },            
+            },
         },
         watch: {
             options: {
@@ -149,7 +149,7 @@ module.exports = function(grunt) {
                 options: {
                     spawn: false,
                 }
-            }  
+            }
         }
     });
 

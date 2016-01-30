@@ -1,5 +1,5 @@
 enemyBullet = function(x, y, speed, direction, power, image)
-{		
+{
 	this.sprite = new sprite(image, 3, 1, 5);
 	this.x = x;
 	this.y = y;
@@ -25,7 +25,7 @@ enemyBullet.prototype.reset = function(x, y, speed, direction, power)	//fix this
 {
     //change variable properties only
 	this.x = x;
-	this.y = y;	
+	this.y = y;
 	this.width = this.sprite.frameWidth;
 	this.height = this.sprite.frameHeight;
 	this.speed = speed;
@@ -38,9 +38,9 @@ enemyBullet.prototype.reset = function(x, y, speed, direction, power)	//fix this
 };
 
 enemyBullet.prototype.update = function()
-{		
+{
 	if (!this.dead)
-	{	
+	{
 		this.vx *= this.friction;
 		this.vy *= this.friction;
 		this.x += this.vx;
@@ -52,7 +52,7 @@ enemyBullet.prototype.update = function()
 		{
 			getNewExplosion(this.x, this.y, 0, 1, 'xSmall', 'chasis');
 			playerShip.hull -= this.power;
-			gameUI.updateEnergy();	
+			gameUI.updateEnergy();
 			playerShip.hit = true;
 			this.dead = true;
 		}
@@ -75,7 +75,7 @@ enemyBullet.prototype.draw = function(x, y)	//fix this with sprites with diferen
 	this.ctx.rotate(this.direction - Math.PI/2);
 
 	this.sprite.draw(this.spriteX, this.spriteY);
-	
+
 	this.ctx.restore();
 };
 

@@ -2,7 +2,7 @@
 
 		//making our canvases dynamically resize according to the size of the browser win	//! USE THIS TO SHOW ROTATE SCREEN MSG IF MOBILE AND GAME.WIDTH > GAME HEIGHT
 		function respondCanvas()
-		{ 
+		{
 
 			game.paused = gameMenu.toggled ? game.paused : true; //promtp to pause the game if called outside game menu
 
@@ -13,15 +13,15 @@
 		}
 
 
-		//Keyboard		
+		//Keyboard
 		$(document).keydown(function(e){    //using jquery to listen to pressed keys
 			game.keys[e.keyCode ? e.keyCode : e.which] = true;	//and cross browser proofing
 		});
-		
+
 		$(document).keyup(function(e){   //using jquery to listen to released keys
-			delete game.keys[e.keyCode ? e.keyCode : e.which]; //once key is released, delete the key pressed action previously defined 
+			delete game.keys[e.keyCode ? e.keyCode : e.which]; //once key is released, delete the key pressed action previously defined
 		});
-		
+
 
 		function addGamePlayInput()
 		{
@@ -29,55 +29,55 @@
 			inputAreaY = playerShip.y;
 
 	        inputArea.addEventListener("mousedown",mouseDown, false);
-	        inputArea.addEventListener("mouseup", mouseUp, false);        
+	        inputArea.addEventListener("mouseup", mouseUp, false);
 	        inputArea.addEventListener("mousemove",mouseXY, false);
 
 	        inputArea.addEventListener("touchstart", touchDown, false);
 	        inputArea.addEventListener("touchend", touchUp, false);
 	        inputArea.addEventListener("touchcancel", touchUp, false);
 	        inputArea.addEventListener("touchleave", touchUp, false);
-	        inputArea.addEventListener("touchmove", touchXY, false);		                
+	        inputArea.addEventListener("touchmove", touchXY, false);
 		}
 
 		//remove this later
 		function addStandByInput()
-		{			         
+		{
 	        inputArea.addEventListener("mouseup", standByInput, false);
-	        inputArea.addEventListener("touchstart", standByInput, false);		                
+	        inputArea.addEventListener("touchstart", standByInput, false);
 		}
 
 		function removeGamePlayInput()
-		{	                
+		{
 	        inputArea.removeEventListener("mousedown",mouseDown, false);
-	        inputArea.removeEventListener("mouseup", mouseUp, false);        
+	        inputArea.removeEventListener("mouseup", mouseUp, false);
 	        inputArea.removeEventListener("mousemove",mouseXY, false);
 
 	        inputArea.removeEventListener("touchstart", touchDown, false);
 	        inputArea.removeEventListener("touchend", touchUp, false);
 	        inputArea.removeEventListener("touchcancel", touchUp, false);
 	        inputArea.removeEventListener("touchleave", touchUp, false);
-	        inputArea.removeEventListener("touchmove", touchXY, false);		                
+	        inputArea.removeEventListener("touchmove", touchXY, false);
 		}
 
 		function removeStandByInput()
-		{			         
+		{
 	        inputArea.removeEventListener("mouseup", standByInput, false);
-	        inputArea.removeEventListener("touchstart", standByInput, false);		                
+	        inputArea.removeEventListener("touchstart", standByInput, false);
 		}
 
-		
+
 		function mouseUp(e)
 		{
 			e.preventDefault();
 			mouseIsDown = 0;
 		}
-		 
+
 		function touchUp(e)
 		{
 			e.preventDefault();
 			mouseIsDown = 0;
 		}
-		 
+
 		function mouseDown(e)
 		{
 			e.preventDefault();
@@ -85,7 +85,7 @@
 			touchInitX = e.pageX - inputArea.offsetLeft;
 			touchInitY = e.pageY - inputArea.offsetTop;
 		}
-		  
+
 		function touchDown(e)
 		{
 			e.preventDefault();
@@ -96,21 +96,21 @@
 			touchInitY =  touch.pageY - touch.target.offsetTop;
 
 		}
-		
+
 		function mouseXY(e)
 		{
 			e.preventDefault();
 			inputAreaX = e.pageX - inputArea.offsetLeft;
 			inputAreaY = e.pageY - inputArea.offsetTop;
 		}
-		 
+
 		function touchXY(e) {
 			e.preventDefault();
 			var touch = e.targetTouches[0];
 
     		inputAreaX = touch.pageX - inputArea.offsetLeft;
     		inputAreaY = touch.pageY - inputArea.offsetTop;
- 
+
 		}
 
 		//remove this later
@@ -165,9 +165,9 @@
 						// console.log (dtSum);
 					}
 
-					dt = Math.ceil(dtSum / dtArray.length)/1000;				
+					dt = Math.ceil(dtSum / dtArray.length)/1000;
 					dtTimerSet = true;
-					document.getElementById("toggle-menu-btn").disabled = false;				
+					document.getElementById("toggle-menu-btn").disabled = false;
     			}
     		}
 		}
@@ -183,13 +183,13 @@
 
 		function clrCanvas()
 		{
-			// game.contextBackground.clearRect(0, 0, game.width, game.height); 
-			game.context.clearRect(0, 0, game.width, game.height); 
+			// game.contextBackground.clearRect(0, 0, game.width, game.height);
+			game.context.clearRect(0, 0, game.width, game.height);
 			// game.contextEnemies.clearRect(0, 0, game.width, game.height);
 		}
 
-		function resetGame(){	//called on level start			
-			
+		function resetGame(){	//called on level start
+
 			mouseIsDown = 0;
 			gameLights.switch('off');
 			clrCanvas();
@@ -197,7 +197,7 @@
 			//Game state
 			game.bossDead = false;
 			game.levelComplete = false;
-			
+
 
 			//Timers
 			game.timer = 0;
@@ -205,13 +205,13 @@
 
 
 			//Objects
-			playerShip.reset();			
+			playerShip.reset();
 			game.bullets = [];
 			game.explosions = [];
 			game.enemies = [];
 			game.waves = [];
-			game.loot = [];										
-			gameUI.updateAll();		
+			game.loot = [];
+			gameUI.updateAll();
 
 			//Sounds
 			game.sounds = [];
@@ -223,14 +223,14 @@
 			if (game.music && game.tracks.length < 1){
 				game.tracks.push(game.soundTracks['tune1' + fileFormat]);
 				game.tracks[0].play();
-				game.tracks[0].loop = true;	
+				game.tracks[0].loop = true;
 			}
 		}
 
 
 
 		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
-			
+
 		// 	if (!(first.x + first.size < second.x || second.x + second.size < first.x || first.y + first.size < second.y || second.y + second.size < first.y)) {
 
 		// 		Cx = first.x < second.x ? second.x : first.x;
@@ -246,19 +246,19 @@
 		// 		for (var i = 0 ; i < length; i+= game.res) {
 		// 			// return !(!iFirst.data[i] || !iSecond.data[i]);
 		// 			if (iFirst.data[i] > 0 && iSecond.data[i] > 0)
-		// 			{	
+		// 			{
 		// 				// console.log('true1');
 		// 				return true;
-						
+
 		// 			}
 		// 		}
 		// 		console.log(iFirst.data.length);
 		// 	}
-		// 	// console.log('false');			
-		// 	return false;			
+		// 	// console.log('false');
+		// 	return false;
 		// }
 
-		
+
 		function Collision(first, second)
 		{ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
 			return !(first.x > second.x + second.width ||
@@ -277,8 +277,8 @@
 
 		// LOOOOOOOOOOOOOOOOOOOOP
 
-			
-		function loop(){ //the loop		
+
+		function loop(){ //the loop
 			requestAnimFrame(loop);
 			if (!game.paused){
 			update();
@@ -287,14 +287,14 @@
 
 
 		function startGame()
-		{						
+		{
 			game.loaded = true;
 
 			if (typeof win[playerShip] === "undefined")
 			{
 				playerShip = new player(10, 15);
 			}
-			
+
 			//preparing sound tracks (chromium fix)
 			game.tracks.push(game.soundTracks['tune1' + fileFormat]);
 			game.tracks.push(game.soundTracks['tune2' + fileFormat]);
@@ -303,7 +303,7 @@
 
 			for (var t in game.tracks){
 				game.tracks[t].play();
-				game.tracks[t].pause();			
+				game.tracks[t].pause();
 			}
 
 			game.tracks = [];
@@ -327,7 +327,7 @@
 				game.sounds[s].play();
 				game.sounds[s].pause();
 			}
-		
+
 			game.sounds = [];
 
 			loop();
@@ -356,13 +356,13 @@
 			offCanvas = doc.createElement('canvas');
 			offCanvas.width = Math.round(this.width);
 			offCanvas.height = Math.round(this.height);
-			
+
 			offCtx = offCanvas.getContext('2d');
 
 			offCtx.drawImage(this, 0, 0, offCanvas.width, offCanvas.height);
 
 			game.offCtx[indexName] = offCanvas;
-			
+
 			game.doneImages++;
 		}
 
@@ -370,7 +370,7 @@
 			game.requiredImages = ipaths.length; //the number of required images will be equal to the length of the ipaths array
 			for(var i in ipaths)
 			{
-				var img = new Image(); //defining img as a new image				
+				var img = new Image(); //defining img as a new image
 
 				img.addEventListener("load", imgEventHandler, false); // !event listner needs to be set before loading the image (defining .src)
 
@@ -407,15 +407,15 @@
 			// console.log('required soundSfx:' + game.requiredSfx);
 			for(var i in sfxPaths)
 			{
-				var sfx = new Audio(); //defining sfx as a new Audio					
+				var sfx = new Audio(); //defining sfx as a new Audio
 				sfx.src = sfxPaths[i]; //defining new Audio src as stPaths[i]
 
 				var sfxIndex = sfx.src.split("/").pop(); //obtaining file name from path and setting our sfxIndex as such
-				
+
 				var sfxIndexInstance; //to keep track of sounds which use the same audio source and avoding duplicate indexes
 
 				if (!(sfxIndex in game.sfx)) //if index is unique
-				{	
+				{
 					sfxIndexInstance = 1;
 					game.sfx[sfxIndex] = sfx;
 				}
@@ -431,7 +431,7 @@
 				{
 					game.sfx[sfxIndex].preload = "auto";
 					//checking if sfx have loaded
-					game.sfx[sfxIndex].addEventListener("canplaythrough", sfxEventHandler, false); 
+					game.sfx[sfxIndex].addEventListener("canplaythrough", sfxEventHandler, false);
 				}
 				else
 				{
@@ -453,17 +453,17 @@
 
 				game.soundTracks[soundTracksIndex] = soundTracks; //defining game.soundTracks[soundTracksIndex] as a new Audio (with stPaths)
 
-								
+
 				if(audiopreload)
 				{
 					game.soundTracks[soundTracksIndex].preload = "auto";
 					//checking if st's have loaded
-					game.soundTracks[soundTracksIndex].addEventListener("canplaythrough", stEventHandler, false);				
+					game.soundTracks[soundTracksIndex].addEventListener("canplaythrough", stEventHandler, false);
 				}
 				else
 				{
 					game.doneSoundTracks++;
-				}	
+				}
 
 				// console.log('requiredSoundTracks: ' + game.requiredSoundTracks);
 			}
@@ -476,11 +476,11 @@
 				loadingBarFiller.css({"width": "0"});
 				initSfx(game.sfxPaths);
 				checkSfx();
-			} 
+			}
 			else
 			{
 				loadingBarWidth = (game.doneImages / game.requiredImages) * 100 + '%';
-				loadingBarFiller.css({"width": loadingBarWidth});		
+				loadingBarFiller.css({"width": loadingBarWidth});
 				setTimeout(function(){
 					checkImages();
 				}, 1);
@@ -495,11 +495,11 @@
 				//start loading sound tracks
 				initSoundTracks(game.soundTrackPaths);
 				checkSoundTracks();
-			} 
+			}
 			else
 			{
 				loadingBarWidth = (game.doneSfx / game.requiredSfx) * 100 + '%';
-				loadingBarFiller.css({"width": loadingBarWidth});					
+				loadingBarFiller.css({"width": loadingBarWidth});
 				setTimeout(function(){
 					checkSfx();
 				}, 1);
@@ -510,14 +510,14 @@
 			if(game.doneSoundTracks >= game.requiredSoundTracks){
 				loadingText = new text('Loading Assets.. ', '', false);
 				loadingBarFiller.css({"width": "0"});
-				//starting game menu				
+				//starting game menu
 				initObjects();
 				checkObjects();
-			} 
+			}
 			else
 			{
 				loadingBarWidth = (game.doneSoundTracks / game.requiredSoundTracks) * 100 + '%';
-				loadingBarFiller.css({"width": loadingBarWidth});					
+				loadingBarFiller.css({"width": loadingBarWidth});
 				setTimeout(function(){
 					checkSoundTracks();
 				}, 1);
@@ -528,14 +528,14 @@
 			if(game.doneObjects >= game.requiredObjects){
 				loadingText.switch('off');
 				loadingBar.hide();
-				//starting game menu				
+				//starting game menu
 				gameMenu.init();
-				gameBackground = new background();				
-			} 
+				gameBackground = new background();
+			}
 			else
 			{
 				loadingBarWidth = (game.doneObjects / game.requiredObjects) * 100 + '%';
-				loadingBarFiller.css({"width": loadingBarWidth});					
+				loadingBarFiller.css({"width": loadingBarWidth});
 				setTimeout(function(){
 					checkObjects();
 				}, 1);
@@ -545,42 +545,42 @@
 		function initObjects ()			//   !!! make this a function inside each object class
 		{
 			//waves
-			for (var w = 1 ; w <= game.requiredWaves; w++) {				
+			for (var w = 1 ; w <= game.requiredWaves; w++) {
 				ew = new enemyWave(null, null, 'enemy_sectoid', 'pawn', 0, 0, 0, 0);
     			game.wavesPool.push(ew);
     			game.doneObjects++;
 			}
 
 			//enemies
-			for (var e = 1 ; e <= game.requiredEnemies; e++) {				
+			for (var e = 1 ; e <= game.requiredEnemies; e++) {
 				en = new enemy(0, 0, 0, 0, 0, 'pawn', 'enemy_sectoid', 0);
     			game.enemiesPool.push(en);
     			game.doneObjects++;
 			}
 
 			//player bullets
-			for (var pb = 1 ; pb <= game.requiredPlayerBullets; pb++) {				
+			for (var pb = 1 ; pb <= game.requiredPlayerBullets; pb++) {
 				b = new playerBullet(null, null, null, -Math.PI/2, null, null, 'bullet_p_laser');
     			game.playerBulletsPool.push(b);
     			game.doneObjects++;
 			}
 
 			//enemy bullets
-			for (var ebul = 1 ; ebul <= game.requiredEnemyBullets; ebul++) {				
+			for (var ebul = 1 ; ebul <= game.requiredEnemyBullets; ebul++) {
 				eb = new enemyBullet(null, null, null, null, null, 'bullet_e_missile');
     			game.enemyBulletsPool.push(eb);
     			game.doneObjects++;
 			}
 
 			//loot
-			for (var loo = 1 ; loo <= game.requiredLoot; loo++) {				
+			for (var loo = 1 ; loo <= game.requiredLoot; loo++) {
 				l = new loot(null, null);
     			game.lootPool.push(l);
     			game.doneObjects++;
 			}
 
 			//explosions
-			for (var ex = 1 ; ex <= game.requiredExplosions; ex++) {				
+			for (var ex = 1 ; ex <= game.requiredExplosions; ex++) {
 				e = new explosion(null, null, null, null, 'small', null);
     			game.explosionsPool.push(e);
     			game.doneObjects++;
@@ -637,13 +637,13 @@
 				for(var w in game.tracks)
 				{
 					game.tracks[w].play();
-					game.tracks[w].loop = true;							
+					game.tracks[w].loop = true;
 				}
 			}
 		}
 
 
-		
+
 		//ON WINDOW LOAD
 
 		//Handler functions
@@ -701,7 +701,7 @@
 		else if (fileFormat === '.m4a')
 		{
 			audioTest.src = 'data:audio/x-m4a;base64,AAAAGGZ0eXBNNEEgAAACAGlzb21pc28yAAAACGZyZWUAAAAfbWRhdN4EAABsaWJmYWFjIDEuMjgAAAFoAQBHAAACiG1vb3YAAABsbXZoZAAAAAB8JbCAfCWwgAAAA+gAAAAYAAEAAAEAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAG0dHJhawAAAFx0a2hkAAAAD3wlsIB8JbCAAAAAAQAAAAAAAAAYAAAAAAAAAAAAAAAAAQAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAABUG1kaWEAAAAgbWRoZAAAAAB8JbCAfCWwgAAArEQAAAQAVcQAAAAAAC1oZGxyAAAAAAAAAABzb3VuAAAAAAAAAAAAAAAAU291bmRIYW5kbGVyAAAAAPttaW5mAAAAEHNtaGQAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAL9zdGJsAAAAW3N0c2QAAAAAAAAAAQAAAEttcDRhAAAAAAAAAAEAAAAAAAAAAAACABAAAAAArEQAAAAAACdlc2RzAAAAAAMZAAEABBFAFQAAAAABftAAAAAABQISCAYBAgAAABhzdHRzAAAAAAAAAAEAAAABAAAEAAAAABxzdHNjAAAAAAAAAAEAAAABAAAAAQAAAAEAAAAUc3RzegAAAAAAAAAXAAAAAQAAABRzdGNvAAAAAAAAAAEAAAAoAAAAYHVkdGEAAABYbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAbWRpcmFwcGwAAAAAAAAAAAAAAAAraWxzdAAAACOpdG9vAAAAG2RhdGEAAAABAAAAAExhdmY1Mi42NC4y';
-		}		
+		}
 		else if (fileFormat === '.ogg')
 		{
 			audioTest.src = 'data:audio/ogg;base64,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lFJKKaWUUkoppZRSSimllFJKKaWUUkqppJRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoplVJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSCgCQinAAkHowoQwUGrISAEgFAACMUUopxpyDEDHmGGPQSSgpYsw5xhyUklLlHIQQUmktt8o5CCGk1FJtmXNSWosx5hgz56SkFFvNOYdSUoux5ppr7qS0VmuuNedaWqs115xzzbm0FmuuOdecc8sx15xzzjnnGHPOOeecc84FAOA0OACAHtiwOsJJ0VhgoSErAYBUAAACGaUYc8456BBSjDnnHIQQIoUYc845CCFUjDnnHHQQQqgYc8w5CCGEkDnnHIQQQgghcw466CCEEEIHHYQQQgihlM5BCCGEEEooIYQQQgghhBA6CCGEEEIIIYQQQgghhFJKCCGEEEIJoZRQAABggQMAQIANqyOcFI0FFhqyEgAAAgCAHJagUs6EQY5Bjw1BylEzDUJMOdGZYk5qMxVTkDkQnXQSGWpB2V4yCwAAgCAAIMAEEBggKPhCCIgxAABBiMwQCYVVsMCgDBoc5gHAA0SERACQmKBIu7iALgNc0MVdB0IIQhCCWBxAAQk4OOGGJ97whBucoFNU6iAAAAAAAAwA4AEA4KAAIiKaq7C4wMjQ2ODo8AgAAAAAABYA+AAAOD6AiIjmKiwuMDI0Njg6PAIAAAAAAAAAAICAgAAAAAAAQAAAAICAT2dnUwAE7AwAAAAAAAD/QwAAAgAAADuydfsFAQEBAQEACg4ODg==';
@@ -719,8 +719,8 @@
 
 		audioTest.addEventListener('loadeddata', testpreload);
 		timeout = setTimeout(testpreload, waitTime);
- 
-		
+
+
 	/* jshint ignore:start */
 	// });
 // })();
@@ -738,6 +738,6 @@ win.requestAnimFrame = (function(){  // Creating a request animAnimeFrame functi
 			win.oRequestAnimationFrame    ||
 			win.msRequestAnimationFrame    ||
 			function( callback ){
-				win.setTimeout(callback, 1000 / 30);			
+				win.setTimeout(callback, 1000 / 30);
 			};
 })(); // jshint ignore:line

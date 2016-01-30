@@ -5,7 +5,7 @@ boss = function(x, y, speed, direction, hull, image)
 	this.direction = direction;
 	this.hull = hull;
 	this.image = game.offCtx[image];
-	this.width = game.offCtx[image].width;	
+	this.width = game.offCtx[image].width;
 	this.height = game.offCtx[image].height;
 	this.x = (game.width/2) - (this.width/2);
 	this.y = game.outerTop;
@@ -13,7 +13,7 @@ boss = function(x, y, speed, direction, hull, image)
 	this.audioHit1 = 'hit' + fileFormat;
 	this.audioHit2 = 'hit2' + fileFormat;
 	this.audioHit3 = 'hit3' + fileFormat;
-	this.hitTimer = 0; 
+	this.hitTimer = 0;
 	this.dead = false;
 	this.deadTimer = 0;
 	this.bulletTimer1 = 1;
@@ -29,10 +29,10 @@ boss = function(x, y, speed, direction, hull, image)
 
 boss.prototype.update = function()
 {
-	if (!this.dead) 
+	if (!this.dead)
 	{
 		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
-		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);		
+		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;
@@ -57,16 +57,16 @@ boss.prototype.update = function()
 				        	else if (game.sfx[this.audioHit3].paused)
 				        	{
 				        		game.sounds.push(game.sfx[this.audioHit3]);
-				        	}				        	
+				        	}
 				        }
-			//change image here		
+			//change image here
 			this.hit = false;
 		}
 
 		// player-boss collision
-		if (Collision(playerShip, this) && !this.dead && !game.gameOver){			
+		if (Collision(playerShip, this) && !this.dead && !game.gameOver){
 			playerShip.hull -= this.hull;
-			playerShip.hit = true;			
+			playerShip.hit = true;
 			this.hit = true;
 			this.hull -= playerShip.hull;
 		}
@@ -76,9 +76,9 @@ boss.prototype.update = function()
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;
-				gameUI.updateScore();	
+				gameUI.updateScore();
 				game.bossDead = true;
-				this.dead = true;						
+				this.dead = true;
 			}
 		}
 
@@ -87,28 +87,28 @@ boss.prototype.update = function()
 			this.bulletTimer2++;
 
 			if (this.bulletTimer1 % this.bulletDivision1 == 1){
-				this.bulletTimer1 = 1;	
+				this.bulletTimer1 = 1;
 				mBulletX1 = Math.round(this.x);
 				mBulletX2 = Math.round(this.x + this.width);
 				mBulletY = Math.round(this.y + this.height*0.6);
 
-				getNewEnemyBullet(mBulletX1, mBulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');			
-				getNewEnemyBullet(mBulletX2, mBulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');			
+				getNewEnemyBullet(mBulletX1, mBulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');
+				getNewEnemyBullet(mBulletX2, mBulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');
 			}
-		
+
 			// homing missiles, sort of
 			// this.bulletAngle = sectoidWave.units.length > 0 ? this.angleTo(sectoidWave.units[Math.floor(Math.random() * sectoidWave.units.length)]) : -Math.PI/2;
-			if (this.bulletTimer2 % this.bulletDivision2 == 1) {				
+			if (this.bulletTimer2 % this.bulletDivision2 == 1) {
 				// if (game.sound){game.shootSound.play();}
 				this.bulletTimer2 = 1; //resetting our timer
 				lBulletX1 = Math.round(this.x + this.width*0.4);
 				lBulletX2 = Math.round(this.x + this.width*0.6);
 				lBulletY = Math.round(this.y + this.height);
 			    getNewEnemyBullet(lBulletX1, lBulletY, 250, Math.PI/2, 1.5, 'bullet_p_laser');
-			    getNewEnemyBullet(lBulletX2, lBulletY, 250, Math.PI/2, 1.5, 'bullet_p_laser');				
+			    getNewEnemyBullet(lBulletX2, lBulletY, 250, Math.PI/2, 1.5, 'bullet_p_laser');
 			}
 
-		
+
 
 		if (this.y > this.yStop){
 			this.speed = 0;
@@ -127,15 +127,15 @@ boss.prototype.update = function()
 	else
 	{
 		//level finished --- taken from update function, needs work, should be triggered in boss dead else function
-		
-		//waiting a few secs before engaging warp speed
-		game.levelUpTimer++; 
 
-		if (game.levelUpTimer == 100) 
+		//waiting a few secs before engaging warp speed
+		game.levelUpTimer++;
+
+		if (game.levelUpTimer == 100)
 		{
-			game.levelComplete = true;					
+			game.levelComplete = true;
 			gameState.lvlComplete();
-			mouseIsDown = 0;					
+			mouseIsDown = 0;
 		}
 	}
 };

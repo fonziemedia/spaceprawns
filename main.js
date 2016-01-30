@@ -81,6 +81,7 @@ var vector = {
 		this._y /= val;
 	}
 };
+
 var utils = {
 	norm: function(value, min, max) {
 		return (value - min) / (max - min);
@@ -128,7 +129,7 @@ var utils = {
 	},
 
 	rangeIntersect: function(min0, max0, min1, max1) {
-		return Math.max(min0, max0) >= Math.min(min1, max1) && 
+		return Math.max(min0, max0) >= Math.min(min1, max1) &&
 			   Math.min(min0, max0) <= Math.max(min1, max1);
 	},
 
@@ -164,24 +165,24 @@ var utils = {
 
 	quadraticBezier: function(p0, p1, p2, t, pFinal) {
 		pFinal = pFinal || {};
-		pFinal.x = Math.pow(1 - t, 2) * p0.x + 
-				   (1 - t) * 2 * t * p1.x + 
+		pFinal.x = Math.pow(1 - t, 2) * p0.x +
+				   (1 - t) * 2 * t * p1.x +
 				   t * t * p2.x;
-		pFinal.y = Math.pow(1 - t, 2) * p0.y + 
-				   (1 - t) * 2 * t * p1.y + 
+		pFinal.y = Math.pow(1 - t, 2) * p0.y +
+				   (1 - t) * 2 * t * p1.y +
 				   t * t * p2.y;
 		return pFinal;
 	},
 
 	cubicBezier: function(p0, p1, p2, p3, t, pFinal) {
 		pFinal = pFinal || {};
-		pFinal.x = Math.pow(1 - t, 3) * p0.x + 
-				   Math.pow(1 - t, 2) * 3 * t * p1.x + 
-				   (1 - t) * 3 * t * t * p2.x + 
+		pFinal.x = Math.pow(1 - t, 3) * p0.x +
+				   Math.pow(1 - t, 2) * 3 * t * p1.x +
+				   (1 - t) * 3 * t * t * p2.x +
 				   t * t * t * p3.x;
-		pFinal.y = Math.pow(1 - t, 3) * p0.y + 
-				   Math.pow(1 - t, 2) * 3 * t * p1.y + 
-				   (1 - t) * 3 * t * t * p2.y + 
+		pFinal.y = Math.pow(1 - t, 3) * p0.y +
+				   Math.pow(1 - t, 2) * 3 * t * p1.y +
+				   (1 - t) * 3 * t * t * p2.y +
 				   t * t * t * p3.y;
 		return pFinal;
 	},
@@ -202,24 +203,25 @@ var utils = {
 		p1 = points[points.length - 1];
 		context.quadraticCurveTo(p0.x, p0.y, p1.x, p1.y);
 	}
-	
+
 };
+
 var particle = function(x, y, speed, direction, grav) {
 	this.x = x;
 	this.y = y;
 	this.speed = speed;
 	this.direction = direction;
 	this.vx = Math.cos(this.direction) * (this.speed*dt);
-	this.vy = Math.sin(this.direction) * (this.speed*dt); 
+	this.vy = Math.sin(this.direction) * (this.speed*dt);
 	this.mass = 1;
 	this.radius = 0;
 	this.bounce = -1;
 	this.friction = 1;
 	this.gravity = grav || 0;
 	this.springs = [];
-	this.gravitations = [];	
+	this.gravitations = [];
 };
-	
+
 particle.prototype.update = function() {
 	if (dt === 0){ //setting speed according to delta time if not yet set (might not be a perfect solution to the problem of friction and gravity - with this if statement we avoid reseting vx and vy all the time)
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
@@ -331,7 +333,7 @@ particle.prototype.angleTo = function(p2) {
 	// 	var dx = point.x - this.x,
 	// 		dy = point.y - this.y,
 	// 		distance = Math.sqrt(dx * dx + dy * dy),
-	// 		springForce = (distance - length || 0) * k; 
+	// 		springForce = (distance - length || 0) * k;
 	// 	this.vx += dx / distance * springForce;
 	// 	this.vy += dy / distance * springForce;
 	// };
@@ -339,7 +341,7 @@ particle.prototype.angleTo = function(p2) {
 // (function(game){ // jshint ignore:line
 	// $(document).ready(function(){ // jshint ignore:line
 // function startGame(){	// jshint ignore:line
-		
+
 		function log(label, variable)
 		{
 			var txt = label;
@@ -351,11 +353,11 @@ particle.prototype.angleTo = function(p2) {
 		{
 		  document.querySelector('meta[name=viewport]')
 		    .setAttribute(
-		      'content', 
+		      'content',
 		      'initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no'
 		    );
 		}
-				
+
 		// /* Connect to XML */
 		$.ajax({
 		type: "GET",
@@ -398,13 +400,13 @@ particle.prototype.angleTo = function(p2) {
 		game.isMobile = false;
 		// device detection
 		if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0,4))) game.isMobile = true;	//checking if game is running on mobile
-		
+
 
 		// !! add condition here for no sound support. Create a trigger to be considered when loading audio
 
 
 		// game.stars = []; //this is an array which will contain our stars info: position in space and size
-		game.background = [];		
+		game.background = [];
 		game.score = 0; //the game score
 		game.levelScore = 0; //the score for each level
 		game.level = X_Level; //starting at level X...
@@ -416,7 +418,7 @@ particle.prototype.angleTo = function(p2) {
 
 		game.bullets = []; //Our proton torpedoes!
 			game.playerBulletsPool = []; //Our proton torpedoes!
-			game.enemyBulletsPool = []; //Enemy missiles!		
+			game.enemyBulletsPool = []; //Enemy missiles!
 			game.lootPool = [];
 
 		game.enemies = []; //The InVaDeRs
@@ -438,17 +440,17 @@ particle.prototype.angleTo = function(p2) {
 
 		game.requiredObjects = game.requiredWaves + game.requiredEnemies + game.requiredPlayerBullets + game.requiredEnemyBullets + game.requiredLoot + game.requiredExplosions;
 		game.doneObjects = 0;
-		
+
 		var dt = 0.017, // defining dt globally
-		dtTimer = 0,		
+		dtTimer = 0,
 		dtArray = [],
 		timeThen = new Date().getTime();
 		dtTimerSet = false;
-		
+
 		//====================== Game state ========================
-		
+
 		game.loaded = false;
-		game.started = false;		
+		game.started = false;
 		game.paused = false;
 		game.gameOver = false;
 		game.timer = 0;
@@ -467,7 +469,7 @@ particle.prototype.angleTo = function(p2) {
 		game.windowHeight = doc.documentElement.clientHeight;
 
 		game.fullScreen = false;
-		
+
 		//========================== Input ==========================
 		var inputArea = doc.getElementById("inputarea");
 		var inputAreaX, inputAreaY;
@@ -475,11 +477,11 @@ particle.prototype.angleTo = function(p2) {
 		var touchInitX = 0;
 		var touchInitY = 0;
 
-		game.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;	
+		game.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;
 		if (game.canVibrate && !("vibrate" in navigator)) navigator.vibrate = navigator.mozVibrate;
 
 		//========================== Audio ==========================
-		
+
 		//Audio Support
 		var audioElementSupported = (function(d) {
 
@@ -515,12 +517,12 @@ particle.prototype.angleTo = function(p2) {
 			fileFormat = ".mp3";
 		}
 
-		
 
-		// Obtaining Audio ON/OFF status from local storage		
-		
+
+		// Obtaining Audio ON/OFF status from local storage
+
 		if ("localStorage" in win && win.localStorage !== null) //checking browser support for local storage
-		{	
+		{
 			//NOTE: localStorage won't accept boolean values! so we need to 'convert' these
 			if (localStorage.prawnsSound === "true")
 			{
@@ -548,41 +550,41 @@ particle.prototype.angleTo = function(p2) {
 
 		//SFX vars
 		game.sfxPaths = [	//using initSfx function to load our sounds
-			"_sounds/_sfx/laser" + fileFormat,			
-			"_sounds/_sfx/laser" + fileFormat,			
-			"_sounds/_sfx/laser" + fileFormat,			
-			"_sounds/_sfx/hit" + fileFormat,			
-			"_sounds/_sfx/hit" + fileFormat,			
-			"_sounds/_sfx/hit" + fileFormat,			
-			"_sounds/_sfx/loot_powerUp" + fileFormat,			
-			"_sounds/_sfx/loot_powerUp" + fileFormat,			
-			"_sounds/_sfx/loot_powerUp" + fileFormat,			
-			"_sounds/_sfx/explosion" + fileFormat,			
-			"_sounds/_sfx/explosion" + fileFormat,			
-			"_sounds/_sfx/explosion" + fileFormat,			
-			"_sounds/_sfx/blast" + fileFormat		
+			"_sounds/_sfx/laser" + fileFormat,
+			"_sounds/_sfx/laser" + fileFormat,
+			"_sounds/_sfx/laser" + fileFormat,
+			"_sounds/_sfx/hit" + fileFormat,
+			"_sounds/_sfx/hit" + fileFormat,
+			"_sounds/_sfx/hit" + fileFormat,
+			"_sounds/_sfx/loot_powerUp" + fileFormat,
+			"_sounds/_sfx/loot_powerUp" + fileFormat,
+			"_sounds/_sfx/loot_powerUp" + fileFormat,
+			"_sounds/_sfx/explosion" + fileFormat,
+			"_sounds/_sfx/explosion" + fileFormat,
+			"_sounds/_sfx/explosion" + fileFormat,
+			"_sounds/_sfx/blast" + fileFormat
 		];
-		game.sfx = [];		
+		game.sfx = [];
 		game.doneSfx  = 0;
 		game.requiredSfx = 0;
 
 		//Sound Tracks vars
 		game.soundTrackPaths = [	//using initSfx function to load our sound tracks
-			"_sounds/_soundTracks/_lvl1/tune1" + fileFormat,			
-			"_sounds/_soundTracks/_lvl1/tune2" + fileFormat,			
-			"_sounds/_soundTracks/_lvl1/victory" + fileFormat,			
-			"_sounds/_soundTracks/_lvl1/boss" + fileFormat	
+			"_sounds/_soundTracks/_lvl1/tune1" + fileFormat,
+			"_sounds/_soundTracks/_lvl1/tune2" + fileFormat,
+			"_sounds/_soundTracks/_lvl1/victory" + fileFormat,
+			"_sounds/_soundTracks/_lvl1/boss" + fileFormat
 		];
-		game.soundTracks = [];		
+		game.soundTracks = [];
 		game.doneSoundTracks = 0;
 		game.requiredSoundTracks = 0;
-		
+
 		//Our main SOUND players arrays
 		game.sounds = [];
-		game.tracks = [];		
-			
-		//======================== Images ========================		
-		
+		game.tracks = [];
+
+		//======================== Images ========================
+
 		if (!game.isMobile || win.innerHeight >= 900)
 		{
 			game.imagePaths = [
@@ -590,22 +592,22 @@ particle.prototype.angleTo = function(p2) {
 				"_img/bg_level1_a.dkt.jpg",
 				"_img/bg_level1_b.dkt.jpg",
 				"_img/bg_level1_c.dkt.jpg",
-				
+
 				//UI
 				//see CSS assets
-				
+
 				//Player
 				"_img/player_ship.dkt.png",
 				"_img/player_ship_i.dkt.png",
 				"_img/player_shields.dkt.png",
-				
+
 				//Enemies
 				////Pawns
 				"_img/enemy_sectoid.dkt.png",
 				////Minibosses
-				"_img/enemy_floater.dkt.png",		
+				"_img/enemy_floater.dkt.png",
 				////Enemy Bases
-				"_img/enemy_base_sectoid.dkt.png",			
+				"_img/enemy_base_sectoid.dkt.png",
 				"_img/enemy_base_floater.dkt.png",
 				////Big bosses
 				"_img/boss_sectoid.dkt.png",
@@ -614,16 +616,16 @@ particle.prototype.angleTo = function(p2) {
 				"_img/bullet_p_laser.dkt.png",
 				"_img/bullet_p_missile.dkt.png",
 				"_img/bullet_e_missile.dkt.png",
-				"_img/explosion_s0.dkt.png",						
-				"_img/explosion_s1.dkt.png",						
-				"_img/explosion_s2.dkt.png",						
-				"_img/explosion_s3.dkt.png",						
+				"_img/explosion_s0.dkt.png",
+				"_img/explosion_s1.dkt.png",
+				"_img/explosion_s2.dkt.png",
+				"_img/explosion_s3.dkt.png",
 				"_img/explosion_s4.dkt.png",
 
-				//Loot					
-				"_img/loot_lasers.dkt.png",					
-				"_img/loot_missiles.dkt.png",					
-				"_img/loot_shields.dkt.png"					
+				//Loot
+				"_img/loot_lasers.dkt.png",
+				"_img/loot_missiles.dkt.png",
+				"_img/loot_shields.dkt.png"
 			];
 		}
 		else
@@ -633,22 +635,22 @@ particle.prototype.angleTo = function(p2) {
 				"_img/bg_level1_a.mob.jpg",
 				"_img/bg_level1_b.mob.jpg",
 				"_img/bg_level1_c.mob.jpg",
-				
+
 				//UI
 				//see CSS assets
-				
+
 				//Player
 				"_img/player_ship.mob.png",
 				"_img/player_ship_i.mob.png",
 				"_img/player_shields.mob.png",
-				
+
 				//Enemies
 				////Pawns
 				"_img/enemy_sectoid.mob.png",
 				////Minibosses
-				"_img/enemy_floater.mob.png",		
+				"_img/enemy_floater.mob.png",
 				////Enemy Bases
-				"_img/enemy_base_sectoid.mob.png",			
+				"_img/enemy_base_sectoid.mob.png",
 				"_img/enemy_base_floater.mob.png",
 				////Big bosses
 				"_img/boss_sectoid.mob.png",
@@ -657,16 +659,16 @@ particle.prototype.angleTo = function(p2) {
 				"_img/bullet_p_laser.mob.png",
 				"_img/bullet_p_missile.mob.png",
 				"_img/bullet_e_missile.mob.png",
-				"_img/explosion_s0.mob.png",						
-				"_img/explosion_s1.mob.png",						
-				"_img/explosion_s2.mob.png",						
-				"_img/explosion_s3.mob.png",						
+				"_img/explosion_s0.mob.png",
+				"_img/explosion_s1.mob.png",
+				"_img/explosion_s2.mob.png",
+				"_img/explosion_s3.mob.png",
 				"_img/explosion_s4.mob.png",
 
-				//Loot					
-				"_img/loot_lasers.mob.png",					
-				"_img/loot_missiles.mob.png",					
-				"_img/loot_shields.mob.png"						
+				//Loot
+				"_img/loot_lasers.mob.png",
+				"_img/loot_missiles.mob.png",
+				"_img/loot_shields.mob.png"
 			];
 		}
 
@@ -677,15 +679,15 @@ particle.prototype.angleTo = function(p2) {
 
 		game.font = game.isMobile ? "Helvetica" : "Monaco";
 		// game.res = 4*5; //check the 4th index every 5 frames
-		
+
 		//====================== Canvases + Responsiveness  ============================
-		
+
 		// game.contextBackground = doc.getElementById("backgroundCanvas").getContext("2d"); //defining the 4 different canvas
-		game.canvas = doc.getElementById("gameCanvas");	
+		game.canvas = doc.getElementById("gameCanvas");
 		game.context = game.canvas.getContext("2d");
 		// m_canvas = doc.createElement('canvas');
 
-		
+
 		var pixelRatio = win.devicePixelRatio > 1.5 ? 2 : 1; // This is our game size delta to keep the size of our game + objects proportional to the display
 		pixelRatio = game.isMobile && pixelRatio < 1.5 ? 2 : pixelRatio; //adjustment for mobile devices with low pixel ratio
 		pixelRatio = game.isMobile && win.innerHeight >= 900 ? 1 : pixelRatio; //adjusment for tablets
@@ -695,7 +697,7 @@ particle.prototype.angleTo = function(p2) {
 			//SETTING CANVASES ATTRIBUTES
 			//Note: the canvas dimensions need to be set here using attributes due to the nature of the canvas element: it works like an image and using css to set this will stretch it
 
-			//get the gameArea and the canvases 
+			//get the gameArea and the canvases
 			var gameArea = $('#gamearea');
 			var allCanvas = $('canvas');
 
@@ -710,14 +712,14 @@ particle.prototype.angleTo = function(p2) {
 			game.context.scale(pixelRatio,pixelRatio);
 
 			//SETTING GAME DIMENSIONS
-			game.width = Math.round(game.windowWidth);			
+			game.width = Math.round(game.windowWidth);
 			game.height = Math.round(game.windowHeight);
 			log('with: ', game.width);
 			log('height: ', game.height);
 
 			//outer borders
-			game.outerLeft = -Math.round(game.width*0.1);			
-			game.outerRight = Math.round(game.width + game.width*0.1);			
+			game.outerLeft = -Math.round(game.width*0.1);
+			game.outerRight = Math.round(game.width + game.width*0.1);
 			game.outerTop = -Math.round(game.height*0.1);
 			game.outerBottom = Math.round(game.height + game.height*0.1);
 
@@ -730,7 +732,7 @@ particle.prototype.angleTo = function(p2) {
 				playerShip.limitY2 = Math.round(game.height - (playerShip.height*0.5));
 				playerShip.movement = Math.round(game.height*0.007);
 			}
-			
+
 			//set game bosses' boundaries  !Need to give this enemy a name in the array
 			// this.yStop = Math.round(game.height*0.1);
 			// this.xBondary = Math.round(game.width - this.size/4);
@@ -739,19 +741,20 @@ particle.prototype.angleTo = function(p2) {
 			{
 				playerShip.x = Math.round(game.width*0.46);
 				playerShip.y = Math.round(game.height*0.90);
-			}	
+			}
 
 		}
 
-		setGameDimensions();		
+		setGameDimensions();
 
 		//delta size will keep the size of our game objects proportional to the display - NOT REQUIRED, see pixelRatio above
 		// var dtSize = game.height*0.001;
 		// console.log (dtSize);
 
 	// jshint ignore:line
+
 sprite = function(image, columns, rows, animationSpeed)
-{	
+{
 	this.image = game.offCtx[image];
 	this.width = this.image.width;
 	this.height = this.image.height;
@@ -760,8 +763,8 @@ sprite = function(image, columns, rows, animationSpeed)
 	this.frameHeight = this.height / rows;
 	this.startFrame = 0;
 	this.endFrame = this.totalFrames - 1;	//will be used to create the animationSequence array
-	this.frameSpeed = animationSpeed;	
-	this.ctx = game.context;	
+	this.frameSpeed = animationSpeed;
+	this.ctx = game.context;
 	this.animationSequence = [];	// array holding the order of the animation
 	this.fpr = Math.floor(this.image.width / this.frameWidth);
 
@@ -782,13 +785,13 @@ sprite.prototype.reset = function(image, columns, rows, animationSpeed)
 {
 	this.image = game.offCtx[image];
 	this.width = this.image.width;
-	this.height = this.image.height;	
+	this.height = this.image.height;
 	this.totalFrames = columns * rows;
 	this.frameWidth = this.width / columns;
 	this.frameHeight = this.height / rows;
 	this.startFrame = 0;
 	this.endFrame = this.totalFrames - 1;	//will be used to create the animationSequence array
-	this.frameSpeed = animationSpeed;		
+	this.frameSpeed = animationSpeed;
 	this.animationSequence = [];  // array holding the order of the animation
 	this.fpr = Math.floor(this.image.width / this.frameWidth);
 
@@ -802,7 +805,7 @@ sprite.prototype.reset = function(image, columns, rows, animationSpeed)
 	}
 };
 
-// sprite.prototype.update = function(){ // Replacing the default 'update' method		
+// sprite.prototype.update = function(){ // Replacing the default 'update' method
 // 	//setting this to make friction work with deltaTime (dt), check particle.js
 // 	if (dt !== 0 && !this.dtSet){
 // 		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
@@ -851,6 +854,7 @@ sprite.prototype.drawFrame = function(x, y, frame)
 		x, y,
 		this.frameWidth, this.frameHeight);
 };
+
 background = function(section)
 {
 	this.imageA = game.offCtx['bg_level' + game.level + '_a'];
@@ -875,11 +879,11 @@ background.prototype.update = function()
 	this.y2 += this.speed;
 	this.y3 += this.speed;
 
-	
+
 	if (this.y1 >= this.yDrawLimit && this.y1 < game.height)
 	{
 		this.draw(this.imageA, this.x, this.y1);
-	}	
+	}
 	else
 	{
 		this.y1 = this.y3-this.height;
@@ -888,7 +892,7 @@ background.prototype.update = function()
 	if (this.y2 >= this.yDrawLimit && this.y2 < game.height)
 	{
 		this.draw(this.imageB, this.x, this.y2);
-	}	
+	}
 	else
 	{
 		this.y2 = this.y1-this.height;
@@ -897,7 +901,7 @@ background.prototype.update = function()
 	if (this.y3 >= this.yDrawLimit && this.y3 < game.height)
 	{
 		this.draw(this.imageC, this.x, this.y3);
-	}	
+	}
 	else
 	{
 		this.y3 = this.y2-this.height;
@@ -909,6 +913,7 @@ background.prototype.draw = function(image, x, y)
 {
 	this.ctx.drawImage(image, x, y);
 };
+
 explosion = function (x, y, speed, direction, size, target)
 {
 	switch(size)
@@ -927,9 +932,9 @@ explosion = function (x, y, speed, direction, size, target)
 		break;
 		case 'xLarge':
 			this.image = 'explosion_s4';
-		break;										
+		break;
 	}
-	this.sprite = new sprite(this.image, 5, 4, 2);	
+	this.sprite = new sprite(this.image, 5, 4, 2);
 	this.width = this.sprite.frameWidth;
 	this.height = this.sprite.frameHeight;
 	this.speed = speed;
@@ -941,12 +946,12 @@ explosion = function (x, y, speed, direction, size, target)
 
 //invariables (note: any other object properties that require these need to be declared in the prototype function)
 explosion.prototype.dead = false;
-explosion.prototype.audioHit1 = 'hit' + fileFormat;	
-explosion.prototype.audioHit2 = 'hit2' + fileFormat;	
-explosion.prototype.audioHit3 = 'hit3' + fileFormat;		
+explosion.prototype.audioHit1 = 'hit' + fileFormat;
+explosion.prototype.audioHit2 = 'hit2' + fileFormat;
+explosion.prototype.audioHit3 = 'hit3' + fileFormat;
 explosion.prototype.audioDead1 = 'explosion' + fileFormat;
 explosion.prototype.audioDead2 = 'explosion2' + fileFormat;
-explosion.prototype.audioDead3 = 'explosion3' + fileFormat;	
+explosion.prototype.audioDead3 = 'explosion3' + fileFormat;
 explosion.prototype.audioExplode = 'blast' + fileFormat;
 
 explosion.prototype.reset = function(x, y, speed, direction, size, target)
@@ -967,10 +972,10 @@ explosion.prototype.reset = function(x, y, speed, direction, size, target)
 		break;
 		case 'xLarge':
 			this.image = 'explosion_s4';
-		break;										
+		break;
 	}
 	this.x = Math.round(x - (this.width*0.2));
-	this.y = Math.round(y - (this.height*0.2));	
+	this.y = Math.round(y - (this.height*0.2));
 	this.speed = speed;
 	this.direction = direction;
 	this.target = target;
@@ -985,7 +990,7 @@ explosion.prototype.update = function() {
 	if (!this.dead)
 	{
 		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
-		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);	
+		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;
@@ -1008,13 +1013,13 @@ explosion.prototype.update = function() {
 };
 
 explosion.prototype.draw = function(x, y) {
-	
+
 	this.sprite.draw(x, y);
 
 };
 
-explosion.prototype.loadSound = function() {	
-	
+explosion.prototype.loadSound = function() {
+
 	if (game.sound)
     {
     	if (this.target == 'chasis')
@@ -1030,7 +1035,7 @@ explosion.prototype.loadSound = function() {
         	else if (game.sfx[this.audioHit3].paused)
         	{
         		game.sounds.push(game.sfx[this.audioHit3]);
-        	}				        	
+        	}
         }
 
          else if (this.target == 'enemy')
@@ -1046,10 +1051,10 @@ explosion.prototype.loadSound = function() {
         	else if (game.sfx[this.audioDead3].paused)
         	{
         		game.sounds.push(game.sfx[this.audioDead3]);
-        	}				        	
-        }	
+        	}
+        }
 		else if (this.target == 'player' || this.target == 'boss'){game.sounds.push(game.sfx[this.audioExplode]);}
-		
+
 	}
 };
 
@@ -1065,7 +1070,7 @@ function getNewExplosion(x, y, speed, direction, size, target)
     // check to see if there is a spare one
     if (game.explosionsPool.length > 0)
     {
-    	//recycle		    	
+    	//recycle
         e = game.explosionsPool.pop();
 
 		e.reset(x, y, speed, direction, size, target);
@@ -1081,7 +1086,7 @@ function getNewExplosion(x, y, speed, direction, size, target)
     	game.explosions.push(e);
     }
     else
-    { 
+    {
         // none available, construct a new one
 		e = new explosion(x, y, speed, direction, size, target);
 		e.loadSound();
@@ -1102,13 +1107,14 @@ function freeExplosion(e)
     // return the explosion back into the pool
 	game.explosionsPool.push(e);
 }
+
 player = function(hull, fireRate)
 {
 	this.x = Math.round(game.width*0.46);
 	this.y = Math.round(game.height*0.90);
 	this.speed = 0;
 	this.maxSpeed = 400;
-	
+
 	// this.size = Math.round(100/pixelRatio);
 	this.hull = hull;
 	this.maxHull = hull;
@@ -1135,7 +1141,7 @@ player = function(hull, fireRate)
 	this.limitX2 = Math.round(game.width - this.width*0.5);
 	this.limitY1 = Math.round(-this.height*0.5);
 	this.limitY2 = Math.round(game.height - this.height*0.5);
-	this.movement = Math.round(game.height*0.007);	
+	this.movement = Math.round(game.height*0.007);
 
 	//====================== Laser bullets =================//
 	this.bulletTimer = 1;
@@ -1147,11 +1153,11 @@ player = function(hull, fireRate)
 	this.leftlaserX = Math.round(this.x + this.width*0.25);
 	this.rightlaserX = Math.round(this.x + this.width*0.75);
 	this.LaserY = Math.round(this.y - this.height*0.2);
-	
+
 };
 
 
-player.prototype.update = function() {		
+player.prototype.update = function() {
 	// this.vx = Math.cos(this.direction) * (this.speed*dt);
 	// this.vy = Math.sin(this.direction) * (this.speed*dt);
 	// this.handleSprings();
@@ -1164,8 +1170,8 @@ player.prototype.update = function() {
 	this.speed = 0; // !! check if you can optimise this !!
 	// this.playerImage = this.image; // !! check if you can optimise this !!
 	this.speedX = Math.round(((touchInitX - inputAreaX)*0.1)/pixelRatio);
-	this.speedY = Math.round(((touchInitY - inputAreaY)*0.1)/pixelRatio);		
-	
+	this.speedY = Math.round(((touchInitY - inputAreaY)*0.1)/pixelRatio);
+
 	//////////////////////////////
 	//	Mouse and Touch controls
 	/////////////////////////////
@@ -1176,9 +1182,9 @@ player.prototype.update = function() {
 		if (!game.isMobile) {doc.getElementById('gamearea').style.cursor = 'none';}
 
 
-		//defining the boundaries	
-				
-			
+		//defining the boundaries
+
+
 			moveRight1 = (this.speedX < -2 && this.speedX >= -4) ? true : false;
 			moveRight2 = (this.speedX < -4 && this.speedX >= -6) ? true : false;
 			moveRight3 = (this.speedX < -6 && this.speedX >= -8) ? true : false;
@@ -1190,14 +1196,14 @@ player.prototype.update = function() {
 			moveLeft3 = (this.speedX > 6 && this.speedX <= 8) ? true : false;
 			moveLeft4 = (this.speedX > 8 && this.speedX <= 10) ? true : false;
 			moveLeft5 = (this.speedX > 10) ? true : false;
-			
+
 			//making it move to touch or click point
 			// if (inputAreaX != moveX || inputAreaY != moveY) {
 				//the distance between the current ship pos and the user touch/click pos
-				
-				
+
+
 				// console.log('inputAreax:'+ inputAreaX);
-				// console.log('inputAreay:'+ inputAreaY);				
+				// console.log('inputAreay:'+ inputAreaY);
 				// console.log('touchx:'+ touchInitX);
 				// console.log('touchy:'+ touchInitY);
 				// console.log (this.speedX);
@@ -1208,28 +1214,28 @@ player.prototype.update = function() {
 
 
 				// console.log('movement:' + this.movement);
-				
+
 				//this needs to come after movement vars above because he redefine this.speedX here
-				this.speedX = this.speedX < this.movement ? this.speedX : this.movement;					
+				this.speedX = this.speedX < this.movement ? this.speedX : this.movement;
 				this.speedY = this.speedY < this.movement ? this.speedY : this.movement;
-				this.speedX = this.speedX > -this.movement ? this.speedX : -this.movement;					
+				this.speedX = this.speedX > -this.movement ? this.speedX : -this.movement;
 				this.speedY = this.speedY > -this.movement ? this.speedY : -this.movement;
 
 				// console.log('touchInitX:'+ touchInitX);
 				// console.log('touchInitY:'+ touchInitY);
 				// console.log('inputAreaX:'+ inputAreaX);
-				// console.log('inputAreaY:'+ inputAreaY);					
+				// console.log('inputAreaY:'+ inputAreaY);
 				// console.log('this.speedX:'+ this.speedX);
-				// console.log('this.speedY:'+ this.speedY);	
-				
-				if (this.speedX !== 0 || this.speedY !== 0) 
+				// console.log('this.speedY:'+ this.speedY);
+
+				if (this.speedX !== 0 || this.speedY !== 0)
 				{
-					//the bondaries and edge portals				
+					//the bondaries and edge portals
 					if (this.x >= this.limitX1 && this.x <= this.limitX2 && this.y >= this.limitY1 && this.y <= this.limitY2)
-					{			
+					{
 					this.x = this.x - this.speedX;
 					this.y = this.y - this.speedY;
-					}						
+					}
 					else if(this.x < this.limitX1)
 					{
 					 this.x = this.limitX2;
@@ -1251,23 +1257,23 @@ player.prototype.update = function() {
 
 				this.speedX = 0;
 				this.speedY = 0; //not needed but..
-				
-				// B ALTERNATIVE CONTROLS 
+
+				// B ALTERNATIVE CONTROLS
 				// this.speedX = (touchInitX - canvasX);
 				// this.speedY = (touchInitY - canvasY);
-				
-				
+
+
 				// this.x = this.x - this.speedX;
-				// this.y = this.y - this.speedY;					
+				// this.y = this.y - this.speedY;
 
 
 				// touchInitX = canvasX;
 				// touchInitY = canvasY;
 
 
-		
 
-			
+
+
 			if (moveRight1) {
 				this.spriteFrame = 5;
 			} else if (moveRight2) {
@@ -1291,12 +1297,12 @@ player.prototype.update = function() {
 				this.spriteFrame = 4;
 			}
 
-			this.rendered = false;		
+			this.rendered = false;
 
 	}
 	else
 	{
-		this.spriteFrame = 10;	
+		this.spriteFrame = 10;
 		doc.getElementById('gamearea').style.cursor = 'crosshair';
 	}
 
@@ -1307,9 +1313,9 @@ player.prototype.update = function() {
 	if(!game.isMobile)
 	{
 		//left
-		if(game.keys[37] || game.keys[65] && !game.gameOver){ //if key pressed..				
-			if(this.x > 0){ // (keeping it within the boundaries of our canvas)				
-				this.speed = this.maxSpeed;							
+		if(game.keys[37] || game.keys[65] && !game.gameOver){ //if key pressed..
+			if(this.x > 0){ // (keeping it within the boundaries of our canvas)
+				this.speed = this.maxSpeed;
 				this.image = this.offCanvasL5;
 				this.rendered = false;
 				this.x -= Math.round(this.speed*dt);
@@ -1317,7 +1323,7 @@ player.prototype.update = function() {
 		}
 		//right
 		if(game.keys[39] || game.keys[68] && !game.gameOver){
-			if(this.x <= game.width - this.width){				
+			if(this.x <= game.width - this.width){
 				this.speed = this.maxSpeed;
 				this.image = this.offCanvasR5;
 				this.rendered = false;
@@ -1326,25 +1332,25 @@ player.prototype.update = function() {
 		}
 		//up
 		if((game.keys[38] || game.keys[87]) && !game.gameOver){
-			if(this.y > 0){				
-				this.speed = this.maxSpeed;					
+			if(this.y > 0){
+				this.speed = this.maxSpeed;
 				this.rendered = false;
 				this.y -= Math.round(this.speed*dt);
 			}
 		}
 		//down
 		if(game.keys[40] || game.keys[83] && !game.gameOver){
-			if(this.y <= game.height - this.height){				
-				this.speed = this.maxSpeed;					
+			if(this.y <= game.height - this.height){
+				this.speed = this.maxSpeed;
 				this.rendered = false;
 				this.y += Math.round(this.speed*dt);
-			}	
+			}
 		}
 	}
 
-	
-	if(game.levelComplete){			
-		this.speed = this.maxSpeed*2;			
+
+	if(game.levelComplete){
+		this.speed = this.maxSpeed*2;
 		this.rendered = false;
 		this.y -= Math.round(this.speed*dt);
 	}
@@ -1387,12 +1393,12 @@ player.prototype.update = function() {
 			        	else if (game.sfx[this.audioFire3].paused)
 			        	{
 			        		game.sounds.push(game.sfx[this.audioFire3]);
-			        	}				        	
+			        	}
 			        }
 			    break;
 			    case 2:
 			    	getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			    	getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');			
+			    	getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
 			        if (game.sound)
 			        {
 			        	if (game.sfx[this.audioFire1].paused)
@@ -1406,7 +1412,7 @@ player.prototype.update = function() {
 			        	else if (game.sfx[this.audioFire3].paused)
 			        	{
 			        		game.sounds.push(game.sfx[this.audioFire3]);
-			        	}				        	
+			        	}
 			        }
 			    break;
 			    case 3:
@@ -1426,7 +1432,7 @@ player.prototype.update = function() {
 			        	else if (game.sfx[this.audioFire3].paused)
 			        	{
 			        		game.sounds.push(game.sfx[this.audioFire3]);
-			        	}				        	
+			        	}
 			        }
 			    break;
 			 }
@@ -1445,8 +1451,8 @@ player.prototype.update = function() {
 			     	getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
 			    	getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
 			    	getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-				break;										
-			 }				
+				break;
+			 }
 			// this.bulletTimer = 1; //resetting our timer
 		}
 	}
@@ -1461,19 +1467,19 @@ player.prototype.update = function() {
 
 	if (this.hull <= 0 && !this.dead)
 	{
-		this.dead = true;			
+		this.dead = true;
 		this.lives -= 1;
-		getNewExplosion(this.x, this.y, 0, 0, 'large', 'player'); //need to obtain player direction if we want dinamic explosions, for now we just blow it still			
+		getNewExplosion(this.x, this.y, 0, 0, 'large', 'player'); //need to obtain player direction if we want dinamic explosions, for now we just blow it still
 		gameUI.updateHangar();
-	}	
+	}
 
 
-	if (this.dead && this.deadTimer <= 100) 
+	if (this.dead && this.deadTimer <= 100)
 	{
 		//waiting a few secs before any action
-		this.deadTimer++; 
+		this.deadTimer++;
 
-		if (this.deadTimer > 100 && this.lives > 0) 
+		if (this.deadTimer > 100 && this.lives > 0)
 		{
 			mouseIsDown = 0;
 			this.hull = 10;
@@ -1485,14 +1491,14 @@ player.prototype.update = function() {
 			this.hit = false;
 			this.friction = 0;
 			this.laserLevel = 1;
-			this.missileLevel = 0;						
+			this.missileLevel = 0;
 			gameUI.updateEnergy();
 			this.deadTimer = 0;
 			this.imune = true;
 			this.imuneTimer = 0;
 		}
 		else if (this.deadTimer > 100 && this.lives === 0 && !game.gameOver)
-		{	
+		{
 			mouseIsDown = 0;
 			game.keys[13] = false;
 			this.deadTimer = 0;
@@ -1519,8 +1525,8 @@ player.prototype.draw = function() {
 
 
 	if(!this.dead)
-	{		
-		
+	{
+
 		if (!this.imune)
 		{
 
@@ -1537,11 +1543,11 @@ player.prototype.draw = function() {
 
 		if (this.hit && !this.imune)
 		{
-			if (game.canVibrate) 
+			if (game.canVibrate)
 			{
 				if (this.sprite_s.currentFrame < 1)	navigator.vibrate(30);
 			}
-			
+
 			this.sprite_s.draw(this.x - this.width*0.7, this.y - this.height*0.1);
 			if (this.sprite_s.currentFrame >= this.sprite_s.endFrame)
 			{
@@ -1562,7 +1568,7 @@ player.prototype.load = function()
 player.prototype.reset = function() {
 	game.gameOver = false;
 	this.dead = false;
-	this.deadTimer = 0;				
+	this.deadTimer = 0;
 	this.x = Math.round(game.width*0.46);
 	this.y = Math.round(game.height*0.90);
 	// this.image = this.offCanvas;
@@ -1579,8 +1585,9 @@ player.prototype.reset = function() {
 
 
 var playerShip = null;
+
 playerBullet = function(x, y, speed, direction, power, friction, image)
-{	
+{
 	// this.size = Math.round(bulletSize/pixelRatio);
 	this.sprite = new sprite(image, 3, 1, 4);
 	this.width = this.sprite.frameWidth;
@@ -1602,7 +1609,7 @@ playerBullet.prototype.ctx = game.context;
 
 playerBullet.prototype.reset = function(x, y, speed, power, friction)  //only variable arguments here
 {
-	//reseting variable properties only (lasers != missiles)	
+	//reseting variable properties only (lasers != missiles)
 	this.width = this.sprite.frameWidth;
 	this.height = this.sprite.frameHeight;
 	this.x = Math.round(x - this.width*0.5);
@@ -1617,7 +1624,7 @@ playerBullet.prototype.reset = function(x, y, speed, power, friction)  //only va
 };
 
 playerBullet.prototype.update = function(){ // Replacing the default 'update' method
-	if (!this.dead) 
+	if (!this.dead)
 	{
 		this.vx *= this.friction;
 		this.vy *= this.friction;
@@ -1625,20 +1632,20 @@ playerBullet.prototype.update = function(){ // Replacing the default 'update' me
 		this.y += this.vy;
 
 		this.draw(this.x, this.y);
-		
+
 		//projectiles collision
 		for (var e in game.enemies)
 		{
 			if (Collision(game.enemies[e], this))
 			{ //dead check avoids ghost scoring
-				game.enemies[e].hull -= this.power;							
+				game.enemies[e].hull -= this.power;
 				if(game.enemies[e].hull > 0)
 				{
 					getNewExplosion(game.enemies[e].x + game.enemies[e].width*0.5, game.enemies[e].y + game.enemies[e].height*0.5, 0, 1, 'xSmall', 'chasis');
 				}
 
 				this.dead = true;
-			}					
+			}
 		}
 
 		if (this.y < game.outerTop) //always goes up
@@ -1660,7 +1667,7 @@ playerBullet.prototype.draw = function(x, y) {
 			// this.ctx.translate(this.x, this.y);
 			// this.ctx.rotate(direction - Math.PI/2);
 			// ...
-			// this.ctx.restore();	
+			// this.ctx.restore();
 };
 
 // playerBullet.prototype = Object.create(particle.prototype); // Creating a playerBullet.prototype object that inherits from particle.prototype.
@@ -1683,10 +1690,10 @@ getNewBullet = function(x, y, speed, direction, power, friction, image)
 
 
 		//(image, columns, rows, animationSpeed)
-		b.sprite.reset(image, 3, 1, 4); 
+		b.sprite.reset(image, 3, 1, 4);
 
         b.reset(x, y, speed, power, friction, image);
- 		
+
 
     	game.bullets.push(b);
     }
@@ -1711,12 +1718,13 @@ freeBullet = function(b)
     // return the bullet back into the pool
 	game.playerBulletsPool.push(b);
 };
+
 enemy = function(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 
 	this.x = x;
 	this.y = y;
 	this.image = game.offCtx[image];
-	this.width = game.offCtx[image].width;	
+	this.width = game.offCtx[image].width;
 	this.height = game.offCtx[image].height;
 	this.hull = hull;
 	this.sprite = new sprite(image, 6, 5, 5);
@@ -1732,12 +1740,12 @@ enemy = function(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		case 'base':
 			this.width = this.sprite.frameWidth;
 			this.height = this.sprite.frameHeight;
-			this.explosionSize = 'xLarge';	
+			this.explosionSize = 'xLarge';
 		break;
 	}
 	this.sheep = sheep || false;
 	this.fireRate = fireRate * 60 || 0; //bullets/sec
-	/// *** WTF!!?? ///	
+	/// *** WTF!!?? ///
 	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
 	this.speed = speed/pixelRatio;
 	this.direction = direction;
@@ -1760,13 +1768,13 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fire
 	this.x = x;
     this.y = y;
     this.speed = speed;
-	this.direction = direction;	
+	this.direction = direction;
 	this.hull = hull;
 	this.type = type;
-	this.image = game.offCtx[image];	
+	this.image = game.offCtx[image];
 	this.sheep = sheep || false;
 	this.fireRate = fireRate * 60 || 0; //bullets/sec
-	this.width = game.offCtx[image].width;	
+	this.width = game.offCtx[image].width;
 	this.height = game.offCtx[image].height;
 	switch (type)
 	{
@@ -1779,11 +1787,11 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fire
 		case 'base':
 			this.width = this.sprite.frameWidth;
 			this.height = this.sprite.frameHeight;
-			this.explosionSize = 'xLarge';	
+			this.explosionSize = 'xLarge';
 		break;
 	}
 	this.bulletTimer = 1;
-	this.hitTimer = 0;	
+	this.hitTimer = 0;
 	this.collided = false;		//do we need this??
 	this.dead = false;
 
@@ -1794,12 +1802,12 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fire
 };
 
 enemy.prototype.update = function() {
-	if (!this.dead) 
+	if (!this.dead)
 	{
 		// this.lastX = this.x;
 		// this.lastY = this.y;
 		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
-		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);		
+		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;
@@ -1809,7 +1817,7 @@ enemy.prototype.update = function() {
 		this.y += this.vy;
 
 		if (this.type !== 'base' )
-		{	
+		{
 			this.direction -= utils.randomRange(-0.05, 0.05);
 		}
 
@@ -1820,64 +1828,64 @@ enemy.prototype.update = function() {
 			this.bulletTimer++;
 			if (this.bulletTimer % this.bulletDivision == 1)
 			{
-				this.bulletTimer = 1;				
+				this.bulletTimer = 1;
 				bulletX = Math.round(this.x + this.width*0.42);
 				bulletY = Math.round(this.y + this.height);
-				getNewEnemyBullet(bulletX, bulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');			
+				getNewEnemyBullet(bulletX, bulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');
 			}
 		}
-				
+
 		// player-enemy collision
 		if (Collision(this, playerShip) && !this.dead && !playerShip.imune && !game.gameOver)
 		{
-			getNewExplosion(playerShip.x, playerShip.y, 0, 1, 'small', 'chasis');	//get new explosion sound for hiting player		
+			getNewExplosion(playerShip.x, playerShip.y, 0, 1, 'small', 'chasis');	//get new explosion sound for hiting player
 			playerShip.hull -= this.hull;
-			gameUI.updateEnergy();						
-			playerShip.hit = true;			
+			gameUI.updateEnergy();
+			playerShip.hit = true;
 			this.hull -= playerShip.hull;
 		}
 
 
 		if (this.hull <= 0)
-		{			
+		{
 			this.dead = true;
 			getNewExplosion(this.x, this.y, this.speed, this.direction, this.explosionSize, 'enemy');
 
-			lootchance = Math.random();			
+			lootchance = Math.random();
 			if (lootchance < 0.4)
 			{
-				getNewLoot(this.x, this.y);					
+				getNewLoot(this.x, this.y);
 			}
 
 			if (!playerShip.crashed)
 			{
 				game.score++;
 				game.levelScore++;
-				gameUI.updateScore();								
+				gameUI.updateScore();
 			}
 		}
 
 		if(this.x > game.outerRight || this.x < game.outerLeft || this.y > game.outerBottom || this.y < game.outerTop)
 		{
-			this.dead = true;				
+			this.dead = true;
 		}
 	}
 	else
-	{	
+	{
 		freeEnemy(this);
 	}
 
 };
 
 enemy.prototype.draw = function(x, y) {
-	
+
 	if (this.type !== 'base')
 	{
 		this.ctx.drawImage(this.image, x, y);
 	}
 	else
 	{
-		this.sprite.draw(x, y);	
+		this.sprite.draw(x, y);
 	}
 
 };
@@ -1893,7 +1901,7 @@ function getNewEnemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
 
     // check to see if there is a spare one
     if (game.enemiesPool.length > 0)
-    {	
+    {
     	//recycle
         en = game.enemiesPool.pop();
 
@@ -1904,7 +1912,7 @@ function getNewEnemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
     	game.enemies.push(en);
     }
     else
-    { 
+    {
         // none available, construct a new one
 		en = new enemy(x, y, speed, direction, hull, type, image, fireRate, sheep);
 		// en.offDraw();
@@ -1925,6 +1933,7 @@ function freeEnemy(en)
     // return the bullet back into the pool
 	game.enemiesPool.push(en);
 }
+
 boss = function(x, y, speed, direction, hull, image)
 {
 
@@ -1932,7 +1941,7 @@ boss = function(x, y, speed, direction, hull, image)
 	this.direction = direction;
 	this.hull = hull;
 	this.image = game.offCtx[image];
-	this.width = game.offCtx[image].width;	
+	this.width = game.offCtx[image].width;
 	this.height = game.offCtx[image].height;
 	this.x = (game.width/2) - (this.width/2);
 	this.y = game.outerTop;
@@ -1940,7 +1949,7 @@ boss = function(x, y, speed, direction, hull, image)
 	this.audioHit1 = 'hit' + fileFormat;
 	this.audioHit2 = 'hit2' + fileFormat;
 	this.audioHit3 = 'hit3' + fileFormat;
-	this.hitTimer = 0; 
+	this.hitTimer = 0;
 	this.dead = false;
 	this.deadTimer = 0;
 	this.bulletTimer1 = 1;
@@ -1956,10 +1965,10 @@ boss = function(x, y, speed, direction, hull, image)
 
 boss.prototype.update = function()
 {
-	if (!this.dead) 
+	if (!this.dead)
 	{
 		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
-		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);		
+		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;
@@ -1984,16 +1993,16 @@ boss.prototype.update = function()
 				        	else if (game.sfx[this.audioHit3].paused)
 				        	{
 				        		game.sounds.push(game.sfx[this.audioHit3]);
-				        	}				        	
+				        	}
 				        }
-			//change image here		
+			//change image here
 			this.hit = false;
 		}
 
 		// player-boss collision
-		if (Collision(playerShip, this) && !this.dead && !game.gameOver){			
+		if (Collision(playerShip, this) && !this.dead && !game.gameOver){
 			playerShip.hull -= this.hull;
-			playerShip.hit = true;			
+			playerShip.hit = true;
 			this.hit = true;
 			this.hull -= playerShip.hull;
 		}
@@ -2003,9 +2012,9 @@ boss.prototype.update = function()
 			if (!playerShip.crashed){
 				game.score++;
 				game.levelScore++;
-				gameUI.updateScore();	
+				gameUI.updateScore();
 				game.bossDead = true;
-				this.dead = true;						
+				this.dead = true;
 			}
 		}
 
@@ -2014,28 +2023,28 @@ boss.prototype.update = function()
 			this.bulletTimer2++;
 
 			if (this.bulletTimer1 % this.bulletDivision1 == 1){
-				this.bulletTimer1 = 1;	
+				this.bulletTimer1 = 1;
 				mBulletX1 = Math.round(this.x);
 				mBulletX2 = Math.round(this.x + this.width);
 				mBulletY = Math.round(this.y + this.height*0.6);
 
-				getNewEnemyBullet(mBulletX1, mBulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');			
-				getNewEnemyBullet(mBulletX2, mBulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');			
+				getNewEnemyBullet(mBulletX1, mBulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');
+				getNewEnemyBullet(mBulletX2, mBulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');
 			}
-		
+
 			// homing missiles, sort of
 			// this.bulletAngle = sectoidWave.units.length > 0 ? this.angleTo(sectoidWave.units[Math.floor(Math.random() * sectoidWave.units.length)]) : -Math.PI/2;
-			if (this.bulletTimer2 % this.bulletDivision2 == 1) {				
+			if (this.bulletTimer2 % this.bulletDivision2 == 1) {
 				// if (game.sound){game.shootSound.play();}
 				this.bulletTimer2 = 1; //resetting our timer
 				lBulletX1 = Math.round(this.x + this.width*0.4);
 				lBulletX2 = Math.round(this.x + this.width*0.6);
 				lBulletY = Math.round(this.y + this.height);
 			    getNewEnemyBullet(lBulletX1, lBulletY, 250, Math.PI/2, 1.5, 'bullet_p_laser');
-			    getNewEnemyBullet(lBulletX2, lBulletY, 250, Math.PI/2, 1.5, 'bullet_p_laser');				
+			    getNewEnemyBullet(lBulletX2, lBulletY, 250, Math.PI/2, 1.5, 'bullet_p_laser');
 			}
 
-		
+
 
 		if (this.y > this.yStop){
 			this.speed = 0;
@@ -2054,15 +2063,15 @@ boss.prototype.update = function()
 	else
 	{
 		//level finished --- taken from update function, needs work, should be triggered in boss dead else function
-		
-		//waiting a few secs before engaging warp speed
-		game.levelUpTimer++; 
 
-		if (game.levelUpTimer == 100) 
+		//waiting a few secs before engaging warp speed
+		game.levelUpTimer++;
+
+		if (game.levelUpTimer == 100)
 		{
-			game.levelComplete = true;					
+			game.levelComplete = true;
 			gameState.lvlComplete();
-			mouseIsDown = 0;					
+			mouseIsDown = 0;
 		}
 	}
 };
@@ -2071,8 +2080,9 @@ boss.prototype.draw = function(x, y)
 {
 	this.ctx.drawImage(this.image, x, y);
 };
+
 enemyBullet = function(x, y, speed, direction, power, image)
-{		
+{
 	this.sprite = new sprite(image, 3, 1, 5);
 	this.x = x;
 	this.y = y;
@@ -2098,7 +2108,7 @@ enemyBullet.prototype.reset = function(x, y, speed, direction, power)	//fix this
 {
     //change variable properties only
 	this.x = x;
-	this.y = y;	
+	this.y = y;
 	this.width = this.sprite.frameWidth;
 	this.height = this.sprite.frameHeight;
 	this.speed = speed;
@@ -2111,9 +2121,9 @@ enemyBullet.prototype.reset = function(x, y, speed, direction, power)	//fix this
 };
 
 enemyBullet.prototype.update = function()
-{		
+{
 	if (!this.dead)
-	{	
+	{
 		this.vx *= this.friction;
 		this.vy *= this.friction;
 		this.x += this.vx;
@@ -2125,7 +2135,7 @@ enemyBullet.prototype.update = function()
 		{
 			getNewExplosion(this.x, this.y, 0, 1, 'xSmall', 'chasis');
 			playerShip.hull -= this.power;
-			gameUI.updateEnergy();	
+			gameUI.updateEnergy();
 			playerShip.hit = true;
 			this.dead = true;
 		}
@@ -2148,7 +2158,7 @@ enemyBullet.prototype.draw = function(x, y)	//fix this with sprites with diferen
 	this.ctx.rotate(this.direction - Math.PI/2);
 
 	this.sprite.draw(this.spriteX, this.spriteY);
-	
+
 	this.ctx.restore();
 };
 
@@ -2193,6 +2203,7 @@ freeEnemyBullet = function(eb)
     // return the bullet back into the pool
 	game.enemyBulletsPool.push(eb);
 };
+
 loot = function(x, y) {
 
 	this.x = x;
@@ -2201,7 +2212,7 @@ loot = function(x, y) {
 	this.key = Math.floor(Math.random() * this.drops.length);
 	this.type = this.drops[this.key];
 	switch(this.type)
-	{	
+	{
 		/* jshint ignore:start */
 		case 'health':
 			this.image = game.offCtx['loot_shields'];
@@ -2209,11 +2220,11 @@ loot = function(x, y) {
 		case 'laser':
 			this.image = game.offCtx['loot_lasers'];
 		break;
-		case 'missile':    
+		case 'missile':
 			this.image = game.offCtx['loot_missiles'];
 		break;
 		/* jshint ignore:end */
-	}		
+	}
 	this.width = this.image.width;
 	this.height = this.image.height;
 };
@@ -2228,7 +2239,7 @@ loot.prototype.sfx2 = 'loot_powerUp2' + fileFormat;
 loot.prototype.sfx3 = 'loot_powerUp3' + fileFormat;
 loot.prototype.ctx = game.context;
 
-loot.prototype.reset = function(x, y) {			
+loot.prototype.reset = function(x, y) {
 	this.x = x;
     this.y = y;
     this.dead = false;
@@ -2242,7 +2253,7 @@ loot.prototype.reset = function(x, y) {
 		case 'laser':
 			this.image = game.offCtx['loot_lasers'];
 		break;
-		case 'missile':    
+		case 'missile':
 			this.image = game.offCtx['loot_missiles'];
 		break;
 		/* jshint ignore:end */
@@ -2253,7 +2264,7 @@ loot.prototype.update = function() {
 	if(!this.dead)
 	{
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
-		this.vy = Math.sin(this.direction) * (this.speed*dt);	
+		this.vy = Math.sin(this.direction) * (this.speed*dt);
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;
@@ -2265,7 +2276,7 @@ loot.prototype.update = function() {
 		this.draw(this.x, this.y);
 
 		if (Collision(this, playerShip))
-		{			
+		{
 			switch(this.type)
 			{
 			    case 'health':
@@ -2297,7 +2308,7 @@ loot.prototype.update = function() {
 	        	else if (game.sfx[this.sfx3].paused)
 	        	{
 	        		game.sounds.push(game.sfx[this.sfx3]);
-	        	}				        	
+	        	}
 	        }
 			this.dead = true;
 		}
@@ -2313,7 +2324,7 @@ loot.prototype.update = function() {
 	}
 };
 
-loot.prototype.draw = function(x, y) {			
+loot.prototype.draw = function(x, y) {
 	this.ctx.drawImage(this.image, x, y);
 };
 
@@ -2328,7 +2339,7 @@ function getNewLoot(x, y)
 
     // check to see if there is a spare one
     if (game.lootPool.length > 0)
-    {	
+    {
     	//recycle
         l = game.lootPool.pop();
 
@@ -2337,7 +2348,7 @@ function getNewLoot(x, y)
     	game.bullets.push(l);
     }
     else
-    { 
+    {
         // none available, construct a new one
 		l = new loot(x, y);
 
@@ -2358,8 +2369,9 @@ function freeLoot(l)
     // return the bullet back into the pool
 	game.lootPool.push(l);
 }
+
 var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate) {
-	
+
 	this.side = side;
 	this.spawnedShips = 0;
 	this.race = race;
@@ -2391,25 +2403,25 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 	// this.bulletTimer = 1;
 	// this.bulletDivision = fireRate || 99999;
 	// this.loot = [];
-	
+
 
 
 	this.update = function() {
 		if(!this.over)
-		{					
+		{
 			// if (dt !== 0 && !this.spawnDivisionSet){
 			// 	this.spawnDivision = Math.round(700 * dt);
 			// 	this.spawnDivisionSet = true;
-			// }							
-				
+			// }
+
 			this.spawnTimer++;
-					
+
 			if (this.spawnedShips <= this.fleetSize){
-				if (this.spawnTimer == this.spawnDivision){   
+				if (this.spawnTimer == this.spawnDivision){
 					this.spawnTimer = 1;
 
 					getNewEnemy(this.x, this.y, this.speed, this.direction, this.hull, this.type, this.race, this.fireRate, true);
-					
+
 					this.spawnedShips++;
 				}
 			}
@@ -2423,7 +2435,7 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 			freeEnemyWave(this);
 		}
 	};
-	
+
 };
 
 ////////////
@@ -2436,7 +2448,7 @@ function getNewEnemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate
 
     // check to see if there is a spare one
     if (game.wavesPool.length > 0)
-    {	
+    {
     	//recycle
         ew = game.wavesPool.pop();
 
@@ -2473,7 +2485,7 @@ function getNewEnemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate
     	game.waves.push(ew);
     }
     else
-    { 
+    {
         // none available, construct a new one
 		ew = new enemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate);
     	game.waves.push(ew);
@@ -2493,6 +2505,7 @@ function freeEnemyWave(ew)
     // return the bullet back into the pool
 	game.wavesPool.push(ew);
 }
+
 function ui() {
 
 	var uiAll = $('#ui');
@@ -2501,29 +2514,29 @@ function ui() {
 	var uiLevel = doc.getElementById("uiLevel");
 	var uiScore = doc.getElementById("uiScore");
 	var uiEBar = doc.getElementById("uiEBar");
-	var uiHangar = doc.getElementById("uiHangarList");	
+	var uiHangar = doc.getElementById("uiHangarList");
 
-	var effectDuration = 800;	
+	var effectDuration = 800;
 
 
-	this.updateLevel = function() {			
+	this.updateLevel = function() {
 		uiLevel.innerHTML = 'STAGE ' + game.level;
 	};
 
 	this.updateScore = function() {
-		uiScore.innerHTML = 'SCORE: ' + game.score;		
+		uiScore.innerHTML = 'SCORE: ' + game.score;
 	};
 
-	this.updateEnergy = function() {		
-		
+	this.updateEnergy = function() {
+
 		shipEnergy = (playerShip.hull / playerShip.maxHull) * 100;
-		
+
 		if(shipEnergy < 0 ) {shipEnergy = 0;}
 
 		shipEnergyPC = shipEnergy + '%';
-		
+
 		if (shipEnergy >= 66)
-		{			
+		{
 			uiEBar.classList.remove('eBar-red');
 			uiEBar.classList.remove('eBar-yellow');
 			uiEBar.classList.add('eBar-blue');
@@ -2552,15 +2565,15 @@ function ui() {
 					uiHangar.getElementsByTagName("li")[1].style.display = 'inline-block';
 					uiHangar.getElementsByTagName("li")[2].style.display = 'inline-block';
 				break;
-				case 2:		
+				case 2:
 					uiHangar.getElementsByTagName("li")[0].style.display = 'none';
 				break;
-				case 1:		
+				case 1:
 					uiHangar.getElementsByTagName("li")[1].style.display = 'none';
 				break;
-				case 0:		
+				case 0:
 					uiHangar.getElementsByTagName("li")[2].style.display = 'none';
-				break;				
+				break;
 			}
 	};
 
@@ -2568,7 +2581,7 @@ function ui() {
 	{
 		switch (trigger)
 		{
-			case 'in':				
+			case 'in':
 				uiAll.fadeIn(effectDuration);
 			break;
 
@@ -2582,18 +2595,19 @@ function ui() {
 		this.updateLevel();
 		this.updateScore();
 		this.updateEnergy();
-		this.updateHangar();		
+		this.updateHangar();
 	};
-	
+
 }
 
 gameUI = new ui();
+
 function lights() {
 
 	this.fader = $('#fader');
 	var effectDuration = 2000;
 
-	
+
 	this.switch = function(trigger)
 	{
 		switch (trigger)
@@ -2611,7 +2625,7 @@ function lights() {
 			break;
 		}
 	};
-	
+
 
 
 	this.fade = function(trigger)
@@ -2624,7 +2638,7 @@ function lights() {
 				this.fader.fadeOut(effectDuration, function(){
 					game.fadingIn = false;
 					game.faded = false;
-				});				
+				});
 			break;
 
 			case 'out':
@@ -2632,13 +2646,14 @@ function lights() {
 				this.fader.fadeIn(effectDuration, function(){
 					game.fadingOut = false;
 					game.faded = true;
-				});				
+				});
 			break;
 		}
 	};
 }
 
 gameLights = new lights();
+
 function text(header1, header2, inputRequired) {
 
 	var h1 = $('#h1'); //remove jquery here
@@ -2675,8 +2690,8 @@ function text(header1, header2, inputRequired) {
 	{
 		switch (trigger)
 		{
-			case 'in':				
-				game.textFadingIn = true;				
+			case 'in':
+				game.textFadingIn = true;
 				allText.fadeIn(effectDuration, function(){
 					game.textFadingIn = false;
 					game.textFaded = false;
@@ -2686,7 +2701,7 @@ function text(header1, header2, inputRequired) {
 			case 'out':
 				game.textFadingOut = true;
 				allText.fadeOut(effectDuration, function(){
-					h1.text('');		
+					h1.text('');
 					h2.text('');
 					h3.text('');
 					game.textFadingOut = false;
@@ -2698,9 +2713,9 @@ function text(header1, header2, inputRequired) {
 
 	this.init = function()
 	{
-		h1.text(h1Text);		
+		h1.text(h1Text);
 		h2.text(h2Text);
-		if (textInput){h3.text(h3Text);}else{h3.text('');}		
+		if (textInput){h3.text(h3Text);}else{h3.text('');}
 	};
 
 	this.init();
@@ -2708,6 +2723,7 @@ function text(header1, header2, inputRequired) {
 }
 
 gameText = new text(); //To be removed!
+
 function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and skiping these
 {
 
@@ -2718,11 +2734,11 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 		document.getElementById("resumeGame").disabled = true;
 		document.getElementById("startGame").disabled = true;
 
-		gameState.pause();		  
+		gameState.pause();
 		gameLights.switch('off');
 
 		removeGamePlayInput();
-		addStandByInput(); 		
+		addStandByInput();
 
 		if (gameMenu.toggled) //if the game menu is up toggle it off
 		{
@@ -2736,7 +2752,7 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 		else
 		{
 			game.score = 0;
-			game.level = 1;			
+			game.level = 1;
 		}
 
 		introBriefing = ['Outside the galaxy', 'The outer space', 'AlphaPI 2034' ];
@@ -2750,7 +2766,7 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 				introText.fade('in');
 
 				$('.all-text').promise().done(function()
-				{  
+				{
 					removeStandByInput();
 					if (game.textFaded) //remove this later
 					{
@@ -2763,16 +2779,16 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 						gameState.unPause();
 						document.getElementById("resumeGame").disabled = false;
 						document.getElementById("startGame").disabled = false;
-					} 
+					}
 					else
-					{			
+					{
 						$('#inputarea').on('mousedown touchstart', function()
 						{   //only trigger this event listner once text animations have ended
 							$('#inputarea').off('mousedown touchstart');
 							introText.fade('out');
 							$('.all-text').promise().done(function()
-							{  
-								if (!game.loaded){									
+							{
+								if (!game.loaded){
 									startGame();
 								}
 								addGamePlayInput();
@@ -2788,35 +2804,35 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 			});
 		});
 	};
-	
+
 
 	this.lvlComplete = function() //called at the end of each level
 	{
 		game.started = false;
-		removeGamePlayInput();		
+		removeGamePlayInput();
 		gameUI.fade('out');
 
-		levelUpText = new text('Stage Complete!', game.score + ' enemy ships destroyed', true); 	
+		levelUpText = new text('Stage Complete!', game.score + ' enemy ships destroyed', true);
 		levelUpText.switch('on');
-		
+
 		$('#inputarea').on('mousedown touchstart', function()
 		{
 			$('#inputarea').off('mousedown touchstart');
 			levelUpText.fade('out');
 
 			$('.all-text').promise().done(function()
-			{	
-				gameUI.fade('out');	
+			{
+				gameUI.fade('out');
 				gameLights.fade('out');
 					$('#fader').promise().done(function()
-					{   //once text fades 			
+					{   //once text fades
 						gameState.pause();
 						game.level++;
 						gameState.start();
 					});
 			});
 		});
-		
+
 	};
 
 
@@ -2826,7 +2842,7 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 		removeGamePlayInput();
 		gameUI.fade('out');
 
-		gameOverText = new text('Game Over', game.score + ' enemy ships destroyed', true);		
+		gameOverText = new text('Game Over', game.score + ' enemy ships destroyed', true);
 		gameOverText.switch('on');
 
 		$('#inputarea').on('mousedown touchstart', function()
@@ -2836,60 +2852,60 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 
 			$('.all-text').promise().done(function()
 			{
-				gameUI.fade('out');		
+				gameUI.fade('out');
 				gameLights.fade('out');
 					$('#fader').promise().done(function()
-					{   //once text fades 			
+					{   //once text fades
 						gameState.pause();
 						game.score = 0;
 						game.level = 1;
 						gameLights.fade('out');
-						gameMenu.toggle();								
+						gameMenu.toggle();
 					});
 			});
-		});	
+		});
 	};
 
 
 	this.pause = function()
 	{
 		game.paused = true;
-		gameUI.fade('out');		
+		gameUI.fade('out');
 	};
 
 	this.unPause = function()
 	{
-		game.paused = false;		
+		game.paused = false;
 		gameUI.updateAll();
-		gameUI.fade('in');	
+		gameUI.fade('in');
 	};
 
 }
 
 
 //====================== Game state =================//
-		
-			
+
+
 		// 	//If Esc
 		// 	if (game.keys[27]) {
-		// 		mouseIsDown = 0;				
+		// 		mouseIsDown = 0;
 		// 		game.keys[27] = false;
 		// 		playerShip.hull = 0;
 		// 		playerShip.lives = 0;
-		// 		game.gameOver = true;								
+		// 		game.gameOver = true;
 		// 	}
 
 		// 	//game sound
-		// 	if (game.keys[119]) {				
+		// 	if (game.keys[119]) {
 		// 		game.sound = (game.sound) ? false : true;
-		// 		gameUI.updateSound();	
+		// 		gameUI.updateSound();
 		// 		game.keys[119] = false;
 		// 	}
 
 		// 	if (game.keys[120]) {
 		// 		game.music = (game.music) ? false : true;
 		// 		gameUI.updateSound();
-		// 		game.keys[120] = false;	
+		// 		game.keys[120] = false;
 
 
 
@@ -2903,7 +2919,7 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 		// 				game.tracks.push(game.soundTracks['tune1.mp3']);
 		// 				for(var w in game.tracks){
 		// 					game.tracks[w].play();
-		// 					game.tracks[w].loop = true;							
+		// 					game.tracks[w].loop = true;
 		// 				}
 		// 		}
 		// 	}
@@ -2934,6 +2950,7 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 		// }
 
 gameState = new state();
+
 function menu()
 {
 
@@ -2941,14 +2958,14 @@ function menu()
 	var resumeBtn = $('#resumeGame');
 	var startBtn = $('#startGame');
 	var soundFx = $('#toggleSound');
-	var music = $('#toggleMusic');	
+	var music = $('#toggleMusic');
 	var fullScreen = $('#toggleFullScreen');
 	var credits = $('#credits');
 	var allButtons = $('.menu-option-btn');
 	var animationSpeed = 800;
 
 	this.toggled = false;
-	
+
 	doc.addEventListener("fullscreenchange", FShandler);
 	doc.addEventListener("webkitfullscreenchange", FShandler);
 	doc.addEventListener("mozfullscreenchange", FShandler);
@@ -3031,7 +3048,7 @@ function menu()
 			soundFx.text('Sound: ON');
 		}
 		else
-		{			
+		{
 		soundFx.removeClass('active');
 		soundFx.text('Sound: OFF');
 		}
@@ -3061,7 +3078,7 @@ function menu()
 			for(var w in game.tracks)
 			{
 				game.tracks[w].play();
-				game.tracks[w].loop = true;							
+				game.tracks[w].loop = true;
 			}
 		}
 
@@ -3071,7 +3088,7 @@ function menu()
 			music.text('Music: ON');
 		}
 		else
-		{			
+		{
 			music.removeClass('active');
 			music.text('Music: OFF');
 		}
@@ -3106,7 +3123,7 @@ function menu()
 						opacity: 1,
 						"right": "-=50%",
 					},800);
-				}	
+				}
 				else
 				{
 					startBtn.text('Start');
@@ -3184,7 +3201,7 @@ function menu()
 				{
 					if(game.loaded && !game.faded)	gameState.unPause();
 					document.getElementById("toggle-menu-btn").disabled = false;
-				});				
+				});
 			});
 		}
 
@@ -3198,7 +3215,7 @@ function menu()
 			soundFx.text('Sound: ON');
 		}
 		else
-		{			
+		{
 		soundFx.removeClass('active');
 		soundFx.text('Sound: OFF');
 		}
@@ -3209,7 +3226,7 @@ function menu()
 			music.text('Music: ON');
 		}
 		else
-		{			
+		{
 			music.removeClass('active');
 			music.text('Music: OFF');
 		}
@@ -3220,7 +3237,7 @@ function menu()
 			fullScreen.text('Fullscreen: ON');
 		}
 		else
-		{			
+		{
 			fullScreen.removeClass('active');
 			fullScreen.text('Fullscreen: OFF');
 		}
@@ -3228,15 +3245,16 @@ function menu()
 		gameMenu.toggle();
 
 	};
-	
+
 }
 
 gameMenu = new menu();
+
 		//====================== Main update function =================//		
 		function update(){
-			//////////////////////// 
+			////////////////////////
 			// Init
-			///////////////////////		
+			///////////////////////
 
 			// gameBackground.update();
 			clrCanvas();
@@ -3246,7 +3264,7 @@ gameMenu = new menu();
 			{
 				getDeltaTime();
 				console.log(dt);
-			}	
+			}
 
     		updateGameTime();
 
@@ -3283,7 +3301,7 @@ gameMenu = new menu();
 			}
 
 			if (game.bullets.length > 0);
-			{	
+			{
 				var b = game.bullets.length;
 				while (b--)
 				{
@@ -3293,9 +3311,9 @@ gameMenu = new menu();
 
 			playerShip.load(); //change this, it's fugly
 
-			
+
 			if (game.explosions.length > 0);
-			{	
+			{
 				var e = game.explosions.length;
 				while (e--)
 				{
@@ -3313,7 +3331,7 @@ gameMenu = new menu();
 			///////////////////////////////////
 
 			// console.log (game.sounds.length);
-			
+
 			if (game.sounds.length > 0) {
 				for(var s in game.sounds){
 
@@ -3359,8 +3377,9 @@ gameMenu = new menu();
 			// console.log('sounds: '+game.sounds.length);
 			// console.log('tracks: '+game.tracks.length);
 			// console.log('images: '+game.images.length);
-										
-		}	
+
+		}
+
 var level1 = {};
 
 			// enemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
@@ -3373,11 +3392,11 @@ var level1 = {};
 
 			level1.second3 = function () {
 			    getNewEnemyWave('left', game.height*0.5, 'enemy_sectoid', 'pawn', 1, 250, 1, 0);
-			    getNewEnemyWave('right', game.height*0.5, 'enemy_sectoid', 'pawn', 1, 300, 1, 0);		
+			    getNewEnemyWave('right', game.height*0.5, 'enemy_sectoid', 'pawn', 1, 300, 1, 0);
 			};
 
 			level1.second5 = function () {
-			    getNewEnemy(game.width * 0.7, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);		
+			    getNewEnemy(game.width * 0.7, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
 			};
 
 			level1.second7 = function () {
@@ -3404,10 +3423,10 @@ var level1 = {};
 			    getNewEnemyWave('left', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 2);
 			};
 
-			level1.second13 = function () {				
-			    getNewEnemy(game.width * 0.3, game.outerTop, 155, Math.PI/2, 10, 'base', 'enemy_base_floater', 1);			
-			};			
-			
+			level1.second13 = function () {
+			    getNewEnemy(game.width * 0.3, game.outerTop, 155, Math.PI/2, 10, 'base', 'enemy_base_floater', 1);
+			};
+
 			level1.second15 = function () {
 			    getNewEnemyWave('top', game.width*0.2, 'enemy_sectoid', 'pawn', 2, 300, 1, 2);
 			};
@@ -3488,11 +3507,11 @@ var level1 = {};
 				if (game.seconds > 13 && game.tracks.length < 2 && game.enemies.length > 0 && !game.bossDead) //NEEDS WORK
 				{
 					if(game.music){
-						game.tracks.push(game.soundTracks['tune2' + fileFormat]);				
+						game.tracks.push(game.soundTracks['tune2' + fileFormat]);
 						game.tracks[1].play();
 						game.tracks[1].loop = true;
 					}
-				}				
+				}
 				if (game.seconds > 50 && game.enemies.length === 0 && !game.bossDead) {
 					if (game.music) {
 						game.tracks.push(game.soundTracks['boss' + fileFormat]);
@@ -3517,11 +3536,12 @@ var level1 = {};
 			};
 			//boss(x, y, speed, direction, hull, image)
 // };
+
 		//====================== Game functions =================//
 
 		//making our canvases dynamically resize according to the size of the browser win	//! USE THIS TO SHOW ROTATE SCREEN MSG IF MOBILE AND GAME.WIDTH > GAME HEIGHT
 		function respondCanvas()
-		{ 
+		{
 
 			game.paused = gameMenu.toggled ? game.paused : true; //promtp to pause the game if called outside game menu
 
@@ -3532,15 +3552,15 @@ var level1 = {};
 		}
 
 
-		//Keyboard		
+		//Keyboard
 		$(document).keydown(function(e){    //using jquery to listen to pressed keys
 			game.keys[e.keyCode ? e.keyCode : e.which] = true;	//and cross browser proofing
 		});
-		
+
 		$(document).keyup(function(e){   //using jquery to listen to released keys
-			delete game.keys[e.keyCode ? e.keyCode : e.which]; //once key is released, delete the key pressed action previously defined 
+			delete game.keys[e.keyCode ? e.keyCode : e.which]; //once key is released, delete the key pressed action previously defined
 		});
-		
+
 
 		function addGamePlayInput()
 		{
@@ -3548,55 +3568,55 @@ var level1 = {};
 			inputAreaY = playerShip.y;
 
 	        inputArea.addEventListener("mousedown",mouseDown, false);
-	        inputArea.addEventListener("mouseup", mouseUp, false);        
+	        inputArea.addEventListener("mouseup", mouseUp, false);
 	        inputArea.addEventListener("mousemove",mouseXY, false);
 
 	        inputArea.addEventListener("touchstart", touchDown, false);
 	        inputArea.addEventListener("touchend", touchUp, false);
 	        inputArea.addEventListener("touchcancel", touchUp, false);
 	        inputArea.addEventListener("touchleave", touchUp, false);
-	        inputArea.addEventListener("touchmove", touchXY, false);		                
+	        inputArea.addEventListener("touchmove", touchXY, false);
 		}
 
 		//remove this later
 		function addStandByInput()
-		{			         
+		{
 	        inputArea.addEventListener("mouseup", standByInput, false);
-	        inputArea.addEventListener("touchstart", standByInput, false);		                
+	        inputArea.addEventListener("touchstart", standByInput, false);
 		}
 
 		function removeGamePlayInput()
-		{	                
+		{
 	        inputArea.removeEventListener("mousedown",mouseDown, false);
-	        inputArea.removeEventListener("mouseup", mouseUp, false);        
+	        inputArea.removeEventListener("mouseup", mouseUp, false);
 	        inputArea.removeEventListener("mousemove",mouseXY, false);
 
 	        inputArea.removeEventListener("touchstart", touchDown, false);
 	        inputArea.removeEventListener("touchend", touchUp, false);
 	        inputArea.removeEventListener("touchcancel", touchUp, false);
 	        inputArea.removeEventListener("touchleave", touchUp, false);
-	        inputArea.removeEventListener("touchmove", touchXY, false);		                
+	        inputArea.removeEventListener("touchmove", touchXY, false);
 		}
 
 		function removeStandByInput()
-		{			         
+		{
 	        inputArea.removeEventListener("mouseup", standByInput, false);
-	        inputArea.removeEventListener("touchstart", standByInput, false);		                
+	        inputArea.removeEventListener("touchstart", standByInput, false);
 		}
 
-		
+
 		function mouseUp(e)
 		{
 			e.preventDefault();
 			mouseIsDown = 0;
 		}
-		 
+
 		function touchUp(e)
 		{
 			e.preventDefault();
 			mouseIsDown = 0;
 		}
-		 
+
 		function mouseDown(e)
 		{
 			e.preventDefault();
@@ -3604,7 +3624,7 @@ var level1 = {};
 			touchInitX = e.pageX - inputArea.offsetLeft;
 			touchInitY = e.pageY - inputArea.offsetTop;
 		}
-		  
+
 		function touchDown(e)
 		{
 			e.preventDefault();
@@ -3615,21 +3635,21 @@ var level1 = {};
 			touchInitY =  touch.pageY - touch.target.offsetTop;
 
 		}
-		
+
 		function mouseXY(e)
 		{
 			e.preventDefault();
 			inputAreaX = e.pageX - inputArea.offsetLeft;
 			inputAreaY = e.pageY - inputArea.offsetTop;
 		}
-		 
+
 		function touchXY(e) {
 			e.preventDefault();
 			var touch = e.targetTouches[0];
 
     		inputAreaX = touch.pageX - inputArea.offsetLeft;
     		inputAreaY = touch.pageY - inputArea.offsetTop;
- 
+
 		}
 
 		//remove this later
@@ -3684,9 +3704,9 @@ var level1 = {};
 						// console.log (dtSum);
 					}
 
-					dt = Math.ceil(dtSum / dtArray.length)/1000;				
+					dt = Math.ceil(dtSum / dtArray.length)/1000;
 					dtTimerSet = true;
-					document.getElementById("toggle-menu-btn").disabled = false;				
+					document.getElementById("toggle-menu-btn").disabled = false;
     			}
     		}
 		}
@@ -3702,13 +3722,13 @@ var level1 = {};
 
 		function clrCanvas()
 		{
-			// game.contextBackground.clearRect(0, 0, game.width, game.height); 
-			game.context.clearRect(0, 0, game.width, game.height); 
+			// game.contextBackground.clearRect(0, 0, game.width, game.height);
+			game.context.clearRect(0, 0, game.width, game.height);
 			// game.contextEnemies.clearRect(0, 0, game.width, game.height);
 		}
 
-		function resetGame(){	//called on level start			
-			
+		function resetGame(){	//called on level start
+
 			mouseIsDown = 0;
 			gameLights.switch('off');
 			clrCanvas();
@@ -3716,7 +3736,7 @@ var level1 = {};
 			//Game state
 			game.bossDead = false;
 			game.levelComplete = false;
-			
+
 
 			//Timers
 			game.timer = 0;
@@ -3724,13 +3744,13 @@ var level1 = {};
 
 
 			//Objects
-			playerShip.reset();			
+			playerShip.reset();
 			game.bullets = [];
 			game.explosions = [];
 			game.enemies = [];
 			game.waves = [];
-			game.loot = [];										
-			gameUI.updateAll();		
+			game.loot = [];
+			gameUI.updateAll();
 
 			//Sounds
 			game.sounds = [];
@@ -3742,14 +3762,14 @@ var level1 = {};
 			if (game.music && game.tracks.length < 1){
 				game.tracks.push(game.soundTracks['tune1' + fileFormat]);
 				game.tracks[0].play();
-				game.tracks[0].loop = true;	
+				game.tracks[0].loop = true;
 			}
 		}
 
 
 
 		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
-			
+
 		// 	if (!(first.x + first.size < second.x || second.x + second.size < first.x || first.y + first.size < second.y || second.y + second.size < first.y)) {
 
 		// 		Cx = first.x < second.x ? second.x : first.x;
@@ -3765,19 +3785,19 @@ var level1 = {};
 		// 		for (var i = 0 ; i < length; i+= game.res) {
 		// 			// return !(!iFirst.data[i] || !iSecond.data[i]);
 		// 			if (iFirst.data[i] > 0 && iSecond.data[i] > 0)
-		// 			{	
+		// 			{
 		// 				// console.log('true1');
 		// 				return true;
-						
+
 		// 			}
 		// 		}
 		// 		console.log(iFirst.data.length);
 		// 	}
-		// 	// console.log('false');			
-		// 	return false;			
+		// 	// console.log('false');
+		// 	return false;
 		// }
 
-		
+
 		function Collision(first, second)
 		{ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
 			return !(first.x > second.x + second.width ||
@@ -3796,8 +3816,8 @@ var level1 = {};
 
 		// LOOOOOOOOOOOOOOOOOOOOP
 
-			
-		function loop(){ //the loop		
+
+		function loop(){ //the loop
 			requestAnimFrame(loop);
 			if (!game.paused){
 			update();
@@ -3806,14 +3826,14 @@ var level1 = {};
 
 
 		function startGame()
-		{						
+		{
 			game.loaded = true;
 
 			if (typeof win[playerShip] === "undefined")
 			{
 				playerShip = new player(10, 15);
 			}
-			
+
 			//preparing sound tracks (chromium fix)
 			game.tracks.push(game.soundTracks['tune1' + fileFormat]);
 			game.tracks.push(game.soundTracks['tune2' + fileFormat]);
@@ -3822,7 +3842,7 @@ var level1 = {};
 
 			for (var t in game.tracks){
 				game.tracks[t].play();
-				game.tracks[t].pause();			
+				game.tracks[t].pause();
 			}
 
 			game.tracks = [];
@@ -3846,7 +3866,7 @@ var level1 = {};
 				game.sounds[s].play();
 				game.sounds[s].pause();
 			}
-		
+
 			game.sounds = [];
 
 			loop();
@@ -3875,13 +3895,13 @@ var level1 = {};
 			offCanvas = doc.createElement('canvas');
 			offCanvas.width = Math.round(this.width);
 			offCanvas.height = Math.round(this.height);
-			
+
 			offCtx = offCanvas.getContext('2d');
 
 			offCtx.drawImage(this, 0, 0, offCanvas.width, offCanvas.height);
 
 			game.offCtx[indexName] = offCanvas;
-			
+
 			game.doneImages++;
 		}
 
@@ -3889,7 +3909,7 @@ var level1 = {};
 			game.requiredImages = ipaths.length; //the number of required images will be equal to the length of the ipaths array
 			for(var i in ipaths)
 			{
-				var img = new Image(); //defining img as a new image				
+				var img = new Image(); //defining img as a new image
 
 				img.addEventListener("load", imgEventHandler, false); // !event listner needs to be set before loading the image (defining .src)
 
@@ -3926,15 +3946,15 @@ var level1 = {};
 			// console.log('required soundSfx:' + game.requiredSfx);
 			for(var i in sfxPaths)
 			{
-				var sfx = new Audio(); //defining sfx as a new Audio					
+				var sfx = new Audio(); //defining sfx as a new Audio
 				sfx.src = sfxPaths[i]; //defining new Audio src as stPaths[i]
 
 				var sfxIndex = sfx.src.split("/").pop(); //obtaining file name from path and setting our sfxIndex as such
-				
+
 				var sfxIndexInstance; //to keep track of sounds which use the same audio source and avoding duplicate indexes
 
 				if (!(sfxIndex in game.sfx)) //if index is unique
-				{	
+				{
 					sfxIndexInstance = 1;
 					game.sfx[sfxIndex] = sfx;
 				}
@@ -3950,7 +3970,7 @@ var level1 = {};
 				{
 					game.sfx[sfxIndex].preload = "auto";
 					//checking if sfx have loaded
-					game.sfx[sfxIndex].addEventListener("canplaythrough", sfxEventHandler, false); 
+					game.sfx[sfxIndex].addEventListener("canplaythrough", sfxEventHandler, false);
 				}
 				else
 				{
@@ -3972,17 +3992,17 @@ var level1 = {};
 
 				game.soundTracks[soundTracksIndex] = soundTracks; //defining game.soundTracks[soundTracksIndex] as a new Audio (with stPaths)
 
-								
+
 				if(audiopreload)
 				{
 					game.soundTracks[soundTracksIndex].preload = "auto";
 					//checking if st's have loaded
-					game.soundTracks[soundTracksIndex].addEventListener("canplaythrough", stEventHandler, false);				
+					game.soundTracks[soundTracksIndex].addEventListener("canplaythrough", stEventHandler, false);
 				}
 				else
 				{
 					game.doneSoundTracks++;
-				}	
+				}
 
 				// console.log('requiredSoundTracks: ' + game.requiredSoundTracks);
 			}
@@ -3995,11 +4015,11 @@ var level1 = {};
 				loadingBarFiller.css({"width": "0"});
 				initSfx(game.sfxPaths);
 				checkSfx();
-			} 
+			}
 			else
 			{
 				loadingBarWidth = (game.doneImages / game.requiredImages) * 100 + '%';
-				loadingBarFiller.css({"width": loadingBarWidth});		
+				loadingBarFiller.css({"width": loadingBarWidth});
 				setTimeout(function(){
 					checkImages();
 				}, 1);
@@ -4014,11 +4034,11 @@ var level1 = {};
 				//start loading sound tracks
 				initSoundTracks(game.soundTrackPaths);
 				checkSoundTracks();
-			} 
+			}
 			else
 			{
 				loadingBarWidth = (game.doneSfx / game.requiredSfx) * 100 + '%';
-				loadingBarFiller.css({"width": loadingBarWidth});					
+				loadingBarFiller.css({"width": loadingBarWidth});
 				setTimeout(function(){
 					checkSfx();
 				}, 1);
@@ -4029,14 +4049,14 @@ var level1 = {};
 			if(game.doneSoundTracks >= game.requiredSoundTracks){
 				loadingText = new text('Loading Assets.. ', '', false);
 				loadingBarFiller.css({"width": "0"});
-				//starting game menu				
+				//starting game menu
 				initObjects();
 				checkObjects();
-			} 
+			}
 			else
 			{
 				loadingBarWidth = (game.doneSoundTracks / game.requiredSoundTracks) * 100 + '%';
-				loadingBarFiller.css({"width": loadingBarWidth});					
+				loadingBarFiller.css({"width": loadingBarWidth});
 				setTimeout(function(){
 					checkSoundTracks();
 				}, 1);
@@ -4047,14 +4067,14 @@ var level1 = {};
 			if(game.doneObjects >= game.requiredObjects){
 				loadingText.switch('off');
 				loadingBar.hide();
-				//starting game menu				
+				//starting game menu
 				gameMenu.init();
-				gameBackground = new background();				
-			} 
+				gameBackground = new background();
+			}
 			else
 			{
 				loadingBarWidth = (game.doneObjects / game.requiredObjects) * 100 + '%';
-				loadingBarFiller.css({"width": loadingBarWidth});					
+				loadingBarFiller.css({"width": loadingBarWidth});
 				setTimeout(function(){
 					checkObjects();
 				}, 1);
@@ -4064,42 +4084,42 @@ var level1 = {};
 		function initObjects ()			//   !!! make this a function inside each object class
 		{
 			//waves
-			for (var w = 1 ; w <= game.requiredWaves; w++) {				
+			for (var w = 1 ; w <= game.requiredWaves; w++) {
 				ew = new enemyWave(null, null, 'enemy_sectoid', 'pawn', 0, 0, 0, 0);
     			game.wavesPool.push(ew);
     			game.doneObjects++;
 			}
 
 			//enemies
-			for (var e = 1 ; e <= game.requiredEnemies; e++) {				
+			for (var e = 1 ; e <= game.requiredEnemies; e++) {
 				en = new enemy(0, 0, 0, 0, 0, 'pawn', 'enemy_sectoid', 0);
     			game.enemiesPool.push(en);
     			game.doneObjects++;
 			}
 
 			//player bullets
-			for (var pb = 1 ; pb <= game.requiredPlayerBullets; pb++) {				
+			for (var pb = 1 ; pb <= game.requiredPlayerBullets; pb++) {
 				b = new playerBullet(null, null, null, -Math.PI/2, null, null, 'bullet_p_laser');
     			game.playerBulletsPool.push(b);
     			game.doneObjects++;
 			}
 
 			//enemy bullets
-			for (var ebul = 1 ; ebul <= game.requiredEnemyBullets; ebul++) {				
+			for (var ebul = 1 ; ebul <= game.requiredEnemyBullets; ebul++) {
 				eb = new enemyBullet(null, null, null, null, null, 'bullet_e_missile');
     			game.enemyBulletsPool.push(eb);
     			game.doneObjects++;
 			}
 
 			//loot
-			for (var loo = 1 ; loo <= game.requiredLoot; loo++) {				
+			for (var loo = 1 ; loo <= game.requiredLoot; loo++) {
 				l = new loot(null, null);
     			game.lootPool.push(l);
     			game.doneObjects++;
 			}
 
 			//explosions
-			for (var ex = 1 ; ex <= game.requiredExplosions; ex++) {				
+			for (var ex = 1 ; ex <= game.requiredExplosions; ex++) {
 				e = new explosion(null, null, null, null, 'small', null);
     			game.explosionsPool.push(e);
     			game.doneObjects++;
@@ -4156,13 +4176,13 @@ var level1 = {};
 				for(var w in game.tracks)
 				{
 					game.tracks[w].play();
-					game.tracks[w].loop = true;							
+					game.tracks[w].loop = true;
 				}
 			}
 		}
 
 
-		
+
 		//ON WINDOW LOAD
 
 		//Handler functions
@@ -4220,7 +4240,7 @@ var level1 = {};
 		else if (fileFormat === '.m4a')
 		{
 			audioTest.src = 'data:audio/x-m4a;base64,AAAAGGZ0eXBNNEEgAAACAGlzb21pc28yAAAACGZyZWUAAAAfbWRhdN4EAABsaWJmYWFjIDEuMjgAAAFoAQBHAAACiG1vb3YAAABsbXZoZAAAAAB8JbCAfCWwgAAAA+gAAAAYAAEAAAEAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAG0dHJhawAAAFx0a2hkAAAAD3wlsIB8JbCAAAAAAQAAAAAAAAAYAAAAAAAAAAAAAAAAAQAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAABUG1kaWEAAAAgbWRoZAAAAAB8JbCAfCWwgAAArEQAAAQAVcQAAAAAAC1oZGxyAAAAAAAAAABzb3VuAAAAAAAAAAAAAAAAU291bmRIYW5kbGVyAAAAAPttaW5mAAAAEHNtaGQAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAL9zdGJsAAAAW3N0c2QAAAAAAAAAAQAAAEttcDRhAAAAAAAAAAEAAAAAAAAAAAACABAAAAAArEQAAAAAACdlc2RzAAAAAAMZAAEABBFAFQAAAAABftAAAAAABQISCAYBAgAAABhzdHRzAAAAAAAAAAEAAAABAAAEAAAAABxzdHNjAAAAAAAAAAEAAAABAAAAAQAAAAEAAAAUc3RzegAAAAAAAAAXAAAAAQAAABRzdGNvAAAAAAAAAAEAAAAoAAAAYHVkdGEAAABYbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAbWRpcmFwcGwAAAAAAAAAAAAAAAAraWxzdAAAACOpdG9vAAAAG2RhdGEAAAABAAAAAExhdmY1Mi42NC4y';
-		}		
+		}
 		else if (fileFormat === '.ogg')
 		{
 			audioTest.src = 'data:audio/ogg;base64,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lFJKKaWUUkoppZRSSimllFJKKaWUUkqppJRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoplVJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSCgCQinAAkHowoQwUGrISAEgFAACMUUopxpyDEDHmGGPQSSgpYsw5xhyUklLlHIQQUmktt8o5CCGk1FJtmXNSWosx5hgz56SkFFvNOYdSUoux5ppr7qS0VmuuNedaWqs115xzzbm0FmuuOdecc8sx15xzzjnnGHPOOeecc84FAOA0OACAHtiwOsJJ0VhgoSErAYBUAAACGaUYc8456BBSjDnnHIQQIoUYc845CCFUjDnnHHQQQqgYc8w5CCGEkDnnHIQQQgghcw466CCEEEIHHYQQQgihlM5BCCGEEEooIYQQQgghhBA6CCGEEEIIIYQQQgghhFJKCCGEEEIJoZRQAABggQMAQIANqyOcFI0FFhqyEgAAAgCAHJagUs6EQY5Bjw1BylEzDUJMOdGZYk5qMxVTkDkQnXQSGWpB2V4yCwAAgCAAIMAEEBggKPhCCIgxAABBiMwQCYVVsMCgDBoc5gHAA0SERACQmKBIu7iALgNc0MVdB0IIQhCCWBxAAQk4OOGGJ97whBucoFNU6iAAAAAAAAwA4AEA4KAAIiKaq7C4wMjQ2ODo8AgAAAAAABYA+AAAOD6AiIjmKiwuMDI0Njg6PAIAAAAAAAAAAICAgAAAAAAAQAAAAICAT2dnUwAE7AwAAAAAAAD/QwAAAgAAADuydfsFAQEBAQEACg4ODg==';
@@ -4238,8 +4258,8 @@ var level1 = {};
 
 		audioTest.addEventListener('loadeddata', testpreload);
 		timeout = setTimeout(testpreload, waitTime);
- 
-		
+
+
 	/* jshint ignore:start */
 	// });
 // })();
@@ -4257,6 +4277,6 @@ win.requestAnimFrame = (function(){  // Creating a request animAnimeFrame functi
 			win.oRequestAnimationFrame    ||
 			win.msRequestAnimationFrame    ||
 			function( callback ){
-				win.setTimeout(callback, 1000 / 30);			
+				win.setTimeout(callback, 1000 / 30);
 			};
 })(); // jshint ignore:line

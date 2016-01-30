@@ -34,8 +34,8 @@ function text(header1, header2, inputRequired) {
 	{
 		switch (trigger)
 		{
-			case 'in':				
-				game.textFadingIn = true;				
+			case 'in':
+				game.textFadingIn = true;
 				allText.fadeIn(effectDuration, function(){
 					game.textFadingIn = false;
 					game.textFaded = false;
@@ -45,7 +45,7 @@ function text(header1, header2, inputRequired) {
 			case 'out':
 				game.textFadingOut = true;
 				allText.fadeOut(effectDuration, function(){
-					h1.text('');		
+					h1.text('');
 					h2.text('');
 					h3.text('');
 					game.textFadingOut = false;
@@ -57,9 +57,9 @@ function text(header1, header2, inputRequired) {
 
 	this.init = function()
 	{
-		h1.text(h1Text);		
+		h1.text(h1Text);
 		h2.text(h2Text);
-		if (textInput){h3.text(h3Text);}else{h3.text('');}		
+		if (textInput){h3.text(h3Text);}else{h3.text('');}
 	};
 
 	this.init();

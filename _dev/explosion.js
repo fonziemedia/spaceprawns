@@ -16,9 +16,9 @@ explosion = function (x, y, speed, direction, size, target)
 		break;
 		case 'xLarge':
 			this.image = 'explosion_s4';
-		break;										
+		break;
 	}
-	this.sprite = new sprite(this.image, 5, 4, 2);	
+	this.sprite = new sprite(this.image, 5, 4, 2);
 	this.width = this.sprite.frameWidth;
 	this.height = this.sprite.frameHeight;
 	this.speed = speed;
@@ -30,12 +30,12 @@ explosion = function (x, y, speed, direction, size, target)
 
 //invariables (note: any other object properties that require these need to be declared in the prototype function)
 explosion.prototype.dead = false;
-explosion.prototype.audioHit1 = 'hit' + fileFormat;	
-explosion.prototype.audioHit2 = 'hit2' + fileFormat;	
-explosion.prototype.audioHit3 = 'hit3' + fileFormat;		
+explosion.prototype.audioHit1 = 'hit' + fileFormat;
+explosion.prototype.audioHit2 = 'hit2' + fileFormat;
+explosion.prototype.audioHit3 = 'hit3' + fileFormat;
 explosion.prototype.audioDead1 = 'explosion' + fileFormat;
 explosion.prototype.audioDead2 = 'explosion2' + fileFormat;
-explosion.prototype.audioDead3 = 'explosion3' + fileFormat;	
+explosion.prototype.audioDead3 = 'explosion3' + fileFormat;
 explosion.prototype.audioExplode = 'blast' + fileFormat;
 
 explosion.prototype.reset = function(x, y, speed, direction, size, target)
@@ -56,10 +56,10 @@ explosion.prototype.reset = function(x, y, speed, direction, size, target)
 		break;
 		case 'xLarge':
 			this.image = 'explosion_s4';
-		break;										
+		break;
 	}
 	this.x = Math.round(x - (this.width*0.2));
-	this.y = Math.round(y - (this.height*0.2));	
+	this.y = Math.round(y - (this.height*0.2));
 	this.speed = speed;
 	this.direction = direction;
 	this.target = target;
@@ -74,7 +74,7 @@ explosion.prototype.update = function() {
 	if (!this.dead)
 	{
 		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
-		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);	
+		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;
@@ -97,13 +97,13 @@ explosion.prototype.update = function() {
 };
 
 explosion.prototype.draw = function(x, y) {
-	
+
 	this.sprite.draw(x, y);
 
 };
 
-explosion.prototype.loadSound = function() {	
-	
+explosion.prototype.loadSound = function() {
+
 	if (game.sound)
     {
     	if (this.target == 'chasis')
@@ -119,7 +119,7 @@ explosion.prototype.loadSound = function() {
         	else if (game.sfx[this.audioHit3].paused)
         	{
         		game.sounds.push(game.sfx[this.audioHit3]);
-        	}				        	
+        	}
         }
 
          else if (this.target == 'enemy')
@@ -135,10 +135,10 @@ explosion.prototype.loadSound = function() {
         	else if (game.sfx[this.audioDead3].paused)
         	{
         		game.sounds.push(game.sfx[this.audioDead3]);
-        	}				        	
-        }	
+        	}
+        }
 		else if (this.target == 'player' || this.target == 'boss'){game.sounds.push(game.sfx[this.audioExplode]);}
-		
+
 	}
 };
 
@@ -154,7 +154,7 @@ function getNewExplosion(x, y, speed, direction, size, target)
     // check to see if there is a spare one
     if (game.explosionsPool.length > 0)
     {
-    	//recycle		    	
+    	//recycle
         e = game.explosionsPool.pop();
 
 		e.reset(x, y, speed, direction, size, target);
@@ -170,7 +170,7 @@ function getNewExplosion(x, y, speed, direction, size, target)
     	game.explosions.push(e);
     }
     else
-    { 
+    {
         // none available, construct a new one
 		e = new explosion(x, y, speed, direction, size, target);
 		e.loadSound();

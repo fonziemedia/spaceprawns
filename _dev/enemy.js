@@ -3,7 +3,7 @@ enemy = function(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	this.x = x;
 	this.y = y;
 	this.image = game.offCtx[image];
-	this.width = game.offCtx[image].width;	
+	this.width = game.offCtx[image].width;
 	this.height = game.offCtx[image].height;
 	this.hull = hull;
 	this.sprite = new sprite(image, 6, 5, 5);
@@ -19,12 +19,12 @@ enemy = function(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 		case 'base':
 			this.width = this.sprite.frameWidth;
 			this.height = this.sprite.frameHeight;
-			this.explosionSize = 'xLarge';	
+			this.explosionSize = 'xLarge';
 		break;
 	}
 	this.sheep = sheep || false;
 	this.fireRate = fireRate * 60 || 0; //bullets/sec
-	/// *** WTF!!?? ///	
+	/// *** WTF!!?? ///
 	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
 	this.speed = speed/pixelRatio;
 	this.direction = direction;
@@ -47,13 +47,13 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fire
 	this.x = x;
     this.y = y;
     this.speed = speed;
-	this.direction = direction;	
+	this.direction = direction;
 	this.hull = hull;
 	this.type = type;
-	this.image = game.offCtx[image];	
+	this.image = game.offCtx[image];
 	this.sheep = sheep || false;
 	this.fireRate = fireRate * 60 || 0; //bullets/sec
-	this.width = game.offCtx[image].width;	
+	this.width = game.offCtx[image].width;
 	this.height = game.offCtx[image].height;
 	switch (type)
 	{
@@ -66,11 +66,11 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fire
 		case 'base':
 			this.width = this.sprite.frameWidth;
 			this.height = this.sprite.frameHeight;
-			this.explosionSize = 'xLarge';	
+			this.explosionSize = 'xLarge';
 		break;
 	}
 	this.bulletTimer = 1;
-	this.hitTimer = 0;	
+	this.hitTimer = 0;
 	this.collided = false;		//do we need this??
 	this.dead = false;
 
@@ -81,12 +81,12 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fire
 };
 
 enemy.prototype.update = function() {
-	if (!this.dead) 
+	if (!this.dead)
 	{
 		// this.lastX = this.x;
 		// this.lastY = this.y;
 		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
-		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);		
+		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;
@@ -96,7 +96,7 @@ enemy.prototype.update = function() {
 		this.y += this.vy;
 
 		if (this.type !== 'base' )
-		{	
+		{
 			this.direction -= utils.randomRange(-0.05, 0.05);
 		}
 
@@ -107,64 +107,64 @@ enemy.prototype.update = function() {
 			this.bulletTimer++;
 			if (this.bulletTimer % this.bulletDivision == 1)
 			{
-				this.bulletTimer = 1;				
+				this.bulletTimer = 1;
 				bulletX = Math.round(this.x + this.width*0.42);
 				bulletY = Math.round(this.y + this.height);
-				getNewEnemyBullet(bulletX, bulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');			
+				getNewEnemyBullet(bulletX, bulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');
 			}
 		}
-				
+
 		// player-enemy collision
 		if (Collision(this, playerShip) && !this.dead && !playerShip.imune && !game.gameOver)
 		{
-			getNewExplosion(playerShip.x, playerShip.y, 0, 1, 'small', 'chasis');	//get new explosion sound for hiting player		
+			getNewExplosion(playerShip.x, playerShip.y, 0, 1, 'small', 'chasis');	//get new explosion sound for hiting player
 			playerShip.hull -= this.hull;
-			gameUI.updateEnergy();						
-			playerShip.hit = true;			
+			gameUI.updateEnergy();
+			playerShip.hit = true;
 			this.hull -= playerShip.hull;
 		}
 
 
 		if (this.hull <= 0)
-		{			
+		{
 			this.dead = true;
 			getNewExplosion(this.x, this.y, this.speed, this.direction, this.explosionSize, 'enemy');
 
-			lootchance = Math.random();			
+			lootchance = Math.random();
 			if (lootchance < 0.4)
 			{
-				getNewLoot(this.x, this.y);					
+				getNewLoot(this.x, this.y);
 			}
 
 			if (!playerShip.crashed)
 			{
 				game.score++;
 				game.levelScore++;
-				gameUI.updateScore();								
+				gameUI.updateScore();
 			}
 		}
 
 		if(this.x > game.outerRight || this.x < game.outerLeft || this.y > game.outerBottom || this.y < game.outerTop)
 		{
-			this.dead = true;				
+			this.dead = true;
 		}
 	}
 	else
-	{	
+	{
 		freeEnemy(this);
 	}
 
 };
 
 enemy.prototype.draw = function(x, y) {
-	
+
 	if (this.type !== 'base')
 	{
 		this.ctx.drawImage(this.image, x, y);
 	}
 	else
 	{
-		this.sprite.draw(x, y);	
+		this.sprite.draw(x, y);
 	}
 
 };
@@ -180,7 +180,7 @@ function getNewEnemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
 
     // check to see if there is a spare one
     if (game.enemiesPool.length > 0)
-    {	
+    {
     	//recycle
         en = game.enemiesPool.pop();
 
@@ -191,7 +191,7 @@ function getNewEnemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
     	game.enemies.push(en);
     }
     else
-    { 
+    {
         // none available, construct a new one
 		en = new enemy(x, y, speed, direction, hull, type, image, fireRate, sheep);
 		// en.offDraw();

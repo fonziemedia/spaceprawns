@@ -1,8 +1,8 @@
 		//====================== Main update function =================//		
 		function update(){
-			//////////////////////// 
+			////////////////////////
 			// Init
-			///////////////////////		
+			///////////////////////
 
 			// gameBackground.update();
 			clrCanvas();
@@ -12,7 +12,7 @@
 			{
 				getDeltaTime();
 				console.log(dt);
-			}	
+			}
 
     		updateGameTime();
 
@@ -49,7 +49,7 @@
 			}
 
 			if (game.bullets.length > 0);
-			{	
+			{
 				var b = game.bullets.length;
 				while (b--)
 				{
@@ -59,9 +59,9 @@
 
 			playerShip.load(); //change this, it's fugly
 
-			
+
 			if (game.explosions.length > 0);
-			{	
+			{
 				var e = game.explosions.length;
 				while (e--)
 				{
@@ -79,7 +79,7 @@
 			///////////////////////////////////
 
 			// console.log (game.sounds.length);
-			
+
 			if (game.sounds.length > 0) {
 				for(var s in game.sounds){
 
@@ -125,5 +125,5 @@
 			// console.log('sounds: '+game.sounds.length);
 			// console.log('tracks: '+game.tracks.length);
 			// console.log('images: '+game.images.length);
-										
-		}	
+
+		}

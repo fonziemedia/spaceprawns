@@ -22,11 +22,11 @@ background.prototype.update = function()
 	this.y2 += this.speed;
 	this.y3 += this.speed;
 
-	
+
 	if (this.y1 >= this.yDrawLimit && this.y1 < game.height)
 	{
 		this.draw(this.imageA, this.x, this.y1);
-	}	
+	}
 	else
 	{
 		this.y1 = this.y3-this.height;
@@ -35,7 +35,7 @@ background.prototype.update = function()
 	if (this.y2 >= this.yDrawLimit && this.y2 < game.height)
 	{
 		this.draw(this.imageB, this.x, this.y2);
-	}	
+	}
 	else
 	{
 		this.y2 = this.y1-this.height;
@@ -44,7 +44,7 @@ background.prototype.update = function()
 	if (this.y3 >= this.yDrawLimit && this.y3 < game.height)
 	{
 		this.draw(this.imageC, this.x, this.y3);
-	}	
+	}
 	else
 	{
 		this.y3 = this.y2-this.height;

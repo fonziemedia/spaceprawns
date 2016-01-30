@@ -6,7 +6,7 @@ loot = function(x, y) {
 	this.key = Math.floor(Math.random() * this.drops.length);
 	this.type = this.drops[this.key];
 	switch(this.type)
-	{	
+	{
 		/* jshint ignore:start */
 		case 'health':
 			this.image = game.offCtx['loot_shields'];
@@ -14,11 +14,11 @@ loot = function(x, y) {
 		case 'laser':
 			this.image = game.offCtx['loot_lasers'];
 		break;
-		case 'missile':    
+		case 'missile':
 			this.image = game.offCtx['loot_missiles'];
 		break;
 		/* jshint ignore:end */
-	}		
+	}
 	this.width = this.image.width;
 	this.height = this.image.height;
 };
@@ -33,7 +33,7 @@ loot.prototype.sfx2 = 'loot_powerUp2' + fileFormat;
 loot.prototype.sfx3 = 'loot_powerUp3' + fileFormat;
 loot.prototype.ctx = game.context;
 
-loot.prototype.reset = function(x, y) {			
+loot.prototype.reset = function(x, y) {
 	this.x = x;
     this.y = y;
     this.dead = false;
@@ -47,7 +47,7 @@ loot.prototype.reset = function(x, y) {
 		case 'laser':
 			this.image = game.offCtx['loot_lasers'];
 		break;
-		case 'missile':    
+		case 'missile':
 			this.image = game.offCtx['loot_missiles'];
 		break;
 		/* jshint ignore:end */
@@ -58,7 +58,7 @@ loot.prototype.update = function() {
 	if(!this.dead)
 	{
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
-		this.vy = Math.sin(this.direction) * (this.speed*dt);	
+		this.vy = Math.sin(this.direction) * (this.speed*dt);
 		// this.handleSprings();
 		// this.handleGravitations();
 		// this.vx *= this.friction;
@@ -70,7 +70,7 @@ loot.prototype.update = function() {
 		this.draw(this.x, this.y);
 
 		if (Collision(this, playerShip))
-		{			
+		{
 			switch(this.type)
 			{
 			    case 'health':
@@ -102,7 +102,7 @@ loot.prototype.update = function() {
 	        	else if (game.sfx[this.sfx3].paused)
 	        	{
 	        		game.sounds.push(game.sfx[this.sfx3]);
-	        	}				        	
+	        	}
 	        }
 			this.dead = true;
 		}
@@ -118,7 +118,7 @@ loot.prototype.update = function() {
 	}
 };
 
-loot.prototype.draw = function(x, y) {			
+loot.prototype.draw = function(x, y) {
 	this.ctx.drawImage(this.image, x, y);
 };
 
@@ -133,7 +133,7 @@ function getNewLoot(x, y)
 
     // check to see if there is a spare one
     if (game.lootPool.length > 0)
-    {	
+    {
     	//recycle
         l = game.lootPool.pop();
 
@@ -142,7 +142,7 @@ function getNewLoot(x, y)
     	game.bullets.push(l);
     }
     else
-    { 
+    {
         // none available, construct a new one
 		l = new loot(x, y);
 

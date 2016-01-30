@@ -8,11 +8,11 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 		document.getElementById("resumeGame").disabled = true;
 		document.getElementById("startGame").disabled = true;
 
-		gameState.pause();		  
+		gameState.pause();
 		gameLights.switch('off');
 
 		removeGamePlayInput();
-		addStandByInput(); 		
+		addStandByInput();
 
 		if (gameMenu.toggled) //if the game menu is up toggle it off
 		{
@@ -26,7 +26,7 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 		else
 		{
 			game.score = 0;
-			game.level = 1;			
+			game.level = 1;
 		}
 
 		introBriefing = ['Outside the galaxy', 'The outer space', 'AlphaPI 2034' ];
@@ -40,7 +40,7 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 				introText.fade('in');
 
 				$('.all-text').promise().done(function()
-				{  
+				{
 					removeStandByInput();
 					if (game.textFaded) //remove this later
 					{
@@ -53,16 +53,16 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 						gameState.unPause();
 						document.getElementById("resumeGame").disabled = false;
 						document.getElementById("startGame").disabled = false;
-					} 
+					}
 					else
-					{			
+					{
 						$('#inputarea').on('mousedown touchstart', function()
 						{   //only trigger this event listner once text animations have ended
 							$('#inputarea').off('mousedown touchstart');
 							introText.fade('out');
 							$('.all-text').promise().done(function()
-							{  
-								if (!game.loaded){									
+							{
+								if (!game.loaded){
 									startGame();
 								}
 								addGamePlayInput();
@@ -78,35 +78,35 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 			});
 		});
 	};
-	
+
 
 	this.lvlComplete = function() //called at the end of each level
 	{
 		game.started = false;
-		removeGamePlayInput();		
+		removeGamePlayInput();
 		gameUI.fade('out');
 
-		levelUpText = new text('Stage Complete!', game.score + ' enemy ships destroyed', true); 	
+		levelUpText = new text('Stage Complete!', game.score + ' enemy ships destroyed', true);
 		levelUpText.switch('on');
-		
+
 		$('#inputarea').on('mousedown touchstart', function()
 		{
 			$('#inputarea').off('mousedown touchstart');
 			levelUpText.fade('out');
 
 			$('.all-text').promise().done(function()
-			{	
-				gameUI.fade('out');	
+			{
+				gameUI.fade('out');
 				gameLights.fade('out');
 					$('#fader').promise().done(function()
-					{   //once text fades 			
+					{   //once text fades
 						gameState.pause();
 						game.level++;
 						gameState.start();
 					});
 			});
 		});
-		
+
 	};
 
 
@@ -116,7 +116,7 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 		removeGamePlayInput();
 		gameUI.fade('out');
 
-		gameOverText = new text('Game Over', game.score + ' enemy ships destroyed', true);		
+		gameOverText = new text('Game Over', game.score + ' enemy ships destroyed', true);
 		gameOverText.switch('on');
 
 		$('#inputarea').on('mousedown touchstart', function()
@@ -126,60 +126,60 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 
 			$('.all-text').promise().done(function()
 			{
-				gameUI.fade('out');		
+				gameUI.fade('out');
 				gameLights.fade('out');
 					$('#fader').promise().done(function()
-					{   //once text fades 			
+					{   //once text fades
 						gameState.pause();
 						game.score = 0;
 						game.level = 1;
 						gameLights.fade('out');
-						gameMenu.toggle();								
+						gameMenu.toggle();
 					});
 			});
-		});	
+		});
 	};
 
 
 	this.pause = function()
 	{
 		game.paused = true;
-		gameUI.fade('out');		
+		gameUI.fade('out');
 	};
 
 	this.unPause = function()
 	{
-		game.paused = false;		
+		game.paused = false;
 		gameUI.updateAll();
-		gameUI.fade('in');	
+		gameUI.fade('in');
 	};
 
 }
 
 
 //====================== Game state =================//
-		
-			
+
+
 		// 	//If Esc
 		// 	if (game.keys[27]) {
-		// 		mouseIsDown = 0;				
+		// 		mouseIsDown = 0;
 		// 		game.keys[27] = false;
 		// 		playerShip.hull = 0;
 		// 		playerShip.lives = 0;
-		// 		game.gameOver = true;								
+		// 		game.gameOver = true;
 		// 	}
 
 		// 	//game sound
-		// 	if (game.keys[119]) {				
+		// 	if (game.keys[119]) {
 		// 		game.sound = (game.sound) ? false : true;
-		// 		gameUI.updateSound();	
+		// 		gameUI.updateSound();
 		// 		game.keys[119] = false;
 		// 	}
 
 		// 	if (game.keys[120]) {
 		// 		game.music = (game.music) ? false : true;
 		// 		gameUI.updateSound();
-		// 		game.keys[120] = false;	
+		// 		game.keys[120] = false;
 
 
 
@@ -193,7 +193,7 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 		// 				game.tracks.push(game.soundTracks['tune1.mp3']);
 		// 				for(var w in game.tracks){
 		// 					game.tracks[w].play();
-		// 					game.tracks[w].loop = true;							
+		// 					game.tracks[w].loop = true;
 		// 				}
 		// 		}
 		// 	}

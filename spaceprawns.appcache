@@ -48,7 +48,7 @@ _img/player_shields.dkt.png
 #enemies
 _img/enemy_sectoid.dkt.png
 _img/enemy_floater.dkt.png
-_img/enemy_base_sectoid.dkt.png			
+_img/enemy_base_sectoid.dkt.png
 _img/enemy_base_floater.dkt.png
 _img/boss_sectoid.dkt.png
 
@@ -56,15 +56,15 @@ _img/boss_sectoid.dkt.png
 _img/bullet_p_laser.dkt.png
 _img/bullet_p_missile.dkt.png
 _img/bullet_e_missile.dkt.png
-_img/explosion_s0.dkt.png						
-_img/explosion_s1.dkt.png						
-_img/explosion_s2.dkt.png						
-_img/explosion_s3.dkt.png						
+_img/explosion_s0.dkt.png
+_img/explosion_s1.dkt.png
+_img/explosion_s2.dkt.png
+_img/explosion_s3.dkt.png
 _img/explosion_s4.dkt.png
 
-#loot					
-_img/loot_lasers.dkt.png					
-_img/loot_missiles.dkt.png				
+#loot
+_img/loot_lasers.dkt.png
+_img/loot_missiles.dkt.png
 _img/loot_shields.dkt.png
 
 
@@ -84,7 +84,7 @@ _img/player_shields.mob.png
 #enemies
 _img/enemy_sectoid.mob.png
 _img/enemy_floater.mob.png
-_img/enemy_base_sectoid.mob.png			
+_img/enemy_base_sectoid.mob.png
 _img/enemy_base_floater.mob.png
 _img/boss_sectoid.mob.png
 
@@ -92,15 +92,15 @@ _img/boss_sectoid.mob.png
 _img/bullet_p_laser.mob.png
 _img/bullet_p_missile.mob.png
 _img/bullet_e_missile.mob.png
-_img/explosion_s0.mob.png						
-_img/explosion_s1.mob.png						
-_img/explosion_s2.mob.png						
-_img/explosion_s3.mob.png						
+_img/explosion_s0.mob.png
+_img/explosion_s1.mob.png
+_img/explosion_s2.mob.png
+_img/explosion_s3.mob.png
 _img/explosion_s4.mob.png
 
-#loot					
-_img/loot_lasers.mob.png					
-_img/loot_missiles.mob.png				
+#loot
+_img/loot_lasers.mob.png
+_img/loot_missiles.mob.png
 _img/loot_shields.mob.png
 
 #SOUND

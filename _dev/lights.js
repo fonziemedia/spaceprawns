@@ -3,7 +3,7 @@ function lights() {
 	this.fader = $('#fader');
 	var effectDuration = 2000;
 
-	
+
 	this.switch = function(trigger)
 	{
 		switch (trigger)
@@ -21,7 +21,7 @@ function lights() {
 			break;
 		}
 	};
-	
+
 
 
 	this.fade = function(trigger)
@@ -34,7 +34,7 @@ function lights() {
 				this.fader.fadeOut(effectDuration, function(){
 					game.fadingIn = false;
 					game.faded = false;
-				});				
+				});
 			break;
 
 			case 'out':
@@ -42,7 +42,7 @@ function lights() {
 				this.fader.fadeIn(effectDuration, function(){
 					game.fadingOut = false;
 					game.faded = true;
-				});				
+				});
 			break;
 		}
 	};

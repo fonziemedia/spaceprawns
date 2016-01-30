@@ -4,16 +4,16 @@ var particle = function(x, y, speed, direction, grav) {
 	this.speed = speed;
 	this.direction = direction;
 	this.vx = Math.cos(this.direction) * (this.speed*dt);
-	this.vy = Math.sin(this.direction) * (this.speed*dt); 
+	this.vy = Math.sin(this.direction) * (this.speed*dt);
 	this.mass = 1;
 	this.radius = 0;
 	this.bounce = -1;
 	this.friction = 1;
 	this.gravity = grav || 0;
 	this.springs = [];
-	this.gravitations = [];	
+	this.gravitations = [];
 };
-	
+
 particle.prototype.update = function() {
 	if (dt === 0){ //setting speed according to delta time if not yet set (might not be a perfect solution to the problem of friction and gravity - with this if statement we avoid reseting vx and vy all the time)
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
@@ -125,7 +125,7 @@ particle.prototype.angleTo = function(p2) {
 	// 	var dx = point.x - this.x,
 	// 		dy = point.y - this.y,
 	// 		distance = Math.sqrt(dx * dx + dy * dy),
-	// 		springForce = (distance - length || 0) * k; 
+	// 		springForce = (distance - length || 0) * k;
 	// 	this.vx += dx / distance * springForce;
 	// 	this.vy += dy / distance * springForce;
 	// };

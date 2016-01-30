@@ -31,20 +31,20 @@ body {
 	background-color: #000;
   font-family: 'Furore';
   letter-spacing: 1px;
-  font-size: 62.5%;  
+  font-size: 62.5%;
   text-shadow: 2px 2px 2px black;
 }
 
 input, button {
-  font: inherit;    
+  font: inherit;
   text-shadow: 2px 2px 2px black;
 }
 
-.no-select { 
-  -moz-user-select: none; 
-  -khtml-user-select: none; 
-  -webkit-user-select: none; 
-  -o-user-select: none; 
+.no-select {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
 }
 
 /* Do not over use this. Maybe only required in parent element? */
@@ -113,7 +113,7 @@ canvas {
 	width: 100%;
   image-rendering: optimizeSpeed;             /* Older versions of FF          */
   image-rendering: crisp-edges;               /* FF 6.0+                       */
-  image-rendering: -moz-crisp-edges;          
+  image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-optimize-contrast; /* Safari                        */
   image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
   image-rendering: pixelated;                 /* Awesome future-browsers       */
@@ -177,19 +177,19 @@ canvas {
   height: 100%;
   color: #FFC619;
   background-color: transparent;
-  z-index: 9999;  
+  z-index: 9999;
 }
 
-#uiLevel {  
+#uiLevel {
   margin-top: 2%;
   width: 15%;
   right: 84%;
 }
 
-#uiScore {  
+#uiScore {
   margin-top: 2%;
   width: 20%;
-  right: 62%;  
+  right: 62%;
 }
 
 #uiEContainer {
@@ -205,7 +205,7 @@ canvas {
   background-size: 100% 100%;
   background-color: transparent;
   background-repeat: no-repeat;
-  z-index: 1; 
+  z-index: 1;
 }
 
 #uiEBarMask {
@@ -260,7 +260,7 @@ canvas {
   height: 100%;
 }
 
-#uiHangar ul li {  
+#uiHangar ul li {
   display: inline-block;
   width: 25%;
   height: 65%;
@@ -324,14 +324,14 @@ canvas {
   text-align: center;
   text-decoration: none;
   display: none;
-  z-index: 6; 
+  z-index: 6;
 }
 
 #loadingBar {
   position: absolute;
   width: 100%;
   height: 5%;
-  top: 45%;   
+  top: 45%;
   background-color: transparent;
   opacity: 1;
   display: none;
@@ -342,7 +342,7 @@ canvas {
   position: absolute;
   width: 60%;
   height: 80%;
-  left: 20%;   
+  left: 20%;
   border: #FFFFFF 2px;
   border-style: solid;
   border-radius: 25px;
@@ -408,7 +408,7 @@ canvas {
 	top: 40%;
 	margin-bottom: 2%;
 	border: #FFFFFF 1px;
-	border-style: solid; 
+	border-style: solid;
 	background-color: #264d92;
 	color: #FFFFFF;
   opacity: 0;
@@ -458,7 +458,7 @@ canvas {
     from {
       transform: translateY(0) rotate(0deg);
     }
-    to { 
+    to {
       transform: translateY(2560px) rotate(0.001deg);
     }
   }
@@ -467,7 +467,7 @@ canvas {
     from {
       -webkit-transform: translateY(0) rotate(0deg);
     }
-    to { 
+    to {
       -webkit-transform: translateY(2560px) rotate(0.001deg);
     }
   }*/
@@ -492,7 +492,7 @@ canvas {
 
 /*  .level1 {
     top: -2560px;
-    background: url('assets/images/level1_m.jpg') 0% 0% repeat;    
+    background: url('assets/images/level1_m.jpg') 0% 0% repeat;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;*/
 
@@ -503,10 +503,10 @@ canvas {
     animation-timing-function: linear;
     -webkit-animation-timing-function: linear;
     animation-iteration-count: infinite;
-    -webkit-animation-iteration-count: infinite;   */ 
+    -webkit-animation-iteration-count: infinite;   */
 
 /*  .level2 {
-    top: -2560px;    
+    top: -2560px;
     background: url('assets/images/level1_m.jpg') 0% 0% repeat;
 
     animation-name: MOVE-BG;
@@ -536,7 +536,7 @@ canvas {
 		width: 40%;
     font-size: 12px;
 	}
-	
+
 	/*Note: the menu-option-btn pos% should be half of the buttons width*/
 	.menu-option-btn[pos="left"] {
 		right: 20%;
@@ -558,7 +558,7 @@ canvas {
 
   #h3 {
     height: 10px;
-    font-size: 10px;  
+    font-size: 10px;
     color: #FFFFFF;
   }
 
@@ -571,10 +571,10 @@ canvas {
   }
 
   #uiEBarContainer {
-    background-image: url('assets/images/energyBar_m.png'); 
+    background-image: url('assets/images/energyBar_m.png');
   }
 
-  #uiEBarText { 
+  #uiEBarText {
     height: 94%;
     padding-top: 6%;
     font-size: 6px;
@@ -621,7 +621,7 @@ canvas {
 		width: 30%;
     font-size: 14px;
 	}
-	
+
 	/*Note: the menu-option-btn pos% should be half of the buttons width*/
 	.menu-option-btn[pos="left"] {
 		right: 15%;
@@ -643,7 +643,7 @@ canvas {
 
   #h3 {
     height: 18px;
-    font-size: 16px;  
+    font-size: 16px;
     color: #FFFFFF;
   }
 
@@ -656,7 +656,7 @@ canvas {
   }
 
   #uiEBarContainer {
-    background-image: url('assets/images/energyBar.png'); 
+    background-image: url('assets/images/energyBar.png');
   }
 
   #uiEBarText {

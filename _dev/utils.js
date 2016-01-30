@@ -45,7 +45,7 @@ var utils = {
 	},
 
 	rangeIntersect: function(min0, max0, min1, max1) {
-		return Math.max(min0, max0) >= Math.min(min1, max1) && 
+		return Math.max(min0, max0) >= Math.min(min1, max1) &&
 			   Math.min(min0, max0) <= Math.max(min1, max1);
 	},
 
@@ -81,24 +81,24 @@ var utils = {
 
 	quadraticBezier: function(p0, p1, p2, t, pFinal) {
 		pFinal = pFinal || {};
-		pFinal.x = Math.pow(1 - t, 2) * p0.x + 
-				   (1 - t) * 2 * t * p1.x + 
+		pFinal.x = Math.pow(1 - t, 2) * p0.x +
+				   (1 - t) * 2 * t * p1.x +
 				   t * t * p2.x;
-		pFinal.y = Math.pow(1 - t, 2) * p0.y + 
-				   (1 - t) * 2 * t * p1.y + 
+		pFinal.y = Math.pow(1 - t, 2) * p0.y +
+				   (1 - t) * 2 * t * p1.y +
 				   t * t * p2.y;
 		return pFinal;
 	},
 
 	cubicBezier: function(p0, p1, p2, p3, t, pFinal) {
 		pFinal = pFinal || {};
-		pFinal.x = Math.pow(1 - t, 3) * p0.x + 
-				   Math.pow(1 - t, 2) * 3 * t * p1.x + 
-				   (1 - t) * 3 * t * t * p2.x + 
+		pFinal.x = Math.pow(1 - t, 3) * p0.x +
+				   Math.pow(1 - t, 2) * 3 * t * p1.x +
+				   (1 - t) * 3 * t * t * p2.x +
 				   t * t * t * p3.x;
-		pFinal.y = Math.pow(1 - t, 3) * p0.y + 
-				   Math.pow(1 - t, 2) * 3 * t * p1.y + 
-				   (1 - t) * 3 * t * t * p2.y + 
+		pFinal.y = Math.pow(1 - t, 3) * p0.y +
+				   Math.pow(1 - t, 2) * 3 * t * p1.y +
+				   (1 - t) * 3 * t * t * p2.y +
 				   t * t * t * p3.y;
 		return pFinal;
 	},
@@ -119,5 +119,5 @@ var utils = {
 		p1 = points[points.length - 1];
 		context.quadraticCurveTo(p0.x, p0.y, p1.x, p1.y);
 	}
-	
+
 };

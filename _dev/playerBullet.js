@@ -1,5 +1,5 @@
 playerBullet = function(x, y, speed, direction, power, friction, image)
-{	
+{
 	// this.size = Math.round(bulletSize/pixelRatio);
 	this.sprite = new sprite(image, 3, 1, 4);
 	this.width = this.sprite.frameWidth;
@@ -21,7 +21,7 @@ playerBullet.prototype.ctx = game.context;
 
 playerBullet.prototype.reset = function(x, y, speed, power, friction)  //only variable arguments here
 {
-	//reseting variable properties only (lasers != missiles)	
+	//reseting variable properties only (lasers != missiles)
 	this.width = this.sprite.frameWidth;
 	this.height = this.sprite.frameHeight;
 	this.x = Math.round(x - this.width*0.5);
@@ -36,7 +36,7 @@ playerBullet.prototype.reset = function(x, y, speed, power, friction)  //only va
 };
 
 playerBullet.prototype.update = function(){ // Replacing the default 'update' method
-	if (!this.dead) 
+	if (!this.dead)
 	{
 		this.vx *= this.friction;
 		this.vy *= this.friction;
@@ -44,20 +44,20 @@ playerBullet.prototype.update = function(){ // Replacing the default 'update' me
 		this.y += this.vy;
 
 		this.draw(this.x, this.y);
-		
+
 		//projectiles collision
 		for (var e in game.enemies)
 		{
 			if (Collision(game.enemies[e], this))
 			{ //dead check avoids ghost scoring
-				game.enemies[e].hull -= this.power;							
+				game.enemies[e].hull -= this.power;
 				if(game.enemies[e].hull > 0)
 				{
 					getNewExplosion(game.enemies[e].x + game.enemies[e].width*0.5, game.enemies[e].y + game.enemies[e].height*0.5, 0, 1, 'xSmall', 'chasis');
 				}
 
 				this.dead = true;
-			}					
+			}
 		}
 
 		if (this.y < game.outerTop) //always goes up
@@ -79,7 +79,7 @@ playerBullet.prototype.draw = function(x, y) {
 			// this.ctx.translate(this.x, this.y);
 			// this.ctx.rotate(direction - Math.PI/2);
 			// ...
-			// this.ctx.restore();	
+			// this.ctx.restore();
 };
 
 // playerBullet.prototype = Object.create(particle.prototype); // Creating a playerBullet.prototype object that inherits from particle.prototype.
@@ -102,10 +102,10 @@ getNewBullet = function(x, y, speed, direction, power, friction, image)
 
 
 		//(image, columns, rows, animationSpeed)
-		b.sprite.reset(image, 3, 1, 4); 
+		b.sprite.reset(image, 3, 1, 4);
 
         b.reset(x, y, speed, power, friction, image);
- 		
+
 
     	game.bullets.push(b);
     }

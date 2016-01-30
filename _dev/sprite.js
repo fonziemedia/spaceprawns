@@ -1,5 +1,5 @@
 sprite = function(image, columns, rows, animationSpeed)
-{	
+{
 	this.image = game.offCtx[image];
 	this.width = this.image.width;
 	this.height = this.image.height;
@@ -8,8 +8,8 @@ sprite = function(image, columns, rows, animationSpeed)
 	this.frameHeight = this.height / rows;
 	this.startFrame = 0;
 	this.endFrame = this.totalFrames - 1;	//will be used to create the animationSequence array
-	this.frameSpeed = animationSpeed;	
-	this.ctx = game.context;	
+	this.frameSpeed = animationSpeed;
+	this.ctx = game.context;
 	this.animationSequence = [];	// array holding the order of the animation
 	this.fpr = Math.floor(this.image.width / this.frameWidth);
 
@@ -30,13 +30,13 @@ sprite.prototype.reset = function(image, columns, rows, animationSpeed)
 {
 	this.image = game.offCtx[image];
 	this.width = this.image.width;
-	this.height = this.image.height;	
+	this.height = this.image.height;
 	this.totalFrames = columns * rows;
 	this.frameWidth = this.width / columns;
 	this.frameHeight = this.height / rows;
 	this.startFrame = 0;
 	this.endFrame = this.totalFrames - 1;	//will be used to create the animationSequence array
-	this.frameSpeed = animationSpeed;		
+	this.frameSpeed = animationSpeed;
 	this.animationSequence = [];  // array holding the order of the animation
 	this.fpr = Math.floor(this.image.width / this.frameWidth);
 
@@ -50,7 +50,7 @@ sprite.prototype.reset = function(image, columns, rows, animationSpeed)
 	}
 };
 
-// sprite.prototype.update = function(){ // Replacing the default 'update' method		
+// sprite.prototype.update = function(){ // Replacing the default 'update' method
 // 	//setting this to make friction work with deltaTime (dt), check particle.js
 // 	if (dt !== 0 && !this.dtSet){
 // 		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
