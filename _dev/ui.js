@@ -1,26 +1,24 @@
-function ui() {
-
+function ui()
+{
 	var uiAll = $('#ui');
-
-	//avoiding jQuery inside the loop
 	var uiLevel = doc.getElementById("uiLevel");
 	var uiScore = doc.getElementById("uiScore");
 	var uiEBar = doc.getElementById("uiEBar");
 	var uiHangar = doc.getElementById("uiHangarList");
-
 	var effectDuration = 800;
 
-
-	this.updateLevel = function() {
+	this.updateLevel = function()
+	{
 		uiLevel.innerHTML = 'STAGE ' + game.level;
 	};
 
-	this.updateScore = function() {
+	this.updateScore = function()
+	{
 		uiScore.innerHTML = 'SCORE: ' + game.score;
 	};
 
-	this.updateEnergy = function() {
-
+	this.updateEnergy = function()
+	{
 		shipEnergy = (playerShip.hull / playerShip.maxHull) * 100;
 
 		if(shipEnergy < 0 ) {shipEnergy = 0;}
@@ -49,24 +47,25 @@ function ui() {
 		uiEBar.style.width = shipEnergyPC;
 	};
 
-	this.updateHangar = function() {
-		switch (playerShip.lives)
-			{
-				case 3:
-					uiHangar.getElementsByTagName("li")[0].style.display = 'inline-block';
-					uiHangar.getElementsByTagName("li")[1].style.display = 'inline-block';
-					uiHangar.getElementsByTagName("li")[2].style.display = 'inline-block';
-				break;
-				case 2:
-					uiHangar.getElementsByTagName("li")[0].style.display = 'none';
-				break;
-				case 1:
-					uiHangar.getElementsByTagName("li")[1].style.display = 'none';
-				break;
-				case 0:
-					uiHangar.getElementsByTagName("li")[2].style.display = 'none';
-				break;
-			}
+	this.updateHangar = function()
+	{
+		switch(playerShip.lives)
+		{
+			case 3:
+				uiHangar.getElementsByTagName("li")[0].style.display = 'inline-block';
+				uiHangar.getElementsByTagName("li")[1].style.display = 'inline-block';
+				uiHangar.getElementsByTagName("li")[2].style.display = 'inline-block';
+			break;
+			case 2:
+				uiHangar.getElementsByTagName("li")[0].style.display = 'none';
+			break;
+			case 1:
+				uiHangar.getElementsByTagName("li")[1].style.display = 'none';
+			break;
+			case 0:
+				uiHangar.getElementsByTagName("li")[2].style.display = 'none';
+			break;
+		}
 	};
 
 	this.fade = function(trigger)
@@ -76,7 +75,6 @@ function ui() {
 			case 'in':
 				uiAll.fadeIn(effectDuration);
 			break;
-
 			case 'out':
 				uiAll.fadeOut(effectDuration);
 			break;
@@ -89,7 +87,6 @@ function ui() {
 		this.updateEnergy();
 		this.updateHangar();
 	};
-
 }
 
 gameUI = new ui();

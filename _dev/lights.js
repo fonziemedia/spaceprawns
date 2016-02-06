@@ -1,8 +1,7 @@
-function lights() {
-
+function lights()
+{
 	this.fader = $('#fader');
 	var effectDuration = 2000;
-
 
 	this.switch = function(trigger)
 	{
@@ -22,8 +21,6 @@ function lights() {
 		}
 	};
 
-
-
 	this.fade = function(trigger)
 	{
 		switch (trigger)
@@ -31,7 +28,8 @@ function lights() {
 			//note that we're fadding the this.fader div here to give the illusion that our game is fading so the jquery effects below should be opposite to what we want to achieve
 			case 'in':
 				game.fadingIn = true;
-				this.fader.fadeOut(effectDuration, function(){
+				this.fader.fadeOut(effectDuration, function()
+				{
 					game.fadingIn = false;
 					game.faded = false;
 				});
@@ -39,7 +37,8 @@ function lights() {
 
 			case 'out':
 				game.fadingOut = true;
-				this.fader.fadeIn(effectDuration, function(){
+				this.fader.fadeIn(effectDuration, function()
+				{
 					game.fadingOut = false;
 					game.faded = true;
 				});

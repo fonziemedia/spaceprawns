@@ -14,14 +14,11 @@ background = function(section)
 	this.ctx = game.context;
 };
 
-
 background.prototype.update = function()
 {
-
 	this.y1 += this.speed;
 	this.y2 += this.speed;
 	this.y3 += this.speed;
-
 
 	if (this.y1 >= this.yDrawLimit && this.y1 < game.height)
 	{
@@ -49,7 +46,6 @@ background.prototype.update = function()
 	{
 		this.y3 = this.y2-this.height;
 	}
-
 };
 
 background.prototype.draw = function(image, x, y)

@@ -1,7 +1,7 @@
 @echo off
 CD C:\wamp
 start wampmanager.exe
-CD C:\Users\mickf\AppData\Local\atom\app-1.4.0\
+CD C:\Users\mickf\AppData\Local\atom\app-1.4.2\
 start atom.exe
 CD C:\wamp\www\spaceprawns
 start grunt

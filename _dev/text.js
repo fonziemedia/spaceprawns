@@ -1,17 +1,14 @@
-function text(header1, header2, inputRequired) {
-
+function text(header1, header2, inputRequired)
+{
 	var h1 = $('#h1'); //remove jquery here
 	var h2 = $('#h2');
 	var h3 = $('#h3');
-
 	var h1Text = header1;
 	var h2Text = header2;
 	var h3Text = game.isMobile ? 'Tap screen to continue' : 'Press ENTER or LMB to continue';
 	var allText = $('.all-text');
 	var textInput = inputRequired;
-
 	var effectDuration = 2000;
-
 
 	this.switch = function(trigger)
 	{
@@ -21,7 +18,6 @@ function text(header1, header2, inputRequired) {
 				allText.show();
 				game.textFaded = false;
 			break;
-
 			case 'off':
 				allText.stop(true, true);
 				allText.hide();
@@ -41,7 +37,6 @@ function text(header1, header2, inputRequired) {
 					game.textFaded = false;
 				});
 			break;
-
 			case 'out':
 				game.textFadingOut = true;
 				allText.fadeOut(effectDuration, function(){
@@ -63,7 +58,6 @@ function text(header1, header2, inputRequired) {
 	};
 
 	this.init();
-
 }
 
 gameText = new text(); //To be removed!

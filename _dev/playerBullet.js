@@ -10,12 +10,11 @@ playerBullet = function(x, y, speed, direction, power, friction, image)
 	this.direction = direction;
 	this.power = power;
 	this.friction = friction;
-	//setting this to make friction work with deltaTime (dt), check particle.js
+	//setting these to make friction work with deltaTime (dt), check particle.js
 	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 };
 
-//invariables (note: any other object properties that require these need to be declared in the prototype function)
 playerBullet.prototype.dead = false;
 playerBullet.prototype.ctx = game.context;
 
@@ -30,12 +29,13 @@ playerBullet.prototype.reset = function(x, y, speed, power, friction)  //only va
 	this.power = power;
 	this.friction = friction;
 	this.dead = false;
-
 	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 };
 
-playerBullet.prototype.update = function(){ // Replacing the default 'update' method
+playerBullet.prototype.update = function()
+{
+	// Replacing the default 'update' method
 	if (!this.dead)
 	{
 		this.vx *= this.friction;
@@ -55,7 +55,6 @@ playerBullet.prototype.update = function(){ // Replacing the default 'update' me
 				{
 					getNewExplosion(game.enemies[e].x + game.enemies[e].width*0.5, game.enemies[e].y + game.enemies[e].height*0.5, 0, 1, 'xSmall', 'chasis');
 				}
-
 				this.dead = true;
 			}
 		}
@@ -71,62 +70,39 @@ playerBullet.prototype.update = function(){ // Replacing the default 'update' me
 	}
 };
 
-playerBullet.prototype.draw = function(x, y) {
-	this.sprite.draw(x, y); //-this.size/2 because we're rotating ctx
-
-		// for homing missiles
-			// this.ctx.save();
-			// this.ctx.translate(this.x, this.y);
-			// this.ctx.rotate(direction - Math.PI/2);
-			// ...
-			// this.ctx.restore();
+playerBullet.prototype.draw = function(x, y)
+{
+	this.sprite.draw(x, y);
 };
-
-// playerBullet.prototype = Object.create(particle.prototype); // Creating a playerBullet.prototype object that inherits from particle.prototype.
-// playerBullet.prototype.constructor = playerBullet; // Set the "constructor" property to refer to playerBullet
 
 ////////////
 // Factory
 ////////////
-
 getNewBullet = function(x, y, speed, direction, power, friction, image)
 {
-    var b = null;
-
-    // check to see if there is a spare one
-    if (game.playerBulletsPool.length > 0)
-    {
-    	//recycle
-
-        b = game.playerBulletsPool.pop();
-
-
+	var b = null;
+	//check to see if there is a spare one
+	if (game.playerBulletsPool.length > 0)
+	{
+		//recycle
+		b = game.playerBulletsPool.pop();
 		//(image, columns, rows, animationSpeed)
 		b.sprite.reset(image, 3, 1, 4);
-
-        b.reset(x, y, speed, power, friction, image);
-
-
-    	game.bullets.push(b);
-    }
-    else
-    {
-    	// none available, construct a new one
-    	b = new playerBullet(x, y, speed, direction, power, friction, image);
-
-    	game.bullets.push(b);
-    }
-
-    // console.log('pool: ' + game.playerBulletsPool.length);
-    // console.log('active: ' + game.bullets.length);
-
+    b.reset(x, y, speed, power, friction, image);
+		game.bullets.push(b);
+	}
+	else
+	{
+		// none available, construct a new one
+		b = new playerBullet(x, y, speed, direction, power, friction, image);
+		game.bullets.push(b);
+	}
 };
 
 freeBullet = function(b)
 {
-    // find the active bullet and remove it
-    game.bullets.splice(game.bullets.indexOf(b),1);
-
-    // return the bullet back into the pool
+	//find the active bullet and remove it
+	game.bullets.splice(game.bullets.indexOf(b),1);
+	//return the bullet back into the pool
 	game.playerBulletsPool.push(b);
 };

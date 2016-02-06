@@ -1,6 +1,5 @@
 function menu()
 {
-
 	var menuBg = $('#menuBackground');
 	var resumeBtn = $('#resumeGame');
 	var startBtn = $('#startGame');
@@ -22,16 +21,16 @@ function menu()
 	{
 		game.fullScreen = game.fullScreen ? false : true;
 
-	    if (game.fullScreen)
-	    {
+    if (game.fullScreen)
+    {
 			fullScreen.addClass('active');
 			fullScreen.text('Fullscreen: ON');
-	    }
-	    else
-	    {
+    }
+    else
+    {
 			fullScreen.removeClass('active');
 			fullScreen.text('Fullscreen: OFF');
-	    }
+    }
 	}
 
 	this.toggleFullScreen = function(trigger)  //experimental   only works with user input
@@ -43,19 +42,19 @@ function menu()
 		{
 			if (doc.documentElement.requestFullscreen)
 			{
-			doc.documentElement.requestFullscreen();
+				doc.documentElement.requestFullscreen();
 			}
 			else if (doc.documentElement.msRequestFullscreen)
 			{
-			doc.documentElement.msRequestFullscreen();
+				doc.documentElement.msRequestFullscreen();
 			}
 			else if (doc.documentElement.mozRequestFullScreen)
 			{
-			doc.documentElement.mozRequestFullScreen();
+				doc.documentElement.mozRequestFullScreen();
 			}
 			else if (doc.documentElement.webkitRequestFullscreen)
 			{
-			doc.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+				doc.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
 			}
 		}
 		else
@@ -79,15 +78,11 @@ function menu()
 		}
 	};
 
-
 	this.toggleSound = function()
 	{
 		if (game.canVibrate) navigator.vibrate(15);
-
 		game.sound = game.sound ? false : true ;
-
 		localStorage.prawnsSound =  game.sound;
-
 
 		if (game.sound)
 		{
@@ -99,15 +94,12 @@ function menu()
 		soundFx.removeClass('active');
 		soundFx.text('Sound: OFF');
 		}
-
 	};
 
 	this.toggleMusic = function()
 	{
 		if (game.canVibrate) navigator.vibrate(15);
-
 		game.music = game.music ? false : true ;
-
 		localStorage.prawnsMusic =  game.music;
 
 		if (game.started && game.tracks.length > 0)
@@ -139,16 +131,13 @@ function menu()
 			music.removeClass('active');
 			music.text('Music: OFF');
 		}
-
 	};
 
 
 	this.toggle = function()
 	{
 		document.getElementById("toggle-menu-btn").disabled = true;
-
 		this.toggled = this.toggled ? false : true;
-
 
 		// IMPROVE THIS WITH LEFT RIGHT BTN CLASSES
 		if (this.toggled)
@@ -239,7 +228,6 @@ function menu()
 				"left": "+=50%",
 			},800);
 
-
 			allButtons.promise().done(function()
 			{
 				allButtons.hide();
@@ -251,7 +239,6 @@ function menu()
 				});
 			});
 		}
-
 	};
 
 	this.init = function()
@@ -290,9 +277,7 @@ function menu()
 		}
 
 		gameMenu.toggle();
-
 	};
-
 }
 
 gameMenu = new menu();

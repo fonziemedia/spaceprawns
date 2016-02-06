@@ -2,168 +2,204 @@ var vector = {
 	_x: 1,
 	_y: 0,
 
-	create: function(x, y) {
+	create: function(x, y)
+	{
 		var obj = Object.create(this);
 		obj.setX(x);
 		obj.setY(y);
 		return obj;
 	},
 
-	setX: function(value) {
+	setX: function(value)
+	{
 		this._x = value;
 	},
 
-	getX: function() {
+	getX: function()
+	{
 		return this._x;
 	},
 
-	setY: function(value) {
+	setY: function(value)
+	{
 		this._y = value;
 	},
 
-	getY: function() {
+	getY: function()
+	{
 		return this._y;
 	},
 
-	setAngle: function(angle) {
+	setAngle: function(angle)
+	{
 		var length = this.getLength();
 		this._x = Math.cos(angle) * length;
 		this._y = Math.sin(angle) * length;
 	},
 
-	getAngle: function() {
+	getAngle: function()
+	{
 		return Math.atan2(this._y, this._x);
 	},
 
-	setLength: function(length) {
+	setLength: function(length)
+	{
 		var angle = this.getAngle();
 		this._x = Math.cos(angle) * length;
 		this._y = Math.sin(angle) * length;
 	},
 
-	getLength: function() {
+	getLength: function()
+	{
 		return Math.sqrt(this._x * this._x + this._y * this._y);
 	},
 
-	add: function(v2) {
+	add: function(v2)
+	{
 		return vector.create(this._x + v2.getX(), this._y + v2.getY());
 	},
 
-	subtract: function(v2) {
+	subtract: function(v2)
+	{
 		return vector.create(this._x - v2.getX(), this._y - v2.getY());
 	},
 
-	multiply: function(val) {
+	multiply: function(val)
+	{
 		return vector.create(this._x * val, this._y * val);
 	},
 
-	divide: function(val) {
+	divide: function(val)
+	{
 		return vector.create(this._x / val, this._y / val);
 	},
 
-	addTo: function(v2) {
+	addTo: function(v2)
+	{
 		this._x += v2.getX();
 		this._y += v2.getY();
 	},
 
-	subtractFrom: function(v2) {
+	subtractFrom: function(v2)
+	{
 		this._x -= v2.getX();
 		this._y -= v2.getY();
 	},
 
-	multiplyBy: function(val) {
+	multiplyBy: function(val)
+	{
 		this._x *= val;
 		this._y *= val;
 	},
 
-	divideBy: function(val) {
+	divideBy: function(val)
+	{
 		this._x /= val;
 		this._y /= val;
 	}
 };
 
 var utils = {
-	norm: function(value, min, max) {
+	norm: function(value, min, max)
+	{
 		return (value - min) / (max - min);
 	},
 
-	lerp: function(norm, min, max) {
+	lerp: function(norm, min, max)
+	{
 		return (max - min) * norm + min;
 	},
 
-	map: function(value, sourceMin, sourceMax, destMin, destMax) {
+	map: function(value, sourceMin, sourceMax, destMin, destMax)
+	{
 		return utils.lerp(utils.norm(value, sourceMin, sourceMax), destMin, destMax);
 	},
 
-	clamp: function(value, min, max) {
+	clamp: function(value, min, max)
+	{
 		return Math.min(Math.max(value, Math.min(min, max)), Math.max(min, max));
 	},
 
-	distance: function(p0, p1) {
+	distance: function(p0, p1)
+	{
 		var dx = p1.x - p0.x,
-			dy = p1.y - p0.y;
+		dy = p1.y - p0.y;
 		return Math.sqrt(dx * dx + dy * dy);
 	},
 
-	distanceXY: function(x0, y0, x1, y1) {
+	distanceXY: function(x0, y0, x1, y1)
+	{
 		var dx = x1 - x0,
-			dy = y1 - y0;
+		dy = y1 - y0;
 		return Math.sqrt(dx * dx + dy * dy);
 	},
 
-	circleCollision: function(c0, c1) {
+	circleCollision: function(c0, c1)
+	{
 		return utils.distance(c0, c1) <= c0.radius + c1.radius;
 	},
 
-	circlePointCollision: function(x, y, circle) {
+	circlePointCollision: function(x, y, circle)
+	{
 		return utils.distanceXY(x, y, circle.x, circle.y) < circle.radius;
 	},
 
-	pointInRect: function(x, y, rect) {
+	pointInRect: function(x, y, rect)
+	{
 		return utils.inRange(x, rect.x, rect.x + rect.width) &&
 		       utils.inRange(y, rect.y, rect.y + rect.height);
 	},
 
-	inRange: function(value, min, max) {
+	inRange: function(value, min, max)
+	{
 		return value >= Math.min(min, max) && value <= Math.max(min, max);
 	},
 
-	rangeIntersect: function(min0, max0, min1, max1) {
+	rangeIntersect: function(min0, max0, min1, max1)
+	{
 		return Math.max(min0, max0) >= Math.min(min1, max1) &&
 			   Math.min(min0, max0) <= Math.max(min1, max1);
 	},
 
-	rectIntersect: function(r0, r1) {
+	rectIntersect: function(r0, r1)
+	{
 		return utils.rangeIntersect(r0.x, r0.x + r0.width, r1.x, r1.x + r1.width) &&
 			   utils.rangeIntersect(r0.y, r0.y + r0.height, r1.y, r1.y + r1.height);
 	},
 
-	degreesToRads: function(degrees) {
+	degreesToRads: function(degrees)
+	{
 		return degrees / 180 * Math.PI;
 	},
 
-	radsToDegrees: function(radians) {
+	radsToDegrees: function(radians)
+	{
 		return radians * 180 / Math.PI;
 	},
 
-	randomRange: function(min, max) {
+	randomRange: function(min, max)
+	{
 		return min + Math.random() * (max - min);
 	},
 
-	randomInt: function(min, max) {
+	randomInt: function(min, max)
+	{
 		return Math.floor(min + Math.random() * (max - min + 1));
 	},
 
-	roundToPlaces: function(value, places) {
+	roundToPlaces: function(value, places)
+	{
 		var mult = Math.pow(10, places);
 		return Math.round(value * mult) / mult;
 	},
 
-	roundNearest: function(value, nearest) {
+	roundNearest: function(value, nearest)
+	{
 		return Math.round(value / nearest) * nearest;
 	},
 
-	quadraticBezier: function(p0, p1, p2, t, pFinal) {
+	quadraticBezier: function(p0, p1, p2, t, pFinal)
+	{
 		pFinal = pFinal || {};
 		pFinal.x = Math.pow(1 - t, 2) * p0.x +
 				   (1 - t) * 2 * t * p1.x +
@@ -174,7 +210,8 @@ var utils = {
 		return pFinal;
 	},
 
-	cubicBezier: function(p0, p1, p2, p3, t, pFinal) {
+	cubicBezier: function(p0, p1, p2, p3, t, pFinal)
+	{
 		pFinal = pFinal || {};
 		pFinal.x = Math.pow(1 - t, 3) * p0.x +
 				   Math.pow(1 - t, 2) * 3 * t * p1.x +
@@ -187,12 +224,14 @@ var utils = {
 		return pFinal;
 	},
 
-	multicurve: function(points, context) {
+	multicurve: function(points, context)
+	{
 		var p0, p1, midx, midy;
 
 		context.moveTo(points[0].x, points[0].y);
 
-		for(var i = 1; i < points.length - 2; i += 1) {
+		for(var i = 1; i < points.length - 2; i += 1)
+		{
 			p0 = points[i];
 			p1 = points[i + 1];
 			midx = (p0.x + p1.x) / 2;
@@ -203,10 +242,10 @@ var utils = {
 		p1 = points[points.length - 1];
 		context.quadraticCurveTo(p0.x, p0.y, p1.x, p1.y);
 	}
-
 };
 
-var particle = function(x, y, speed, direction, grav) {
+var particle = function(x, y, speed, direction, grav)
+{
 	this.x = x;
 	this.y = y;
 	this.speed = speed;
@@ -222,8 +261,10 @@ var particle = function(x, y, speed, direction, grav) {
 	this.gravitations = [];
 };
 
-particle.prototype.update = function() {
-	if (dt === 0){ //setting speed according to delta time if not yet set (might not be a perfect solution to the problem of friction and gravity - with this if statement we avoid reseting vx and vy all the time)
+particle.prototype.update = function()
+{
+	if (dt === 0)
+	{ //setting speed according to delta time if not yet set (might not be a perfect solution to the problem of friction and gravity - with this if statement we avoid reseting vx and vy all the time)
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
 		this.vy = Math.sin(this.direction) * (this.speed*dt);
 	}
@@ -236,522 +277,499 @@ particle.prototype.update = function() {
 	this.y += this.vy;
 };
 
-particle.prototype.angleTo = function(p2) {
+particle.prototype.angleTo = function(p2)
+{
 	return Math.atan2(p2.y - this.y, p2.x - this.x);
 };
-	// this.addGravitation = function(p) {
-	// 	this.removeGravitation(p);
-	// 	this.gravitations.push(p);
-	// };
-
-	// this.removeGravitation = function(p) {
-	// 	for(var i = 0; i < this.gravitations.length; i += 1) {
-	// 		if(p === this.gravitations[i]) {
-	// 			this.gravitations.splice(i, 1);
-	// 			return;
-	// 		}
-	// 	}
-	// };
-
-	// this.addSpring = function(point, k, length) {
-	// 	this.removeSpring(point);
-	// 	this.springs.push({
-	// 		point: point,
-	// 		k: k,
-	// 		length: length || 0
-	// 	});
-	// };
-
-	// this.removeSpring = function(point) {
-	// 	for(var i = 0; i < this.springs.length; i += 1) {
-	// 		if(point === this.springs[i].point) {
-	// 			this.springs.splice(i, 1);
-	// 			return;
-	// 		}
-	// 	}
-	// };
-
-	// this.getSpeed = function() {
-	// 	return Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-	// };
-
-	// this.setSpeed = function(speed) {
-	// 	var heading = this.getHeading();
-	// 	this.vx = Math.cos(heading) * speed;
-	// 	this.vy = Math.sin(heading) * speed;
-	// };
-
-	// this.getHeading = function() {
-	// 	return Math.atan2(this.vy, this.vx);
-	// };
-
-	// this.setHeading = function(heading) {
-	// 	var speed = this.getSpeed();
-	// 	this.vx = Math.cos(heading) * speed;
-	// 	this.vy = Math.sin(heading) * speed;
-	// };
-
-	// this.accelerate = function(ax, ay) {
-	// 	this.vx += ax;
-	// 	this.vy += ay;
-	// };
-
-	// this.handleGravitations = function() {
-	// 	for(var i = 0; i < this.gravitations.length; i += 1) {
-	// 		this.gravitateTo(this.gravitations[i]);
-	// 	}
-	// };
-
-	// this.handleSprings = function() {
-	// 	for(var i = 0; i < this.springs.length; i += 1) {
-	// 		var spring = this.springs[i];
-	// 		this.springTo(spring.point, spring.k, spring.length);
-	// 	}
-	// };
-
-	// this.distanceTo = function(p2) {
-	// 	var dx = p2.x - this.x,
-	// 		dy = p2.y - this.y;
-
-	// 	return Math.sqrt(dx * dx + dy * dy);
-	// };
-
-	// this.gravitateTo = function(p2) {
-	// 	var dx = p2.x - this.x,
-	// 		dy = p2.y - this.y,
-	// 		distSQ = dx * dx + dy * dy,
-	// 		dist = Math.sqrt(distSQ),
-	// 		force = p2.mass / distSQ,
-	// 		ax = dx / dist * force,
-	// 		ay = dy / dist * force;
-
-	// 	this.vx += ax;
-	// 	this.vy += ay;
-	// };
-
-	// this.springTo = function(point, k, length) {
-	// 	var dx = point.x - this.x,
-	// 		dy = point.y - this.y,
-	// 		distance = Math.sqrt(dx * dx + dy * dy),
-	// 		springForce = (distance - length || 0) * k;
-	// 	this.vx += dx / distance * springForce;
-	// 	this.vy += dy / distance * springForce;
-	// };
-
-// (function(game){ // jshint ignore:line
-	// $(document).ready(function(){ // jshint ignore:line
-// function startGame(){	// jshint ignore:line
-
-		function log(label, variable)
-		{
-			var txt = label;
-			console.log(txt + ': ' + variable);
-		}
-
-		//iOS viewport fix
-		if(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream)
-		{
-		  document.querySelector('meta[name=viewport]')
-		    .setAttribute(
-		      'content',
-		      'initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no'
-		    );
-		}
-
-		// /* Connect to XML */
-		$.ajax({
-		type: "GET",
-		url: "game.xml",
-		contentType: 'text/xml',
-		dataType: "text",
-		async: false,
-		success: function(xmldata) {
-			$(xmldata).find('data').each(function(){
-				// SETTINGS
-				X_Sound = parseInt($(this).find('sound').text());
-				X_Music = parseInt($(this).find('music').text());
-				X_Level = parseInt($(this).find('level').text());
-				X_Lives = parseInt($(this).find('player-lives').text());
-				X_PlayerSpeed = parseInt($(this).find('player-speed').text());
-				X_EnemySpeed = parseInt($(this).find('enemy-speed').text());
-				X_GunSpeed = parseInt($(this).find('reload-time').text());
-				X_EnGunSpeed = parseInt($(this).find('enreload-time').text());
-				X_BulletSpeed = parseInt($(this).find('bullet-speed').text());
-				X_EnBulletSpeed = parseInt($(this).find('enbullet-speed').text());
-				// INTRO TEXT
-				X_Title = $(this).find('title').text();
-				X_Subtitle = $(this).find('subtitle').text();
-				X_dt_Start = $(this).find('dt-start').text();
-				X_mb_Start = $(this).find('mb-start').text();
-			});
-		},
-		error: function() {
-			alert("The XML File could not be processed correctly.");
-		}
-		});
-
-
-		/*GLOBAL VARS*/
-
-		var doc = document,
-		win = window,
-		game = {}; //this is a global var which will contain other game vars
-
-		game.isMobile = false;
-		// device detection
-		if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0,4))) game.isMobile = true;	//checking if game is running on mobile
-
-
-		// !! add condition here for no sound support. Create a trigger to be considered when loading audio
-
-
-		// game.stars = []; //this is an array which will contain our stars info: position in space and size
-		game.background = [];
-		game.score = 0; //the game score
-		game.levelScore = 0; //the score for each level
-		game.level = X_Level; //starting at level X...
-		game.bossDead = false;
-		game.levelComplete = false;
-		game.levelUpTimer = 0;
-		game.lives = X_Lives; //with X ships (lives)
-		game.keys = []; //the keyboard array
-
-		game.bullets = []; //Our proton torpedoes!
-			game.playerBulletsPool = []; //Our proton torpedoes!
-			game.enemyBulletsPool = []; //Enemy missiles!
-			game.lootPool = [];
-
-		game.enemies = []; //The InVaDeRs
-			game.enemiesPool = []; //The InVaDeRs
-
-		game.waves = [];	//Doesn't have a draw method!
-			game.wavesPool = [];
-
-		game.explosions = [];
-			game.explosionsPool = [];
-
-
-		game.requiredWaves = 5;
-		game.requiredEnemies = 12;
-		game.requiredPlayerBullets = 70;
-		game.requiredEnemyBullets = 15;
-		game.requiredLoot = 5;
-		game.requiredExplosions = 20;
-
-		game.requiredObjects = game.requiredWaves + game.requiredEnemies + game.requiredPlayerBullets + game.requiredEnemyBullets + game.requiredLoot + game.requiredExplosions;
-		game.doneObjects = 0;
-
-		var dt = 0.017, // defining dt globally
-		dtTimer = 0,
-		dtArray = [],
-		timeThen = new Date().getTime();
-		dtTimerSet = false;
-
-		//====================== Game state ========================
-
-		game.loaded = false;
-		game.started = false;
-		game.paused = false;
-		game.gameOver = false;
-		game.timer = 0;
-
-		game.fadingIn = false;
-		game.fadingOut = false;
-		game.faded = true;
-
-		game.textFadingIn = false;
-		game.textFadingOut = false;
-		game.textFaded = true;
-
-		//========================== Display ==========================
-
-		game.windowWidth = doc.documentElement.clientWidth;
-		game.windowHeight = doc.documentElement.clientHeight;
-
-		game.fullScreen = false;
-
-		//========================== Input ==========================
-		var inputArea = doc.getElementById("inputarea");
-		var inputAreaX, inputAreaY;
-		var mouseIsDown = 0;
-		var touchInitX = 0;
-		var touchInitY = 0;
-
-		game.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;
-		if (game.canVibrate && !("vibrate" in navigator)) navigator.vibrate = navigator.mozVibrate;
-
-		//========================== Audio ==========================
-
-		//Audio Support
-		var audioElementSupported = (function(d) {
-
-	    	var a = d.createElement("audio"),
-	        o = {},
-	        s = "audio\/";
-
-		    if (typeof a.canPlayType === "function") {
-		        o.supported = Boolean(true);
-		        o.mp3 = a.canPlayType(s + "mpeg");
-		        o.wav = a.canPlayType(s + 'wav; codecs="1"');
-		        o.ogg = a.canPlayType(s + 'ogg; codecs="vorbis"');
-		        o.m4a = a.canPlayType(s + "x-m4a") || a.canPlayType(s + "aac");
-		        o.webm = a.canPlayType(s + 'webm; codecs="vorbis"');
-		    } else {
-		        o.supported = Boolean(0);
-		    }
-		    return o;
-
-		})(this.document);
-
-
-		if (audioElementSupported.m4a !== "")  //note: audioElementSupported.x is likely to return 'probably' or 'maybe' so you might want to do a thorough check
-		{
-			fileFormat = ".m4a";
-		}
-		else if (audioElementSupported.ogg !== "")
-		{
-			fileFormat = ".ogg";
-		}
-		else
-		{
-			fileFormat = ".mp3";
-		}
-
-
-
-		// Obtaining Audio ON/OFF status from local storage
-
-		if ("localStorage" in win && win.localStorage !== null) //checking browser support for local storage
-		{
-			//NOTE: localStorage won't accept boolean values! so we need to 'convert' these
-			if (localStorage.prawnsSound === "true")
-			{
-				game.sound = true;
-			}
-			else
-			{
-				game.sound = false;
-			}
-
-			if (localStorage.prawnsMusic === "true")
-			{
-				game.music = true;
-			}
-			else
-			{
-				game.music = false;
-			}
-		}
-		else
-		{
-			game.sound = false;
-			game.music = false;
-		}
-
-		//SFX vars
-		game.sfxPaths = [	//using initSfx function to load our sounds
-			"_sounds/_sfx/laser" + fileFormat,
-			"_sounds/_sfx/laser" + fileFormat,
-			"_sounds/_sfx/laser" + fileFormat,
-			"_sounds/_sfx/hit" + fileFormat,
-			"_sounds/_sfx/hit" + fileFormat,
-			"_sounds/_sfx/hit" + fileFormat,
-			"_sounds/_sfx/loot_powerUp" + fileFormat,
-			"_sounds/_sfx/loot_powerUp" + fileFormat,
-			"_sounds/_sfx/loot_powerUp" + fileFormat,
-			"_sounds/_sfx/explosion" + fileFormat,
-			"_sounds/_sfx/explosion" + fileFormat,
-			"_sounds/_sfx/explosion" + fileFormat,
-			"_sounds/_sfx/blast" + fileFormat
-		];
-		game.sfx = [];
-		game.doneSfx  = 0;
-		game.requiredSfx = 0;
-
-		//Sound Tracks vars
-		game.soundTrackPaths = [	//using initSfx function to load our sound tracks
-			"_sounds/_soundTracks/_lvl1/tune1" + fileFormat,
-			"_sounds/_soundTracks/_lvl1/tune2" + fileFormat,
-			"_sounds/_soundTracks/_lvl1/victory" + fileFormat,
-			"_sounds/_soundTracks/_lvl1/boss" + fileFormat
-		];
-		game.soundTracks = [];
-		game.doneSoundTracks = 0;
-		game.requiredSoundTracks = 0;
-
-		//Our main SOUND players arrays
-		game.sounds = [];
-		game.tracks = [];
-
-		//======================== Images ========================
-
-		if (!game.isMobile || win.innerHeight >= 900)
-		{
-			game.imagePaths = [
-				//backgrounds
-				"_img/bg_level1_a.dkt.jpg",
-				"_img/bg_level1_b.dkt.jpg",
-				"_img/bg_level1_c.dkt.jpg",
-
-				//UI
-				//see CSS assets
-
-				//Player
-				"_img/player_ship.dkt.png",
-				"_img/player_ship_i.dkt.png",
-				"_img/player_shields.dkt.png",
-
-				//Enemies
-				////Pawns
-				"_img/enemy_sectoid.dkt.png",
-				////Minibosses
-				"_img/enemy_floater.dkt.png",
-				////Enemy Bases
-				"_img/enemy_base_sectoid.dkt.png",
-				"_img/enemy_base_floater.dkt.png",
-				////Big bosses
-				"_img/boss_sectoid.dkt.png",
-
-				//Projectiles
-				"_img/bullet_p_laser.dkt.png",
-				"_img/bullet_p_missile.dkt.png",
-				"_img/bullet_e_missile.dkt.png",
-				"_img/explosion_s0.dkt.png",
-				"_img/explosion_s1.dkt.png",
-				"_img/explosion_s2.dkt.png",
-				"_img/explosion_s3.dkt.png",
-				"_img/explosion_s4.dkt.png",
-
-				//Loot
-				"_img/loot_lasers.dkt.png",
-				"_img/loot_missiles.dkt.png",
-				"_img/loot_shields.dkt.png"
-			];
-		}
-		else
-		{
-			game.imagePaths = [
-				//backgrounds
-				"_img/bg_level1_a.mob.jpg",
-				"_img/bg_level1_b.mob.jpg",
-				"_img/bg_level1_c.mob.jpg",
-
-				//UI
-				//see CSS assets
-
-				//Player
-				"_img/player_ship.mob.png",
-				"_img/player_ship_i.mob.png",
-				"_img/player_shields.mob.png",
-
-				//Enemies
-				////Pawns
-				"_img/enemy_sectoid.mob.png",
-				////Minibosses
-				"_img/enemy_floater.mob.png",
-				////Enemy Bases
-				"_img/enemy_base_sectoid.mob.png",
-				"_img/enemy_base_floater.mob.png",
-				////Big bosses
-				"_img/boss_sectoid.mob.png",
-
-				//Projectiles
-				"_img/bullet_p_laser.mob.png",
-				"_img/bullet_p_missile.mob.png",
-				"_img/bullet_e_missile.mob.png",
-				"_img/explosion_s0.mob.png",
-				"_img/explosion_s1.mob.png",
-				"_img/explosion_s2.mob.png",
-				"_img/explosion_s3.mob.png",
-				"_img/explosion_s4.mob.png",
-
-				//Loot
-				"_img/loot_lasers.mob.png",
-				"_img/loot_missiles.mob.png",
-				"_img/loot_shields.mob.png"
-			];
-		}
-
-		game.images = [];
-		game.doneImages  = 0; // will contain how many images have been loaded
-		game.requiredImages = 0; // will contain how many images should be loaded
-		game.offCtx = []; // will contain how many images should be loaded
-
-		game.font = game.isMobile ? "Helvetica" : "Monaco";
-		// game.res = 4*5; //check the 4th index every 5 frames
-
-		//====================== Canvases + Responsiveness  ============================
-
-		// game.contextBackground = doc.getElementById("backgroundCanvas").getContext("2d"); //defining the 4 different canvas
-		game.canvas = doc.getElementById("gameCanvas");
-		game.context = game.canvas.getContext("2d");
-		// m_canvas = doc.createElement('canvas');
-
-
-		var pixelRatio = win.devicePixelRatio > 1.5 ? 2 : 1; // This is our game size delta to keep the size of our game + objects proportional to the display
-		pixelRatio = game.isMobile && pixelRatio < 1.5 ? 2 : pixelRatio; //adjustment for mobile devices with low pixel ratio
-		pixelRatio = game.isMobile && win.innerHeight >= 900 ? 1 : pixelRatio; //adjusment for tablets
-
-		function setGameDimensions()
-		{
-			//SETTING CANVASES ATTRIBUTES
-			//Note: the canvas dimensions need to be set here using attributes due to the nature of the canvas element: it works like an image and using css to set this will stretch it
-
-			//get the gameArea and the canvases
-			var gameArea = $('#gamearea');
-			var allCanvas = $('canvas');
-
-			if (!game.isMobile)
-			{
-				game.windowWidth = parseInt(gameArea.css("width"))*pixelRatio;  //using parseInt here to remove 'px'
-			}
-
-			allCanvas.attr('width', game.windowWidth*pixelRatio);
-			allCanvas.attr('height', game.windowHeight*pixelRatio);
-
-			game.context.scale(pixelRatio,pixelRatio);
-
-			//SETTING GAME DIMENSIONS
-			game.width = Math.round(game.windowWidth);
-			game.height = Math.round(game.windowHeight);
-			log('with: ', game.width);
-			log('height: ', game.height);
-
-			//outer borders
-			game.outerLeft = -Math.round(game.width*0.1);
-			game.outerRight = Math.round(game.width + game.width*0.1);
-			game.outerTop = -Math.round(game.height*0.1);
-			game.outerBottom = Math.round(game.height + game.height*0.1);
-
-
-			if (playerShip && typeof playerShip != 'undefined')
-			{
-				//set playerShip's dimensions/boundaries
-				playerShip.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
-				playerShip.limitX2 = Math.round(game.width - (playerShip.width*0.5));
-				playerShip.limitY2 = Math.round(game.height - (playerShip.height*0.5));
-				playerShip.movement = Math.round(game.height*0.007);
-			}
-
-			//set game bosses' boundaries  !Need to give this enemy a name in the array
-			// this.yStop = Math.round(game.height*0.1);
-			// this.xBondary = Math.round(game.width - this.size/4);
-
-			if(!game.started && playerShip && typeof playerShip != 'undefined')
-			{
-				playerShip.x = Math.round(game.width*0.46);
-				playerShip.y = Math.round(game.height*0.90);
-			}
-
-		}
-
-		setGameDimensions();
-
-		//delta size will keep the size of our game objects proportional to the display - NOT REQUIRED, see pixelRatio above
-		// var dtSize = game.height*0.001;
-		// console.log (dtSize);
-
-	// jshint ignore:line
+
+// particle.prototype.addGravitation = function(p)
+//{
+// 	this.removeGravitation(p);
+// 	this.gravitations.push(p);
+//};
+
+// particle.prototype.removeGravitation = function(p)
+//{
+// 	for(var i = 0; i < this.gravitations.length; i += 1)
+//	{
+// 		if(p === this.gravitations[i])
+//		{
+// 			this.gravitations.splice(i, 1);
+// 			return;
+// 		}
+// 	}
+//};
+
+// particle.prototype.addSpring = function(point, k, length)
+//{
+// 	this.removeSpring(point);
+// 	this.springs.push({
+// 		point: point,
+// 		k: k,
+// 		length: length || 0
+// 	});
+//};
+
+// particle.prototype.removeSpring = function(point)
+//{
+// 	for(var i = 0; i < this.springs.length; i += 1)
+//	{
+// 		if(point === this.springs[i].point)
+//		{
+// 			this.springs.splice(i, 1);
+// 			return;
+// 		}
+// 	}
+//};
+
+// particle.prototype.getSpeed = function()
+//{
+// 	return Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+//};
+
+// particle.prototype.setSpeed = function(speed)
+//{
+// 	var heading = this.getHeading();
+// 	this.vx = Math.cos(heading) * speed;
+// 	this.vy = Math.sin(heading) * speed;
+//};
+
+// particle.prototype.getHeading = function()
+//{
+// 	return Math.atan2(this.vy, this.vx);
+//};
+
+// particle.prototype.setHeading = function(heading)
+//{
+// 	var speed = this.getSpeed();
+// 	this.vx = Math.cos(heading) * speed;
+// 	this.vy = Math.sin(heading) * speed;
+//};
+
+// particle.prototype.accelerate = function(ax, ay)
+//{
+// 	this.vx += ax;
+// 	this.vy += ay;
+//};
+
+// particle.prototype.handleGravitations = function()
+//{
+// 	for(var i = 0; i < this.gravitations.length; i += 1)
+//	{
+// 		this.gravitateTo(this.gravitations[i]);
+// 	}
+//};
+
+// particle.prototype.handleSprings = function()
+//{
+// 	for(var i = 0; i < this.springs.length; i += 1)
+//  {
+// 	var spring = this.springs[i];
+// 	this.springTo(spring.point, spring.k, spring.length);
+// 	}
+//};
+
+// particle.prototype.distanceTo = function(p2)
+//{
+// 	var dx = p2.x - this.x,
+// 	dy = p2.y - this.y;
+
+// 	return Math.sqrt(dx * dx + dy * dy);
+//};
+
+// particle.prototype.gravitateTo = function(p2)
+//{
+// 	var dx = p2.x - this.x,
+// 	dy = p2.y - this.y,
+// 	distSQ = dx * dx + dy * dy,
+// 	dist = Math.sqrt(distSQ),
+// 	force = p2.mass / distSQ,
+// 	ax = dx / dist * force,
+// 	ay = dy / dist * force;
+
+// 	this.vx += ax;
+// 	this.vy += ay;
+//};
+
+// particle.prototype.springTo = function(point, k, length)
+//{
+// 	var dx = point.x - this.x,
+// 	dy = point.y - this.y,
+// 	distance = Math.sqrt(dx * dx + dy * dy),
+// 	springForce = (distance - length || 0) * k;
+// 	this.vx += dx / distance * springForce;
+// 	this.vy += dy / distance * springForce;
+//};
+
+function log(label, variable)
+{
+	var txt = label;
+	console.log(txt + ': ' + variable);
+}
+
+//iOS viewport fix
+if(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream)
+{
+  document.querySelector('meta[name=viewport]')
+    .setAttribute(
+      'content',
+      'initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no'
+    );
+}
+
+// Connect to XML
+$.ajax({
+type: "GET",
+url: "game.xml",
+contentType: 'text/xml',
+dataType: "text",
+async: false,
+success: function(xmldata) {
+	$(xmldata).find('data').each(function(){
+		// SETTINGS
+		X_Sound = parseInt($(this).find('sound').text());
+		X_Music = parseInt($(this).find('music').text());
+		X_Level = parseInt($(this).find('level').text());
+		X_Lives = parseInt($(this).find('player-lives').text());
+		X_PlayerSpeed = parseInt($(this).find('player-speed').text());
+		X_EnemySpeed = parseInt($(this).find('enemy-speed').text());
+		X_GunSpeed = parseInt($(this).find('reload-time').text());
+		X_EnGunSpeed = parseInt($(this).find('enreload-time').text());
+		X_BulletSpeed = parseInt($(this).find('bullet-speed').text());
+		X_EnBulletSpeed = parseInt($(this).find('enbullet-speed').text());
+		// INTRO TEXT
+		X_Title = $(this).find('title').text();
+		X_Subtitle = $(this).find('subtitle').text();
+		X_dt_Start = $(this).find('dt-start').text();
+		X_mb_Start = $(this).find('mb-start').text();
+	});
+},
+error: function() {
+	alert("The XML File could not be processed correctly.");
+}
+});
+
+
+/////////////////////
+// GLOBAL VARS
+/////////////////////
+var doc = document,
+win = window,
+game = {};
+
+game.isMobile = false;
+// mobile device detection
+if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0,4))) game.isMobile = true;
+
+//====================== Game vars ========================
+game.background = [];
+game.score = 0;
+game.levelScore = 0;
+game.level = X_Level;
+game.bossDead = false;
+game.levelComplete = false;
+game.levelUpTimer = 0;
+game.lives = X_Lives;
+game.keys = [];
+
+game.bullets = [];
+	game.playerBulletsPool = [];
+	game.enemyBulletsPool = [];
+	game.lootPool = [];
+
+game.enemies = [];
+	game.enemiesPool = [];
+
+game.waves = [];
+	game.wavesPool = [];
+
+game.explosions = [];
+	game.explosionsPool = [];
+
+game.requiredWaves = 5;
+game.requiredEnemies = 12;
+game.requiredPlayerBullets = 70;
+game.requiredEnemyBullets = 15;
+game.requiredLoot = 5;
+game.requiredExplosions = 20;
+
+game.requiredObjects = game.requiredWaves + game.requiredEnemies + game.requiredPlayerBullets + game.requiredEnemyBullets + game.requiredLoot + game.requiredExplosions;
+game.doneObjects = 0;
+
+//====================== Delta Time ========================
+var dt = 0.017,
+dtTimer = 0,
+dtArray = [],
+timeThen = new Date().getTime();
+dtTimerSet = false;
+
+//====================== Game state ========================
+game.loaded = false;
+game.started = false;
+game.paused = false;
+game.gameOver = false;
+game.timer = 0;
+
+game.fadingIn = false;
+game.fadingOut = false;
+game.faded = true;
+
+game.textFadingIn = false;
+game.textFadingOut = false;
+game.textFaded = true;
+
+//========================== Display ==========================
+game.windowWidth = doc.documentElement.clientWidth;
+game.windowHeight = doc.documentElement.clientHeight;
+
+game.fullScreen = false;
+
+//========================== Input ==========================
+var inputArea = doc.getElementById("inputarea");
+var inputAreaX, inputAreaY;
+var mouseIsDown = 0;
+var touchInitX = 0;
+var touchInitY = 0;
+
+game.canVibrate = "vibrate" in navigator || "mozVibrate" in navigator;
+if (game.canVibrate && !("vibrate" in navigator)) navigator.vibrate = navigator.mozVibrate;
+
+//========================== Audio ==========================
+//Audio Support
+var audioElementSupported = (function(d)
+{
+	var a = d.createElement("audio"),
+	  o = {},
+	  s = "audio\/";
+
+	if (typeof a.canPlayType === "function") {
+	    o.supported = Boolean(true);
+	    o.mp3 = a.canPlayType(s + "mpeg");
+	    o.wav = a.canPlayType(s + 'wav; codecs="1"');
+	    o.ogg = a.canPlayType(s + 'ogg; codecs="vorbis"');
+	    o.m4a = a.canPlayType(s + "x-m4a") || a.canPlayType(s + "aac");
+	    o.webm = a.canPlayType(s + 'webm; codecs="vorbis"');
+	} else {
+	    o.supported = Boolean(0);
+	}
+	return o;
+})(this.document);
+
+if (audioElementSupported.m4a !== "")  //note: audioElementSupported.x is likely to return 'probably' or 'maybe' so you might want to do a thorough check
+{
+	fileFormat = ".m4a";
+}
+else if (audioElementSupported.ogg !== "")
+{
+	fileFormat = ".ogg";
+}
+else
+{
+	fileFormat = ".mp3";
+}
+
+// Obtaining Audio ON/OFF status from local storage
+if ("localStorage" in win && win.localStorage !== null) //checking browser support for local storage
+{
+	//NOTE: localStorage won't accept boolean values! so we need to 'convert' these
+	if (localStorage.prawnsSound === "true")
+	{
+		game.sound = true;
+	}
+	else
+	{
+		game.sound = false;
+	}
+
+	if (localStorage.prawnsMusic === "true")
+	{
+		game.music = true;
+	}
+	else
+	{
+		game.music = false;
+	}
+}
+else
+{
+	game.sound = false;
+	game.music = false;
+}
+
+//Our main SOUND players
+game.sounds = [];
+game.tracks = [];
+
+//SFX vars
+game.sfxPaths = [	//used in initSfx function to load our sounds
+	"_sounds/_sfx/laser" + fileFormat,
+	"_sounds/_sfx/laser" + fileFormat,
+	"_sounds/_sfx/laser" + fileFormat,
+	"_sounds/_sfx/hit" + fileFormat,
+	"_sounds/_sfx/hit" + fileFormat,
+	"_sounds/_sfx/hit" + fileFormat,
+	"_sounds/_sfx/loot_powerUp" + fileFormat,
+	"_sounds/_sfx/loot_powerUp" + fileFormat,
+	"_sounds/_sfx/loot_powerUp" + fileFormat,
+	"_sounds/_sfx/explosion" + fileFormat,
+	"_sounds/_sfx/explosion" + fileFormat,
+	"_sounds/_sfx/explosion" + fileFormat,
+	"_sounds/_sfx/blast" + fileFormat
+];
+game.sfx = [];
+game.doneSfx  = 0;
+game.requiredSfx = 0;
+
+//Sound Tracks vars
+game.soundTrackPaths = [	//used in initSfx function to load our sound tracks
+	"_sounds/_soundTracks/_lvl1/tune1" + fileFormat,
+	"_sounds/_soundTracks/_lvl1/tune2" + fileFormat,
+	"_sounds/_soundTracks/_lvl1/victory" + fileFormat,
+	"_sounds/_soundTracks/_lvl1/boss" + fileFormat
+];
+game.soundTracks = [];
+game.doneSoundTracks = 0;
+game.requiredSoundTracks = 0;
+
+//======================== Graphics ========================
+game.images = [];
+game.doneImages  = 0; // will contain how many images have been loaded
+game.requiredImages = 0; // will contain how many images should be loaded
+game.offCtx = [];
+game.font = game.isMobile ? "Helvetica" : "Monaco";
+
+if (!game.isMobile || win.innerHeight >= 900)
+{
+	//Note: UI images are powered by CSS (see CSS assets folder)
+	game.imagePaths = [
+		//backgrounds
+		"_img/bg_level1_a.dkt.jpg",
+		"_img/bg_level1_b.dkt.jpg",
+		"_img/bg_level1_c.dkt.jpg",
+		//Player
+		"_img/player_ship.dkt.png",
+		"_img/player_ship_i.dkt.png",
+		"_img/player_shields.dkt.png",
+		//Enemies
+			////Pawns
+			"_img/enemy_sectoid.dkt.png",
+			////Minibosses
+			"_img/enemy_floater.dkt.png",
+			////Enemy Bases
+			"_img/enemy_base_sectoid.dkt.png",
+			"_img/enemy_base_floater.dkt.png",
+			////Big bosses
+			"_img/boss_sectoid.dkt.png",
+		//Projectiles
+		"_img/bullet_p_laser.dkt.png",
+		"_img/bullet_p_missile.dkt.png",
+		"_img/bullet_e_missile.dkt.png",
+		"_img/explosion_s0.dkt.png",
+		"_img/explosion_s1.dkt.png",
+		"_img/explosion_s2.dkt.png",
+		"_img/explosion_s3.dkt.png",
+		"_img/explosion_s4.dkt.png",
+		//Loot
+		"_img/loot_lasers.dkt.png",
+		"_img/loot_missiles.dkt.png",
+		"_img/loot_shields.dkt.png"
+	];
+}
+else
+{
+	game.imagePaths = [
+		//backgrounds
+		"_img/bg_level1_a.mob.jpg",
+		"_img/bg_level1_b.mob.jpg",
+		"_img/bg_level1_c.mob.jpg",
+		//Player
+		"_img/player_ship.mob.png",
+		"_img/player_ship_i.mob.png",
+		"_img/player_shields.mob.png",
+		//Enemies
+			////Pawns
+			"_img/enemy_sectoid.mob.png",
+			////Minibosses
+			"_img/enemy_floater.mob.png",
+			////Enemy Bases
+			"_img/enemy_base_sectoid.mob.png",
+			"_img/enemy_base_floater.mob.png",
+			////Big bosses
+			"_img/boss_sectoid.mob.png",
+		//Projectiles
+		"_img/bullet_p_laser.mob.png",
+		"_img/bullet_p_missile.mob.png",
+		"_img/bullet_e_missile.mob.png",
+		"_img/explosion_s0.mob.png",
+		"_img/explosion_s1.mob.png",
+		"_img/explosion_s2.mob.png",
+		"_img/explosion_s3.mob.png",
+		"_img/explosion_s4.mob.png",
+		//Loot
+		"_img/loot_lasers.mob.png",
+		"_img/loot_missiles.mob.png",
+		"_img/loot_shields.mob.png"
+	];
+}
+
+//====================== Canvases + Responsiveness  ============================
+game.canvas = doc.getElementById("gameCanvas");
+game.context = game.canvas.getContext("2d");
+
+var pixelRatio = win.devicePixelRatio > 1.5 ? 2 : 1; // This is our game size delta to keep the size of our game + objects proportional to the display
+pixelRatio = game.isMobile && pixelRatio < 1.5 ? 2 : pixelRatio; //adjustment for mobile devices with low pixel ratio
+pixelRatio = game.isMobile && win.innerHeight >= 900 ? 1 : pixelRatio; //adjusment for tablets
+
+function setGameDimensions()
+{
+	//SETTING CANVASES ATTRIBUTES
+	//Note: the canvas dimensions need to be set here using attributes due to the nature of the canvas element: it works like an image and using css to set this will stretch it
+
+	//get the gameArea and the canvases
+	var gameArea = $('#gamearea');
+	var allCanvas = $('canvas');
+
+	if (!game.isMobile)
+	{
+		game.windowWidth = parseInt(gameArea.css("width"))*pixelRatio;  //using parseInt here to remove 'px'
+	}
+
+	allCanvas.attr('width', game.windowWidth*pixelRatio);
+	allCanvas.attr('height', game.windowHeight*pixelRatio);
+
+	game.context.scale(pixelRatio,pixelRatio);
+
+	//SETTING GAME DIMENSIONS
+	game.width = Math.round(game.windowWidth);
+	game.height = Math.round(game.windowHeight);
+
+	//outer borders
+	game.outerLeft = -Math.round(game.width*0.1);
+	game.outerRight = Math.round(game.width + game.width*0.1);
+	game.outerTop = -Math.round(game.height*0.1);
+	game.outerBottom = Math.round(game.height + game.height*0.1);
+
+	if (playerShip && typeof playerShip != 'undefined')
+	{
+		//re-set playerShip's dimensions/boundaries
+		playerShip.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
+		playerShip.limitX2 = Math.round(game.width - (playerShip.width*0.5));
+		playerShip.limitY2 = Math.round(game.height - (playerShip.height*0.5));
+		playerShip.movement = Math.round(game.height*0.007);
+	}
+
+	//set game bosses' boundaries  !Need to give this enemy a name in the array
+	// this.yStop = Math.round(game.height*0.1);
+	// this.xBondary = Math.round(game.width - this.size/4);
+
+	if(!game.started && playerShip && typeof playerShip != 'undefined')
+	{
+		playerShip.x = Math.round(game.width*0.46);
+		playerShip.y = Math.round(game.height*0.90);
+	}
+}
+
+setGameDimensions();
 
 sprite = function(image, columns, rows, animationSpeed)
 {
@@ -767,18 +785,14 @@ sprite = function(image, columns, rows, animationSpeed)
 	this.ctx = game.context;
 	this.animationSequence = [];	// array holding the order of the animation
 	this.fpr = Math.floor(this.image.width / this.frameWidth);
-
-	//calculate frame dimensions using number of frames / number of rows etc
-
-	// create the sequence of frame numbers for the animation
+	//create the sequence of frame numbers for the animation
 	for (this.frameNum = this.startFrame; this.frameNum <= this.endFrame; this.frameNum++)
 	{
 		this.animationSequence.push(this.frameNum);
 	}
 };
 
-//invariables (note: any other object properties that require these need to be declared in the prototype function)
-sprite.prototype.currentFrame = 0;        // the current frame to draw
+sprite.prototype.currentFrame = 0;
 sprite.prototype.counter = 0;
 
 sprite.prototype.reset = function(image, columns, rows, animationSpeed)
@@ -805,19 +819,7 @@ sprite.prototype.reset = function(image, columns, rows, animationSpeed)
 	}
 };
 
-// sprite.prototype.update = function(){ // Replacing the default 'update' method
-// 	//setting this to make friction work with deltaTime (dt), check particle.js
-// 	if (dt !== 0 && !this.dtSet){
-// 		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
-// 		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
-// 		this.dtSet = true;
-// 	}
-// 	this.vx *= this.friction;
-// 	this.vy *= this.friction;
-// 	this.x += this.vx;
-// 	this.y += this.vy;
-// };
-
+//draw full sprite animation method
 sprite.prototype.draw = function(x, y)
 {
 	this.ctx.drawImage(
@@ -828,7 +830,8 @@ sprite.prototype.draw = function(x, y)
 		this.frameWidth, this.frameHeight);
 
 	// update to the next frame if it is time
-	if (this.counter == (this.frameSpeed - 1)) {
+	if (this.counter == (this.frameSpeed - 1))
+	{
 		this.currentFrame = (this.currentFrame + 1) % this.animationSequence.length;
 	}
 
@@ -839,9 +842,9 @@ sprite.prototype.draw = function(x, y)
 	this.spriteCol = Math.floor(this.animationSequence[this.currentFrame] % this.fpr);
 };
 
+//draw specific sprite frame method
 sprite.prototype.drawFrame = function(x, y, frame)
 {
-
 	this.currentFrame =  frame % this.animationSequence.length;
 
 	this.spriteRow = Math.floor(this.animationSequence[this.currentFrame] / this.fpr);
@@ -871,14 +874,11 @@ background = function(section)
 	this.ctx = game.context;
 };
 
-
 background.prototype.update = function()
 {
-
 	this.y1 += this.speed;
 	this.y2 += this.speed;
 	this.y3 += this.speed;
-
 
 	if (this.y1 >= this.yDrawLimit && this.y1 < game.height)
 	{
@@ -906,7 +906,6 @@ background.prototype.update = function()
 	{
 		this.y3 = this.y2-this.height;
 	}
-
 };
 
 background.prototype.draw = function(image, x, y)
@@ -940,8 +939,6 @@ explosion = function (x, y, speed, direction, size, target)
 	this.speed = speed;
 	this.direction = direction;
 	this.target = target;
-
-
 };
 
 //invariables (note: any other object properties that require these need to be declared in the prototype function)
@@ -980,22 +977,16 @@ explosion.prototype.reset = function(x, y, speed, direction, size, target)
 	this.direction = direction;
 	this.target = target;
 	this.dead = false;
-
 	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 };
 
-
-explosion.prototype.update = function() {
+explosion.prototype.update = function()
+{
 	if (!this.dead)
 	{
 		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
-		// this.handleSprings();
-		// this.handleGravitations();
-		// this.vx *= this.friction;
-		// this.vy *= this.friction;
-		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
 
@@ -1012,99 +1003,84 @@ explosion.prototype.update = function() {
 	}
 };
 
-explosion.prototype.draw = function(x, y) {
-
+explosion.prototype.draw = function(x, y)
+{
 	this.sprite.draw(x, y);
-
 };
 
-explosion.prototype.loadSound = function() {
-
+explosion.prototype.loadSound = function()
+{
 	if (game.sound)
-    {
-    	if (this.target == 'chasis')
-    	{
-        	if (game.sfx[this.audioHit1].paused)
-        	{
-        		game.sounds.push(game.sfx[this.audioHit1]);
-        	}
-        	else if (game.sfx[this.audioHit2].paused)
-        	{
-        		game.sounds.push(game.sfx[this.audioHit2]);
-        	}
-        	else if (game.sfx[this.audioHit3].paused)
-        	{
-        		game.sounds.push(game.sfx[this.audioHit3]);
-        	}
-        }
-
-         else if (this.target == 'enemy')
-         {
-        	if (game.sfx[this.audioDead1].paused)
-        	{
-        		game.sounds.push(game.sfx[this.audioDead1]);
-        	}
-        	else if (game.sfx[this.audioDead2].paused)
-        	{
-        		game.sounds.push(game.sfx[this.audioDead2]);
-        	}
-        	else if (game.sfx[this.audioDead3].paused)
-        	{
-        		game.sounds.push(game.sfx[this.audioDead3]);
-        	}
-        }
-		else if (this.target == 'player' || this.target == 'boss'){game.sounds.push(game.sfx[this.audioExplode]);}
-
+  {
+  	if (this.target == 'chasis')
+  	{
+			if (game.sfx[this.audioHit1].paused)
+			{
+				game.sounds.push(game.sfx[this.audioHit1]);
+			}
+			else if (game.sfx[this.audioHit2].paused)
+			{
+				game.sounds.push(game.sfx[this.audioHit2]);
+			}
+			else if (game.sfx[this.audioHit3].paused)
+			{
+				game.sounds.push(game.sfx[this.audioHit3]);
+			}
+    }
+		else if (this.target == 'enemy')
+		{
+			if (game.sfx[this.audioDead1].paused)
+			{
+				game.sounds.push(game.sfx[this.audioDead1]);
+			}
+			else if (game.sfx[this.audioDead2].paused)
+			{
+				game.sounds.push(game.sfx[this.audioDead2]);
+			}
+			else if (game.sfx[this.audioDead3].paused)
+			{
+				game.sounds.push(game.sfx[this.audioDead3]);
+			}
+		}
+		else if (this.target == 'player' || this.target == 'boss')
+		{
+			game.sounds.push(game.sfx[this.audioExplode]);
+		}
 	}
 };
-
 
 ////////////
 // Factory
 ////////////
-
 function getNewExplosion(x, y, speed, direction, size, target)
 {
-    var e = null;
-
-    // check to see if there is a spare one
-    if (game.explosionsPool.length > 0)
-    {
-    	//recycle
-        e = game.explosionsPool.pop();
-
-		e.reset(x, y, speed, direction, size, target);
-		//(image, frameWidth, frameHeight, startFrame, endFrame, frameSpeed)
-		e.sprite.reset(e.image, 5, 4, 2);
-
-		//watch out for this, maybe we can avoid it?
-		e.width = e.sprite.frameWidth;
-		e.height = e.sprite.frameHeight;
-
-		e.loadSound();
-
-    	game.explosions.push(e);
-    }
-    else
-    {
-        // none available, construct a new one
+  var e = null;
+	//check to see if there is a spare one
+	if (game.explosionsPool.length > 0)
+	{
+	// recycle
+	e = game.explosionsPool.pop();
+	e.reset(x, y, speed, direction, size, target);
+	e.sprite.reset(e.image, 5, 4, 2);
+	e.width = e.sprite.frameWidth;
+	e.height = e.sprite.frameHeight;
+	e.loadSound();
+	game.explosions.push(e);
+  }
+  else
+  {
+		//none available, construct a new one
 		e = new explosion(x, y, speed, direction, size, target);
 		e.loadSound();
-    	game.explosions.push(e);
-    }
-
-    // console.log('pool: ' + game.explosionsPool.length);
-    // console.log('active: ' + game.explosions.length);
-
+		game.explosions.push(e);
+  }
 }
-
 
 function freeExplosion(e)
 {
-    // find the active explosion and remove it
-    game.explosions.splice(game.explosions.indexOf(e),1);
-
-    // return the explosion back into the pool
+	// find the active explosion and remove it
+	game.explosions.splice(game.explosions.indexOf(e),1);
+	// return the explosion back into the pool
 	game.explosionsPool.push(e);
 }
 
@@ -1112,10 +1088,16 @@ player = function(hull, fireRate)
 {
 	this.x = Math.round(game.width*0.46);
 	this.y = Math.round(game.height*0.90);
+	this.ctx = game.context;
+	this.sprite = new sprite('player_ship', 5, 3, 5);
+	this.sprite_i = new sprite('player_ship_i', 5, 3, 5);
+	this.sprite_s = new sprite('player_shields', 3, 2, 5);
+	this.width = this.sprite.frameWidth;
+	this.height = this.sprite.frameHeight;
 	this.speed = 0;
 	this.maxSpeed = 400;
-
-	// this.size = Math.round(100/pixelRatio);
+	this.speedX = 0;
+	this.speedY = 0;
 	this.hull = hull;
 	this.maxHull = hull;
 	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
@@ -1129,14 +1111,6 @@ player = function(hull, fireRate)
 	this.dead = false;
 	this.deadTimer = 0;
 	this.lives = X_Lives;
-	this.ctx = game.context;
-	this.sprite = new sprite('player_ship', 5, 3, 5);
-	this.sprite_i = new sprite('player_ship_i', 5, 3, 5);
-	this.sprite_s = new sprite('player_shields', 3, 2, 5);
-	this.width = this.sprite.frameWidth;
-	this.height = this.sprite.frameHeight;
-	this.speedX = 0;
-	this.speedY = 0;
 	this.limitX1 = Math.round(-this.width*0.5);
 	this.limitX2 = Math.round(game.width - this.width*0.5);
 	this.limitY1 = Math.round(-this.height*0.5);
@@ -1153,152 +1127,112 @@ player = function(hull, fireRate)
 	this.leftlaserX = Math.round(this.x + this.width*0.25);
 	this.rightlaserX = Math.round(this.x + this.width*0.75);
 	this.LaserY = Math.round(this.y - this.height*0.2);
-
 };
 
-
-player.prototype.update = function() {
-	// this.vx = Math.cos(this.direction) * (this.speed*dt);
-	// this.vy = Math.sin(this.direction) * (this.speed*dt);
-	// this.handleSprings();
-	// this.handleGravitations();
-	// this.vx *= this.friction;
-	// this.vy *= this.friction;
-	// this.vy += this.gravity;
-	// this.x += this.vx;
-	// this.y += this.vy;
+player.prototype.update = function()
+{
 	this.speed = 0; // !! check if you can optimise this !!
-	// this.playerImage = this.image; // !! check if you can optimise this !!
 	this.speedX = Math.round(((touchInitX - inputAreaX)*0.1)/pixelRatio);
 	this.speedY = Math.round(((touchInitY - inputAreaY)*0.1)/pixelRatio);
 
 	//////////////////////////////
 	//	Mouse and Touch controls
 	/////////////////////////////
-
-	if (mouseIsDown && !game.levelComplete && !game.paused && !game.gameOver) {
-
+	if (mouseIsDown && !game.levelComplete && !game.paused && !game.gameOver)
+	{
 		//removing cursor
 		if (!game.isMobile) {doc.getElementById('gamearea').style.cursor = 'none';}
 
-
 		//defining the boundaries
+		moveRight1 = (this.speedX < -2 && this.speedX >= -4) ? true : false;
+		moveRight2 = (this.speedX < -4 && this.speedX >= -6) ? true : false;
+		moveRight3 = (this.speedX < -6 && this.speedX >= -8) ? true : false;
+		moveRight4 = (this.speedX < -8 && this.speedX >= -10) ? true : false;
+		moveRight5 = (this.speedX < -10) ? true : false;
 
+		moveLeft1 = (this.speedX > 2 && this.speedX <= 4) ? true : false;
+		moveLeft2 = (this.speedX > 4 && this.speedX <= 6) ? true : false;
+		moveLeft3 = (this.speedX > 6 && this.speedX <= 8) ? true : false;
+		moveLeft4 = (this.speedX > 8 && this.speedX <= 10) ? true : false;
+		moveLeft5 = (this.speedX > 10) ? true : false;
 
-			moveRight1 = (this.speedX < -2 && this.speedX >= -4) ? true : false;
-			moveRight2 = (this.speedX < -4 && this.speedX >= -6) ? true : false;
-			moveRight3 = (this.speedX < -6 && this.speedX >= -8) ? true : false;
-			moveRight4 = (this.speedX < -8 && this.speedX >= -10) ? true : false;
-			moveRight5 = (this.speedX < -10) ? true : false;
+		// A MAIN CONTROLS
+		//this needs to come after movement vars above because we redefine this.speedX here
+		this.speedX = this.speedX < this.movement ? this.speedX : this.movement;
+		this.speedY = this.speedY < this.movement ? this.speedY : this.movement;
+		this.speedX = this.speedX > -this.movement ? this.speedX : -this.movement;
+		this.speedY = this.speedY > -this.movement ? this.speedY : -this.movement;
 
-			moveLeft1 = (this.speedX > 2 && this.speedX <= 4) ? true : false;
-			moveLeft2 = (this.speedX > 4 && this.speedX <= 6) ? true : false;
-			moveLeft3 = (this.speedX > 6 && this.speedX <= 8) ? true : false;
-			moveLeft4 = (this.speedX > 8 && this.speedX <= 10) ? true : false;
-			moveLeft5 = (this.speedX > 10) ? true : false;
-
-			//making it move to touch or click point
-			// if (inputAreaX != moveX || inputAreaY != moveY) {
-				//the distance between the current ship pos and the user touch/click pos
-
-
-				// console.log('inputAreax:'+ inputAreaX);
-				// console.log('inputAreay:'+ inputAreaY);
-				// console.log('touchx:'+ touchInitX);
-				// console.log('touchy:'+ touchInitY);
-				// console.log (this.speedX);
-				// console.log (this.speedY);
-				// console.log (dtSize);
-
-				// A MAIN CONTROLS
-
-
-				// console.log('movement:' + this.movement);
-
-				//this needs to come after movement vars above because he redefine this.speedX here
-				this.speedX = this.speedX < this.movement ? this.speedX : this.movement;
-				this.speedY = this.speedY < this.movement ? this.speedY : this.movement;
-				this.speedX = this.speedX > -this.movement ? this.speedX : -this.movement;
-				this.speedY = this.speedY > -this.movement ? this.speedY : -this.movement;
-
-				// console.log('touchInitX:'+ touchInitX);
-				// console.log('touchInitY:'+ touchInitY);
-				// console.log('inputAreaX:'+ inputAreaX);
-				// console.log('inputAreaY:'+ inputAreaY);
-				// console.log('this.speedX:'+ this.speedX);
-				// console.log('this.speedY:'+ this.speedY);
-
-				if (this.speedX !== 0 || this.speedY !== 0)
-				{
-					//the bondaries and edge portals
-					if (this.x >= this.limitX1 && this.x <= this.limitX2 && this.y >= this.limitY1 && this.y <= this.limitY2)
-					{
-					this.x = this.x - this.speedX;
-					this.y = this.y - this.speedY;
-					}
-					else if(this.x < this.limitX1)
-					{
-					 this.x = this.limitX2;
-					}
-					else if(this.x > this.limitX2)
-					{
-					 this.x = this.limitX1;
-					}
-					else if(this.y < this.limitY1)
-					{
-					 this.y = this.limitY2;
-					}
-					else if(this.y > this.limitY2)
-					{
-					 this.y = this.limitY1;
-					}
-
-				}
-
-				this.speedX = 0;
-				this.speedY = 0; //not needed but..
-
-				// B ALTERNATIVE CONTROLS
-				// this.speedX = (touchInitX - canvasX);
-				// this.speedY = (touchInitY - canvasY);
-
-
-				// this.x = this.x - this.speedX;
-				// this.y = this.y - this.speedY;
-
-
-				// touchInitX = canvasX;
-				// touchInitY = canvasY;
-
-
-
-
-
-			if (moveRight1) {
-				this.spriteFrame = 5;
-			} else if (moveRight2) {
-				this.spriteFrame = 6;
-			} else if (moveRight3) {
-				this.spriteFrame = 7;
-			} else if (moveRight4) {
-				this.spriteFrame = 8;
-			} else if (moveRight5) {
-				this.spriteFrame = 9;
-
-			} else if (moveLeft1) {
-				this.spriteFrame = 0;
-			} else if (moveLeft2) {
-				this.spriteFrame = 1;
-			} else if (moveLeft3) {
-				this.spriteFrame = 2;
-			} else if (moveLeft4) {
-				this.spriteFrame = 3;
-			} else if (moveLeft5) {
-				this.spriteFrame = 4;
+		if (this.speedX !== 0 || this.speedY !== 0)
+		{
+			//the bondaries and edge portals
+			if (this.x >= this.limitX1 && this.x <= this.limitX2 && this.y >= this.limitY1 && this.y <= this.limitY2)
+			{
+			this.x = this.x - this.speedX;
+			this.y = this.y - this.speedY;
 			}
+			else if(this.x < this.limitX1)
+			{
+			 this.x = this.limitX2;
+			}
+			else if(this.x > this.limitX2)
+			{
+			 this.x = this.limitX1;
+			}
+			else if(this.y < this.limitY1)
+			{
+			 this.y = this.limitY2;
+			}
+			else if(this.y > this.limitY2)
+			{
+			 this.y = this.limitY1;
+			}
+		}
 
-			this.rendered = false;
+		this.speedX = 0;
+		this.speedY = 0; //not needed but..
 
+		if (moveRight1)
+		{
+			this.spriteFrame = 5;
+		}
+		else if (moveRight2)
+		{
+			this.spriteFrame = 6;
+		}
+		else if (moveRight3)
+		{
+			this.spriteFrame = 7;
+		}
+		else if (moveRight4)
+		{
+			this.spriteFrame = 8;
+		}
+		else if (moveRight5)
+		{
+			this.spriteFrame = 9;
+		}
+		else if (moveLeft1)
+		{
+			this.spriteFrame = 0;
+		}
+		else if (moveLeft2)
+		{
+			this.spriteFrame = 1;
+		}
+		else if (moveLeft3)
+		{
+			this.spriteFrame = 2;
+		}
+		else if (moveLeft4)
+		{
+			this.spriteFrame = 3;
+		}
+		else if (moveLeft5)
+		{
+			this.spriteFrame = 4;
+		}
+		this.rendered = false;
 	}
 	else
 	{
@@ -1309,12 +1243,14 @@ player.prototype.update = function() {
 	/////////////////////////
 	//	Keyboard controlls
 	////////////////////////
-
 	if(!game.isMobile)
 	{
 		//left
-		if(game.keys[37] || game.keys[65] && !game.gameOver){ //if key pressed..
-			if(this.x > 0){ // (keeping it within the boundaries of our canvas)
+		if(game.keys[37] || game.keys[65] && !game.gameOver)
+		{
+			//if key pressed..
+			if(this.x > 0)
+			{ // (keeping it within the boundaries of our canvas)
 				this.speed = this.maxSpeed;
 				this.image = this.offCanvasL5;
 				this.rendered = false;
@@ -1322,8 +1258,10 @@ player.prototype.update = function() {
 			}
 		}
 		//right
-		if(game.keys[39] || game.keys[68] && !game.gameOver){
-			if(this.x <= game.width - this.width){
+		if(game.keys[39] || game.keys[68] && !game.gameOver)
+		{
+			if(this.x <= game.width - this.width)
+			{
 				this.speed = this.maxSpeed;
 				this.image = this.offCanvasR5;
 				this.rendered = false;
@@ -1331,16 +1269,20 @@ player.prototype.update = function() {
 			}
 		}
 		//up
-		if((game.keys[38] || game.keys[87]) && !game.gameOver){
-			if(this.y > 0){
+		if((game.keys[38] || game.keys[87]) && !game.gameOver)
+		{
+			if(this.y > 0)
+			{
 				this.speed = this.maxSpeed;
 				this.rendered = false;
 				this.y -= Math.round(this.speed*dt);
 			}
 		}
 		//down
-		if(game.keys[40] || game.keys[83] && !game.gameOver){
-			if(this.y <= game.height - this.height){
+		if(game.keys[40] || game.keys[83] && !game.gameOver)
+		{
+			if(this.y <= game.height - this.height)
+			{
 				this.speed = this.maxSpeed;
 				this.rendered = false;
 				this.y += Math.round(this.speed*dt);
@@ -1348,18 +1290,16 @@ player.prototype.update = function() {
 		}
 	}
 
-
-	if(game.levelComplete){
+	if(game.levelComplete)
+	{
 		this.speed = this.maxSpeed*2;
 		this.rendered = false;
 		this.y -= Math.round(this.speed*dt);
 	}
 
-
 	/////////////////////////
-	//	Guns
+	//Guns
 	////////////////////////
-
 	this.midLaserX = Math.round(this.x + this.width*0.5);
 	this.leftLaserX = Math.round(this.x + this.width*0.25);
 	this.rightLaserX = Math.round(this.x + this.width*0.75);
@@ -1370,101 +1310,100 @@ player.prototype.update = function() {
 	this.rightMissileX = this.x + this.width;
 	this.missileY = this.y + this.height;
 
-
-	if((game.keys[32] || mouseIsDown) && !this.dead && !game.gameOver){ //only add a bullet if space is pressed and enough time has passed i.e. our timer has reached 0
+	if((game.keys[32] || mouseIsDown) && !this.dead && !game.gameOver)
+	{
+		//only add a bullet if space is pressed and enough time has passed i.e. our timer has reached 0
 		this.bulletTimer++;
-		// homing missiles, sort of
-		// this.bulletAngle = sectoidWave.units.length > 0 ? this.angleTo(sectoidWave.units[Math.floor(Math.random() * sectoidWave.units.length)]) : -Math.PI/2;
-		if (this.bulletTimer % this.bulletDivision === 0) {
+		if (this.bulletTimer % this.bulletDivision === 0)
+		{
 			// (x, y, speed, direction, power, friction, image)
-			switch(this.laserLevel) {
-			    case 1:
-			        getNewBullet(this.midLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			        if (game.sound)
-			        {
-			        	if (game.sfx[this.audioFire1].paused)
-			        	{
-			        		game.sounds.push(game.sfx[this.audioFire1]);
-			        	}
-			        	else if (game.sfx[this.audioFire2].paused)
-			        	{
-			        		game.sounds.push(game.sfx[this.audioFire2]);
-			        	}
-			        	else if (game.sfx[this.audioFire3].paused)
-			        	{
-			        		game.sounds.push(game.sfx[this.audioFire3]);
-			        	}
-			        }
-			    break;
-			    case 2:
-			    	getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			    	getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			        if (game.sound)
-			        {
-			        	if (game.sfx[this.audioFire1].paused)
-			        	{
-			        		game.sounds.push(game.sfx[this.audioFire1]);
-			        	}
-			        	else if (game.sfx[this.audioFire2].paused)
-			        	{
-			        		game.sounds.push(game.sfx[this.audioFire2]);
-			        	}
-			        	else if (game.sfx[this.audioFire3].paused)
-			        	{
-			        		game.sounds.push(game.sfx[this.audioFire3]);
-			        	}
-			        }
-			    break;
-			    case 3:
-			    	getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			    	getNewBullet(this.midLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			    	getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			        if (game.sound)
-			        {
-			        	if (game.sfx[this.audioFire1].paused)
-			        	{
-			        		game.sounds.push(game.sfx[this.audioFire1]);
-			        	}
-			        	else if (game.sfx[this.audioFire2].paused)
-			        	{
-			        		game.sounds.push(game.sfx[this.audioFire2]);
-			        	}
-			        	else if (game.sfx[this.audioFire3].paused)
-			        	{
-			        		game.sounds.push(game.sfx[this.audioFire3]);
-			        	}
-			        }
-			    break;
-			 }
-
-			 switch(this.missileLevel) {
-			 	case 0:
-			 	break;
-			    case 1:
-			    	getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+			switch(this.laserLevel)
+			{
+			  case 1:
+			    getNewBullet(this.midLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+			    if (game.sound)
+			    {
+			    	if (game.sfx[this.audioFire1].paused)
+			    	{
+			    		game.sounds.push(game.sfx[this.audioFire1]);
+			    	}
+			    	else if (game.sfx[this.audioFire2].paused)
+			    	{
+			    		game.sounds.push(game.sfx[this.audioFire2]);
+			    	}
+			    	else if (game.sfx[this.audioFire3].paused)
+			    	{
+			    		game.sounds.push(game.sfx[this.audioFire3]);
+			    	}
+			    }
+			  break;
+			  case 2:
+			  	getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+			  	getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+			    if (game.sound)
+			    {
+			    	if (game.sfx[this.audioFire1].paused)
+			    	{
+			    		game.sounds.push(game.sfx[this.audioFire1]);
+			    	}
+			    	else if (game.sfx[this.audioFire2].paused)
+			    	{
+			    		game.sounds.push(game.sfx[this.audioFire2]);
+			    	}
+			    	else if (game.sfx[this.audioFire3].paused)
+			    	{
+			    		game.sounds.push(game.sfx[this.audioFire3]);
+			    	}
+			    }
+			  break;
+			  case 3:
+			  	getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+			  	getNewBullet(this.midLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+			  	getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+			    if (game.sound)
+			    {
+			    	if (game.sfx[this.audioFire1].paused)
+			    	{
+			    		game.sounds.push(game.sfx[this.audioFire1]);
+			    	}
+			    	else if (game.sfx[this.audioFire2].paused)
+			    	{
+			    		game.sounds.push(game.sfx[this.audioFire2]);
+			    	}
+			    	else if (game.sfx[this.audioFire3].paused)
+			    	{
+			    		game.sounds.push(game.sfx[this.audioFire3]);
+			    	}
+			    }
+			  break;
+			}
+			switch(this.missileLevel)
+			{
+				case 0:
 				break;
-			    case 2:
+			  case 1:
+			  	getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+				break;
+			  case 2:
 					getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-			    	getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+				  getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
 				break;
-			    case 3:
-			     	getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-			    	getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-			    	getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+			  case 3:
+			   	getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+			  	getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+			  	getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
 				break;
-			 }
-			// this.bulletTimer = 1; //resetting our timer
+			}
 		}
 	}
-	else {
+	else
+	{
 		this.bulletTimer = 1;
 	}
-
 
 	///////////////////////////////////
 	//	DEATH MANAGEMENT
 	///////////////////////////////////
-
 	if (this.hull <= 0 && !this.dead)
 	{
 		this.dead = true;
@@ -1472,7 +1411,6 @@ player.prototype.update = function() {
 		getNewExplosion(this.x, this.y, 0, 0, 'large', 'player'); //need to obtain player direction if we want dinamic explosions, for now we just blow it still
 		gameUI.updateHangar();
 	}
-
 
 	if (this.dead && this.deadTimer <= 100)
 	{
@@ -1505,31 +1443,30 @@ player.prototype.update = function() {
 			game.gameOver = true;
 			gameState.gameOver();
 		}
-		else {
+		else
+		{
 			this.x = Math.round(game.width*0.5); //keeping the player outside canvas while dead
 			this.y = Math.round(game.height*1.5);
 		}
 	}
 
-	if (this.imune){
+	if (this.imune)
+	{
 		this.imuneTimer++;
-		if (this.imuneTimer > 250){
+		if (this.imuneTimer > 250)
+		{
 			this.imune = false;
 			this.imuneTimer = 0;
 		}
 	}
-
 };
 
-player.prototype.draw = function() {
-
-
+player.prototype.draw = function()
+{
 	if(!this.dead)
 	{
-
 		if (!this.imune)
 		{
-
 			this.sprite.drawFrame(this.x, this.y, this.spriteFrame);
 		}
 		else
@@ -1539,7 +1476,6 @@ player.prototype.draw = function() {
 				this.sprite_i.drawFrame(this.x, this.y, this.spriteFrame);
 			}
 		}
-
 
 		if (this.hit && !this.imune)
 		{
@@ -1565,13 +1501,13 @@ player.prototype.load = function()
 	this.draw();
 };
 
-player.prototype.reset = function() {
+player.prototype.reset = function()
+{
 	game.gameOver = false;
 	this.dead = false;
 	this.deadTimer = 0;
 	this.x = Math.round(game.width*0.46);
 	this.y = Math.round(game.height*0.90);
-	// this.image = this.offCanvas;
 	this.spriteFrame = 10;
 	this.hull = 10;
 	this.rendered = false;
@@ -1580,9 +1516,7 @@ player.prototype.reset = function() {
 	this.laserLevel = 1;
 	this.missileLevel = 0;
 	this.lives = X_Lives;
-	// this.lives = (this.lives < 1) ? 3 : this.lives;
 };
-
 
 var playerShip = null;
 
@@ -1598,12 +1532,11 @@ playerBullet = function(x, y, speed, direction, power, friction, image)
 	this.direction = direction;
 	this.power = power;
 	this.friction = friction;
-	//setting this to make friction work with deltaTime (dt), check particle.js
+	//setting these to make friction work with deltaTime (dt), check particle.js
 	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 };
 
-//invariables (note: any other object properties that require these need to be declared in the prototype function)
 playerBullet.prototype.dead = false;
 playerBullet.prototype.ctx = game.context;
 
@@ -1618,12 +1551,13 @@ playerBullet.prototype.reset = function(x, y, speed, power, friction)  //only va
 	this.power = power;
 	this.friction = friction;
 	this.dead = false;
-
 	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 };
 
-playerBullet.prototype.update = function(){ // Replacing the default 'update' method
+playerBullet.prototype.update = function()
+{
+	// Replacing the default 'update' method
 	if (!this.dead)
 	{
 		this.vx *= this.friction;
@@ -1643,7 +1577,6 @@ playerBullet.prototype.update = function(){ // Replacing the default 'update' me
 				{
 					getNewExplosion(game.enemies[e].x + game.enemies[e].width*0.5, game.enemies[e].y + game.enemies[e].height*0.5, 0, 1, 'xSmall', 'chasis');
 				}
-
 				this.dead = true;
 			}
 		}
@@ -1659,68 +1592,45 @@ playerBullet.prototype.update = function(){ // Replacing the default 'update' me
 	}
 };
 
-playerBullet.prototype.draw = function(x, y) {
-	this.sprite.draw(x, y); //-this.size/2 because we're rotating ctx
-
-		// for homing missiles
-			// this.ctx.save();
-			// this.ctx.translate(this.x, this.y);
-			// this.ctx.rotate(direction - Math.PI/2);
-			// ...
-			// this.ctx.restore();
+playerBullet.prototype.draw = function(x, y)
+{
+	this.sprite.draw(x, y);
 };
-
-// playerBullet.prototype = Object.create(particle.prototype); // Creating a playerBullet.prototype object that inherits from particle.prototype.
-// playerBullet.prototype.constructor = playerBullet; // Set the "constructor" property to refer to playerBullet
 
 ////////////
 // Factory
 ////////////
-
 getNewBullet = function(x, y, speed, direction, power, friction, image)
 {
-    var b = null;
-
-    // check to see if there is a spare one
-    if (game.playerBulletsPool.length > 0)
-    {
-    	//recycle
-
-        b = game.playerBulletsPool.pop();
-
-
+	var b = null;
+	//check to see if there is a spare one
+	if (game.playerBulletsPool.length > 0)
+	{
+		//recycle
+		b = game.playerBulletsPool.pop();
 		//(image, columns, rows, animationSpeed)
 		b.sprite.reset(image, 3, 1, 4);
-
-        b.reset(x, y, speed, power, friction, image);
-
-
-    	game.bullets.push(b);
-    }
-    else
-    {
-    	// none available, construct a new one
-    	b = new playerBullet(x, y, speed, direction, power, friction, image);
-
-    	game.bullets.push(b);
-    }
-
-    // console.log('pool: ' + game.playerBulletsPool.length);
-    // console.log('active: ' + game.bullets.length);
-
+    b.reset(x, y, speed, power, friction, image);
+		game.bullets.push(b);
+	}
+	else
+	{
+		// none available, construct a new one
+		b = new playerBullet(x, y, speed, direction, power, friction, image);
+		game.bullets.push(b);
+	}
 };
 
 freeBullet = function(b)
 {
-    // find the active bullet and remove it
-    game.bullets.splice(game.bullets.indexOf(b),1);
-
-    // return the bullet back into the pool
+	//find the active bullet and remove it
+	game.bullets.splice(game.bullets.indexOf(b),1);
+	//return the bullet back into the pool
 	game.playerBulletsPool.push(b);
 };
 
-enemy = function(x, y, speed, direction, hull, type, image, fireRate, sheep) {
-
+enemy = function(x, y, speed, direction, hull, type, image, fireRate, sheep)
+{
 	this.x = x;
 	this.y = y;
 	this.image = game.offCtx[image];
@@ -1745,7 +1655,6 @@ enemy = function(x, y, speed, direction, hull, type, image, fireRate, sheep) {
 	}
 	this.sheep = sheep || false;
 	this.fireRate = fireRate * 60 || 0; //bullets/sec
-	/// *** WTF!!?? ///
 	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
 	this.speed = speed/pixelRatio;
 	this.direction = direction;
@@ -1757,17 +1666,15 @@ enemy.prototype.hitTimer = 0;
 enemy.prototype.ctx = game.context;
 enemy.prototype.dead = false;
 enemy.prototype.collided = false;
-
 enemy.prototype.angleTo = function(p2)
 {
 	return Math.atan2(p2.y - this.y, p2.x - this.x);
 };
-
 enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fireRate, sheep) //only variable arguments here
 {
 	this.x = x;
-    this.y = y;
-    this.speed = speed;
+	this.y = y;
+	this.speed = speed;
 	this.direction = direction;
 	this.hull = hull;
 	this.type = type;
@@ -1778,41 +1685,33 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fire
 	this.height = game.offCtx[image].height;
 	switch (type)
 	{
-		case 'pawn':
-			this.explosionSize = 'medium';
-		break;
-		case 'miniboss':
-			this.explosionSize = 'large';
-		break;
-		case 'base':
-			this.width = this.sprite.frameWidth;
-			this.height = this.sprite.frameHeight;
-			this.explosionSize = 'xLarge';
-		break;
+	case 'pawn':
+		this.explosionSize = 'medium';
+	break;
+	case 'miniboss':
+		this.explosionSize = 'large';
+	break;
+	case 'base':
+		this.width = this.sprite.frameWidth;
+		this.height = this.sprite.frameHeight;
+		this.explosionSize = 'xLarge';
+	break;
 	}
 	this.bulletTimer = 1;
 	this.hitTimer = 0;
 	this.collided = false;		//do we need this??
 	this.dead = false;
-
 	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
-
 	this.vx = Math.cos(this.direction) * ((this.speed)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed)*dt);
 };
 
-enemy.prototype.update = function() {
+enemy.prototype.update = function()
+{
 	if (!this.dead)
 	{
-		// this.lastX = this.x;
-		// this.lastY = this.y;
 		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
-		// this.handleSprings();
-		// this.handleGravitations();
-		// this.vx *= this.friction;
-		// this.vy *= this.friction;
-		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
 
@@ -1845,7 +1744,6 @@ enemy.prototype.update = function() {
 			this.hull -= playerShip.hull;
 		}
 
-
 		if (this.hull <= 0)
 		{
 			this.dead = true;
@@ -1874,11 +1772,10 @@ enemy.prototype.update = function() {
 	{
 		freeEnemy(this);
 	}
-
 };
 
-enemy.prototype.draw = function(x, y) {
-
+enemy.prototype.draw = function(x, y)
+{
 	if (this.type !== 'base')
 	{
 		this.ctx.drawImage(this.image, x, y);
@@ -1887,56 +1784,41 @@ enemy.prototype.draw = function(x, y) {
 	{
 		this.sprite.draw(x, y);
 	}
-
 };
-
 
 ////////////
 // Factory
 ////////////
-
 function getNewEnemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
 {
-    var en = null;
-
-    // check to see if there is a spare one
-    if (game.enemiesPool.length > 0)
-    {
-    	//recycle
-        en = game.enemiesPool.pop();
-
-        en.sprite.reset(image, 6, 5, 6);
-
+	var en = null;
+	//check to see if there is a spare one
+	if (game.enemiesPool.length > 0)
+	{
+		//recycle
+		en = game.enemiesPool.pop();
+		en.sprite.reset(image, 6, 5, 6);
 		en.reset(x, y, speed, direction, hull, type, image, fireRate, sheep);
-
-    	game.enemies.push(en);
-    }
-    else
-    {
-        // none available, construct a new one
+		game.enemies.push(en);
+	}
+	else
+	{
+		// none available, construct a new one
 		en = new enemy(x, y, speed, direction, hull, type, image, fireRate, sheep);
-		// en.offDraw();
-    	game.enemies.push(en);
-    }
-
-    // console.log('pool: ' + game.enemiesPool.length);
-    // console.log('active: ' + game.enemies.length);
-
+		game.enemies.push(en);
+	}
 }
-
 
 function freeEnemy(en)
 {
-    // find the active bullet and remove it
-    game.enemies.splice(game.enemies.indexOf(en),1);
-
-    // return the bullet back into the pool
+	//find the active bullet and remove it
+	game.enemies.splice(game.enemies.indexOf(en),1);
+	//return the bullet back into the pool
 	game.enemiesPool.push(en);
 }
 
 boss = function(x, y, speed, direction, hull, image)
 {
-
 	this.speed = speed;
 	this.direction = direction;
 	this.hull = hull;
@@ -1969,47 +1851,46 @@ boss.prototype.update = function()
 	{
 		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
-		// this.handleSprings();
-		// this.handleGravitations();
-		// this.vx *= this.friction;
-		// this.vy *= this.friction;
-		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
 
 		this.draw(this.x, this.y);
 
-		if(this.hit && this.hull > 0 ){
+		if(this.hit && this.hull > 0)
+		{
 			if (game.sound)
-				        {
-				        	if (game.sfx[this.audioHit1].paused)
-				        	{
-				        		game.sounds.push(game.sfx[this.audioHit1]);
-				        	}
-				        	else if (game.sfx[this.audioHit2].paused)
-				        	{
-				        		game.sounds.push(game.sfx[this.audioHit2]);
-				        	}
-				        	else if (game.sfx[this.audioHit3].paused)
-				        	{
-				        		game.sounds.push(game.sfx[this.audioHit3]);
-				        	}
-				        }
-			//change image here
+			{
+				if (game.sfx[this.audioHit1].paused)
+				{
+					game.sounds.push(game.sfx[this.audioHit1]);
+				}
+				else if (game.sfx[this.audioHit2].paused)
+				{
+					game.sounds.push(game.sfx[this.audioHit2]);
+				}
+				else if (game.sfx[this.audioHit3].paused)
+				{
+					game.sounds.push(game.sfx[this.audioHit3]);
+				}
+			}
+
 			this.hit = false;
 		}
 
 		// player-boss collision
-		if (Collision(playerShip, this) && !this.dead && !game.gameOver){
+		if (Collision(playerShip, this) && !this.dead && !game.gameOver)
+		{
 			playerShip.hull -= this.hull;
 			playerShip.hit = true;
 			this.hit = true;
 			this.hull -= playerShip.hull;
 		}
 
-		if (this.hull <= 0 ) {
+		if (this.hull <= 0 )
+		{
 			getNewExplosion(this.x, this.y, this.speed, this.direction, 'xLarge', 'boss');
-			if (!playerShip.crashed){
+			if (!playerShip.crashed)
+			{
 				game.score++;
 				game.levelScore++;
 				gameUI.updateScore();
@@ -2018,54 +1899,50 @@ boss.prototype.update = function()
 			}
 		}
 
+		this.bulletTimer1++;
+		this.bulletTimer2++;
 
-			this.bulletTimer1++;
-			this.bulletTimer2++;
+		if (this.bulletTimer1 % this.bulletDivision1 == 1)
+		{
+			this.bulletTimer1 = 1;
+			mBulletX1 = Math.round(this.x);
+			mBulletX2 = Math.round(this.x + this.width);
+			mBulletY = Math.round(this.y + this.height*0.6);
 
-			if (this.bulletTimer1 % this.bulletDivision1 == 1){
-				this.bulletTimer1 = 1;
-				mBulletX1 = Math.round(this.x);
-				mBulletX2 = Math.round(this.x + this.width);
-				mBulletY = Math.round(this.y + this.height*0.6);
+			getNewEnemyBullet(mBulletX1, mBulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');
+			getNewEnemyBullet(mBulletX2, mBulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');
+		}
 
-				getNewEnemyBullet(mBulletX1, mBulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');
-				getNewEnemyBullet(mBulletX2, mBulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');
-			}
+		if (this.bulletTimer2 % this.bulletDivision2 == 1)
+		{
+			this.bulletTimer2 = 1; //resetting our timer
+			lBulletX1 = Math.round(this.x + this.width*0.4);
+			lBulletX2 = Math.round(this.x + this.width*0.6);
+			lBulletY = Math.round(this.y + this.height);
+			getNewEnemyBullet(lBulletX1, lBulletY, 250, Math.PI/2, 1.5, 'bullet_p_laser');
+			getNewEnemyBullet(lBulletX2, lBulletY, 250, Math.PI/2, 1.5, 'bullet_p_laser');
+		}
 
-			// homing missiles, sort of
-			// this.bulletAngle = sectoidWave.units.length > 0 ? this.angleTo(sectoidWave.units[Math.floor(Math.random() * sectoidWave.units.length)]) : -Math.PI/2;
-			if (this.bulletTimer2 % this.bulletDivision2 == 1) {
-				// if (game.sound){game.shootSound.play();}
-				this.bulletTimer2 = 1; //resetting our timer
-				lBulletX1 = Math.round(this.x + this.width*0.4);
-				lBulletX2 = Math.round(this.x + this.width*0.6);
-				lBulletY = Math.round(this.y + this.height);
-			    getNewEnemyBullet(lBulletX1, lBulletY, 250, Math.PI/2, 1.5, 'bullet_p_laser');
-			    getNewEnemyBullet(lBulletX2, lBulletY, 250, Math.PI/2, 1.5, 'bullet_p_laser');
-			}
-
-
-
-		if (this.y > this.yStop){
+		if (this.y > this.yStop)
+		{
 			this.speed = 0;
-			if (this.x > 0 && this.x <= this.xBondary) {
 
-				if (this.x < playerShip.x && this.x <= this.xBondary-1){
+			if (this.x > 0 && this.x <= this.xBondary)
+			{
+				if (this.x < playerShip.x && this.x <= this.xBondary-1)
+				{
 					this.x += 1;
 				}
-				else if (this.x > playerShip.x && this.x > 1){
+				else if (this.x > playerShip.x && this.x > 1)
+				{
 					this.x -= 1;
 				}
-
 			}
 		}
 	}
 	else
 	{
-		//level finished --- taken from update function, needs work, should be triggered in boss dead else function
-
-		//waiting a few secs before engaging warp speed
-		game.levelUpTimer++;
+		game.levelUpTimer++; //waiting a few secs before engaging warp speed
 
 		if (game.levelUpTimer == 100)
 		{
@@ -2104,9 +1981,8 @@ enemyBullet.prototype.dead = false;
 enemyBullet.prototype.friction = 1.02;
 enemyBullet.prototype.ctx = game.context;
 
-enemyBullet.prototype.reset = function(x, y, speed, direction, power)	//fix this with sprites with diferent angles
+enemyBullet.prototype.reset = function(x, y, speed, direction, power)	//only variable arguments here
 {
-    //change variable properties only
 	this.x = x;
 	this.y = y;
 	this.width = this.sprite.frameWidth;
@@ -2115,7 +1991,6 @@ enemyBullet.prototype.reset = function(x, y, speed, direction, power)	//fix this
 	this.direction = direction;
 	this.power = power;
 	this.dead = false;
-
 	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 };
@@ -2165,47 +2040,36 @@ enemyBullet.prototype.draw = function(x, y)	//fix this with sprites with diferen
 ////////////
 // Factory
 ////////////
-
 getNewEnemyBullet = function(x, y, speed, direction, power, image)
 {
     var eb = null;
-
     // check to see if there is a spare one
     if (game.enemyBulletsPool.length > 0)
     {
-    	//recycle
-
-        eb = game.enemyBulletsPool.pop();
-
-        eb.sprite.reset(image, 3, 1, 4);
-
-        eb.reset(x, y, speed, direction, power);
-
-    	game.bullets.push(eb);
+			//recycle
+			eb = game.enemyBulletsPool.pop();
+			eb.sprite.reset(image, 3, 1, 4);
+			eb.reset(x, y, speed, direction, power);
+			game.bullets.push(eb);
     }
     else
     {
     	// none available, construct a new one
     	eb = new enemyBullet(x, y, speed, direction, power, image);
-
     	game.bullets.push(eb);
     }
-
-    // console.log('pool: ' + game.enemyBulletsPool.length);
-    // console.log('active: ' + game.bullets.length);
 };
 
 freeEnemyBullet = function(eb)
 {
-    // find the active bullet and remove it
-    game.bullets.splice(game.bullets.indexOf(eb),1);
-
-    // return the bullet back into the pool
+	// find the active bullet and remove it
+	game.bullets.splice(game.bullets.indexOf(eb),1);
+	// return the bullet back into the pool
 	game.enemyBulletsPool.push(eb);
 };
 
-loot = function(x, y) {
-
+loot = function(x, y)
+{
 	this.x = x;
 	this.y = y;
 	this.dead = false;
@@ -2229,7 +2093,6 @@ loot = function(x, y) {
 	this.height = this.image.height;
 };
 
-//invariables
 loot.prototype.speed = Math.round(250/pixelRatio);
 loot.prototype.direction = Math.PI/2;
 loot.prototype.dead = false;
@@ -2239,10 +2102,11 @@ loot.prototype.sfx2 = 'loot_powerUp2' + fileFormat;
 loot.prototype.sfx3 = 'loot_powerUp3' + fileFormat;
 loot.prototype.ctx = game.context;
 
-loot.prototype.reset = function(x, y) {
+loot.prototype.reset = function(x, y)
+{
 	this.x = x;
-    this.y = y;
-    this.dead = false;
+	this.y = y;
+	this.dead = false;
 	this.key = Math.floor(Math.random() * this.drops.length);
 	this.type = this.drops[this.key];
 	switch(this.type) {
@@ -2260,16 +2124,12 @@ loot.prototype.reset = function(x, y) {
 	}
 };
 
-loot.prototype.update = function() {
+loot.prototype.update = function()
+{
 	if(!this.dead)
 	{
 		this.vx = Math.cos(this.direction) * (this.speed*dt);
 		this.vy = Math.sin(this.direction) * (this.speed*dt);
-		// this.handleSprings();
-		// this.handleGravitations();
-		// this.vx *= this.friction;
-		// this.vy *= this.friction;
-		// this.vy += this.gravity;
 		this.x += this.vx;
 		this.y += this.vy;
 
@@ -2279,37 +2139,38 @@ loot.prototype.update = function() {
 		{
 			switch(this.type)
 			{
-			    case 'health':
-			    	if (this.hull <= 7.5) {
-			    		playerShip.hull += 2.5;
+		    case 'health':
+					if (this.hull <= 7.5)
+					{
+						playerShip.hull += 2.5;
 					}
 					else {
 						playerShip.hull = 10;
 					}
-			        gameUI.updateEnergy();
-			    break;
-			    case 'laser':
-			        playerShip.laserLevel = playerShip.laserLevel < 3 ? playerShip.laserLevel + 1 : playerShip.laserLevel;
-			    break;
-			    case 'missile':
-			        playerShip.missileLevel = playerShip.missileLevel < 3 ? playerShip.missileLevel + 1 : playerShip.missileLevel;
-			    break;
+		      gameUI.updateEnergy();
+		    break;
+		    case 'laser':
+		      playerShip.laserLevel = playerShip.laserLevel < 3 ? playerShip.laserLevel + 1 : playerShip.laserLevel;
+		    break;
+		    case 'missile':
+		      playerShip.missileLevel = playerShip.missileLevel < 3 ? playerShip.missileLevel + 1 : playerShip.missileLevel;
+		    break;
 			}
 			if (game.sound)
-	        {
-	        	if (game.sfx[this.sfx1].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.sfx1]);
-	        	}
-	        	else if (game.sfx[this.sfx2].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.sfx2]);
-	        	}
-	        	else if (game.sfx[this.sfx3].paused)
-	        	{
-	        		game.sounds.push(game.sfx[this.sfx3]);
-	        	}
-	        }
+      {
+      	if (game.sfx[this.sfx1].paused)
+      	{
+      		game.sounds.push(game.sfx[this.sfx1]);
+      	}
+      	else if (game.sfx[this.sfx2].paused)
+      	{
+      		game.sounds.push(game.sfx[this.sfx2]);
+      	}
+      	else if (game.sfx[this.sfx3].paused)
+      	{
+      		game.sounds.push(game.sfx[this.sfx3]);
+      	}
+      }
 			this.dead = true;
 		}
 
@@ -2324,54 +2185,43 @@ loot.prototype.update = function() {
 	}
 };
 
-loot.prototype.draw = function(x, y) {
+loot.prototype.draw = function(x, y)
+{
 	this.ctx.drawImage(this.image, x, y);
 };
-
 
 ////////////
 // Factory
 ////////////
-
 function getNewLoot(x, y)
 {
-    var l = null;
-
-    // check to see if there is a spare one
-    if (game.lootPool.length > 0)
-    {
-    	//recycle
-        l = game.lootPool.pop();
-
-        l.reset(x, y);
-
-    	game.bullets.push(l);
-    }
-    else
-    {
-        // none available, construct a new one
+	var l = null;
+	// check to see if there is a spare one
+	if (game.lootPool.length > 0)
+	{
+		//recycle
+		l = game.lootPool.pop();
+		l.reset(x, y);
+		game.bullets.push(l);
+	}
+	else
+	{
+		// none available, construct a new one
 		l = new loot(x, y);
-
-    	game.bullets.push(l);
-    }
-
-    // console.log('pool: ' + game.lootPool.length);
-    // console.log('active: ' + game.bullets.length);
-
+		game.bullets.push(l);
+	}
 }
-
 
 function freeLoot(l)
 {
-    // find the active bullet and remove it
-    game.bullets.splice(game.bullets.indexOf(l),1);
-
-    // return the bullet back into the pool
+	// find the active bullet and remove it
+	game.bullets.splice(game.bullets.indexOf(l),1);
+	// return the bullet back into the pool
 	game.lootPool.push(l);
 }
 
-var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate) {
-
+var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate)
+{
 	this.side = side;
 	this.spawnedShips = 0;
 	this.race = race;
@@ -2382,7 +2232,8 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 	this.fireRate = fireRate || 0;
 	this.spawnTimer = 1;
 	this.spawnDivision = Math.round((1500 * dt)/pixelRatio);
-	switch (this.side){
+	switch (this.side)
+	{
 		case 'top':
 			this.x = pos;
 			this.y = game.outerTop;
@@ -2400,33 +2251,25 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 			break;
 	}
 	this.over = false;
-	// this.bulletTimer = 1;
-	// this.bulletDivision = fireRate || 99999;
-	// this.loot = [];
 
-
-
-	this.update = function() {
+	this.update = function()
+	{
 		if(!this.over)
 		{
-			// if (dt !== 0 && !this.spawnDivisionSet){
-			// 	this.spawnDivision = Math.round(700 * dt);
-			// 	this.spawnDivisionSet = true;
-			// }
-
 			this.spawnTimer++;
 
-			if (this.spawnedShips <= this.fleetSize){
-				if (this.spawnTimer == this.spawnDivision){
+			if (this.spawnedShips <= this.fleetSize)
+			{
+				if (this.spawnTimer == this.spawnDivision)
+				{
 					this.spawnTimer = 1;
-
 					getNewEnemy(this.x, this.y, this.speed, this.direction, this.hull, this.type, this.race, this.fireRate, true);
-
 					this.spawnedShips++;
 				}
 			}
 
-			if (this.spawnedShips == this.fleetSize){
+			if (this.spawnedShips == this.fleetSize)
+			{
 				this.over = true;
 			}
 		}
@@ -2435,100 +2278,87 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 			freeEnemyWave(this);
 		}
 	};
-
 };
 
 ////////////
 // Factory
 ////////////
-
 function getNewEnemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate)
 {
     var ew = null;
-
-    // check to see if there is a spare one
+    //check to see if there is a spare one
     if (game.wavesPool.length > 0)
     {
     	//recycle
-        ew = game.wavesPool.pop();
-
-        ew.side = side;
-		ew.spawnedShips = 0;
-		ew.race = race;
-		ew.type = type;
-		ew.fleetSize = fleetSize;
-		ew.speed = speed;
-		ew.hull = hull;
-		ew.fireRate = fireRate || 0;
-		ew.spawnTimer = 1;
-		ew.spawnDivision = Math.round(1500 * dt);
-		switch (ew.side){
-			case 'top':
-				ew.x = pos;
-				ew.y = game.outerTop;
-				ew.direction = Math.PI/2;
-			break;
-			case 'left':
-				ew.x = game.outerLeft;
-				ew.y = pos;
-				ew.direction = 0;
-			break;
-			case 'right':
-				ew.x = game.outerRight;
-				ew.y = pos;
-				ew.direction = Math.PI;
-			break;
-		}
-
-		ew.over = false;
-
+      ew = game.wavesPool.pop();
+      ew.side = side;
+			ew.spawnedShips = 0;
+			ew.race = race;
+			ew.type = type;
+			ew.fleetSize = fleetSize;
+			ew.speed = speed;
+			ew.hull = hull;
+			ew.fireRate = fireRate || 0;
+			ew.spawnTimer = 1;
+			ew.spawnDivision = Math.round(1500 * dt);
+			switch (ew.side)
+			{
+				case 'top':
+					ew.x = pos;
+					ew.y = game.outerTop;
+					ew.direction = Math.PI/2;
+				break;
+				case 'left':
+					ew.x = game.outerLeft;
+					ew.y = pos;
+					ew.direction = 0;
+				break;
+				case 'right':
+					ew.x = game.outerRight;
+					ew.y = pos;
+					ew.direction = Math.PI;
+				break;
+			}
+			ew.over = false;
     	game.waves.push(ew);
     }
     else
     {
-        // none available, construct a new one
-		ew = new enemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate);
-    	game.waves.push(ew);
+			//none available, construct a new one
+			ew = new enemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate);
+			game.waves.push(ew);
     }
-
-    // console.log('pool: ' + game.wavesPool.length);
-    // console.log('active: ' + game.waves.length);
-
 }
-
 
 function freeEnemyWave(ew)
 {
-    // find the active bullet and remove it
-    game.waves.splice(game.waves.indexOf(ew),1);
-
-    // return the bullet back into the pool
+	// find the active bullet and remove it
+	game.waves.splice(game.waves.indexOf(ew),1);
+	// return the bullet back into the pool
 	game.wavesPool.push(ew);
 }
 
-function ui() {
-
+function ui()
+{
 	var uiAll = $('#ui');
-
-	//avoiding jQuery inside the loop
 	var uiLevel = doc.getElementById("uiLevel");
 	var uiScore = doc.getElementById("uiScore");
 	var uiEBar = doc.getElementById("uiEBar");
 	var uiHangar = doc.getElementById("uiHangarList");
-
 	var effectDuration = 800;
 
-
-	this.updateLevel = function() {
+	this.updateLevel = function()
+	{
 		uiLevel.innerHTML = 'STAGE ' + game.level;
 	};
 
-	this.updateScore = function() {
+	this.updateScore = function()
+	{
 		uiScore.innerHTML = 'SCORE: ' + game.score;
 	};
 
-	this.updateEnergy = function() {
-
+	this.updateEnergy = function()
+	{
 		shipEnergy = (playerShip.hull / playerShip.maxHull) * 100;
 
 		if(shipEnergy < 0 ) {shipEnergy = 0;}
@@ -2557,24 +2387,25 @@ function ui() {
 		uiEBar.style.width = shipEnergyPC;
 	};
 
-	this.updateHangar = function() {
-		switch (playerShip.lives)
-			{
-				case 3:
-					uiHangar.getElementsByTagName("li")[0].style.display = 'inline-block';
-					uiHangar.getElementsByTagName("li")[1].style.display = 'inline-block';
-					uiHangar.getElementsByTagName("li")[2].style.display = 'inline-block';
-				break;
-				case 2:
-					uiHangar.getElementsByTagName("li")[0].style.display = 'none';
-				break;
-				case 1:
-					uiHangar.getElementsByTagName("li")[1].style.display = 'none';
-				break;
-				case 0:
-					uiHangar.getElementsByTagName("li")[2].style.display = 'none';
-				break;
-			}
+	this.updateHangar = function()
+	{
+		switch(playerShip.lives)
+		{
+			case 3:
+				uiHangar.getElementsByTagName("li")[0].style.display = 'inline-block';
+				uiHangar.getElementsByTagName("li")[1].style.display = 'inline-block';
+				uiHangar.getElementsByTagName("li")[2].style.display = 'inline-block';
+			break;
+			case 2:
+				uiHangar.getElementsByTagName("li")[0].style.display = 'none';
+			break;
+			case 1:
+				uiHangar.getElementsByTagName("li")[1].style.display = 'none';
+			break;
+			case 0:
+				uiHangar.getElementsByTagName("li")[2].style.display = 'none';
+			break;
+		}
 	};
 
 	this.fade = function(trigger)
@@ -2584,7 +2415,6 @@ function ui() {
 			case 'in':
 				uiAll.fadeIn(effectDuration);
 			break;
-
 			case 'out':
 				uiAll.fadeOut(effectDuration);
 			break;
@@ -2597,16 +2427,14 @@ function ui() {
 		this.updateEnergy();
 		this.updateHangar();
 	};
-
 }
 
 gameUI = new ui();
 
-function lights() {
-
+function lights()
+{
 	this.fader = $('#fader');
 	var effectDuration = 2000;
-
 
 	this.switch = function(trigger)
 	{
@@ -2626,8 +2454,6 @@ function lights() {
 		}
 	};
 
-
-
 	this.fade = function(trigger)
 	{
 		switch (trigger)
@@ -2635,7 +2461,8 @@ function lights() {
 			//note that we're fadding the this.fader div here to give the illusion that our game is fading so the jquery effects below should be opposite to what we want to achieve
 			case 'in':
 				game.fadingIn = true;
-				this.fader.fadeOut(effectDuration, function(){
+				this.fader.fadeOut(effectDuration, function()
+				{
 					game.fadingIn = false;
 					game.faded = false;
 				});
@@ -2643,7 +2470,8 @@ function lights() {
 
 			case 'out':
 				game.fadingOut = true;
-				this.fader.fadeIn(effectDuration, function(){
+				this.fader.fadeIn(effectDuration, function()
+				{
 					game.fadingOut = false;
 					game.faded = true;
 				});
@@ -2654,20 +2482,17 @@ function lights() {
 
 gameLights = new lights();
 
-function text(header1, header2, inputRequired) {
-
+function text(header1, header2, inputRequired)
+{
 	var h1 = $('#h1'); //remove jquery here
 	var h2 = $('#h2');
 	var h3 = $('#h3');
-
 	var h1Text = header1;
 	var h2Text = header2;
 	var h3Text = game.isMobile ? 'Tap screen to continue' : 'Press ENTER or LMB to continue';
 	var allText = $('.all-text');
 	var textInput = inputRequired;
-
 	var effectDuration = 2000;
-
 
 	this.switch = function(trigger)
 	{
@@ -2677,7 +2502,6 @@ function text(header1, header2, inputRequired) {
 				allText.show();
 				game.textFaded = false;
 			break;
-
 			case 'off':
 				allText.stop(true, true);
 				allText.hide();
@@ -2697,7 +2521,6 @@ function text(header1, header2, inputRequired) {
 					game.textFaded = false;
 				});
 			break;
-
 			case 'out':
 				game.textFadingOut = true;
 				allText.fadeOut(effectDuration, function(){
@@ -2719,14 +2542,12 @@ function text(header1, header2, inputRequired) {
 	};
 
 	this.init();
-
 }
 
 gameText = new text(); //To be removed!
 
 function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and skiping these
 {
-
 	this.start = function()
 	{
 		if (game.canVibrate) navigator.vibrate(15);
@@ -2770,7 +2591,8 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 					removeStandByInput();
 					if (game.textFaded) //remove this later
 					{
-						if (!game.loaded){
+						if (!game.loaded)
+						{
 							startGame();
 						}
 						addGamePlayInput();
@@ -2783,12 +2605,14 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 					else
 					{
 						$('#inputarea').on('mousedown touchstart', function()
-						{   //only trigger this event listner once text animations have ended
+						{
+							//only trigger this event listner once text animations have ended
 							$('#inputarea').off('mousedown touchstart');
 							introText.fade('out');
 							$('.all-text').promise().done(function()
 							{
-								if (!game.loaded){
+								if (!game.loaded)
+								{
 									startGame();
 								}
 								addGamePlayInput();
@@ -2832,9 +2656,7 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 					});
 			});
 		});
-
 	};
-
 
 	this.gameOver = function()
 	{
@@ -2854,18 +2676,17 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 			{
 				gameUI.fade('out');
 				gameLights.fade('out');
-					$('#fader').promise().done(function()
-					{   //once text fades
-						gameState.pause();
-						game.score = 0;
-						game.level = 1;
-						gameLights.fade('out');
-						gameMenu.toggle();
-					});
+				$('#fader').promise().done(function()
+				{   //once text fades
+					gameState.pause();
+					game.score = 0;
+					game.level = 1;
+					gameLights.fade('out');
+					gameMenu.toggle();
+				});
 			});
 		});
 	};
-
 
 	this.pause = function()
 	{
@@ -2879,81 +2700,12 @@ function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and ski
 		gameUI.updateAll();
 		gameUI.fade('in');
 	};
-
 }
-
-
-//====================== Game state =================//
-
-
-		// 	//If Esc
-		// 	if (game.keys[27]) {
-		// 		mouseIsDown = 0;
-		// 		game.keys[27] = false;
-		// 		playerShip.hull = 0;
-		// 		playerShip.lives = 0;
-		// 		game.gameOver = true;
-		// 	}
-
-		// 	//game sound
-		// 	if (game.keys[119]) {
-		// 		game.sound = (game.sound) ? false : true;
-		// 		gameUI.updateSound();
-		// 		game.keys[119] = false;
-		// 	}
-
-		// 	if (game.keys[120]) {
-		// 		game.music = (game.music) ? false : true;
-		// 		gameUI.updateSound();
-		// 		game.keys[120] = false;
-
-
-
-		// 		if (game.tracks.length > 0) {
-		// 			for(var g in game.tracks){
-		// 				game.tracks[g].pause();
-		// 			}
-		// 			game.tracks = [];
-		// 		}
-		// 		else if (game.tracks.length < 1) {
-		// 				game.tracks.push(game.soundTracks['tune1.mp3']);
-		// 				for(var w in game.tracks){
-		// 					game.tracks[w].play();
-		// 					game.tracks[w].loop = true;
-		// 				}
-		// 		}
-		// 	}
-
-
-		// 	//game pause
-		// 	if ((game.keys[80]) && !(game.gameOver))
-		// 	{
-		// 		game.paused = (game.paused) ? false : true;
-		// 		game.keys[80] = false;
-		// 	}
-
-		// 	//If Esc pressed or if gameover and enter pressed
-		// 	if (game.keys[27] ||
-		// 	   ((game.keys[13] || mouseIsDown) && game.paused && game.started && game.gameOver) ||
-		// 	   ((game.keys[13] || mouseIsDown) && game.paused && game.started && game.level >= 7))
-		// 	{
-		// 		if (game.lives < 1 || game.level >=7)
-		// 		{
-		// 			game.level = X_Level;
-		// 			game.score = 0;
-		// 			playerShip.lives = X_Lives;
-		// 			// game.downDivision = Math.floor((300 * game.level)); //the higher the level the slower the enemies come down
-		// 		}
-
-		// 		resetGame();
-		// 	}
-		// }
 
 gameState = new state();
 
 function menu()
 {
-
 	var menuBg = $('#menuBackground');
 	var resumeBtn = $('#resumeGame');
 	var startBtn = $('#startGame');
@@ -2975,16 +2727,16 @@ function menu()
 	{
 		game.fullScreen = game.fullScreen ? false : true;
 
-	    if (game.fullScreen)
-	    {
+    if (game.fullScreen)
+    {
 			fullScreen.addClass('active');
 			fullScreen.text('Fullscreen: ON');
-	    }
-	    else
-	    {
+    }
+    else
+    {
 			fullScreen.removeClass('active');
 			fullScreen.text('Fullscreen: OFF');
-	    }
+    }
 	}
 
 	this.toggleFullScreen = function(trigger)  //experimental   only works with user input
@@ -2996,19 +2748,19 @@ function menu()
 		{
 			if (doc.documentElement.requestFullscreen)
 			{
-			doc.documentElement.requestFullscreen();
+				doc.documentElement.requestFullscreen();
 			}
 			else if (doc.documentElement.msRequestFullscreen)
 			{
-			doc.documentElement.msRequestFullscreen();
+				doc.documentElement.msRequestFullscreen();
 			}
 			else if (doc.documentElement.mozRequestFullScreen)
 			{
-			doc.documentElement.mozRequestFullScreen();
+				doc.documentElement.mozRequestFullScreen();
 			}
 			else if (doc.documentElement.webkitRequestFullscreen)
 			{
-			doc.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+				doc.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
 			}
 		}
 		else
@@ -3032,15 +2784,11 @@ function menu()
 		}
 	};
 
-
 	this.toggleSound = function()
 	{
 		if (game.canVibrate) navigator.vibrate(15);
-
 		game.sound = game.sound ? false : true ;
-
 		localStorage.prawnsSound =  game.sound;
-
 
 		if (game.sound)
 		{
@@ -3052,15 +2800,12 @@ function menu()
 		soundFx.removeClass('active');
 		soundFx.text('Sound: OFF');
 		}
-
 	};
 
 	this.toggleMusic = function()
 	{
 		if (game.canVibrate) navigator.vibrate(15);
-
 		game.music = game.music ? false : true ;
-
 		localStorage.prawnsMusic =  game.music;
 
 		if (game.started && game.tracks.length > 0)
@@ -3092,16 +2837,13 @@ function menu()
 			music.removeClass('active');
 			music.text('Music: OFF');
 		}
-
 	};
 
 
 	this.toggle = function()
 	{
 		document.getElementById("toggle-menu-btn").disabled = true;
-
 		this.toggled = this.toggled ? false : true;
-
 
 		// IMPROVE THIS WITH LEFT RIGHT BTN CLASSES
 		if (this.toggled)
@@ -3192,7 +2934,6 @@ function menu()
 				"left": "+=50%",
 			},800);
 
-
 			allButtons.promise().done(function()
 			{
 				allButtons.hide();
@@ -3204,7 +2945,6 @@ function menu()
 				});
 			});
 		}
-
 	};
 
 	this.init = function()
@@ -3243,1040 +2983,1004 @@ function menu()
 		}
 
 		gameMenu.toggle();
-
 	};
-
 }
 
 gameMenu = new menu();
 
-		//====================== Main update function =================//		
-		function update(){
-			////////////////////////
-			// Init
-			///////////////////////
+function update()
+{
+	////////////////////////
+	// Init
+	///////////////////////
+	clrCanvas();
+	gameBackground.update();
 
-			// gameBackground.update();
-			clrCanvas();
-			gameBackground.update();
+	if(!dtTimerSet)
+	{
+		getDeltaTime();
+	}
 
-			if(!dtTimerSet)
-			{
-				getDeltaTime();
-				console.log(dt);
-			}
+	updateGameTime();
 
-    		updateGameTime();
+	/////////////////////////////////////////////////////////////////////////////////
+	// LEVELS
+	////////////////////////////////////////////////////////////////////////////////
+	/* jshint ignore:start */
+	if(game.seconds == Math.round(game.seconds) && win['level'+game.level]['second'+game.seconds])
+	{
+		win['level'+game.level]['second'+game.seconds]();
+	}
 
-			/////////////////////////////////////////////////////////////////////////////////
-			// LEVELS
-			////////////////////////////////////////////////////////////////////////////////
-			/* jshint ignore:start */
-			if(game.seconds == Math.round(game.seconds) && win['level'+game.level]['second'+game.seconds])
-			{
-				win['level'+game.level]['second'+game.seconds]();
-			}
+	win['level'+game.level].update();
+	/* jshint ignore:end */
 
-			win['level'+game.level].update();
-			/* jshint ignore:end */
-
-
-			///////////////////////////////////
-			// Game objects								**!Load in order of appearance (bottom layer 1st)!**
-			///////////////////////////////////
-
-			if (game.enemies.length > 0);
-			{
-				var ew = game.waves.length;
-				while (ew--)
-				{
-				    game.waves[ew].update();
-				}
-
-				var en = game.enemies.length;
-				while (en--)
-				{
-				    game.enemies[en].update();
-				}
-			}
-
-			if (game.bullets.length > 0);
-			{
-				var b = game.bullets.length;
-				while (b--)
-				{
-				    game.bullets[b].update();
-				}
-			}
-
-			playerShip.load(); //change this, it's fugly
-
-
-			if (game.explosions.length > 0);
-			{
-				var e = game.explosions.length;
-				while (e--)
-				{
-				    game.explosions[e].update();
-				}
-			}
-
-
-
-
-
-
-			///////////////////////////////////
-			// Game Sounds
-			///////////////////////////////////
-
-			// console.log (game.sounds.length);
-
-			if (game.sounds.length > 0) {
-				for(var s in game.sounds){
-
-					game.sounds[s].play();
-					// game.sounds[s].addEventListener("paused", game.sounds[s] = null);
-					game.sounds[s].addEventListener("paused", game.sounds.splice(s,1));
-				}
-			}
-
-			///////////////////////////////////
-			// D3BUG3R!
-			///////////////////////////////////
-
-			// console.log (dt);
-			// console.log(fileFormat);
-
-			// console.log ('game tracks: ' + game.tracks);
-			// console.log('reqSfx: ' + game.requiredSfx);
-
-			// console.log ('update w:' + game.width);
-			// console.log ('update h:' +game.height);
-
-
-			// console.log(win.devicePixelRatio);
-			// console.log(win.outerHeight);
-			// console.log(win.outerWidth);
-
-			///////////////////////////////////
-			// GAME ARRAYS
-			///////////////////////////////////
-
-			// console.log('keys: '+game.keys.length); //the keyboard array
-			// console.log('playerBullets: '+game.playerBullets.length); //Our proton torpedoes!
-			// console.log('playerBulletsPool: '+game.playerBulletsPool.length); //Our proton torpedoes!
-			// console.log('enemyBullets: '+game.enemyBullets.length); //Enemy missiles!
-			// console.log('enemies: '+game.enemies.length); //The InVaDeRs
-			// console.log('waves: '+game.waves.length);
-			// console.log('loot: '+game.loot.length);
-			// console.log('explosions: '+game.explosions.length);
-			// console.log(dtArray.length);
-			// console.log('sfx: '+game.sfx.length);
-			// console.log('soundtracks: '+game.soundTracks.length);
-			// console.log('sounds: '+game.sounds.length);
-			// console.log('tracks: '+game.tracks.length);
-			// console.log('images: '+game.images.length);
-
+	/////////////////////////////////////////////////////////////////////
+	// Game objects	**!Load in order of appearance (bottom layer 1st)!**
+	/////////////////////////////////////////////////////////////////////
+	if (game.enemies.length > 0);
+	{
+		var ew = game.waves.length;
+		while (ew--)
+		{
+		    game.waves[ew].update();
 		}
+
+		var en = game.enemies.length;
+		while (en--)
+		{
+		    game.enemies[en].update();
+		}
+	}
+
+	if (game.bullets.length > 0);
+	{
+		var b = game.bullets.length;
+		while (b--)
+		{
+		    game.bullets[b].update();
+		}
+	}
+
+	playerShip.load(); //change this, it's fugly
+
+	if (game.explosions.length > 0);
+	{
+		var e = game.explosions.length;
+		while (e--)
+		{
+		    game.explosions[e].update();
+		}
+	}
+
+	///////////////////////////////////
+	// Game Sounds
+	///////////////////////////////////
+	if (game.sounds.length > 0)
+	{
+		for(var s in game.sounds)
+		{
+			game.sounds[s].play();
+			game.sounds[s].addEventListener("paused", game.sounds.splice(s,1));
+		}
+	}
+
+	// ///////////////////////////////////
+	// // D3BUG3R!
+	// ///////////////////////////////////
+	// console.log (dt);
+	// console.log(fileFormat);
+	//
+	// console.log ('game width:' + game.width);
+	// console.log ('game height:' + game.height);
+	//
+	// console.log(win.devicePixelRatio);
+	// console.log(win.outerHeight);
+	// console.log(win.outerWidth);
+
+	// ///////////////////////////////////
+	// // GAME ARRAYS
+	// ///////////////////////////////////
+	// console.log('keys: '+ game.keys.length);
+	// console.log('playerBulletsPool: '+ game.playerBulletsPool.length);
+  // console.log('bulletsActive: ' + game.bullets.length);
+	// console.log('enemies: '+ game.enemies.length);
+	// console.log('Waves pool: ' + game.wavesPool.length);
+	// console.log('Waves active: ' + game.waves.length);
+  // console.log('pool: ' + game.lootPool.length);
+  // console.log('active: ' + game.bullets.length);
+	// console.log('explosions: '+ game.explosions.length);
+	// console.log(dtArray.length);
+	// console.log(audiopreload);
+	// console.log('required soundSfx:' + game.requiredSfx);
+	// console.log('sfx: '+ game.sfx.length);
+	// console.log('required soundTracks:' + game.requiredSoundTracks);
+	// console.log('soundtracks: '+ game.soundTracks.length);
+	// console.log('sounds: '+ game.sounds.length);
+	// console.log ('game tracks: ' + game.tracks);
+	// console.log('tracks: '+ game.tracks.length);
+	// console.log('images: '+ game.images.length);
+	// console.log('reqImages: ' + game.requiredImages);
+	// console.log('doneImages: ' + game.doneImages);
+
+	// ///////////////////////////////////
+	// // TOUCH INPUT
+	// ///////////////////////////////////
+	// console.log('touchInitX:' + touchInitX);
+	// console.log('touchInitY:' + touchInitY);
+	// console.log('inputAreaX:' + inputAreaX);
+	// console.log('inputAreaY:' + inputAreaY);
+}
 
 var level1 = {};
 
-			// enemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
-			// enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate)
+// enemy(x, y, speed, direction, hull, type, image, fireRate, sheep)
+// enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate)
+level1.second1 = function ()
+{
+	getNewEnemyWave('left', game.width*0.3, 'enemy_sectoid', 'pawn', 1, 300, 1, 0);
+	getNewEnemyWave('right', game.width*0.3, 'enemy_sectoid', 'pawn', 1, 250, 1, 0);
+};
 
-			level1.second1 = function () {
-				getNewEnemyWave('left', game.width*0.3, 'enemy_sectoid', 'pawn', 1, 300, 1, 0);
-			    getNewEnemyWave('right', game.width*0.3, 'enemy_sectoid', 'pawn', 1, 250, 1, 0);
-			};
+level1.second3 = function ()
+{
+  getNewEnemyWave('left', game.height*0.5, 'enemy_sectoid', 'pawn', 1, 250, 1, 0);
+  getNewEnemyWave('right', game.height*0.5, 'enemy_sectoid', 'pawn', 1, 300, 1, 0);
+};
 
-			level1.second3 = function () {
-			    getNewEnemyWave('left', game.height*0.5, 'enemy_sectoid', 'pawn', 1, 250, 1, 0);
-			    getNewEnemyWave('right', game.height*0.5, 'enemy_sectoid', 'pawn', 1, 300, 1, 0);
-			};
+level1.second5 = function ()
+{
+  getNewEnemy(game.width * 0.7, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
+};
 
-			level1.second5 = function () {
-			    getNewEnemy(game.width * 0.7, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
-			};
+level1.second7 = function ()
+{
+  getNewEnemy(game.width * 0.3, game.outerTop, 155, Math.PI/2, 10, 'base', 'enemy_base_sectoid', 1);
+};
 
-			level1.second7 = function () {
-			    getNewEnemy(game.width * 0.3, game.outerTop, 155, Math.PI/2, 10, 'base', 'enemy_base_sectoid', 1);
-			};
+level1.second8 = function ()
+{
+  getNewEnemyWave('left', game.height*0.3, 'enemy_sectoid', 'pawn', 4, 250, 1, 2);
+};
 
-			level1.second8 = function () {
-			    getNewEnemyWave('left', game.height*0.3, 'enemy_sectoid', 'pawn', 4, 250, 1, 2);
-			};
+level1.second9 = function ()
+{
+  getNewEnemyWave('right', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 2);
+};
 
-			level1.second9 = function () {
-			    getNewEnemyWave('right', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 2);
-			};
+level1.second10 = function ()
+{
+  getNewEnemyWave('top', game.width*0.5, 'enemy_sectoid', 'pawn', 6, 300, 1, 2);
+};
 
-			level1.second10 = function () {
-			    getNewEnemyWave('top', game.width*0.5, 'enemy_sectoid', 'pawn', 6, 300, 1, 2);
-			};
+level1.second11 = function ()
+{
+  getNewEnemyWave('top', game.width*0.7, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
+};
 
-			level1.second11 = function () {
-			    getNewEnemyWave('top', game.width*0.7, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
-			};
+level1.second12 = function ()
+{
+  getNewEnemyWave('left', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 2);
+};
 
-			level1.second12 = function () {
-			    getNewEnemyWave('left', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 2);
-			};
+level1.second13 = function ()
+{
+  getNewEnemy(game.width * 0.3, game.outerTop, 155, Math.PI/2, 10, 'base', 'enemy_base_floater', 1);
+};
 
-			level1.second13 = function () {
-			    getNewEnemy(game.width * 0.3, game.outerTop, 155, Math.PI/2, 10, 'base', 'enemy_base_floater', 1);
-			};
+level1.second15 = function ()
+{
+  getNewEnemyWave('top', game.width*0.2, 'enemy_sectoid', 'pawn', 2, 300, 1, 2);
+};
 
-			level1.second15 = function () {
-			    getNewEnemyWave('top', game.width*0.2, 'enemy_sectoid', 'pawn', 2, 300, 1, 2);
-			};
+level1.second16 = function ()
+{
+  getNewEnemyWave('top', game.width*0.4, 'enemy_sectoid', 'pawn', 3, 300, 1, 2);
+};
 
-			level1.second16 = function () {
-			    getNewEnemyWave('top', game.width*0.4, 'enemy_sectoid', 'pawn', 3, 300, 1, 2);
-			};
+level1.second17 = function ()
+{
+  getNewEnemyWave('top', game.width*0.6, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
+};
 
-			level1.second17 = function () {
-			    getNewEnemyWave('top', game.width*0.6, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
-			};
+level1.second18 = function ()
+{
+  getNewEnemyWave('top', game.width*0.8, 'enemy_sectoid', 'pawn', 5, 300, 1, 2);
+};
 
-			level1.second18 = function () {
-			    getNewEnemyWave('top', game.width*0.8, 'enemy_sectoid', 'pawn', 5, 300, 1, 2);
-			};
+level1.second22 = function ()
+{
+  getNewEnemyWave('top', game.width*0.3, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
+};
 
-			level1.second22 = function () {
-			    getNewEnemyWave('top', game.width*0.3, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
-			};
+level1.second25 = function ()
+{
+  getNewEnemyWave('left', game.width*0.4, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
+};
 
-			level1.second25 = function () {
-			    getNewEnemyWave('left', game.width*0.4, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
-			};
+level1.second27 = function ()
+{
+  getNewEnemyWave('right', game.width*0.3, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
+};
 
-			level1.second27 = function () {
-			    getNewEnemyWave('right', game.width*0.3, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
-			};
+level1.second30 = function ()
+{
+  getNewEnemyWave('top', game.width*0.3, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
+};
 
-			level1.second30 = function () {
-			    getNewEnemyWave('top', game.width*0.3, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
-			};
+level1.second33 = function ()
+{
+  getNewEnemyWave('top', game.width*0.6, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
+};
 
-			level1.second33 = function () {
-			    getNewEnemyWave('top', game.width*0.6, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
-			};
+level1.second35 = function ()
+{
+  getNewEnemyWave('right', game.width*0.2, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
+};
 
-			level1.second35 = function () {
-			    getNewEnemyWave('right', game.width*0.2, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
-			};
+level1.second37 = function ()
+{
+  getNewEnemy(game.width * 0.2, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
+};
 
-			level1.second37 = function () {
-			    getNewEnemy(game.width * 0.2, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
-			};
+level1.second38 = function ()
+{
+  getNewEnemy(game.width * 0.4, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
+};
 
-			level1.second38 = function () {
-			    getNewEnemy(game.width * 0.4, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
-			};
+level1.second39 = function ()
+{
+  getNewEnemy(game.width * 0.6, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
+};
 
-			level1.second39 = function () {
-			    getNewEnemy(game.width * 0.6, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
-			};
+level1.second40 = function ()
+{
+  getNewEnemy(game.width * 0.8, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
+};
 
-			level1.second40 = function () {
-			    getNewEnemy(game.width * 0.8, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
-			};
+level1.second41 = function ()
+{
+  getNewEnemy(game.width * 0.5, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
+};
 
-			level1.second41 = function () {
-			    getNewEnemy(game.width * 0.5, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
-			};
+level1.second42 = function ()
+{
+  getNewEnemy(game.width * 0.2, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
+};
 
-			level1.second42 = function () {
-			    getNewEnemy(game.width * 0.2, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
-			};
+level1.second43 = function ()
+{
+  getNewEnemy(game.width * 0.4, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
+};
 
-			level1.second43 = function () {
-			    getNewEnemy(game.width * 0.4, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
-			};
+level1.second44 = function ()
+{
+  getNewEnemy(game.width * 0.6, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
+};
 
-			level1.second44 = function () {
-			    getNewEnemy(game.width * 0.6, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
-			};
+level1.second45 = function ()
+{
+  getNewEnemy(game.width * 0.8, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
+};
 
-			level1.second45 = function () {
-			    getNewEnemy(game.width * 0.8, game.outerTop, 80, Math.PI/2, 10, 'miniboss', 'enemy_floater', 2);
-			};
+level1.update = function ()
+{
+	if (game.seconds > 13 && game.tracks.length < 2 && game.enemies.length > 0 && !game.bossDead) //NEEDS WORK
+	{
+		if(game.music)
+		{
+			game.tracks.push(game.soundTracks['tune2' + fileFormat]);
+			game.tracks[1].play();
+			game.tracks[1].loop = true;
+		}
+	}
+	if (game.seconds > 50 && game.enemies.length === 0 && !game.bossDead)
+	{
+		if (game.music)
+		{
+			game.tracks.push(game.soundTracks['boss' + fileFormat]);
+			game.tracks[2].play();
+			game.tracks[2].loop = true;
+		}
+		game.enemies.push(new boss(game.width*0.3, game.outerTop, 150, Math.PI/2, 100, 'boss_sectoid'));
+	}
 
-			level1.update = function () {
-				if (game.seconds > 13 && game.tracks.length < 2 && game.enemies.length > 0 && !game.bossDead) //NEEDS WORK
-				{
-					if(game.music){
-						game.tracks.push(game.soundTracks['tune2' + fileFormat]);
-						game.tracks[1].play();
-						game.tracks[1].loop = true;
-					}
-				}
-				if (game.seconds > 50 && game.enemies.length === 0 && !game.bossDead) {
-					if (game.music) {
-						game.tracks.push(game.soundTracks['boss' + fileFormat]);
-						game.tracks[2].play();
-						game.tracks[2].loop = true;
-					}
-				    game.enemies.push(new boss(game.width*0.3, game.outerTop, 150, Math.PI/2, 100, 'boss_sectoid'));
-				}
+	if (game.seconds > 55 && game.enemies.length === 0 && game.bossDead && game.tracks.length == 3)
+	{
+		game.tracks[0].pause();
+		game.tracks[1].pause();
+		game.tracks[2].pause();
+		game.tracks=[];
+		if (game.music && game.tracks.length === 0)
+		{
+			game.tracks.push(game.soundTracks['victory' + fileFormat]);
+		}
 
-				if (game.seconds > 55 && game.enemies.length === 0 && game.bossDead && game.tracks.length == 3) {
-					game.tracks[0].pause();
-					game.tracks[1].pause();
-					game.tracks[2].pause();
-					game.tracks=[];
-					if (game.music && game.tracks.length === 0)
-						{
-							game.tracks.push(game.soundTracks['victory' + fileFormat]);
-						}
-
-					game.tracks[0].play();
-				}
-			};
-			//boss(x, y, speed, direction, hull, image)
+		game.tracks[0].play();
+	}
+};
+//boss(x, y, speed, direction, hull, image)
 // };
 
-		//====================== Game functions =================//
+//====================== Game functions =================//
 
-		//making our canvases dynamically resize according to the size of the browser win	//! USE THIS TO SHOW ROTATE SCREEN MSG IF MOBILE AND GAME.WIDTH > GAME HEIGHT
-		function respondCanvas()
+////////////
+// Display
+////////////
+//making our canvases dynamically resize according to the size of the browser win	//! USE THIS TO SHOW ROTATE SCREEN MSG IF MOBILE AND GAME.WIDTH > GAME HEIGHT
+function respondCanvas()
+{
+	game.paused = gameMenu.toggled ? game.paused : true; //promtp to pause the game if called outside game menu
+	setGameDimensions();
+	game.paused = gameMenu.toggled ? game.paused : false; //prompt to unpause the game if called outside game menu
+}
+
+/////////////////
+// Game controls
+/////////////////
+//Keyboard
+$(document).keydown(function(e)
+{
+	//listen to pressed keys
+	game.keys[e.keyCode ? e.keyCode : e.which] = true;
+});
+
+$(document).keyup(function(e)
+{
+	//listen to released keys
+	delete game.keys[e.keyCode ? e.keyCode : e.which];
+});
+
+function addGamePlayInput()
+{
+	inputAreaX = playerShip.x;
+	inputAreaY = playerShip.y;
+
+  inputArea.addEventListener("mousedown",mouseDown, false);
+  inputArea.addEventListener("mouseup", mouseUp, false);
+  inputArea.addEventListener("mousemove",mouseXY, false);
+
+  inputArea.addEventListener("touchstart", touchDown, false);
+  inputArea.addEventListener("touchend", touchUp, false);
+  inputArea.addEventListener("touchcancel", touchUp, false);
+  inputArea.addEventListener("touchleave", touchUp, false);
+  inputArea.addEventListener("touchmove", touchXY, false);
+}
+
+//remove this later
+function addStandByInput()
+{
+	inputArea.addEventListener("mouseup", standByInput, false);
+	inputArea.addEventListener("touchstart", standByInput, false);
+}
+
+function removeGamePlayInput()
+{
+	inputArea.removeEventListener("mousedown",mouseDown, false);
+	inputArea.removeEventListener("mouseup", mouseUp, false);
+	inputArea.removeEventListener("mousemove",mouseXY, false);
+
+	inputArea.removeEventListener("touchstart", touchDown, false);
+	inputArea.removeEventListener("touchend", touchUp, false);
+	inputArea.removeEventListener("touchcancel", touchUp, false);
+	inputArea.removeEventListener("touchleave", touchUp, false);
+	inputArea.removeEventListener("touchmove", touchXY, false);
+}
+
+function removeStandByInput()
+{
+	inputArea.removeEventListener("mouseup", standByInput, false);
+	inputArea.removeEventListener("touchstart", standByInput, false);
+}
+
+function mouseUp(e)
+{
+	e.preventDefault();
+	mouseIsDown = 0;
+}
+
+function touchUp(e)
+{
+	e.preventDefault();
+	mouseIsDown = 0;
+}
+
+function mouseDown(e)
+{
+	e.preventDefault();
+	mouseIsDown = 1;
+	touchInitX = e.pageX - inputArea.offsetLeft;
+	touchInitY = e.pageY - inputArea.offsetTop;
+}
+
+function touchDown(e)
+{
+	e.preventDefault();
+	mouseIsDown = 1;
+	var touch = e.targetTouches[0];
+
+	touchInitX =  touch.pageX - touch.target.offsetLeft;
+	touchInitY =  touch.pageY - touch.target.offsetTop;
+}
+
+function mouseXY(e)
+{
+	e.preventDefault();
+	inputAreaX = e.pageX - inputArea.offsetLeft;
+	inputAreaY = e.pageY - inputArea.offsetTop;
+}
+
+function touchXY(e)
+{
+	e.preventDefault();
+	var touch = e.targetTouches[0];
+
+	inputAreaX = touch.pageX - inputArea.offsetLeft;
+	inputAreaY = touch.pageY - inputArea.offsetTop;
+}
+
+//remove this later
+function standByInput(e)
+{
+	e.preventDefault();
+
+	if(game.fadingIn)
+	{
+		gameLights.fader.stop(true, true);
+		gameLights.switch('on');
+	}
+
+	if(game.fadingOut)
+	{
+		gameLights.fader.stop(true, true);
+		gameLights.switch('off');
+	}
+
+	if(game.textFadingIn)
+	{
+		$('.all-text').stop(true, true);
+		gameText.switch('off');
+	}
+
+	if(game.textFadingOut)
+	{
+		$('.all-text').stop(true, true);
+		gameText.switch('off');
+	}
+}
+
+////////////////////////
+// Performance checking
+////////////////////////
+function getDeltaTime()
+{
+	//disabling UI menu button so dt calculation doesn't get interrupted
+	document.getElementById("toggle-menu-btn").disabled = true;
+	//obtaining an average deltaTime
+	if(dtTimer <= 200)
+	{
+		var timeNow = new Date().getTime();
+		var timeDiff = timeNow - (timeThen);
+		dtArray.push(timeDiff); // seconds since last frame
+		timeThen = timeNow;
+		dtTimer++;
+
+		if(dtTimer == 200)
 		{
-
-			game.paused = gameMenu.toggled ? game.paused : true; //promtp to pause the game if called outside game menu
-
-			setGameDimensions();
-
-			game.paused = gameMenu.toggled ? game.paused : false; //prompt to unpause the game if called outside game menu
-
-		}
-
-
-		//Keyboard
-		$(document).keydown(function(e){    //using jquery to listen to pressed keys
-			game.keys[e.keyCode ? e.keyCode : e.which] = true;	//and cross browser proofing
-		});
-
-		$(document).keyup(function(e){   //using jquery to listen to released keys
-			delete game.keys[e.keyCode ? e.keyCode : e.which]; //once key is released, delete the key pressed action previously defined
-		});
-
-
-		function addGamePlayInput()
-		{
-			inputAreaX = playerShip.x;
-			inputAreaY = playerShip.y;
-
-	        inputArea.addEventListener("mousedown",mouseDown, false);
-	        inputArea.addEventListener("mouseup", mouseUp, false);
-	        inputArea.addEventListener("mousemove",mouseXY, false);
-
-	        inputArea.addEventListener("touchstart", touchDown, false);
-	        inputArea.addEventListener("touchend", touchUp, false);
-	        inputArea.addEventListener("touchcancel", touchUp, false);
-	        inputArea.addEventListener("touchleave", touchUp, false);
-	        inputArea.addEventListener("touchmove", touchXY, false);
-		}
-
-		//remove this later
-		function addStandByInput()
-		{
-	        inputArea.addEventListener("mouseup", standByInput, false);
-	        inputArea.addEventListener("touchstart", standByInput, false);
-		}
-
-		function removeGamePlayInput()
-		{
-	        inputArea.removeEventListener("mousedown",mouseDown, false);
-	        inputArea.removeEventListener("mouseup", mouseUp, false);
-	        inputArea.removeEventListener("mousemove",mouseXY, false);
-
-	        inputArea.removeEventListener("touchstart", touchDown, false);
-	        inputArea.removeEventListener("touchend", touchUp, false);
-	        inputArea.removeEventListener("touchcancel", touchUp, false);
-	        inputArea.removeEventListener("touchleave", touchUp, false);
-	        inputArea.removeEventListener("touchmove", touchXY, false);
-		}
-
-		function removeStandByInput()
-		{
-	        inputArea.removeEventListener("mouseup", standByInput, false);
-	        inputArea.removeEventListener("touchstart", standByInput, false);
-		}
-
-
-		function mouseUp(e)
-		{
-			e.preventDefault();
-			mouseIsDown = 0;
-		}
-
-		function touchUp(e)
-		{
-			e.preventDefault();
-			mouseIsDown = 0;
-		}
-
-		function mouseDown(e)
-		{
-			e.preventDefault();
-			mouseIsDown = 1;
-			touchInitX = e.pageX - inputArea.offsetLeft;
-			touchInitY = e.pageY - inputArea.offsetTop;
-		}
-
-		function touchDown(e)
-		{
-			e.preventDefault();
-			mouseIsDown = 1;
-			var touch = e.targetTouches[0];
-
-			touchInitX =  touch.pageX - touch.target.offsetLeft;
-			touchInitY =  touch.pageY - touch.target.offsetTop;
-
-		}
-
-		function mouseXY(e)
-		{
-			e.preventDefault();
-			inputAreaX = e.pageX - inputArea.offsetLeft;
-			inputAreaY = e.pageY - inputArea.offsetTop;
-		}
-
-		function touchXY(e) {
-			e.preventDefault();
-			var touch = e.targetTouches[0];
-
-    		inputAreaX = touch.pageX - inputArea.offsetLeft;
-    		inputAreaY = touch.pageY - inputArea.offsetTop;
-
-		}
-
-		//remove this later
-		function standByInput(e)
-		{
-			e.preventDefault();
-
-			if(game.fadingIn)
+			var dtSum = 0;
+			for( var i = 0; i < dtArray.length-10; i++)
 			{
-				gameLights.fader.stop(true, true);
-				gameLights.switch('on');
+			dtSum += dtArray[i+10]; //+10 skips first values which might be deviant
+			// console.log (dtSum);
 			}
-
-			if(game.fadingOut)
-			{
-				gameLights.fader.stop(true, true);
-				gameLights.switch('off');
-			}
-
-			if(game.textFadingIn)
-			{
-				$('.all-text').stop(true, true);
-				gameText.switch('off');
-			}
-
-			if(game.textFadingOut)
-			{
-				$('.all-text').stop(true, true);
-				gameText.switch('off');
-			}
+			dt = Math.ceil(dtSum / dtArray.length)/1000;
+			dtTimerSet = true;
+			document.getElementById("toggle-menu-btn").disabled = false;
 		}
+	}
+}
 
-		function getDeltaTime()
+function updateGameTime()
+{
+	game.timer++;
+	game.seconds = game.timer/60 || 0;
+}
+
+function clrCanvas()
+{
+	game.context.clearRect(0, 0, game.width, game.height);
+}
+
+function resetGame() //called on level start
+{
+	mouseIsDown = 0;
+	gameLights.switch('off');
+	clrCanvas();
+
+	//Game state
+	game.bossDead = false;
+	game.levelComplete = false;
+
+	//Timers
+	game.timer = 0;
+	game.levelUpTimer = 0;
+
+	//Objects
+	playerShip.reset();
+	game.bullets = [];
+	game.explosions = [];
+	game.enemies = [];
+	game.waves = [];
+	game.loot = [];
+	gameUI.updateAll();
+
+	//Sounds
+	game.sounds = [];
+	for(var g in game.tracks)
+	{
+		game.tracks[g].pause();
+	}
+	game.tracks = [];
+
+	if (game.music && game.tracks.length < 1)
+	{
+		game.tracks.push(game.soundTracks['tune1' + fileFormat]);
+		game.tracks[0].play();
+		game.tracks[0].loop = true;
+	}
+}
+
+////////////////////////
+// Game Collisions
+////////////////////////
+function Collision(first, second)
+{
+	//detecting rectangles' (objects) collision
+	return !(first.x > second.x + second.width ||
+		first.x + first.width < second.x ||
+		first.y > second.y + second.height ||
+		first.y + first.height < second.y);
+}
+
+////////////////////////
+// Maths
+////////////////////////
+function angleTo(p1, p2)
+{	//used to calculate enemy bullets' angle to playership
+	return Math.atan2(p2.y - p1.y, p2.x - p1.x);
+}
+
+////////////////////////
+// The game Loop
+////////////////////////
+function loop(){ //the loop
+	requestAnimFrame(loop);
+	if (!game.paused){
+	update();
+	}
+}
+
+////////////////////////
+// Game start
+////////////////////////
+function startGame()
+{
+	game.loaded = true;
+
+	if (typeof win[playerShip] === "undefined")
+	{
+		playerShip = new player(10, 15);
+	}
+
+	//preparing sound tracks (chromium fix)
+	game.tracks.push(game.soundTracks['tune1' + fileFormat]);
+	game.tracks.push(game.soundTracks['tune2' + fileFormat]);
+	game.tracks.push(game.soundTracks['boss' + fileFormat]);
+	game.tracks.push(game.soundTracks['victory' + fileFormat]);
+
+	for (var t in game.tracks)
+	{
+		game.tracks[t].play();
+		game.tracks[t].pause();
+	}
+
+	game.tracks = [];
+
+	//preparing soundfx (chromium fix)
+	game.sounds.push(game.sfx['laser' + fileFormat]);
+	game.sounds.push(game.sfx['laser2' + fileFormat]);
+	game.sounds.push(game.sfx['laser3' + fileFormat]);
+	game.sounds.push(game.sfx['hit' + fileFormat]);
+	game.sounds.push(game.sfx['hit2' + fileFormat]);
+	game.sounds.push(game.sfx['hit3' + fileFormat]);
+	game.sounds.push(game.sfx['loot_powerUp' + fileFormat]);
+	game.sounds.push(game.sfx['loot_powerUp2' + fileFormat]);
+	game.sounds.push(game.sfx['loot_powerUp3' + fileFormat]);
+	game.sounds.push(game.sfx['explosion' + fileFormat]);
+	game.sounds.push(game.sfx['explosion2' + fileFormat]);
+	game.sounds.push(game.sfx['explosion3' + fileFormat]);
+	game.sounds.push(game.sfx['blast' + fileFormat]);
+
+	for (var s in game.sounds)
+	{
+		game.sounds[s].play();
+		game.sounds[s].pause();
+	}
+
+	game.sounds = [];
+
+	loop();
+}
+
+////////////////////////
+// Game Loaders
+////////////////////////
+
+//====================== Loading bars =================//
+var loadingBar = $('#loadingBar');
+var loadingBarFiller = $('#loadingBarFiller');
+var loadingText = new text('Loading Images.. ', '', false);
+loadingText.switch('on');
+loadingBar.show();
+
+//====================== Images engine =================//
+function imgEventHandler ()
+{
+	this.removeEventListener("load", imgEventHandler, false);
+
+	var indexName, ctxName, offCanvas, offCtx;
+
+	indexName = this.src.split("/").pop();
+	indexName = indexName.substr(0, indexName.indexOf('.')) || indexName;
+
+	offCanvas = doc.createElement('canvas');
+	offCanvas.width = Math.round(this.width);
+	offCanvas.height = Math.round(this.height);
+
+	offCtx = offCanvas.getContext('2d');
+	offCtx.drawImage(this, 0, 0, offCanvas.width, offCanvas.height);
+	game.offCtx[indexName] = offCanvas;
+
+	game.doneImages++;
+}
+
+function initImages(ipaths) { //our images engine: passing the array 'ipaths' to the function
+	game.requiredImages = ipaths.length; //the number of required images will be equal to the length of the ipaths array
+	for(var i in ipaths)
+	{
+		var img = new Image(); //defining img as a new image
+
+		img.addEventListener("load", imgEventHandler, false); // !event listner needs to be set before loading the image (defining .src)
+
+		img.src = ipaths[i];
+		var imgIndex = img.src.split("/").pop(); //obtaining file name from path
+
+		//!check if you should change this to object notation! you can't access array functions like this anyway
+		game.images[imgIndex] = img; //defining game.image[index] as a new image (with ipaths)
+	}
+}
+
+//====================== Audio engine =================//
+function sfxEventHandler()
+{
+	this.removeEventListener("canplaythrough", sfxEventHandler, false);
+	game.doneSfx++;
+}
+
+function stEventHandler()
+{
+	this.removeEventListener("canplaythrough", stEventHandler, false);
+	game.doneSoundTracks++;
+}
+
+function initSfx(sfxPaths) { //our Sfx engine: passing the array 'sfxPaths' to the function
+	game.requiredSfx = sfxPaths.length; //the number of required Sfx will be equal to the length of the sfxPaths array
+
+	for(var i in sfxPaths)
+	{
+		var sfx = new Audio(); //defining sfx as a new Audio
+		sfx.src = sfxPaths[i]; //defining new Audio src as stPaths[i]
+
+		var sfxIndex = sfx.src.split("/").pop(); //obtaining file name from path and setting our sfxIndex as such
+
+		var sfxIndexInstance; //to keep track of sounds which use the same audio source and avoding duplicate indexes
+
+		if (!(sfxIndex in game.sfx)) //if index is unique
 		{
-			//disabling UI menu button so dt calculation doesn't get interrupted
-			document.getElementById("toggle-menu-btn").disabled = true;
-		    //obtaining an average deltaTime
-			if(dtTimer <= 200)
-			{
-				var timeNow = new Date().getTime();
-				var timeDiff = timeNow - (timeThen);
-	    		dtArray.push(timeDiff); // seconds since last frame
-	    		timeThen = timeNow;
-	    		dtTimer++;
-
-	    		if(dtTimer == 200)
-	    		{
-    				var dtSum = 0;
-	    			for( var i = 0; i < dtArray.length-10; i++)
-	    			{
-						dtSum += dtArray[i+10]; //+10 skips first values which might be deviant
-						// console.log (dtSum);
-					}
-
-					dt = Math.ceil(dtSum / dtArray.length)/1000;
-					dtTimerSet = true;
-					document.getElementById("toggle-menu-btn").disabled = false;
-    			}
-    		}
+			sfxIndexInstance = 1;
+			game.sfx[sfxIndex] = sfx;
 		}
-
-		function updateGameTime()
+		else //if not increase our index instance and add it to its label
 		{
-		    //game time
-    		//! CHECK OUT 'timeupdate' js event !
-			game.timer++;
-			game.seconds = game.timer/60 || 0;
-			// console.log(game.seconds);
+			sfxIndexInstance++;
+			sfxIndex = sfx.src.match(/([^\/]+)(?=\.\w+$)/)[0] + sfxIndexInstance + fileFormat;
+			game.sfx[sfxIndex] = sfx;
 		}
 
-		function clrCanvas()
+		if(audiopreload)
 		{
-			// game.contextBackground.clearRect(0, 0, game.width, game.height);
-			game.context.clearRect(0, 0, game.width, game.height);
-			// game.contextEnemies.clearRect(0, 0, game.width, game.height);
+			game.sfx[sfxIndex].preload = "auto";
+			//checking if sfx have loaded
+			game.sfx[sfxIndex].addEventListener("canplaythrough", sfxEventHandler, false);
 		}
-
-		function resetGame(){	//called on level start
-
-			mouseIsDown = 0;
-			gameLights.switch('off');
-			clrCanvas();
-
-			//Game state
-			game.bossDead = false;
-			game.levelComplete = false;
-
-
-			//Timers
-			game.timer = 0;
-			game.levelUpTimer = 0;
-
-
-			//Objects
-			playerShip.reset();
-			game.bullets = [];
-			game.explosions = [];
-			game.enemies = [];
-			game.waves = [];
-			game.loot = [];
-			gameUI.updateAll();
-
-			//Sounds
-			game.sounds = [];
-			for(var g in game.tracks){
-					game.tracks[g].pause();
-			}
-			game.tracks = [];
-
-			if (game.music && game.tracks.length < 1){
-				game.tracks.push(game.soundTracks['tune1' + fileFormat]);
-				game.tracks[0].play();
-				game.tracks[0].loop = true;
-			}
-		}
-
-
-
-		// function Collision(first, second){ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
-
-		// 	if (!(first.x + first.size < second.x || second.x + second.size < first.x || first.y + first.size < second.y || second.y + second.size < first.y)) {
-
-		// 		Cx = first.x < second.x ? second.x : first.x;
-		// 		Cy = first.y < second.y ? second.y : first.y;
-		// 		CX = first.x + first.size < second.x + second.size ? first.x + first.size : second.x + second.size;
-		// 		CY = first.y + first.size < second.y + second.size ? first.y + first.size : second.y + second.size;
-
-		// 		iFirst = first.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
-		// 		iSecond = second.context.getImageData(Cx, Cy, CX-Cx, CY-Cy);
-
-		// 		var length = iFirst.data.length;
-
-		// 		for (var i = 0 ; i < length; i+= game.res) {
-		// 			// return !(!iFirst.data[i] || !iSecond.data[i]);
-		// 			if (iFirst.data[i] > 0 && iSecond.data[i] > 0)
-		// 			{
-		// 				// console.log('true1');
-		// 				return true;
-
-		// 			}
-		// 		}
-		// 		console.log(iFirst.data.length);
-		// 	}
-		// 	// console.log('false');
-		// 	return false;
-		// }
-
-
-		function Collision(first, second)
-		{ //detecting rectangles' (image) collision, first is going to be the bullet, second will be the enemies. Note: the function itself can be applied to anything, 'first' and 'second' can be any variable as long as they have x and y values
-			return !(first.x > second.x + second.width ||
-				first.x + first.width < second.x ||
-				first.y > second.y + second.height ||
-				first.y + first.height < second.y);
-		}
-
-		function angleTo(p1, p2)
-		{	//used to calculate enemy bullets' angle to playership
-			return Math.atan2(p2.y - p1.y, p2.x - p1.x);
-		}
-
-
-
-
-		// LOOOOOOOOOOOOOOOOOOOOP
-
-
-		function loop(){ //the loop
-			requestAnimFrame(loop);
-			if (!game.paused){
-			update();
-			}
-		}
-
-
-		function startGame()
+		else
 		{
-			game.loaded = true;
-
-			if (typeof win[playerShip] === "undefined")
-			{
-				playerShip = new player(10, 15);
-			}
-
-			//preparing sound tracks (chromium fix)
-			game.tracks.push(game.soundTracks['tune1' + fileFormat]);
-			game.tracks.push(game.soundTracks['tune2' + fileFormat]);
-			game.tracks.push(game.soundTracks['boss' + fileFormat]);
-			game.tracks.push(game.soundTracks['victory' + fileFormat]);
-
-			for (var t in game.tracks){
-				game.tracks[t].play();
-				game.tracks[t].pause();
-			}
-
-			game.tracks = [];
-
-			//preparing soundfx (chromium fix)
-			game.sounds.push(game.sfx['laser' + fileFormat]);
-			game.sounds.push(game.sfx['laser2' + fileFormat]);
-			game.sounds.push(game.sfx['laser3' + fileFormat]);
-			game.sounds.push(game.sfx['hit' + fileFormat]);
-			game.sounds.push(game.sfx['hit2' + fileFormat]);
-			game.sounds.push(game.sfx['hit3' + fileFormat]);
-			game.sounds.push(game.sfx['loot_powerUp' + fileFormat]);
-			game.sounds.push(game.sfx['loot_powerUp2' + fileFormat]);
-			game.sounds.push(game.sfx['loot_powerUp3' + fileFormat]);
-			game.sounds.push(game.sfx['explosion' + fileFormat]);
-			game.sounds.push(game.sfx['explosion2' + fileFormat]);
-			game.sounds.push(game.sfx['explosion3' + fileFormat]);
-			game.sounds.push(game.sfx['blast' + fileFormat]);
-
-			for (var s in game.sounds){
-				game.sounds[s].play();
-				game.sounds[s].pause();
-			}
-
-			game.sounds = [];
-
-			loop();
-		}
-
-
-		//Loaders
-
-		var loadingBar = $('#loadingBar');
-		var loadingBarFiller = $('#loadingBarFiller');
-		var loadingText = new text('Loading Images.. ', '', false);
-		loadingText.switch('on');
-		loadingBar.show();
-
-		//====================== Images engine =================//
-
-		function imgEventHandler ()
-		{
-			this.removeEventListener("load", imgEventHandler, false);
-
-			var indexName, ctxName, offCanvas, offCtx;
-
-			indexName = this.src.split("/").pop();
-			indexName = indexName.substr(0, indexName.indexOf('.')) || indexName;
-
-			offCanvas = doc.createElement('canvas');
-			offCanvas.width = Math.round(this.width);
-			offCanvas.height = Math.round(this.height);
-
-			offCtx = offCanvas.getContext('2d');
-
-			offCtx.drawImage(this, 0, 0, offCanvas.width, offCanvas.height);
-
-			game.offCtx[indexName] = offCanvas;
-
-			game.doneImages++;
-		}
-
-		function initImages(ipaths) { //our images engine: passing the array 'ipaths' to the function
-			game.requiredImages = ipaths.length; //the number of required images will be equal to the length of the ipaths array
-			for(var i in ipaths)
-			{
-				var img = new Image(); //defining img as a new image
-
-				img.addEventListener("load", imgEventHandler, false); // !event listner needs to be set before loading the image (defining .src)
-
-				img.src = ipaths[i]; //defining new image src as ipaths[i]
-
-				var imgIndex = img.src.split("/").pop(); //obtaining file name from path
-				// var imgIndex = imgFile.substr(0, imgFile.lastIndexOf('.')) || imgFile;
-
-				//!check if you should change this to object notation! you can't access array functions like this anyway
-				game.images[imgIndex] = img; //defining game.image[index] as a new image (with ipaths)
-
-				// console.log('reqImages: ' + game.requiredImages);
-				// console.log('doneImages: ' + game.doneImages);
-			}
-		}
-
-		//====================== Audio engine =================//
-
-		function sfxEventHandler()
-		{
-			this.removeEventListener("canplaythrough", sfxEventHandler, false);
 			game.doneSfx++;
 		}
+	}
+}
 
-		function stEventHandler()
+function initSoundTracks(stPaths)
+{ //our Sfx engine: passing the array 'stPaths' to the function
+	game.requiredSoundTracks = stPaths.length; //the number of required SoundTracks will be equal to the length of the stPaths array
+
+	for(var i in stPaths)
+	{
+		var soundTracks = new Audio(); //defining soundTracks as a new Audio
+		soundTracks.src = stPaths[i];
+
+		var soundTracksIndex = soundTracks.src.split("/").pop(); //obtaining file name from path
+
+		game.soundTracks[soundTracksIndex] = soundTracks; //defining game.soundTracks[soundTracksIndex] as a new Audio (with stPaths)
+
+		if(audiopreload)
 		{
-			this.removeEventListener("canplaythrough", stEventHandler, false);
+			game.soundTracks[soundTracksIndex].preload = "auto";
+			//checking if st's have loaded
+			game.soundTracks[soundTracksIndex].addEventListener("canplaythrough", stEventHandler, false);
+		}
+		else
+		{
 			game.doneSoundTracks++;
 		}
+	}
+}
 
-
-		function initSfx(sfxPaths) { //our Sfx engine: passing the array 'sfxPaths' to the function
-			game.requiredSfx = sfxPaths.length; //the number of required Sfx will be equal to the length of the sfxPaths array
-			// console.log('required soundSfx:' + game.requiredSfx);
-			for(var i in sfxPaths)
-			{
-				var sfx = new Audio(); //defining sfx as a new Audio
-				sfx.src = sfxPaths[i]; //defining new Audio src as stPaths[i]
-
-				var sfxIndex = sfx.src.split("/").pop(); //obtaining file name from path and setting our sfxIndex as such
-
-				var sfxIndexInstance; //to keep track of sounds which use the same audio source and avoding duplicate indexes
-
-				if (!(sfxIndex in game.sfx)) //if index is unique
-				{
-					sfxIndexInstance = 1;
-					game.sfx[sfxIndex] = sfx;
-				}
-				else //if not increase our index instance and add it to its label
-				{
-					sfxIndexInstance++;
-					sfxIndex = sfx.src.match(/([^\/]+)(?=\.\w+$)/)[0] + sfxIndexInstance + fileFormat;
-					game.sfx[sfxIndex] = sfx;
-				}
-
-				console.log(audiopreload);
-				if(audiopreload)
-				{
-					game.sfx[sfxIndex].preload = "auto";
-					//checking if sfx have loaded
-					game.sfx[sfxIndex].addEventListener("canplaythrough", sfxEventHandler, false);
-				}
-				else
-				{
-					game.doneSfx++;
-				}
-			}
-		}
-
-		function initSoundTracks(stPaths)
-		{ //our Sfx engine: passing the array 'stPaths' to the function
-			game.requiredSoundTracks = stPaths.length; //the number of required Sfx will be equal to the length of the stPaths array
-			// console.log('required soundTracks:' + game.requiredSoundTracks);
-			for(var i in stPaths)
-			{
-				var soundTracks = new Audio(); //defining soundTracks as a new Audio
-				soundTracks.src = stPaths[i];
-
-				var soundTracksIndex = soundTracks.src.split("/").pop(); //obtaining file name from path
-
-				game.soundTracks[soundTracksIndex] = soundTracks; //defining game.soundTracks[soundTracksIndex] as a new Audio (with stPaths)
-
-
-				if(audiopreload)
-				{
-					game.soundTracks[soundTracksIndex].preload = "auto";
-					//checking if st's have loaded
-					game.soundTracks[soundTracksIndex].addEventListener("canplaythrough", stEventHandler, false);
-				}
-				else
-				{
-					game.doneSoundTracks++;
-				}
-
-				// console.log('requiredSoundTracks: ' + game.requiredSoundTracks);
-			}
-		}
-
-
-		function checkImages(){	//checking if all images have been loaded. Once all loaded run initSfx
-			if(game.doneImages >= game.requiredImages){
-				loadingText = new text('Loading Sfx.. ', '', false);
-				loadingBarFiller.css({"width": "0"});
-				initSfx(game.sfxPaths);
-				checkSfx();
-			}
-			else
-			{
-				loadingBarWidth = (game.doneImages / game.requiredImages) * 100 + '%';
-				loadingBarFiller.css({"width": loadingBarWidth});
-				setTimeout(function(){
-					checkImages();
-				}, 1);
-			}
-		}
-
-		function checkSfx(){	//checking if all Sfx have been loaded. Once all loaded run init
-			if(game.doneSfx >= game.requiredSfx){
-				loadingText = new text('Loading Sound Tracks.. ', '', false);
-				loadingBarFiller.css({"width": "0"});
-
-				//start loading sound tracks
-				initSoundTracks(game.soundTrackPaths);
-				checkSoundTracks();
-			}
-			else
-			{
-				loadingBarWidth = (game.doneSfx / game.requiredSfx) * 100 + '%';
-				loadingBarFiller.css({"width": loadingBarWidth});
-				setTimeout(function(){
-					checkSfx();
-				}, 1);
-			}
-		}
-
-		function checkSoundTracks(){	//checking if all Sfx have been loaded. Once all loaded run init
-			if(game.doneSoundTracks >= game.requiredSoundTracks){
-				loadingText = new text('Loading Assets.. ', '', false);
-				loadingBarFiller.css({"width": "0"});
-				//starting game menu
-				initObjects();
-				checkObjects();
-			}
-			else
-			{
-				loadingBarWidth = (game.doneSoundTracks / game.requiredSoundTracks) * 100 + '%';
-				loadingBarFiller.css({"width": loadingBarWidth});
-				setTimeout(function(){
-					checkSoundTracks();
-				}, 1);
-			}
-		}
-
-		function checkObjects(){	//checking if all Sfx have been loaded. Once all loaded run init
-			if(game.doneObjects >= game.requiredObjects){
-				loadingText.switch('off');
-				loadingBar.hide();
-				//starting game menu
-				gameMenu.init();
-				gameBackground = new background();
-			}
-			else
-			{
-				loadingBarWidth = (game.doneObjects / game.requiredObjects) * 100 + '%';
-				loadingBarFiller.css({"width": loadingBarWidth});
-				setTimeout(function(){
-					checkObjects();
-				}, 1);
-			}
-		}
-
-		function initObjects ()			//   !!! make this a function inside each object class
-		{
-			//waves
-			for (var w = 1 ; w <= game.requiredWaves; w++) {
-				ew = new enemyWave(null, null, 'enemy_sectoid', 'pawn', 0, 0, 0, 0);
-    			game.wavesPool.push(ew);
-    			game.doneObjects++;
-			}
-
-			//enemies
-			for (var e = 1 ; e <= game.requiredEnemies; e++) {
-				en = new enemy(0, 0, 0, 0, 0, 'pawn', 'enemy_sectoid', 0);
-    			game.enemiesPool.push(en);
-    			game.doneObjects++;
-			}
-
-			//player bullets
-			for (var pb = 1 ; pb <= game.requiredPlayerBullets; pb++) {
-				b = new playerBullet(null, null, null, -Math.PI/2, null, null, 'bullet_p_laser');
-    			game.playerBulletsPool.push(b);
-    			game.doneObjects++;
-			}
-
-			//enemy bullets
-			for (var ebul = 1 ; ebul <= game.requiredEnemyBullets; ebul++) {
-				eb = new enemyBullet(null, null, null, null, null, 'bullet_e_missile');
-    			game.enemyBulletsPool.push(eb);
-    			game.doneObjects++;
-			}
-
-			//loot
-			for (var loo = 1 ; loo <= game.requiredLoot; loo++) {
-				l = new loot(null, null);
-    			game.lootPool.push(l);
-    			game.doneObjects++;
-			}
-
-			//explosions
-			for (var ex = 1 ; ex <= game.requiredExplosions; ex++) {
-				e = new explosion(null, null, null, null, 'small', null);
-    			game.explosionsPool.push(e);
-    			game.doneObjects++;
-			}
-		}
-
-
-
-		//====================== Pre-loading Assets to Off-Screen canvas =================//
-
-		//background
-
-		// function loadOsCanvas() {
-
-		// 	m_canvas = doc.createElement('canvas');
-		// 	m_canvas.width = game.width;
-		// 	m_canvas.height = game.height;
-		// 	var m_context = m_canvas.getContext('2d');
-
-		// 	m_context.drawImage(game.images['level1.jpg'], 0, 0, m_canvas.width, m_canvas.height);
-
-		// }
-
-		// //Drawing (Add below to update function in game class
-		// game.contextBackground.drawImage(m_canvas, this.x, this.y, this.width, this.height);
-
-
-
-		function toggleSound() {
-
-			game.sound = game.sound ? false : true ;
-
-			localStorage.prawnsSound =  game.sound;
-		}
-
-		function toggleMusic() {
-
-			game.music = game.music ? false : true ;
-
-			localStorage.prawnsMusic =  game.music;
-
-			if (game.tracks.length > 0)
-			{
-				for(var g in game.tracks)
-				{
-					game.tracks[g].pause();
-				}
-				game.tracks = [];
-			}
-			else if (game.tracks.length < 1)
-			{
-				game.tracks.push(game.soundTracks['tune1' + fileFormat]);
-
-				for(var w in game.tracks)
-				{
-					game.tracks[w].play();
-					game.tracks[w].loop = true;
-				}
-			}
-		}
-
-
-
-		//ON WINDOW LOAD
-
-		//Handler functions
-
-		function windowLoadEvent()
-		{
-			win.removeEventListener("load", windowLoadEvent, false); //remove listener, no longer needed
-
-			//Run function whenever browser resizes
-			window.onresize = respondCanvas;
-
-			//check for updates appcache
-			win.applicationCache.addEventListener("updateready", appCacheEvent, false);
-
-			//load images
-			initImages(game.imagePaths);
-
-			//start checking loaded game assets
+function checkImages(){	//checking if all images have been loaded. Once all loaded run initSfx
+	if(game.doneImages >= game.requiredImages){
+		loadingText = new text('Loading Sfx.. ', '', false);
+		loadingBarFiller.css({"width": "0"});
+		initSfx(game.sfxPaths);
+		checkSfx();
+	}
+	else
+	{
+		loadingBarWidth = (game.doneImages / game.requiredImages) * 100 + '%';
+		loadingBarFiller.css({"width": loadingBarWidth});
+		setTimeout(function(){
 			checkImages();
-		}
+		}, 1);
+	}
+}
 
+function checkSfx()
+{
+	//checking if all Sfx have been loaded. Once all loaded run init
+	if(game.doneSfx >= game.requiredSfx){
+		loadingText = new text('Loading Sound Tracks.. ', '', false);
+		loadingBarFiller.css({"width": "0"});
 
-		function appCacheEvent()
+		//start loading sound tracks
+		initSoundTracks(game.soundTrackPaths);
+		checkSoundTracks();
+	}
+	else
+	{
+		loadingBarWidth = (game.doneSfx / game.requiredSfx) * 100 + '%';
+		loadingBarFiller.css({"width": loadingBarWidth});
+		setTimeout(function(){
+			checkSfx();
+		}, 1);
+	}
+}
+
+function checkSoundTracks()
+{
+	//checking if all Sfx have been loaded. Once all loaded run init
+	if(game.doneSoundTracks >= game.requiredSoundTracks)
+	{
+		loadingText = new text('Loading Assets.. ', '', false);
+		loadingBarFiller.css({"width": "0"});
+		//starting game menu
+		initObjects();
+		checkObjects();
+	}
+	else
+	{
+		loadingBarWidth = (game.doneSoundTracks / game.requiredSoundTracks) * 100 + '%';
+		loadingBarFiller.css({"width": loadingBarWidth});
+		setTimeout(function()
 		{
-		    win.applicationCache.removeEventListener("updateready", appCacheEvent, false);
+			checkSoundTracks();
+		}, 1);
+	}
+}
 
-		    if (win.applicationCache.status == win.applicationCache.UPDATEREADY)
-		    {
-				// Browser downloaded a new app cache.
-				if (confirm('A new version of InVaDeRs is available. Load it?')) win.location.reload();
+function checkObjects()
+{
+	//checking if all objects have been loaded. Once all loaded run init
+	if(game.doneObjects >= game.requiredObjects){
+		loadingText.switch('off');
+		loadingBar.hide();
+		//starting game menu
+		gameMenu.init();
+		gameBackground = new background();
+	}
+	else
+	{
+		loadingBarWidth = (game.doneObjects / game.requiredObjects) * 100 + '%';
+		loadingBarFiller.css({"width": loadingBarWidth});
+		setTimeout(function(){
+			checkObjects();
+		}, 1);
+	}
+}
 
-		    }
-		    else
-		    {
-		    	// Manifest didn't changed. Nothing new to server.
-		    }
-		}
+function initObjects()	//   !!! make this a function inside each object class
+{
+	//waves
+	for (var w = 1 ; w <= game.requiredWaves; w++)
+	{
+		ew = new enemyWave(null, null, 'enemy_sectoid', 'pawn', 0, 0, 0, 0);
+		game.wavesPool.push(ew);
+		game.doneObjects++;
+	}
+	//enemies
+	for (var e = 1 ; e <= game.requiredEnemies; e++)
+	{
+		en = new enemy(0, 0, 0, 0, 0, 'pawn', 'enemy_sectoid', 0);
+		game.enemiesPool.push(en);
+		game.doneObjects++;
+	}
+	//player bullets
+	for (var pb = 1 ; pb <= game.requiredPlayerBullets; pb++)
+	{
+		b = new playerBullet(null, null, null, -Math.PI/2, null, null, 'bullet_p_laser');
+		game.playerBulletsPool.push(b);
+		game.doneObjects++;
+	}
+	//enemy bullets
+	for (var ebul = 1 ; ebul <= game.requiredEnemyBullets; ebul++)
+	{
+		eb = new enemyBullet(null, null, null, null, null, 'bullet_e_missile');
+		game.enemyBulletsPool.push(eb);
+		game.doneObjects++;
+	}
+	//loot
+	for (var loo = 1 ; loo <= game.requiredLoot; loo++)
+	{
+		l = new loot(null, null);
+		game.lootPool.push(l);
+		game.doneObjects++;
+	}
+	//explosions
+	for (var ex = 1 ; ex <= game.requiredExplosions; ex++)
+	{
+		e = new explosion(null, null, null, null, 'small', null);
+		game.explosionsPool.push(e);
+		game.doneObjects++;
+	}
+}
 
-		//on window load function
-		win.addEventListener("load", windowLoadEvent,false);
+function toggleSound()
+{
+	game.sound = game.sound ? false : true ;
+	localStorage.prawnsSound =  game.sound;
+}
 
+function toggleMusic()
+{
+	game.music = game.music ? false : true ;
+	localStorage.prawnsMusic =  game.music;
 
-
-		//Audio pre-load test
-		var audiopreload = false;
-		var timeout;
-		var waitTime = 1000;
-		var audioTest = new Audio();
-
-		if (fileFormat === '.mp3')
+	if (game.tracks.length > 0)
+	{
+		for(var g in game.tracks)
 		{
-		//75ms of silence (minumum Mp3 duration loaded by Safari, not tested other formats thoroughly: may be possible to shrink base64 URI)
-			audioTest.src = 'data:audio/mpeg;base64,//MUxAAB6AXgAAAAAPP+c6nf//yi/6f3//MUxAMAAAIAAAjEcH//0fTX6C9Lf//0//MUxA4BeAIAAAAAAKX2/6zv//+IlR4f//MUxBMCMAH8AAAAABYWalVMQU1FMy45//MUxBUB0AH0AAAAADkuM1VVVVVVVVVV//MUxBgBUATowAAAAFVVVVVVVVVVVVVV';
+			game.tracks[g].pause();
 		}
-		else if (fileFormat === '.m4a')
+		game.tracks = [];
+	}
+	else if (game.tracks.length < 1)
+	{
+		game.tracks.push(game.soundTracks['tune1' + fileFormat]);
+
+		for(var w in game.tracks)
 		{
-			audioTest.src = 'data:audio/x-m4a;base64,AAAAGGZ0eXBNNEEgAAACAGlzb21pc28yAAAACGZyZWUAAAAfbWRhdN4EAABsaWJmYWFjIDEuMjgAAAFoAQBHAAACiG1vb3YAAABsbXZoZAAAAAB8JbCAfCWwgAAAA+gAAAAYAAEAAAEAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAG0dHJhawAAAFx0a2hkAAAAD3wlsIB8JbCAAAAAAQAAAAAAAAAYAAAAAAAAAAAAAAAAAQAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAABUG1kaWEAAAAgbWRoZAAAAAB8JbCAfCWwgAAArEQAAAQAVcQAAAAAAC1oZGxyAAAAAAAAAABzb3VuAAAAAAAAAAAAAAAAU291bmRIYW5kbGVyAAAAAPttaW5mAAAAEHNtaGQAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAL9zdGJsAAAAW3N0c2QAAAAAAAAAAQAAAEttcDRhAAAAAAAAAAEAAAAAAAAAAAACABAAAAAArEQAAAAAACdlc2RzAAAAAAMZAAEABBFAFQAAAAABftAAAAAABQISCAYBAgAAABhzdHRzAAAAAAAAAAEAAAABAAAEAAAAABxzdHNjAAAAAAAAAAEAAAABAAAAAQAAAAEAAAAUc3RzegAAAAAAAAAXAAAAAQAAABRzdGNvAAAAAAAAAAEAAAAoAAAAYHVkdGEAAABYbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAbWRpcmFwcGwAAAAAAAAAAAAAAAAraWxzdAAAACOpdG9vAAAAG2RhdGEAAAABAAAAAExhdmY1Mi42NC4y';
+			game.tracks[w].play();
+			game.tracks[w].loop = true;
 		}
-		else if (fileFormat === '.ogg')
+	}
+}
+
+////////////////////////////
+// On Window load functions
+////////////////////////////
+//Handler functions
+function windowLoadEvent()
+{
+	//remove listener, no longer needed
+	win.removeEventListener("load", windowLoadEvent, false);
+	//Run function whenever browser resizes
+	window.onresize = respondCanvas;
+	//check for updates appcache
+	win.applicationCache.addEventListener("updateready", appCacheEvent, false);
+	//load images
+	initImages(game.imagePaths);
+	//start checking loaded game assets
+	checkImages();
+}
+
+function appCacheEvent()
+{
+	win.applicationCache.removeEventListener("updateready", appCacheEvent, false);
+
+	if (win.applicationCache.status == win.applicationCache.UPDATEREADY)
+	{
+		// Browser downloaded a new app cache.
+		if (confirm('A new version of InVaDeRs is available. Load it?'))
 		{
-			audioTest.src = 'data:audio/ogg;base64,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lFJKKaWUUkoppZRSSimllFJKKaWUUkqppJRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoplVJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSCgCQinAAkHowoQwUGrISAEgFAACMUUopxpyDEDHmGGPQSSgpYsw5xhyUklLlHIQQUmktt8o5CCGk1FJtmXNSWosx5hgz56SkFFvNOYdSUoux5ppr7qS0VmuuNedaWqs115xzzbm0FmuuOdecc8sx15xzzjnnGHPOOeecc84FAOA0OACAHtiwOsJJ0VhgoSErAYBUAAACGaUYc8456BBSjDnnHIQQIoUYc845CCFUjDnnHHQQQqgYc8w5CCGEkDnnHIQQQgghcw466CCEEEIHHYQQQgihlM5BCCGEEEooIYQQQgghhBA6CCGEEEIIIYQQQgghhFJKCCGEEEIJoZRQAABggQMAQIANqyOcFI0FFhqyEgAAAgCAHJagUs6EQY5Bjw1BylEzDUJMOdGZYk5qMxVTkDkQnXQSGWpB2V4yCwAAgCAAIMAEEBggKPhCCIgxAABBiMwQCYVVsMCgDBoc5gHAA0SERACQmKBIu7iALgNc0MVdB0IIQhCCWBxAAQk4OOGGJ97whBucoFNU6iAAAAAAAAwA4AEA4KAAIiKaq7C4wMjQ2ODo8AgAAAAAABYA+AAAOD6AiIjmKiwuMDI0Njg6PAIAAAAAAAAAAICAgAAAAAAAQAAAAICAT2dnUwAE7AwAAAAAAAD/QwAAAgAAADuydfsFAQEBAQEACg4ODg==';
-		}
-		//add 'Audio not supported condition'
+			win.location.reload();
+	  }
+	  else
+	  {
+	  	// Manifest didn't changed. Nothing new to server.
+	  }
+	}
+}
 
-		audioTest.preload = "auto";
-
-		function testpreload(event)
-		{
-			clearTimeout(timeout);
-			audioTest.removeEventListener('loadeddata', testpreload);
-			audiopreload = event !== undefined && event.type === 'loadeddata' ? true : false;
-		}
-
-		audioTest.addEventListener('loadeddata', testpreload);
-		timeout = setTimeout(testpreload, waitTime);
+//run on window load functions
+win.addEventListener("load", windowLoadEvent,false);
 
 
-	/* jshint ignore:start */
-	// });
-// })();
-	// }	// jshint ignore:line
-/* jshint ignore:end */
+//Audio pre-load test
+var audiopreload = false;
+var timeout;
+var waitTime = 1000;
+var audioTest = new Audio();
 
+if (fileFormat === '.mp3')
+{
+	// 75ms of silence (minumum Mp3 duration loaded by Safari, not tested other formats thoroughly: may be possible to shrink base64 URI)
+	audioTest.src = 'data:audio/mpeg;base64,//MUxAAB6AXgAAAAAPP+c6nf//yi/6f3//MUxAMAAAIAAAjEcH//0fTX6C9Lf//0//MUxA4BeAIAAAAAAKX2/6zv//+IlR4f//MUxBMCMAH8AAAAABYWalVMQU1FMy45//MUxBUB0AH0AAAAADkuM1VVVVVVVVVV//MUxBgBUATowAAAAFVVVVVVVVVVVVVV';
+}
+else if (fileFormat === '.m4a')
+{
+	audioTest.src = 'data:audio/x-m4a;base64,AAAAGGZ0eXBNNEEgAAACAGlzb21pc28yAAAACGZyZWUAAAAfbWRhdN4EAABsaWJmYWFjIDEuMjgAAAFoAQBHAAACiG1vb3YAAABsbXZoZAAAAAB8JbCAfCWwgAAAA+gAAAAYAAEAAAEAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAG0dHJhawAAAFx0a2hkAAAAD3wlsIB8JbCAAAAAAQAAAAAAAAAYAAAAAAAAAAAAAAAAAQAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAABUG1kaWEAAAAgbWRoZAAAAAB8JbCAfCWwgAAArEQAAAQAVcQAAAAAAC1oZGxyAAAAAAAAAABzb3VuAAAAAAAAAAAAAAAAU291bmRIYW5kbGVyAAAAAPttaW5mAAAAEHNtaGQAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAL9zdGJsAAAAW3N0c2QAAAAAAAAAAQAAAEttcDRhAAAAAAAAAAEAAAAAAAAAAAACABAAAAAArEQAAAAAACdlc2RzAAAAAAMZAAEABBFAFQAAAAABftAAAAAABQISCAYBAgAAABhzdHRzAAAAAAAAAAEAAAABAAAEAAAAABxzdHNjAAAAAAAAAAEAAAABAAAAAQAAAAEAAAAUc3RzegAAAAAAAAAXAAAAAQAAABRzdGNvAAAAAAAAAAEAAAAoAAAAYHVkdGEAAABYbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAbWRpcmFwcGwAAAAAAAAAAAAAAAAraWxzdAAAACOpdG9vAAAAG2RhdGEAAAABAAAAAExhdmY1Mi42NC4y';
+}
+else if (fileFormat === '.ogg')
+{
+	audioTest.src = 'data:audio/ogg;base64,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lFJKKaWUUkoppZRSSimllFJKKaWUUkqppJRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoplVJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSCgCQinAAkHowoQwUGrISAEgFAACMUUopxpyDEDHmGGPQSSgpYsw5xhyUklLlHIQQUmktt8o5CCGk1FJtmXNSWosx5hgz56SkFFvNOYdSUoux5ppr7qS0VmuuNedaWqs115xzzbm0FmuuOdecc8sx15xzzjnnGHPOOeecc84FAOA0OACAHtiwOsJJ0VhgoSErAYBUAAACGaUYc8456BBSjDnnHIQQIoUYc845CCFUjDnnHHQQQqgYc8w5CCGEkDnnHIQQQgghcw466CCEEEIHHYQQQgihlM5BCCGEEEooIYQQQgghhBA6CCGEEEIIIYQQQgghhFJKCCGEEEIJoZRQAABggQMAQIANqyOcFI0FFhqyEgAAAgCAHJagUs6EQY5Bjw1BylEzDUJMOdGZYk5qMxVTkDkQnXQSGWpB2V4yCwAAgCAAIMAEEBggKPhCCIgxAABBiMwQCYVVsMCgDBoc5gHAA0SERACQmKBIu7iALgNc0MVdB0IIQhCCWBxAAQk4OOGGJ97whBucoFNU6iAAAAAAAAwA4AEA4KAAIiKaq7C4wMjQ2ODo8AgAAAAAABYA+AAAOD6AiIjmKiwuMDI0Njg6PAIAAAAAAAAAAICAgAAAAAAAQAAAAICAT2dnUwAE7AwAAAAAAAD/QwAAAgAAADuydfsFAQEBAQEACg4ODg==';
+}
+
+audioTest.preload = "auto";
+
+function testpreload(event)
+{
+	clearTimeout(timeout);
+	audioTest.removeEventListener('loadeddata', testpreload);
+	audiopreload = event !== undefined && event.type === 'loadeddata' ? true : false;
+}
+
+audioTest.addEventListener('loadeddata', testpreload);
+timeout = setTimeout(testpreload, waitTime);
+
+///////////////////////////
+// Request Animation Frame
+///////////////////////////
 /*
 Provides requestAnimationFrame in a cross browser way.
 http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 */
-win.requestAnimFrame = (function(){  // Creating a request animAnimeFrame function and making it work across browsers.  win.requestAnimationFrame is an HTML built in 60fps anim function
-	return  win.requestAnimationFrame       ||
-			win.webkitRequestAnimationFrame ||
-			win.mozRequestAnimationFrame    ||
-			win.oRequestAnimationFrame    ||
-			win.msRequestAnimationFrame    ||
-			function( callback ){
-				win.setTimeout(callback, 1000 / 30);
-			};
+win.requestAnimFrame = (function()
+{
+	return  win.requestAnimationFrame	||
+	win.webkitRequestAnimationFrame ||
+	win.mozRequestAnimationFrame	||
+	win.oRequestAnimationFrame	||
+	win.msRequestAnimationFrame	||
+	function(callback)
+	{
+		win.setTimeout(callback, 1000 / 30);
+	};
 })(); // jshint ignore:line

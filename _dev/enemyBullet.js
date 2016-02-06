@@ -21,9 +21,8 @@ enemyBullet.prototype.dead = false;
 enemyBullet.prototype.friction = 1.02;
 enemyBullet.prototype.ctx = game.context;
 
-enemyBullet.prototype.reset = function(x, y, speed, direction, power)	//fix this with sprites with diferent angles
+enemyBullet.prototype.reset = function(x, y, speed, direction, power)	//only variable arguments here
 {
-    //change variable properties only
 	this.x = x;
 	this.y = y;
 	this.width = this.sprite.frameWidth;
@@ -32,7 +31,6 @@ enemyBullet.prototype.reset = function(x, y, speed, direction, power)	//fix this
 	this.direction = direction;
 	this.power = power;
 	this.dead = false;
-
 	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 };
@@ -82,41 +80,30 @@ enemyBullet.prototype.draw = function(x, y)	//fix this with sprites with diferen
 ////////////
 // Factory
 ////////////
-
 getNewEnemyBullet = function(x, y, speed, direction, power, image)
 {
     var eb = null;
-
     // check to see if there is a spare one
     if (game.enemyBulletsPool.length > 0)
     {
-    	//recycle
-
-        eb = game.enemyBulletsPool.pop();
-
-        eb.sprite.reset(image, 3, 1, 4);
-
-        eb.reset(x, y, speed, direction, power);
-
-    	game.bullets.push(eb);
+			//recycle
+			eb = game.enemyBulletsPool.pop();
+			eb.sprite.reset(image, 3, 1, 4);
+			eb.reset(x, y, speed, direction, power);
+			game.bullets.push(eb);
     }
     else
     {
     	// none available, construct a new one
     	eb = new enemyBullet(x, y, speed, direction, power, image);
-
     	game.bullets.push(eb);
     }
-
-    // console.log('pool: ' + game.enemyBulletsPool.length);
-    // console.log('active: ' + game.bullets.length);
 };
 
 freeEnemyBullet = function(eb)
 {
-    // find the active bullet and remove it
-    game.bullets.splice(game.bullets.indexOf(eb),1);
-
-    // return the bullet back into the pool
+	// find the active bullet and remove it
+	game.bullets.splice(game.bullets.indexOf(eb),1);
+	// return the bullet back into the pool
 	game.enemyBulletsPool.push(eb);
 };
