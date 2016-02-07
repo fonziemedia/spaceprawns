@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 2015-12-15 ver 0.11.0
+# 2015-12-15 ver 0.11.4
 
 # Explicitly cached entries
 index.html
@@ -21,8 +21,6 @@ _css/_src/assets/images/ePoint_yellow.png
 _css/_src/assets/images/ePoint_red.png
 _css/_src/assets/images/intro_bg.jpg
 _css/_src/assets/images/intro_bg_m.jpg
-_css/_src/assets/images/level1.jpg
-_css/_src/assets/images/level1_m.jpg
 _css/_src/assets/images/fighter.png
 _css/_src/assets/images/fighter_m.png
 _css/_src/assets/fonts/furore/furore.otf

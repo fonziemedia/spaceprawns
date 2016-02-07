@@ -8,11 +8,9 @@ boss = function(x, y, speed, direction, hull, image)
 	this.height = game.offCtx[image].height;
 	this.x = (game.width/2) - (this.width/2);
 	this.y = game.outerTop;
-	this.hit = false;
 	this.audioHit1 = 'hit' + fileFormat;
 	this.audioHit2 = 'hit2' + fileFormat;
 	this.audioHit3 = 'hit3' + fileFormat;
-	this.hitTimer = 0;
 	this.dead = false;
 	this.deadTimer = 0;
 	this.bulletTimer1 = 1;
@@ -37,33 +35,11 @@ boss.prototype.update = function()
 
 		this.draw(this.x, this.y);
 
-		if(this.hit && this.hull > 0)
-		{
-			if (game.sound)
-			{
-				if (game.sfx[this.audioHit1].paused)
-				{
-					game.sounds.push(game.sfx[this.audioHit1]);
-				}
-				else if (game.sfx[this.audioHit2].paused)
-				{
-					game.sounds.push(game.sfx[this.audioHit2]);
-				}
-				else if (game.sfx[this.audioHit3].paused)
-				{
-					game.sounds.push(game.sfx[this.audioHit3]);
-				}
-			}
-
-			this.hit = false;
-		}
-
 		// player-boss collision
 		if (Collision(playerShip, this) && !this.dead && !game.gameOver)
 		{
 			playerShip.hull -= this.hull;
 			playerShip.hit = true;
-			this.hit = true;
 			this.hull -= playerShip.hull;
 		}
 
@@ -90,8 +66,8 @@ boss.prototype.update = function()
 			mBulletX2 = Math.round(this.x + this.width);
 			mBulletY = Math.round(this.y + this.height*0.6);
 
-			getNewEnemyBullet(mBulletX1, mBulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');
-			getNewEnemyBullet(mBulletX2, mBulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');
+			getNewEnemyBullet(mBulletX1, mBulletY, 50, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
+			getNewEnemyBullet(mBulletX2, mBulletY, 50, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
 		}
 
 		if (this.bulletTimer2 % this.bulletDivision2 == 1)

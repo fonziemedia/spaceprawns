@@ -35,10 +35,6 @@ enemy.prototype.hitTimer = 0;
 enemy.prototype.ctx = game.context;
 enemy.prototype.dead = false;
 enemy.prototype.collided = false;
-enemy.prototype.angleTo = function(p2)
-{
-	return Math.atan2(p2.y - this.y, p2.x - this.x);
-};
 enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fireRate, sheep) //only variable arguments here
 {
 	this.x = x;
@@ -99,7 +95,7 @@ enemy.prototype.update = function()
 				this.bulletTimer = 1;
 				bulletX = Math.round(this.x + this.width*0.42);
 				bulletY = Math.round(this.y + this.height);
-				getNewEnemyBullet(bulletX, bulletY, 50, angleTo(this, playerShip), 1, 'bullet_e_missile');
+				getNewEnemyBullet(bulletX, bulletY, 50, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
 			}
 		}
 

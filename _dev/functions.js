@@ -239,14 +239,6 @@ function Collision(first, second)
 }
 
 ////////////////////////
-// Maths
-////////////////////////
-function angleTo(p1, p2)
-{	//used to calculate enemy bullets' angle to playership
-	return Math.atan2(p2.y - p1.y, p2.x - p1.x);
-}
-
-////////////////////////
 // The game Loop
 ////////////////////////
 function loop(){ //the loop
@@ -617,10 +609,6 @@ function appCacheEvent()
 		if (confirm('A new version of InVaDeRs is available. Load it?'))
 		{
 			win.location.reload();
-	  }
-	  else
-	  {
-	  	// Manifest didn't changed. Nothing new to server.
 	  }
 	}
 }

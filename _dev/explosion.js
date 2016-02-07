@@ -147,8 +147,6 @@ function getNewExplosion(x, y, speed, direction, size, target)
 	e = game.explosionsPool.pop();
 	e.reset(x, y, speed, direction, size, target);
 	e.sprite.reset(e.image, 5, 4, 2);
-	e.width = e.sprite.frameWidth;
-	e.height = e.sprite.frameHeight;
 	e.loadSound();
 	game.explosions.push(e);
   }

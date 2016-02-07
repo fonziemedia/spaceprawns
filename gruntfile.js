@@ -9,7 +9,6 @@ module.exports = function(grunt) {
                 src: [
                 '_dev/vector.js',
                 '_dev/utils.js',
-                '_dev/particle.js',
                 '_dev/init.js',
                 '_dev/sprite.js',
                 '_dev/background.js',
