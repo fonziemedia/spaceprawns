@@ -166,3 +166,16 @@ function freeExplosion(e)
 	// return the explosion back into the pool
 	game.explosionsPool.push(e);
 }
+
+////////////////////////////
+// Pre-load game explosions
+////////////////////////////
+function initExplosions()
+{
+	for (var ex = 1 ; ex <= game.requiredExplosions; ex++)
+	{
+		e = new explosion(null, null, null, null, 'small', null);
+		game.explosionsPool.push(e);
+		game.doneObjects++;
+	}
+}

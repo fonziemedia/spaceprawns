@@ -182,3 +182,16 @@ function freeEnemy(en)
 	//return the bullet back into the pool
 	game.enemiesPool.push(en);
 }
+
+/////////////////////////
+// Pre-load game enemies
+/////////////////////////
+function initEnemies()
+{
+	for (var e = 1 ; e <= game.requiredEnemies; e++)
+	{
+		en = new enemy(0, 0, 0, 0, 0, 'pawn', 'enemy_sectoid', 0);
+		game.enemiesPool.push(en);
+		game.doneObjects++;
+	}
+}

@@ -930,6 +930,19 @@ function freeExplosion(e)
 	game.explosionsPool.push(e);
 }
 
+////////////////////////////
+// Pre-load game explosions
+////////////////////////////
+function initExplosions()
+{
+	for (var ex = 1 ; ex <= game.requiredExplosions; ex++)
+	{
+		e = new explosion(null, null, null, null, 'small', null);
+		game.explosionsPool.push(e);
+		game.doneObjects++;
+	}
+}
+
 player = function(hull, fireRate)
 {
 	this.x = Math.round(game.width*0.46);
@@ -1472,6 +1485,19 @@ freeBullet = function(b)
 	game.playerBulletsPool.push(b);
 };
 
+////////////////////////////////
+// Pre-load game player bullets
+////////////////////////////////
+function initPlayerBullets()
+{
+	for (var pb = 1 ; pb <= game.requiredPlayerBullets; pb++)
+	{
+		b = new playerBullet(null, null, null, -Math.PI/2, null, null, 'bullet_p_laser');
+		game.playerBulletsPool.push(b);
+		game.doneObjects++;
+	}
+}
+
 enemy = function(x, y, speed, direction, hull, type, image, fireRate)
 {
 	this.x = x;
@@ -1655,6 +1681,19 @@ function freeEnemy(en)
 	game.enemies.splice(game.enemies.indexOf(en),1);
 	//return the bullet back into the pool
 	game.enemiesPool.push(en);
+}
+
+/////////////////////////
+// Pre-load game enemies
+/////////////////////////
+function initEnemies()
+{
+	for (var e = 1 ; e <= game.requiredEnemies; e++)
+	{
+		en = new enemy(0, 0, 0, 0, 0, 'pawn', 'enemy_sectoid', 0);
+		game.enemiesPool.push(en);
+		game.doneObjects++;
+	}
 }
 
 boss = function(x, y, speed, direction, hull, image)
@@ -1895,6 +1934,19 @@ freeEnemyBullet = function(eb)
 	game.enemyBulletsPool.push(eb);
 };
 
+////////////////////////////////
+// Pre-load game enemy bullets
+////////////////////////////////
+function initEnemyBullets()
+{
+	for (var ebul = 1 ; ebul <= game.requiredEnemyBullets; ebul++)
+	{
+		eb = new enemyBullet(null, null, null, null, null, 'bullet_e_missile');
+		game.enemyBulletsPool.push(eb);
+		game.doneObjects++;
+	}
+}
+
 loot = function(x, y)
 {
 	this.x = x;
@@ -2047,6 +2099,19 @@ function freeLoot(l)
 	game.lootPool.push(l);
 }
 
+///////////////////////
+// Pre-load game loot
+///////////////////////
+function initLoot ()
+{
+	for (var loo = 1 ; loo <= game.requiredLoot; loo++)
+	{
+		l = new loot(null, null);
+		game.lootPool.push(l);
+		game.doneObjects++;
+	}
+}
+
 var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate)
 {
 	this.side = side;
@@ -2109,49 +2174,49 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 ////////////
 function getNewEnemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate)
 {
-    var ew = null;
-    //check to see if there is a spare one
-    if (game.wavesPool.length > 0)
-    {
-    	//recycle
-      ew = game.wavesPool.pop();
-      ew.side = side;
-			ew.spawnedShips = 0;
-			ew.race = race;
-			ew.type = type;
-			ew.fleetSize = fleetSize;
-			ew.speed = speed;
-			ew.hull = hull;
-			ew.fireRate = fireRate;
-			ew.spawnTimer = 1;
-			ew.spawnRate = Math.round(1500 * dt);
-			switch (ew.side)
-			{
-				case 'top':
-					ew.x = pos;
-					ew.y = game.outerTop;
-					ew.direction = Math.PI/2;
-				break;
-				case 'left':
-					ew.x = game.outerLeft;
-					ew.y = pos;
-					ew.direction = 0;
-				break;
-				case 'right':
-					ew.x = game.outerRight;
-					ew.y = pos;
-					ew.direction = Math.PI;
-				break;
-			}
-			ew.over = false;
-    	game.waves.push(ew);
-    }
-    else
-    {
-			//none available, construct a new one
-			ew = new enemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate);
-			game.waves.push(ew);
-    }
+  var ew = null;
+  //check to see if there is a spare one
+  if (game.wavesPool.length > 0)
+  {
+  	//recycle
+    ew = game.wavesPool.pop();
+    ew.side = side;
+		ew.spawnedShips = 0;
+		ew.race = race;
+		ew.type = type;
+		ew.fleetSize = fleetSize;
+		ew.speed = speed;
+		ew.hull = hull;
+		ew.fireRate = fireRate;
+		ew.spawnTimer = 1;
+		ew.spawnRate = Math.round(1500 * dt);
+		switch (ew.side)
+		{
+			case 'top':
+				ew.x = pos;
+				ew.y = game.outerTop;
+				ew.direction = Math.PI/2;
+			break;
+			case 'left':
+				ew.x = game.outerLeft;
+				ew.y = pos;
+				ew.direction = 0;
+			break;
+			case 'right':
+				ew.x = game.outerRight;
+				ew.y = pos;
+				ew.direction = Math.PI;
+			break;
+		}
+		ew.over = false;
+  	game.waves.push(ew);
+  }
+  else
+  {
+		//none available, construct a new one
+		ew = new enemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate);
+		game.waves.push(ew);
+  }
 }
 
 function freeEnemyWave(ew)
@@ -2160,6 +2225,19 @@ function freeEnemyWave(ew)
 	game.waves.splice(game.waves.indexOf(ew),1);
 	// return the bullet back into the pool
 	game.wavesPool.push(ew);
+}
+
+///////////////////////
+// Pre-load game waves
+///////////////////////
+function initWaves()
+{
+	for (var w = 1 ; w <= game.requiredWaves; w++)
+	{
+		ew = new enemyWave(null, null, 'enemy_sectoid', 'pawn', 0, 0, 0, 0);
+		game.wavesPool.push(ew);
+		game.doneObjects++;
+	}
 }
 
 function ui()
@@ -3632,50 +3710,14 @@ function checkObjects()
 	}
 }
 
-function initObjects()	//   !!! make this a function inside each object class
+function initObjects()
 {
-	//waves
-	for (var w = 1 ; w <= game.requiredWaves; w++)
-	{
-		ew = new enemyWave(null, null, 'enemy_sectoid', 'pawn', 0, 0, 0, 0);
-		game.wavesPool.push(ew);
-		game.doneObjects++;
-	}
-	//enemies
-	for (var e = 1 ; e <= game.requiredEnemies; e++)
-	{
-		en = new enemy(0, 0, 0, 0, 0, 'pawn', 'enemy_sectoid', 0);
-		game.enemiesPool.push(en);
-		game.doneObjects++;
-	}
-	//player bullets
-	for (var pb = 1 ; pb <= game.requiredPlayerBullets; pb++)
-	{
-		b = new playerBullet(null, null, null, -Math.PI/2, null, null, 'bullet_p_laser');
-		game.playerBulletsPool.push(b);
-		game.doneObjects++;
-	}
-	//enemy bullets
-	for (var ebul = 1 ; ebul <= game.requiredEnemyBullets; ebul++)
-	{
-		eb = new enemyBullet(null, null, null, null, null, 'bullet_e_missile');
-		game.enemyBulletsPool.push(eb);
-		game.doneObjects++;
-	}
-	//loot
-	for (var loo = 1 ; loo <= game.requiredLoot; loo++)
-	{
-		l = new loot(null, null);
-		game.lootPool.push(l);
-		game.doneObjects++;
-	}
-	//explosions
-	for (var ex = 1 ; ex <= game.requiredExplosions; ex++)
-	{
-		e = new explosion(null, null, null, null, 'small', null);
-		game.explosionsPool.push(e);
-		game.doneObjects++;
-	}
+	initWaves();
+	initEnemies();
+	initEnemyBullets();
+	initPlayerBullets();
+	initExplosions();
+	initLoot();
 }
 
 function toggleSound()

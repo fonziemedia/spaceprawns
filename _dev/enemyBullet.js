@@ -107,3 +107,16 @@ freeEnemyBullet = function(eb)
 	// return the bullet back into the pool
 	game.enemyBulletsPool.push(eb);
 };
+
+////////////////////////////////
+// Pre-load game enemy bullets
+////////////////////////////////
+function initEnemyBullets()
+{
+	for (var ebul = 1 ; ebul <= game.requiredEnemyBullets; ebul++)
+	{
+		eb = new enemyBullet(null, null, null, null, null, 'bullet_e_missile');
+		game.enemyBulletsPool.push(eb);
+		game.doneObjects++;
+	}
+}

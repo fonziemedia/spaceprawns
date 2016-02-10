@@ -149,3 +149,16 @@ function freeLoot(l)
 	// return the bullet back into the pool
 	game.lootPool.push(l);
 }
+
+///////////////////////
+// Pre-load game loot
+///////////////////////
+function initLoot ()
+{
+	for (var loo = 1 ; loo <= game.requiredLoot; loo++)
+	{
+		l = new loot(null, null);
+		game.lootPool.push(l);
+		game.doneObjects++;
+	}
+}

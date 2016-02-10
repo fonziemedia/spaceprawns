@@ -504,50 +504,14 @@ function checkObjects()
 	}
 }
 
-function initObjects()	//   !!! make this a function inside each object class
+function initObjects()
 {
-	//waves
-	for (var w = 1 ; w <= game.requiredWaves; w++)
-	{
-		ew = new enemyWave(null, null, 'enemy_sectoid', 'pawn', 0, 0, 0, 0);
-		game.wavesPool.push(ew);
-		game.doneObjects++;
-	}
-	//enemies
-	for (var e = 1 ; e <= game.requiredEnemies; e++)
-	{
-		en = new enemy(0, 0, 0, 0, 0, 'pawn', 'enemy_sectoid', 0);
-		game.enemiesPool.push(en);
-		game.doneObjects++;
-	}
-	//player bullets
-	for (var pb = 1 ; pb <= game.requiredPlayerBullets; pb++)
-	{
-		b = new playerBullet(null, null, null, -Math.PI/2, null, null, 'bullet_p_laser');
-		game.playerBulletsPool.push(b);
-		game.doneObjects++;
-	}
-	//enemy bullets
-	for (var ebul = 1 ; ebul <= game.requiredEnemyBullets; ebul++)
-	{
-		eb = new enemyBullet(null, null, null, null, null, 'bullet_e_missile');
-		game.enemyBulletsPool.push(eb);
-		game.doneObjects++;
-	}
-	//loot
-	for (var loo = 1 ; loo <= game.requiredLoot; loo++)
-	{
-		l = new loot(null, null);
-		game.lootPool.push(l);
-		game.doneObjects++;
-	}
-	//explosions
-	for (var ex = 1 ; ex <= game.requiredExplosions; ex++)
-	{
-		e = new explosion(null, null, null, null, 'small', null);
-		game.explosionsPool.push(e);
-		game.doneObjects++;
-	}
+	initWaves();
+	initEnemies();
+	initEnemyBullets();
+	initPlayerBullets();
+	initExplosions();
+	initLoot();
 }
 
 function toggleSound()

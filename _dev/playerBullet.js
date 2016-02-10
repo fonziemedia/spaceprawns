@@ -106,3 +106,16 @@ freeBullet = function(b)
 	//return the bullet back into the pool
 	game.playerBulletsPool.push(b);
 };
+
+////////////////////////////////
+// Pre-load game player bullets
+////////////////////////////////
+function initPlayerBullets()
+{
+	for (var pb = 1 ; pb <= game.requiredPlayerBullets; pb++)
+	{
+		b = new playerBullet(null, null, null, -Math.PI/2, null, null, 'bullet_p_laser');
+		game.playerBulletsPool.push(b);
+		game.doneObjects++;
+	}
+}
