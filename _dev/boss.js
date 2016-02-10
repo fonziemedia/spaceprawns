@@ -13,15 +13,37 @@ boss = function(x, y, speed, direction, hull, image)
 	this.audioHit3 = 'hit3' + fileFormat;
 	this.dead = false;
 	this.deadTimer = 0;
-	this.bulletTimer1 = 1;
-	this.bulletTimer2 = 1;
-	this.bulletDivision1 = 50;
-	this.bulletDivision2 = 30;
-	this.fireRate = 0; //bullets/sec
-	// this.fireRate = fireRate * 60; //bullets/sec
+	this.lasersTimer = 1;
+	this.missilesTimer = 1;
+	this.lasersFireRate = 40;
+	this.missilesFireRate = 120;
 	this.yStop = Math.round(game.height*0.05);
-	this.xBondary = Math.round(game.width - this.width/4);
+	this.laser1 = {};
+	this.laser2 = {};
+	this.laser1.y = Math.round(this.yStop + this.height);
+	this.laser2.y = this.laser1.y;
+	this.missile1 = {};
+	this.missile2 = {};
+	this.missile1.y = Math.round(this.yStop + this.height*0.5);
+	this.missile2.y = this.missile1.y;
+	this.xBondary = Math.round(game.width - this.width);
 	this.ctx = game.context;
+};
+
+boss.prototype.fireLasers = function()
+{
+	this.laser1.x = Math.round(this.x + this.width*0.4);
+	this.laser2.x = Math.round(this.x + this.width*0.6);
+	getNewEnemyBullet(this.laser1.x, this.laser1.y, 250, Math.PI/2, 1.5, 'bullet_p_laser');
+	getNewEnemyBullet(this.laser2.x, this.laser2.y, 250, Math.PI/2, 1.5, 'bullet_p_laser');
+};
+
+boss.prototype.fireMissiles = function()
+{
+	this.missile1.x = Math.round(this.x);
+	this.missile2.x = Math.round(this.x + this.width);
+	getNewEnemyBullet(this.missile1.x, this.missile1.y, 50, utils.angleTo(this.missile1, playerShip), 1, 'bullet_e_missile');
+	getNewEnemyBullet(this.missile2.x, this.missile1.y, 50, utils.angleTo(this.missile2, playerShip), 1, 'bullet_e_missile');
 };
 
 boss.prototype.update = function()
@@ -56,28 +78,17 @@ boss.prototype.update = function()
 			}
 		}
 
-		this.bulletTimer1++;
-		this.bulletTimer2++;
+		this.lasersTimer++;
+		this.missilesTimer++;
 
-		if (this.bulletTimer1 % this.bulletDivision1 == 1)
+		if (this.lasersTimer % this.lasersFireRate === 0)
 		{
-			this.bulletTimer1 = 1;
-			mBulletX1 = Math.round(this.x);
-			mBulletX2 = Math.round(this.x + this.width);
-			mBulletY = Math.round(this.y + this.height*0.6);
-
-			getNewEnemyBullet(mBulletX1, mBulletY, 50, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
-			getNewEnemyBullet(mBulletX2, mBulletY, 50, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
+			this.fireLasers();
 		}
 
-		if (this.bulletTimer2 % this.bulletDivision2 == 1)
+		if (this.missilesTimer % this.missilesFireRate === 0)
 		{
-			this.bulletTimer2 = 1; //resetting our timer
-			lBulletX1 = Math.round(this.x + this.width*0.4);
-			lBulletX2 = Math.round(this.x + this.width*0.6);
-			lBulletY = Math.round(this.y + this.height);
-			getNewEnemyBullet(lBulletX1, lBulletY, 250, Math.PI/2, 1.5, 'bullet_p_laser');
-			getNewEnemyBullet(lBulletX2, lBulletY, 250, Math.PI/2, 1.5, 'bullet_p_laser');
+			this.fireMissiles();
 		}
 
 		if (this.y > this.yStop)
@@ -86,13 +97,13 @@ boss.prototype.update = function()
 
 			if (this.x > 0 && this.x <= this.xBondary)
 			{
-				if (this.x < playerShip.x && this.x <= this.xBondary-1)
+				if (this.x < playerShip.x && this.x <= this.xBondary-2)
 				{
-					this.x += 1;
+					this.x += 2;
 				}
-				else if (this.x > playerShip.x && this.x > 1)
+				else if (this.x > playerShip.x && this.x > 2)
 				{
-					this.x -= 1;
+					this.x -= 2;
 				}
 			}
 		}

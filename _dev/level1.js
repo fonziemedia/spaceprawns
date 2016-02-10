@@ -26,27 +26,27 @@ level1.second7 = function ()
 
 level1.second8 = function ()
 {
-  getNewEnemyWave('left', game.height*0.3, 'enemy_sectoid', 'pawn', 4, 250, 1, 2);
+  getNewEnemyWave('left', game.height*0.3, 'enemy_sectoid', 'pawn', 4, 250, 1, 3);
 };
 
 level1.second9 = function ()
 {
-  getNewEnemyWave('right', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 2);
+  getNewEnemyWave('right', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 3);
 };
 
 level1.second10 = function ()
 {
-  getNewEnemyWave('top', game.width*0.5, 'enemy_sectoid', 'pawn', 6, 300, 1, 2);
+  getNewEnemyWave('top', game.width*0.5, 'enemy_sectoid', 'pawn', 6, 300, 1, 3);
 };
 
 level1.second11 = function ()
 {
-  getNewEnemyWave('top', game.width*0.7, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
+  getNewEnemyWave('top', game.width*0.7, 'enemy_sectoid', 'pawn', 4, 300, 1, 3);
 };
 
 level1.second12 = function ()
 {
-  getNewEnemyWave('left', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 2);
+  getNewEnemyWave('left', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 3);
 };
 
 level1.second13 = function ()

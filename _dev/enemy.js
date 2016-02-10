@@ -1,4 +1,4 @@
-enemy = function(x, y, speed, direction, hull, type, image, fireRate, sheep)
+enemy = function(x, y, speed, direction, hull, type, image, fireRate)
 {
 	this.x = x;
 	this.y = y;
@@ -22,9 +22,7 @@ enemy = function(x, y, speed, direction, hull, type, image, fireRate, sheep)
 			this.explosionSize = 'xLarge';
 		break;
 	}
-	this.sheep = sheep || false;
-	this.fireRate = fireRate * 60 || 0; //bullets/sec
-	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
+	this.fireRate = fireRate * 60; //fireRate = delay in seconds
 	this.speed = speed/pixelRatio;
 	this.direction = direction;
 };
@@ -35,7 +33,15 @@ enemy.prototype.hitTimer = 0;
 enemy.prototype.ctx = game.context;
 enemy.prototype.dead = false;
 enemy.prototype.collided = false;
-enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fireRate, sheep) //only variable arguments here
+
+enemy.prototype.fireMissile = function()
+{
+		bulletX = Math.round(this.x + this.width*0.42);
+		bulletY = Math.round(this.y + this.height);
+		getNewEnemyBullet(bulletX, bulletY, 50, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
+};
+
+enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fireRate) //only variable arguments here
 {
 	this.x = x;
 	this.y = y;
@@ -44,8 +50,7 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fire
 	this.hull = hull;
 	this.type = type;
 	this.image = game.offCtx[image];
-	this.sheep = sheep || false;
-	this.fireRate = fireRate * 60 || 0; //bullets/sec
+	this.fireRate = fireRate * 60; //fireRate = delay in seconds
 	this.width = game.offCtx[image].width;
 	this.height = game.offCtx[image].height;
 	switch (type)
@@ -66,7 +71,6 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fire
 	this.hitTimer = 0;
 	this.collided = false;		//do we need this??
 	this.dead = false;
-	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
 	this.vx = Math.cos(this.direction) * ((this.speed)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed)*dt);
 };
@@ -90,12 +94,9 @@ enemy.prototype.update = function()
 		if(this.fireRate !== 0)
 		{
 			this.bulletTimer++;
-			if (this.bulletTimer % this.bulletDivision == 1)
+			if (this.bulletTimer % this.fireRate === 0)
 			{
-				this.bulletTimer = 1;
-				bulletX = Math.round(this.x + this.width*0.42);
-				bulletY = Math.round(this.y + this.height);
-				getNewEnemyBullet(bulletX, bulletY, 50, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
+				this.fireMissile();
 			}
 		}
 

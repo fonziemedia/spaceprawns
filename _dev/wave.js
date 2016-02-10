@@ -7,9 +7,9 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 	this.fleetSize = fleetSize;
 	this.speed = speed;
 	this.hull = hull;
-	this.fireRate = fireRate || 0;
+	this.fireRate = fireRate;
 	this.spawnTimer = 1;
-	this.spawnDivision = Math.round((1500 * dt)/pixelRatio);
+	this.spawnRate = Math.round((1500 * dt)/pixelRatio);
 	switch (this.side)
 	{
 		case 'top':
@@ -36,14 +36,11 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 		{
 			this.spawnTimer++;
 
-			if (this.spawnedShips <= this.fleetSize)
+			if (this.spawnTimer % this.spawnRate === 0)
 			{
-				if (this.spawnTimer == this.spawnDivision)
-				{
-					this.spawnTimer = 1;
-					getNewEnemy(this.x, this.y, this.speed, this.direction, this.hull, this.type, this.race, this.fireRate, true);
+					this.spawnFireRate = Math.round(utils.randomRange(this.fireRate, this.fireRate*2)); //a randomRange so that each ship fires at it's own time
+					getNewEnemy(this.x, this.y, this.speed, this.direction, this.hull, this.type, this.race, this.spawnFireRate);
 					this.spawnedShips++;
-				}
 			}
 
 			if (this.spawnedShips == this.fleetSize)
@@ -76,9 +73,9 @@ function getNewEnemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate
 			ew.fleetSize = fleetSize;
 			ew.speed = speed;
 			ew.hull = hull;
-			ew.fireRate = fireRate || 0;
+			ew.fireRate = fireRate;
 			ew.spawnTimer = 1;
-			ew.spawnDivision = Math.round(1500 * dt);
+			ew.spawnRate = Math.round(1500 * dt);
 			switch (ew.side)
 			{
 				case 'top':

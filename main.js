@@ -964,8 +964,8 @@ player = function(hull, fireRate)
 	this.movement = Math.round(game.height*0.007);
 
 	//====================== Laser bullets =================//
-	this.bulletTimer = 1;
-	this.bulletDivision = fireRate;
+	this.fireTimer = 1;
+	this.fireRate = fireRate;
 	this.laserLevel = 1;
 	this.missileLevel = 0;
 
@@ -973,6 +973,102 @@ player = function(hull, fireRate)
 	this.leftlaserX = Math.round(this.x + this.width*0.25);
 	this.rightlaserX = Math.round(this.x + this.width*0.75);
 	this.LaserY = Math.round(this.y - this.height*0.2);
+};
+
+player.prototype.fireGuns = function()
+{
+	this.midLaserX = Math.round(this.x + this.width*0.5);
+	this.leftLaserX = Math.round(this.x + this.width*0.25);
+	this.rightLaserX = Math.round(this.x + this.width*0.75);
+	this.laserY = Math.round(this.y - this.height*0.2);
+
+	this.midMissileX = Math.round(this.x + this.width*0.5);
+	this.leftMissileX = this.x;
+	this.rightMissileX = this.x + this.width;
+	this.missileY = this.y + this.height;
+	//only add a bullet if space is pressed and enough time has passed i.e. our timer has reached 0
+	this.fireTimer++;
+	if (this.fireTimer % this.fireRate === 0)
+	{
+		// (x, y, speed, direction, power, friction, image)
+		switch(this.laserLevel)
+		{
+			case 1:
+				getNewBullet(this.midLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+				if (game.sound)
+				{
+					if (game.sfx[this.audioFire1].paused)
+					{
+						game.sounds.push(game.sfx[this.audioFire1]);
+					}
+					else if (game.sfx[this.audioFire2].paused)
+					{
+						game.sounds.push(game.sfx[this.audioFire2]);
+					}
+					else if (game.sfx[this.audioFire3].paused)
+					{
+						game.sounds.push(game.sfx[this.audioFire3]);
+					}
+				}
+			break;
+			case 2:
+				getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+				getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+				if (game.sound)
+				{
+					if (game.sfx[this.audioFire1].paused)
+					{
+						game.sounds.push(game.sfx[this.audioFire1]);
+					}
+					else if (game.sfx[this.audioFire2].paused)
+					{
+						game.sounds.push(game.sfx[this.audioFire2]);
+					}
+					else if (game.sfx[this.audioFire3].paused)
+					{
+						game.sounds.push(game.sfx[this.audioFire3]);
+					}
+				}
+			break;
+			case 3:
+				getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+				getNewBullet(this.midLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+				getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+				if (game.sound)
+				{
+					if (game.sfx[this.audioFire1].paused)
+					{
+						game.sounds.push(game.sfx[this.audioFire1]);
+					}
+					else if (game.sfx[this.audioFire2].paused)
+					{
+						game.sounds.push(game.sfx[this.audioFire2]);
+					}
+					else if (game.sfx[this.audioFire3].paused)
+					{
+						game.sounds.push(game.sfx[this.audioFire3]);
+					}
+				}
+			break;
+		}
+		switch(this.missileLevel)
+		{
+			case 0:
+			break;
+			case 1:
+				getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+			break;
+			case 2:
+				getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+				getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+			break;
+			case 3:
+				getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+				getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+				getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+			break;
+		}
+	}
 };
 
 player.prototype.update = function()
@@ -1143,108 +1239,9 @@ player.prototype.update = function()
 		this.y -= Math.round(this.speed*dt);
 	}
 
-	/////////////////////////
-	//Guns
-	////////////////////////
-	this.midLaserX = Math.round(this.x + this.width*0.5);
-	this.leftLaserX = Math.round(this.x + this.width*0.25);
-	this.rightLaserX = Math.round(this.x + this.width*0.75);
-	this.laserY = Math.round(this.y - this.height*0.2);
-
-	this.midMissileX = Math.round(this.x + this.width*0.5);
-	this.leftMissileX = this.x;
-	this.rightMissileX = this.x + this.width;
-	this.missileY = this.y + this.height;
-
 	if((game.keys[32] || mouseIsDown) && !this.dead && !game.gameOver)
 	{
-		//only add a bullet if space is pressed and enough time has passed i.e. our timer has reached 0
-		this.bulletTimer++;
-		if (this.bulletTimer % this.bulletDivision === 0)
-		{
-			// (x, y, speed, direction, power, friction, image)
-			switch(this.laserLevel)
-			{
-			  case 1:
-			    getNewBullet(this.midLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			    if (game.sound)
-			    {
-			    	if (game.sfx[this.audioFire1].paused)
-			    	{
-			    		game.sounds.push(game.sfx[this.audioFire1]);
-			    	}
-			    	else if (game.sfx[this.audioFire2].paused)
-			    	{
-			    		game.sounds.push(game.sfx[this.audioFire2]);
-			    	}
-			    	else if (game.sfx[this.audioFire3].paused)
-			    	{
-			    		game.sounds.push(game.sfx[this.audioFire3]);
-			    	}
-			    }
-			  break;
-			  case 2:
-			  	getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			  	getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			    if (game.sound)
-			    {
-			    	if (game.sfx[this.audioFire1].paused)
-			    	{
-			    		game.sounds.push(game.sfx[this.audioFire1]);
-			    	}
-			    	else if (game.sfx[this.audioFire2].paused)
-			    	{
-			    		game.sounds.push(game.sfx[this.audioFire2]);
-			    	}
-			    	else if (game.sfx[this.audioFire3].paused)
-			    	{
-			    		game.sounds.push(game.sfx[this.audioFire3]);
-			    	}
-			    }
-			  break;
-			  case 3:
-			  	getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			  	getNewBullet(this.midLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			  	getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			    if (game.sound)
-			    {
-			    	if (game.sfx[this.audioFire1].paused)
-			    	{
-			    		game.sounds.push(game.sfx[this.audioFire1]);
-			    	}
-			    	else if (game.sfx[this.audioFire2].paused)
-			    	{
-			    		game.sounds.push(game.sfx[this.audioFire2]);
-			    	}
-			    	else if (game.sfx[this.audioFire3].paused)
-			    	{
-			    		game.sounds.push(game.sfx[this.audioFire3]);
-			    	}
-			    }
-			  break;
-			}
-			switch(this.missileLevel)
-			{
-				case 0:
-				break;
-			  case 1:
-			  	getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-				break;
-			  case 2:
-					getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-				  getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-				break;
-			  case 3:
-			   	getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-			  	getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-			  	getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-				break;
-			}
-		}
-	}
-	else
-	{
-		this.bulletTimer = 1;
+		this.fireGuns();
 	}
 
 	///////////////////////////////////
@@ -1475,7 +1472,7 @@ freeBullet = function(b)
 	game.playerBulletsPool.push(b);
 };
 
-enemy = function(x, y, speed, direction, hull, type, image, fireRate, sheep)
+enemy = function(x, y, speed, direction, hull, type, image, fireRate)
 {
 	this.x = x;
 	this.y = y;
@@ -1499,9 +1496,7 @@ enemy = function(x, y, speed, direction, hull, type, image, fireRate, sheep)
 			this.explosionSize = 'xLarge';
 		break;
 	}
-	this.sheep = sheep || false;
-	this.fireRate = fireRate * 60 || 0; //bullets/sec
-	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
+	this.fireRate = fireRate * 60; //fireRate = delay in seconds
 	this.speed = speed/pixelRatio;
 	this.direction = direction;
 };
@@ -1512,7 +1507,15 @@ enemy.prototype.hitTimer = 0;
 enemy.prototype.ctx = game.context;
 enemy.prototype.dead = false;
 enemy.prototype.collided = false;
-enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fireRate, sheep) //only variable arguments here
+
+enemy.prototype.fireMissile = function()
+{
+		bulletX = Math.round(this.x + this.width*0.42);
+		bulletY = Math.round(this.y + this.height);
+		getNewEnemyBullet(bulletX, bulletY, 50, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
+};
+
+enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fireRate) //only variable arguments here
 {
 	this.x = x;
 	this.y = y;
@@ -1521,8 +1524,7 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fire
 	this.hull = hull;
 	this.type = type;
 	this.image = game.offCtx[image];
-	this.sheep = sheep || false;
-	this.fireRate = fireRate * 60 || 0; //bullets/sec
+	this.fireRate = fireRate * 60; //fireRate = delay in seconds
 	this.width = game.offCtx[image].width;
 	this.height = game.offCtx[image].height;
 	switch (type)
@@ -1543,7 +1545,6 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fire
 	this.hitTimer = 0;
 	this.collided = false;		//do we need this??
 	this.dead = false;
-	this.bulletDivision = (this.sheep) ? (this.fireRate*2) - (Math.floor(Math.random()*this.fireRate)) || 99999 : this.bulletDivision = this.fireRate || 99999;
 	this.vx = Math.cos(this.direction) * ((this.speed)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed)*dt);
 };
@@ -1567,12 +1568,9 @@ enemy.prototype.update = function()
 		if(this.fireRate !== 0)
 		{
 			this.bulletTimer++;
-			if (this.bulletTimer % this.bulletDivision == 1)
+			if (this.bulletTimer % this.fireRate === 0)
 			{
-				this.bulletTimer = 1;
-				bulletX = Math.round(this.x + this.width*0.42);
-				bulletY = Math.round(this.y + this.height);
-				getNewEnemyBullet(bulletX, bulletY, 50, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
+				this.fireMissile();
 			}
 		}
 
@@ -1674,15 +1672,37 @@ boss = function(x, y, speed, direction, hull, image)
 	this.audioHit3 = 'hit3' + fileFormat;
 	this.dead = false;
 	this.deadTimer = 0;
-	this.bulletTimer1 = 1;
-	this.bulletTimer2 = 1;
-	this.bulletDivision1 = 50;
-	this.bulletDivision2 = 30;
-	this.fireRate = 0; //bullets/sec
-	// this.fireRate = fireRate * 60; //bullets/sec
+	this.lasersTimer = 1;
+	this.missilesTimer = 1;
+	this.lasersFireRate = 40;
+	this.missilesFireRate = 120;
 	this.yStop = Math.round(game.height*0.05);
-	this.xBondary = Math.round(game.width - this.width/4);
+	this.laser1 = {};
+	this.laser2 = {};
+	this.laser1.y = Math.round(this.yStop + this.height);
+	this.laser2.y = this.laser1.y;
+	this.missile1 = {};
+	this.missile2 = {};
+	this.missile1.y = Math.round(this.yStop + this.height*0.5);
+	this.missile2.y = this.missile1.y;
+	this.xBondary = Math.round(game.width - this.width);
 	this.ctx = game.context;
+};
+
+boss.prototype.fireLasers = function()
+{
+	this.laser1.x = Math.round(this.x + this.width*0.4);
+	this.laser2.x = Math.round(this.x + this.width*0.6);
+	getNewEnemyBullet(this.laser1.x, this.laser1.y, 250, Math.PI/2, 1.5, 'bullet_p_laser');
+	getNewEnemyBullet(this.laser2.x, this.laser2.y, 250, Math.PI/2, 1.5, 'bullet_p_laser');
+};
+
+boss.prototype.fireMissiles = function()
+{
+	this.missile1.x = Math.round(this.x);
+	this.missile2.x = Math.round(this.x + this.width);
+	getNewEnemyBullet(this.missile1.x, this.missile1.y, 50, utils.angleTo(this.missile1, playerShip), 1, 'bullet_e_missile');
+	getNewEnemyBullet(this.missile2.x, this.missile1.y, 50, utils.angleTo(this.missile2, playerShip), 1, 'bullet_e_missile');
 };
 
 boss.prototype.update = function()
@@ -1717,28 +1737,17 @@ boss.prototype.update = function()
 			}
 		}
 
-		this.bulletTimer1++;
-		this.bulletTimer2++;
+		this.lasersTimer++;
+		this.missilesTimer++;
 
-		if (this.bulletTimer1 % this.bulletDivision1 == 1)
+		if (this.lasersTimer % this.lasersFireRate === 0)
 		{
-			this.bulletTimer1 = 1;
-			mBulletX1 = Math.round(this.x);
-			mBulletX2 = Math.round(this.x + this.width);
-			mBulletY = Math.round(this.y + this.height*0.6);
-
-			getNewEnemyBullet(mBulletX1, mBulletY, 50, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
-			getNewEnemyBullet(mBulletX2, mBulletY, 50, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
+			this.fireLasers();
 		}
 
-		if (this.bulletTimer2 % this.bulletDivision2 == 1)
+		if (this.missilesTimer % this.missilesFireRate === 0)
 		{
-			this.bulletTimer2 = 1; //resetting our timer
-			lBulletX1 = Math.round(this.x + this.width*0.4);
-			lBulletX2 = Math.round(this.x + this.width*0.6);
-			lBulletY = Math.round(this.y + this.height);
-			getNewEnemyBullet(lBulletX1, lBulletY, 250, Math.PI/2, 1.5, 'bullet_p_laser');
-			getNewEnemyBullet(lBulletX2, lBulletY, 250, Math.PI/2, 1.5, 'bullet_p_laser');
+			this.fireMissiles();
 		}
 
 		if (this.y > this.yStop)
@@ -1747,13 +1756,13 @@ boss.prototype.update = function()
 
 			if (this.x > 0 && this.x <= this.xBondary)
 			{
-				if (this.x < playerShip.x && this.x <= this.xBondary-1)
+				if (this.x < playerShip.x && this.x <= this.xBondary-2)
 				{
-					this.x += 1;
+					this.x += 2;
 				}
-				else if (this.x > playerShip.x && this.x > 1)
+				else if (this.x > playerShip.x && this.x > 2)
 				{
-					this.x -= 1;
+					this.x -= 2;
 				}
 			}
 		}
@@ -2047,9 +2056,9 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 	this.fleetSize = fleetSize;
 	this.speed = speed;
 	this.hull = hull;
-	this.fireRate = fireRate || 0;
+	this.fireRate = fireRate;
 	this.spawnTimer = 1;
-	this.spawnDivision = Math.round((1500 * dt)/pixelRatio);
+	this.spawnRate = Math.round((1500 * dt)/pixelRatio);
 	switch (this.side)
 	{
 		case 'top':
@@ -2076,14 +2085,11 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 		{
 			this.spawnTimer++;
 
-			if (this.spawnedShips <= this.fleetSize)
+			if (this.spawnTimer % this.spawnRate === 0)
 			{
-				if (this.spawnTimer == this.spawnDivision)
-				{
-					this.spawnTimer = 1;
-					getNewEnemy(this.x, this.y, this.speed, this.direction, this.hull, this.type, this.race, this.fireRate, true);
+					this.spawnFireRate = Math.round(utils.randomRange(this.fireRate, this.fireRate*2)); //a randomRange so that each ship fires at it's own time
+					getNewEnemy(this.x, this.y, this.speed, this.direction, this.hull, this.type, this.race, this.spawnFireRate);
 					this.spawnedShips++;
-				}
 			}
 
 			if (this.spawnedShips == this.fleetSize)
@@ -2116,9 +2122,9 @@ function getNewEnemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate
 			ew.fleetSize = fleetSize;
 			ew.speed = speed;
 			ew.hull = hull;
-			ew.fireRate = fireRate || 0;
+			ew.fireRate = fireRate;
 			ew.spawnTimer = 1;
-			ew.spawnDivision = Math.round(1500 * dt);
+			ew.spawnRate = Math.round(1500 * dt);
 			switch (ew.side)
 			{
 				case 'top':
@@ -2958,27 +2964,27 @@ level1.second7 = function ()
 
 level1.second8 = function ()
 {
-  getNewEnemyWave('left', game.height*0.3, 'enemy_sectoid', 'pawn', 4, 250, 1, 2);
+  getNewEnemyWave('left', game.height*0.3, 'enemy_sectoid', 'pawn', 4, 250, 1, 3);
 };
 
 level1.second9 = function ()
 {
-  getNewEnemyWave('right', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 2);
+  getNewEnemyWave('right', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 3);
 };
 
 level1.second10 = function ()
 {
-  getNewEnemyWave('top', game.width*0.5, 'enemy_sectoid', 'pawn', 6, 300, 1, 2);
+  getNewEnemyWave('top', game.width*0.5, 'enemy_sectoid', 'pawn', 6, 300, 1, 3);
 };
 
 level1.second11 = function ()
 {
-  getNewEnemyWave('top', game.width*0.7, 'enemy_sectoid', 'pawn', 4, 300, 1, 2);
+  getNewEnemyWave('top', game.width*0.7, 'enemy_sectoid', 'pawn', 4, 300, 1, 3);
 };
 
 level1.second12 = function ()
 {
-  getNewEnemyWave('left', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 2);
+  getNewEnemyWave('left', game.height*0.2, 'enemy_sectoid', 'pawn', 3, 300, 1, 3);
 };
 
 level1.second13 = function ()
