@@ -1,63 +1,63 @@
-function text(header1, header2, inputRequired)
+text = function(header1, header2, inputRequired)
 {
-	var h1 = $('#h1'); //remove jquery here
-	var h2 = $('#h2');
-	var h3 = $('#h3');
-	var h1Text = header1;
-	var h2Text = header2;
-	var h3Text = game.isMobile ? 'Tap screen to continue' : 'Press ENTER or LMB to continue';
-	var allText = $('.all-text');
-	var textInput = inputRequired;
-	var effectDuration = 2000;
-
-	this.switch = function(trigger)
-	{
-		switch (trigger)
-		{
-			case 'on':
-				allText.show();
-				game.textFaded = false;
-			break;
-			case 'off':
-				allText.stop(true, true);
-				allText.hide();
-				game.textFaded = true;
-			break;
-		}
-	};
-
-	this.fade = function(trigger)
-	{
-		switch (trigger)
-		{
-			case 'in':
-				game.textFadingIn = true;
-				allText.fadeIn(effectDuration, function(){
-					game.textFadingIn = false;
-					game.textFaded = false;
-				});
-			break;
-			case 'out':
-				game.textFadingOut = true;
-				allText.fadeOut(effectDuration, function(){
-					h1.text('');
-					h2.text('');
-					h3.text('');
-					game.textFadingOut = false;
-					game.textFaded = true;
-				});
-			break;
-		}
-	};
-
-	this.init = function()
-	{
-		h1.text(h1Text);
-		h2.text(h2Text);
-		if (textInput){h3.text(h3Text);}else{h3.text('');}
-	};
+	this.h1 = $('#h1'); //remove jquery here
+	this.h2 = $('#h2');
+	this.h3 = $('#h3');
+	this.h1Text = header1;
+	this.h2Text = header2;
+	this.h3Text = game.isMobile ? 'Tap screen to continue' : 'Press ENTER or LMB to continue';
+	this.allText = $('.all-text');
+	this.textInput = inputRequired;
+	this.effectDuration = 2000;
 
 	this.init();
-}
+};
+
+text.prototype.switch = function(trigger)
+{
+	switch (trigger)
+	{
+		case 'on':
+			this.allText.show();
+			game.textFaded = false;
+		break;
+		case 'off':
+			this.allText.stop(true, true);
+			this.allText.hide();
+			game.textFaded = true;
+		break;
+	}
+};
+
+text.prototype.fade = function(trigger)
+{
+	switch (trigger)
+	{
+		case 'in':
+			game.textFadingIn = true;
+			this.allText.fadeIn(this.effectDuration, function(){
+				game.textFadingIn = false;
+				game.textFaded = false;
+			});
+		break;
+		case 'out':
+			game.textFadingOut = true;
+			this.allText.fadeOut(this.effectDuration, function(){
+				this.h1.text('');
+				this.h2.text('');
+				this.h3.text('');
+				game.textFadingOut = false;
+				game.textFaded = true;
+			});
+		break;
+	}
+};
+
+text.prototype.init = function()
+{
+	this.h1.text(this.h1Text);
+	this.h2.text(this.h2Text);
+	if (this.textInput){this.h3.text(this.h3Text);}else{this.h3.text('');}
+};
 
 gameText = new text(); //To be removed!

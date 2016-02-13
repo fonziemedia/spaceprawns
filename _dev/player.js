@@ -390,10 +390,7 @@ player.prototype.draw = function()
 
 		if (this.hit && !this.imune)
 		{
-			if (game.canVibrate)
-			{
-				if (this.sprite_s.currentFrame < 1)	navigator.vibrate(30);
-			}
+			if (this.sprite_s.currentFrame < 1) vibrateDevice(30);
 
 			this.sprite_s.draw(this.x - this.width*0.7, this.y - this.height*0.1);
 			if (this.sprite_s.currentFrame >= this.sprite_s.endFrame)

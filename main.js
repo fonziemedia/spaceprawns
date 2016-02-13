@@ -1335,10 +1335,7 @@ player.prototype.draw = function()
 
 		if (this.hit && !this.imune)
 		{
-			if (game.canVibrate)
-			{
-				if (this.sprite_s.currentFrame < 1)	navigator.vibrate(30);
-			}
+			if (this.sprite_s.currentFrame < 1) vibrateDevice(30);
 
 			this.sprite_s.draw(this.x - this.width*0.7, this.y - this.height*0.1);
 			if (this.sprite_s.currentFrame >= this.sprite_s.endFrame)
@@ -2240,653 +2237,652 @@ function initWaves()
 	}
 }
 
-function ui()
+ui = function()
 {
-	var uiAll = $('#ui');
-	var uiLevel = doc.getElementById("uiLevel");
-	var uiScore = doc.getElementById("uiScore");
-	var uiEBar = doc.getElementById("uiEBar");
-	var uiHangar = doc.getElementById("uiHangarList");
-	var effectDuration = 800;
+	this.uiAll = $('#ui');
+	this.uiLevel = doc.getElementById("uiLevel");
+	this.uiScore = doc.getElementById("uiScore");
+	this.uiEBar = doc.getElementById("uiEBar");
+	this.uiHangar = doc.getElementById("uiHangarList");
+	this.effectDuration = 800;
+};
 
-	this.updateLevel = function()
+ui.prototype.updateLevel = function()
+{
+	this.uiLevel.innerHTML = 'STAGE ' + game.level;
+};
+
+ui.prototype.updateScore = function()
+{
+	this.uiScore.innerHTML = 'SCORE: ' + game.score;
+};
+
+ui.prototype.updateEnergy = function()
+{
+	shipEnergy = (playerShip.hull / playerShip.maxHull) * 100;
+
+	if(shipEnergy < 0 ) {shipEnergy = 0;}
+
+	shipEnergyPC = shipEnergy + '%';
+
+	if (shipEnergy >= 66)
 	{
-		uiLevel.innerHTML = 'STAGE ' + game.level;
-	};
-
-	this.updateScore = function()
+		this.uiEBar.classList.remove('eBar-red');
+		this.uiEBar.classList.remove('eBar-yellow');
+		this.uiEBar.classList.add('eBar-blue');
+	}
+	else if (shipEnergy >= 33 && shipEnergy < 66  )
 	{
-		uiScore.innerHTML = 'SCORE: ' + game.score;
-	};
-
-	this.updateEnergy = function()
+		this.uiEBar.classList.remove('eBar-red');
+		this.uiEBar.classList.add('eBar-yellow');
+		this.uiEBar.classList.remove('eBar-blue');
+	}
+	else
 	{
-		shipEnergy = (playerShip.hull / playerShip.maxHull) * 100;
+		this.uiEBar.classList.add('eBar-red');
+		this.uiEBar.classList.remove('eBar-yellow');
+		this.uiEBar.classList.remove('eBar-blue');
+	}
 
-		if(shipEnergy < 0 ) {shipEnergy = 0;}
+	this.uiEBar.style.width = shipEnergyPC;
+};
 
-		shipEnergyPC = shipEnergy + '%';
-
-		if (shipEnergy >= 66)
-		{
-			uiEBar.classList.remove('eBar-red');
-			uiEBar.classList.remove('eBar-yellow');
-			uiEBar.classList.add('eBar-blue');
-		}
-		else if (shipEnergy >= 33 && shipEnergy < 66  )
-		{
-			uiEBar.classList.remove('eBar-red');
-			uiEBar.classList.add('eBar-yellow');
-			uiEBar.classList.remove('eBar-blue');
-		}
-		else
-		{
-			uiEBar.classList.add('eBar-red');
-			uiEBar.classList.remove('eBar-yellow');
-			uiEBar.classList.remove('eBar-blue');
-		}
-
-		uiEBar.style.width = shipEnergyPC;
-	};
-
-	this.updateHangar = function()
+ui.prototype.updateHangar = function()
+{
+	switch(playerShip.lives)
 	{
-		switch(playerShip.lives)
-		{
-			case 3:
-				uiHangar.getElementsByTagName("li")[0].style.display = 'inline-block';
-				uiHangar.getElementsByTagName("li")[1].style.display = 'inline-block';
-				uiHangar.getElementsByTagName("li")[2].style.display = 'inline-block';
-			break;
-			case 2:
-				uiHangar.getElementsByTagName("li")[0].style.display = 'none';
-			break;
-			case 1:
-				uiHangar.getElementsByTagName("li")[1].style.display = 'none';
-			break;
-			case 0:
-				uiHangar.getElementsByTagName("li")[2].style.display = 'none';
-			break;
-		}
-	};
+		case 3:
+			this.uiHangar.getElementsByTagName("li")[0].style.display = 'inline-block';
+			this.uiHangar.getElementsByTagName("li")[1].style.display = 'inline-block';
+			this.uiHangar.getElementsByTagName("li")[2].style.display = 'inline-block';
+		break;
+		case 2:
+			this.uiHangar.getElementsByTagName("li")[0].style.display = 'none';
+		break;
+		case 1:
+			this.uiHangar.getElementsByTagName("li")[1].style.display = 'none';
+		break;
+		case 0:
+			this.uiHangar.getElementsByTagName("li")[2].style.display = 'none';
+		break;
+	}
+};
 
-	this.fade = function(trigger)
+ui.prototype.fade = function(trigger)
+{
+	switch (trigger)
 	{
-		switch (trigger)
-		{
-			case 'in':
-				uiAll.fadeIn(effectDuration);
-			break;
-			case 'out':
-				uiAll.fadeOut(effectDuration);
-			break;
-		}
-	};
+		case 'in':
+			this.uiAll.fadeIn(this.effectDuration);
+		break;
+		case 'out':
+			this.uiAll.fadeOut(this.effectDuration);
+		break;
+	}
+};
 
-	this.updateAll = function() {
-		this.updateLevel();
-		this.updateScore();
-		this.updateEnergy();
-		this.updateHangar();
-	};
-}
+ui.prototype.updateAll = function()
+{
+	this.updateLevel();
+	this.updateScore();
+	this.updateEnergy();
+	this.updateHangar();
+};
 
 gameUI = new ui();
 
-function lights()
+lights = function()
 {
 	this.fader = $('#fader');
-	var effectDuration = 2000;
+	this.effectDuration = 2000;
+};
 
-	this.switch = function(trigger)
+lights.prototype.switch = function(trigger)
+{
+	switch (trigger)
 	{
-		switch (trigger)
-		{
-			case 'on':
-				// this.fader.stop();
-				this.fader.hide();
+		case 'on':
+			this.fader.hide();
+			game.faded = false;
+		break;
+
+		case 'off':
+			this.fader.show();
+			game.faded = true;
+		break;
+	}
+};
+
+lights.prototype.fade = function(trigger)
+{
+	switch (trigger)
+	{
+		//note that we're fadding this.fader(div) here to give the illusion that our game is fading so the jquery effects below should be opposite to what we want to achieve
+		case 'in':
+			game.fadingIn = true;
+			this.fader.fadeOut(this.effectDuration, function()
+			{
+				game.fadingIn = false;
 				game.faded = false;
-			break;
+			});
+		break;
 
-			case 'off':
-				// this.fader.stop();
-				this.fader.show();
+		case 'out':
+			game.fadingOut = true;
+			this.fader.fadeIn(this.effectDuration, function()
+			{
+				game.fadingOut = false;
 				game.faded = true;
-			break;
-		}
-	};
-
-	this.fade = function(trigger)
-	{
-		switch (trigger)
-		{
-			//note that we're fadding the this.fader div here to give the illusion that our game is fading so the jquery effects below should be opposite to what we want to achieve
-			case 'in':
-				game.fadingIn = true;
-				this.fader.fadeOut(effectDuration, function()
-				{
-					game.fadingIn = false;
-					game.faded = false;
-				});
-			break;
-
-			case 'out':
-				game.fadingOut = true;
-				this.fader.fadeIn(effectDuration, function()
-				{
-					game.fadingOut = false;
-					game.faded = true;
-				});
-			break;
-		}
-	};
-}
+			});
+		break;
+	}
+};
 
 gameLights = new lights();
 
-function text(header1, header2, inputRequired)
+text = function(header1, header2, inputRequired)
 {
-	var h1 = $('#h1'); //remove jquery here
-	var h2 = $('#h2');
-	var h3 = $('#h3');
-	var h1Text = header1;
-	var h2Text = header2;
-	var h3Text = game.isMobile ? 'Tap screen to continue' : 'Press ENTER or LMB to continue';
-	var allText = $('.all-text');
-	var textInput = inputRequired;
-	var effectDuration = 2000;
-
-	this.switch = function(trigger)
-	{
-		switch (trigger)
-		{
-			case 'on':
-				allText.show();
-				game.textFaded = false;
-			break;
-			case 'off':
-				allText.stop(true, true);
-				allText.hide();
-				game.textFaded = true;
-			break;
-		}
-	};
-
-	this.fade = function(trigger)
-	{
-		switch (trigger)
-		{
-			case 'in':
-				game.textFadingIn = true;
-				allText.fadeIn(effectDuration, function(){
-					game.textFadingIn = false;
-					game.textFaded = false;
-				});
-			break;
-			case 'out':
-				game.textFadingOut = true;
-				allText.fadeOut(effectDuration, function(){
-					h1.text('');
-					h2.text('');
-					h3.text('');
-					game.textFadingOut = false;
-					game.textFaded = true;
-				});
-			break;
-		}
-	};
-
-	this.init = function()
-	{
-		h1.text(h1Text);
-		h2.text(h2Text);
-		if (textInput){h3.text(h3Text);}else{h3.text('');}
-	};
+	this.h1 = $('#h1'); //remove jquery here
+	this.h2 = $('#h2');
+	this.h3 = $('#h3');
+	this.h1Text = header1;
+	this.h2Text = header2;
+	this.h3Text = game.isMobile ? 'Tap screen to continue' : 'Press ENTER or LMB to continue';
+	this.allText = $('.all-text');
+	this.textInput = inputRequired;
+	this.effectDuration = 2000;
 
 	this.init();
-}
+};
+
+text.prototype.switch = function(trigger)
+{
+	switch (trigger)
+	{
+		case 'on':
+			this.allText.show();
+			game.textFaded = false;
+		break;
+		case 'off':
+			this.allText.stop(true, true);
+			this.allText.hide();
+			game.textFaded = true;
+		break;
+	}
+};
+
+text.prototype.fade = function(trigger)
+{
+	switch (trigger)
+	{
+		case 'in':
+			game.textFadingIn = true;
+			this.allText.fadeIn(this.effectDuration, function(){
+				game.textFadingIn = false;
+				game.textFaded = false;
+			});
+		break;
+		case 'out':
+			game.textFadingOut = true;
+			this.allText.fadeOut(this.effectDuration, function(){
+				this.h1.text('');
+				this.h2.text('');
+				this.h3.text('');
+				game.textFadingOut = false;
+				game.textFaded = true;
+			});
+		break;
+	}
+};
+
+text.prototype.init = function()
+{
+	this.h1.text(this.h1Text);
+	this.h2.text(this.h2Text);
+	if (this.textInput){this.h3.text(this.h3Text);}else{this.h3.text('');}
+};
 
 gameText = new text(); //To be removed!
 
-function state()  ///OPTIMISE THIS LATER - Disable UI during transitions and skiping these
+state = function() {};
+
+state.prototype.start = function()
 {
-	this.start = function()
+	vibrateDevice(15);
+	//disabling buttons so we don't this function more than once
+	document.getElementById("resumeGame").disabled = true;
+	document.getElementById("startGame").disabled = true;
+
+	gameState.pause();
+	gameLights.switch('off');
+
+	removeGamePlayInput();
+	addStandByInput();
+
+	if (gameMenu.toggled) //if the game menu is up toggle it off
 	{
-		if (game.canVibrate) navigator.vibrate(15);
-		//disabling buttons so we don't this function more than once
-		document.getElementById("resumeGame").disabled = true;
-		document.getElementById("startGame").disabled = true;
-
-		gameState.pause();
-		gameLights.switch('off');
-
-		removeGamePlayInput();
-		addStandByInput();
-
-		if (gameMenu.toggled) //if the game menu is up toggle it off
-		{
-			gameMenu.toggle();
-		}
-
-		if(!game.started) //checking if we're starting a new game or restarting
-		{
-			game.started = true; //this needs to be set after gameMenu.toggle() or will break resume button
-		}
-		else
-		{
-			game.score = 0;
-			game.level = 1;
-		}
-
-		introBriefing = ['Outside the galaxy', 'The outer space', 'AlphaPI 2034' ];
-		introText = new text('Stage ' + game.level, introBriefing[game.level - 1], true);  //needs reclying centre!
-
-		$('.menu-option-btn').promise().done(function()
-		{
-			$('#menuBackground').promise().done(function()
-			{
-				gameBackground.update();
-				introText.fade('in');
-
-				$('.all-text').promise().done(function()
-				{
-					removeStandByInput();
-					if (game.textFaded) //remove this later
-					{
-						if (!game.loaded)
-						{
-							startGame();
-						}
-						addGamePlayInput();
-						resetGame();
-						gameLights.fade('in');
-						gameState.unPause();
-						document.getElementById("resumeGame").disabled = false;
-						document.getElementById("startGame").disabled = false;
-					}
-					else
-					{
-						$('#inputarea').on('mousedown touchstart', function()
-						{
-							//only trigger this event listner once text animations have ended
-							$('#inputarea').off('mousedown touchstart');
-							introText.fade('out');
-							$('.all-text').promise().done(function()
-							{
-								if (!game.loaded)
-								{
-									startGame();
-								}
-								addGamePlayInput();
-								resetGame();
-								gameLights.fade('in');
-								gameState.unPause();
-								document.getElementById("resumeGame").disabled = false;
-								document.getElementById("startGame").disabled = false;
-							});
-						});
-					}
-				});
-			});
-		});
-	};
-
-
-	this.lvlComplete = function() //called at the end of each level
-	{
-		game.started = false;
-		removeGamePlayInput();
-		gameUI.fade('out');
-
-		levelUpText = new text('Stage Complete!', game.score + ' enemy ships destroyed', true);
-		levelUpText.switch('on');
-
-		$('#inputarea').on('mousedown touchstart', function()
-		{
-			$('#inputarea').off('mousedown touchstart');
-			levelUpText.fade('out');
-
-			$('.all-text').promise().done(function()
-			{
-				gameUI.fade('out');
-				gameLights.fade('out');
-					$('#fader').promise().done(function()
-					{   //once text fades
-						gameState.pause();
-						game.level++;
-						gameState.start();
-					});
-			});
-		});
-	};
-
-	this.gameOver = function()
-	{
-		game.started = false;
-		removeGamePlayInput();
-		gameUI.fade('out');
-
-		gameOverText = new text('Game Over', game.score + ' enemy ships destroyed', true);
-		gameOverText.switch('on');
-
-		$('#inputarea').on('mousedown touchstart', function()
-		{
-			$('#inputarea').off('mousedown touchstart');
-			gameOverText.fade('out');
-
-			$('.all-text').promise().done(function()
-			{
-				gameUI.fade('out');
-				gameLights.fade('out');
-				$('#fader').promise().done(function()
-				{   //once text fades
-					gameState.pause();
-					game.score = 0;
-					game.level = 1;
-					gameLights.fade('out');
-					gameMenu.toggle();
-				});
-			});
-		});
-	};
-
-	this.pause = function()
-	{
-		game.paused = true;
-		gameUI.fade('out');
-	};
-
-	this.unPause = function()
-	{
-		game.paused = false;
-		gameUI.updateAll();
-		gameUI.fade('in');
-	};
-}
-
-gameState = new state();
-
-function menu()
-{
-	var menuBg = $('#menuBackground');
-	var resumeBtn = $('#resumeGame');
-	var startBtn = $('#startGame');
-	var soundFx = $('#toggleSound');
-	var music = $('#toggleMusic');
-	var fullScreen = $('#toggleFullScreen');
-	var credits = $('#credits');
-	var allButtons = $('.menu-option-btn');
-	var animationSpeed = 800;
-
-	this.toggled = false;
-
-	doc.addEventListener("fullscreenchange", FShandler);
-	doc.addEventListener("webkitfullscreenchange", FShandler);
-	doc.addEventListener("mozfullscreenchange", FShandler);
-	doc.addEventListener("MSFullscreenChange", FShandler);
-
-	function FShandler()
-	{
-		game.fullScreen = game.fullScreen ? false : true;
-
-    if (game.fullScreen)
-    {
-			fullScreen.addClass('active');
-			fullScreen.text('Fullscreen: ON');
-    }
-    else
-    {
-			fullScreen.removeClass('active');
-			fullScreen.text('Fullscreen: OFF');
-    }
+		gameMenu.toggle();
 	}
 
-	this.toggleFullScreen = function(trigger)  //experimental   only works with user input
+	if(!game.started) //checking if we're starting a new game or restarting
 	{
-		if (game.canVibrate) navigator.vibrate(15);
-
-		if (!doc.fullscreenElement &&    // alternative standard method
-		!doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement)   // current working methods
-		{
-			if (doc.documentElement.requestFullscreen)
-			{
-				doc.documentElement.requestFullscreen();
-			}
-			else if (doc.documentElement.msRequestFullscreen)
-			{
-				doc.documentElement.msRequestFullscreen();
-			}
-			else if (doc.documentElement.mozRequestFullScreen)
-			{
-				doc.documentElement.mozRequestFullScreen();
-			}
-			else if (doc.documentElement.webkitRequestFullscreen)
-			{
-				doc.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-			}
-		}
-		else
-		{
-			if (doc.exitFullscreen)
-			{
-			  doc.exitFullscreen();
-			}
-			else if (doc.msExitFullscreen)
-			{
-			  doc.msExitFullscreen();
-			}
-			else if (doc.mozCancelFullScreen)
-			{
-			  doc.mozCancelFullScreen();
-			}
-			else if (doc.webkitExitFullscreen)
-			{
-			  doc.webkitExitFullscreen();
-			}
-		}
-	};
-
-	this.toggleSound = function()
+		game.started = true; //this needs to be set after gameMenu.toggle() or will break resume button
+	}
+	else
 	{
-		if (game.canVibrate) navigator.vibrate(15);
-		game.sound = game.sound ? false : true ;
-		localStorage.prawnsSound =  game.sound;
+		game.score = 0;
+		game.level = 1;
+	}
 
-		if (game.sound)
-		{
-			soundFx.addClass('active');
-			soundFx.text('Sound: ON');
-		}
-		else
-		{
-		soundFx.removeClass('active');
-		soundFx.text('Sound: OFF');
-		}
-	};
+	introBriefing = ['Outside the galaxy', 'The outer space', 'AlphaPI 2034' ];
+	introText = new text('Stage ' + game.level, introBriefing[game.level - 1], true);  //needs reclying centre!
 
-	this.toggleMusic = function()
+	$('.menu-option-btn').promise().done(function()
 	{
-		if (game.canVibrate) navigator.vibrate(15);
-		game.music = game.music ? false : true ;
-		localStorage.prawnsMusic =  game.music;
-
-		if (game.started && game.tracks.length > 0)
+		$('#menuBackground').promise().done(function()
 		{
-			for(var g in game.tracks)
+			gameBackground.update();
+			introText.fade('in');
+
+			$('.all-text').promise().done(function()
 			{
-				game.tracks[g].pause();
-			}
-			game.tracks = [];
-		}
-		else if (game.started && game.tracks.length < 1)
-		{
-			game.tracks.push(game.soundTracks['tune1' + fileFormat]);
-
-			for(var w in game.tracks)
-			{
-				game.tracks[w].play();
-				game.tracks[w].loop = true;
-			}
-		}
-
-		if (game.music)
-		{
-			music.addClass('active');
-			music.text('Music: ON');
-		}
-		else
-		{
-			music.removeClass('active');
-			music.text('Music: OFF');
-		}
-	};
-
-
-	this.toggle = function()
-	{
-		document.getElementById("toggle-menu-btn").disabled = true;
-		this.toggled = this.toggled ? false : true;
-
-		// IMPROVE THIS WITH LEFT RIGHT BTN CLASSES
-		if (this.toggled)
-		{
-			gameState.pause();
-
-			allButtons.css({"display": "block"});
-
-			menuBg.fadeIn(animationSpeed);
-			menuBg.promise().done(function()
-			{
-				if(game.started)
+				removeStandByInput();
+				if (game.textFaded) //remove this later
 				{
-					if(startBtn.text !== 'Restart')
+					if (!game.loaded)
 					{
-						startBtn.text('Restart');
+						startGame();
 					}
-					resumeBtn.animate({
-						opacity: 1,
-						"right": "-=50%",
-					},800);
+					addGamePlayInput();
+					resetGame();
+					gameLights.fade('in');
+					gameState.unPause();
+					document.getElementById("resumeGame").disabled = false;
+					document.getElementById("startGame").disabled = false;
 				}
 				else
 				{
-					startBtn.text('Start');
+					$('#inputarea').on('mousedown touchstart', function()
+					{
+						//only trigger this event listner once text animations have ended
+						$('#inputarea').off('mousedown touchstart');
+						introText.fade('out');
+						$('.all-text').promise().done(function()
+						{
+							if (!game.loaded)
+							{
+								startGame();
+							}
+							addGamePlayInput();
+							resetGame();
+							gameLights.fade('in');
+							gameState.unPause();
+							document.getElementById("resumeGame").disabled = false;
+							document.getElementById("startGame").disabled = false;
+						});
+					});
 				}
-
-				startBtn.animate({
-					opacity: 1,
-					"left": "-=50%",
-				},800);
-
-				soundFx.animate({
-					opacity: 1,
-					"right": "-=50%",
-				},800);
-
-				music.animate({
-					opacity: 1,
-					"left": "-=50%",
-				},800);
-
-				fullScreen.animate({
-					opacity: 1,
-					"right": "-=50%",
-				},800);
-
-				credits.animate({
-					opacity: 1,
-					"left": "-=50%",
-				},800);
-
-				document.getElementById("toggle-menu-btn").disabled = false;
 			});
+		});
+	});
+};
+
+
+state.prototype.lvlComplete = function() //called at the end of each level
+{
+	game.started = false;
+	removeGamePlayInput();
+	gameUI.fade('out');
+
+	levelUpText = new text('Stage Complete!', game.score + ' enemy ships destroyed', true);
+	levelUpText.switch('on');
+
+	$('#inputarea').on('mousedown touchstart', function()
+	{
+		$('#inputarea').off('mousedown touchstart');
+		levelUpText.fade('out');
+
+		$('.all-text').promise().done(function()
+		{
+			gameUI.fade('out');
+			gameLights.fade('out');
+				$('#fader').promise().done(function()
+				{   //once text fades
+					gameState.pause();
+					game.level++;
+					gameState.start();
+				});
+		});
+	});
+};
+
+state.prototype.gameOver = function()
+{
+	game.started = false;
+	removeGamePlayInput();
+	gameUI.fade('out');
+
+	gameOverText = new text('Game Over', game.score + ' enemy ships destroyed', true);
+	gameOverText.switch('on');
+
+	$('#inputarea').on('mousedown touchstart', function()
+	{
+		$('#inputarea').off('mousedown touchstart');
+		gameOverText.fade('out');
+
+		$('.all-text').promise().done(function()
+		{
+			gameUI.fade('out');
+			gameLights.fade('out');
+			$('#fader').promise().done(function()
+			{   //once text fades
+				gameState.pause();
+				game.score = 0;
+				game.level = 1;
+				gameLights.fade('out');
+				gameMenu.toggle();
+			});
+		});
+	});
+};
+
+state.prototype.pause = function()
+{
+	game.paused = true;
+	gameUI.fade('out');
+};
+
+state.prototype.unPause = function()
+{
+	game.paused = false;
+	gameUI.updateAll();
+	gameUI.fade('in');
+};
+
+gameState = new state();
+
+menu = function()
+{
+	self = this;
+	this.menuBg = $('#menuBackground');
+	this.resumeBtn = $('#resumeGame');
+	this.startBtn = $('#startGame');
+	this.soundFx = $('#toggleSound');
+	this.music = $('#toggleMusic');
+	this.fullScreen = $('#toggleFullScreen');
+	this.credits = $('#credits');
+	this.allButtons = $('.menu-option-btn');
+	this.animationSpeed = 800;
+	this.toggled = false;
+
+	doc.addEventListener("fullscreenchange", this.fullScreenHandler);
+	doc.addEventListener("webkitfullscreenchange", this.fullScreenHandler);
+	doc.addEventListener("mozfullscreenchange", this.fullScreenHandler);
+	doc.addEventListener("MSFullscreenChange", this.fullScreenHandler);
+};
+
+menu.prototype.fullScreenHandler = function()
+{
+	game.fullScreen = game.fullScreen ? false : true;
+
+  if (game.fullScreen)
+  {
+		self.fullScreen.addClass('active');
+		self.fullScreen.text('Fullscreen: ON');
+  }
+  else
+  {
+		self.fullScreen.removeClass('active');
+		self.fullScreen.text('Fullscreen: OFF');
+  }
+};
+
+menu.prototype.toggleFullScreen = function(trigger)  //experimental   only works with user input
+{
+	vibrateDevice(15);
+
+	if (!doc.fullscreenElement &&    // alternative standard method
+	!doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement)   // current working methods
+	{
+		if (doc.documentElement.requestFullscreen)
+		{
+			doc.documentElement.requestFullscreen();
 		}
-		else
+		else if (doc.documentElement.msRequestFullscreen)
+		{
+			doc.documentElement.msRequestFullscreen();
+		}
+		else if (doc.documentElement.mozRequestFullScreen)
+		{
+			doc.documentElement.mozRequestFullScreen();
+		}
+		else if (doc.documentElement.webkitRequestFullscreen)
+		{
+			doc.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+		}
+	}
+	else
+	{
+		if (doc.exitFullscreen)
+		{
+		  doc.exitFullscreen();
+		}
+		else if (doc.msExitFullscreen)
+		{
+		  doc.msExitFullscreen();
+		}
+		else if (doc.mozCancelFullScreen)
+		{
+		  doc.mozCancelFullScreen();
+		}
+		else if (doc.webkitExitFullscreen)
+		{
+		  doc.webkitExitFullscreen();
+		}
+	}
+};
+
+menu.prototype.toggleSound = function()
+{
+	vibrateDevice(15);
+	game.sound = game.sound ? false : true ;
+	localStorage.prawnsSound =  game.sound;
+
+	if (game.sound)
+	{
+		this.soundFx.addClass('active');
+		this.soundFx.text('Sound: ON');
+	}
+	else
+	{
+	this.soundFx.removeClass('active');
+	this.soundFx.text('Sound: OFF');
+	}
+};
+
+menu.prototype.toggleMusic = function()
+{
+	vibrateDevice(15);
+	game.music = game.music ? false : true ;
+	localStorage.prawnsMusic =  game.music;
+
+	if (game.tracks.length > 0)
+	{
+		for(var g in game.tracks)
+		{
+			game.tracks[g].pause();
+		}
+		game.tracks = [];
+	}
+	else if (game.started && game.tracks.length < 1)
+	{
+		game.tracks.push(game.soundTracks['tune1' + fileFormat]);
+
+		for(var w in game.tracks)
+		{
+			game.tracks[w].play();
+			game.tracks[w].loop = true;
+		}
+	}
+
+	if (game.music)
+	{
+		this.music.addClass('active');
+		this.music.text('Music: ON');
+	}
+	else
+	{
+		this.music.removeClass('active');
+		this.music.text('Music: OFF');
+	}
+};
+
+
+menu.prototype.toggle = function()
+{
+	var self = this;
+	document.getElementById("toggle-menu-btn").disabled = true;
+	this.toggled = this.toggled ? false : true;
+
+	// IMPROVE THIS WITH LEFT RIGHT BTN CLASSES
+	if (this.toggled)
+	{
+		gameState.pause();
+
+		this.allButtons.css({"display": "block"});
+
+		this.menuBg.fadeIn(this.animationSpeed);
+		this.menuBg.promise().done(function()
 		{
 			if(game.started)
 			{
-				resumeBtn.animate({
-					opacity: 0,
-					"right": "+=50%",
+				if(self.startBtn.text !== 'Restart')
+				{
+					self.startBtn.text('Restart');
+				}
+				self.resumeBtn.animate({
+					opacity: 1,
+					"right": "-=50%",
 				},800);
 			}
-
-			startBtn.animate({
-				opacity: 0,
-				"left": "+=50%",
-			},800);
-
-			soundFx.animate({
-				opacity: 0,
-				"right": "+=50%",
-			},800);
-
-			music.animate({
-				opacity: 0,
-				"left": "+=50%",
-			},800);
-
-			fullScreen.animate({
-				opacity: 0,
-				"right": "+=50%",
-			},800);
-
-			credits.animate({
-				opacity: 0,
-				"left": "+=50%",
-			},800);
-
-			allButtons.promise().done(function()
+			else
 			{
-				allButtons.hide();
-				menuBg.fadeOut(animationSpeed);
-				menuBg.promise().done(function()
-				{
-					if(game.loaded && !game.faded)	gameState.unPause();
-					document.getElementById("toggle-menu-btn").disabled = false;
-				});
-			});
-		}
-	};
+				self.startBtn.text('Start');
+			}
 
-	this.init = function()
+			self.startBtn.animate({
+				opacity: 1,
+				"left": "-=50%",
+			},800);
+
+			self.soundFx.animate({
+				opacity: 1,
+				"right": "-=50%",
+			},800);
+
+			self.music.animate({
+				opacity: 1,
+				"left": "-=50%",
+			},800);
+
+			self.fullScreen.animate({
+				opacity: 1,
+				"right": "-=50%",
+			},800);
+
+			self.credits.animate({
+				opacity: 1,
+				"left": "-=50%",
+			},800);
+
+			document.getElementById("toggle-menu-btn").disabled = false;
+		});
+	}
+	else
 	{
-		if (localStorage.prawnsSound === 'true') //note = localStorage will only process string values
+		if(game.started)
 		{
-			soundFx.addClass('active');
-			soundFx.text('Sound: ON');
-		}
-		else
-		{
-		soundFx.removeClass('active');
-		soundFx.text('Sound: OFF');
+			this.resumeBtn.animate({
+				opacity: 0,
+				"right": "+=50%",
+			},800);
 		}
 
-		if (localStorage.prawnsMusic === 'true') //note = localStorage will only process string values
-		{
-			music.addClass('active');
-			music.text('Music: ON');
-		}
-		else
-		{
-			music.removeClass('active');
-			music.text('Music: OFF');
-		}
+		this.startBtn.animate({
+			opacity: 0,
+			"left": "+=50%",
+		},800);
 
-		if (localStorage.fullScreen === 'true') //note = localStorage will only process string values
-		{
-			fullScreen.addClass('active');
-			fullScreen.text('Fullscreen: ON');
-		}
-		else
-		{
-			fullScreen.removeClass('active');
-			fullScreen.text('Fullscreen: OFF');
-		}
+		this.soundFx.animate({
+			opacity: 0,
+			"right": "+=50%",
+		},800);
 
-		gameMenu.toggle();
-	};
-}
+		this.music.animate({
+			opacity: 0,
+			"left": "+=50%",
+		},800);
+
+		this.fullScreen.animate({
+			opacity: 0,
+			"right": "+=50%",
+		},800);
+
+		this.credits.animate({
+			opacity: 0,
+			"left": "+=50%",
+		},800);
+
+		this.allButtons.promise().done(function()
+		{
+			self.allButtons.hide();
+			self.menuBg.fadeOut(self.animationSpeed);
+			self.menuBg.promise().done(function()
+			{
+				if(game.loaded && !game.faded)	gameState.unPause();
+				document.getElementById("toggle-menu-btn").disabled = false;
+			});
+		});
+	}
+};
+
+menu.prototype.init = function()
+{
+	if (localStorage.prawnsSound === 'true') //note = localStorage will only process string values
+	{
+		this.soundFx.addClass('active');
+		this.soundFx.text('Sound: ON');
+	}
+	else
+	{
+	this.soundFx.removeClass('active');
+	this.soundFx.text('Sound: OFF');
+	}
+
+	if (localStorage.prawnsMusic === 'true') //note = localStorage will only process string values
+	{
+		this.music.addClass('active');
+		this.music.text('Music: ON');
+	}
+	else
+	{
+		this.music.removeClass('active');
+		this.music.text('Music: OFF');
+	}
+
+	if (localStorage.fullScreen === 'true') //note = localStorage will only process string values
+	{
+		this.fullScreen.addClass('active');
+		this.fullScreen.text('Fullscreen: ON');
+	}
+	else
+	{
+		this.fullScreen.removeClass('active');
+		this.fullScreen.text('Fullscreen: OFF');
+	}
+
+	gameMenu.toggle();
+};
 
 gameMenu = new menu();
 
@@ -3217,9 +3213,14 @@ function respondCanvas()
 	game.paused = gameMenu.toggled ? game.paused : false; //prompt to unpause the game if called outside game menu
 }
 
-/////////////////
-// Game controls
-/////////////////
+///////////////////
+// Input/controls
+///////////////////
+//vibration
+function vibrateDevice(ms)
+{
+	if (game.canVibrate) navigator.vibrate(ms);
+}
 //Keyboard
 $(document).keydown(function(e)
 {

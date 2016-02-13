@@ -1,92 +1,93 @@
-function ui()
+ui = function()
 {
-	var uiAll = $('#ui');
-	var uiLevel = doc.getElementById("uiLevel");
-	var uiScore = doc.getElementById("uiScore");
-	var uiEBar = doc.getElementById("uiEBar");
-	var uiHangar = doc.getElementById("uiHangarList");
-	var effectDuration = 800;
+	this.uiAll = $('#ui');
+	this.uiLevel = doc.getElementById("uiLevel");
+	this.uiScore = doc.getElementById("uiScore");
+	this.uiEBar = doc.getElementById("uiEBar");
+	this.uiHangar = doc.getElementById("uiHangarList");
+	this.effectDuration = 800;
+};
 
-	this.updateLevel = function()
+ui.prototype.updateLevel = function()
+{
+	this.uiLevel.innerHTML = 'STAGE ' + game.level;
+};
+
+ui.prototype.updateScore = function()
+{
+	this.uiScore.innerHTML = 'SCORE: ' + game.score;
+};
+
+ui.prototype.updateEnergy = function()
+{
+	shipEnergy = (playerShip.hull / playerShip.maxHull) * 100;
+
+	if(shipEnergy < 0 ) {shipEnergy = 0;}
+
+	shipEnergyPC = shipEnergy + '%';
+
+	if (shipEnergy >= 66)
 	{
-		uiLevel.innerHTML = 'STAGE ' + game.level;
-	};
-
-	this.updateScore = function()
+		this.uiEBar.classList.remove('eBar-red');
+		this.uiEBar.classList.remove('eBar-yellow');
+		this.uiEBar.classList.add('eBar-blue');
+	}
+	else if (shipEnergy >= 33 && shipEnergy < 66  )
 	{
-		uiScore.innerHTML = 'SCORE: ' + game.score;
-	};
-
-	this.updateEnergy = function()
+		this.uiEBar.classList.remove('eBar-red');
+		this.uiEBar.classList.add('eBar-yellow');
+		this.uiEBar.classList.remove('eBar-blue');
+	}
+	else
 	{
-		shipEnergy = (playerShip.hull / playerShip.maxHull) * 100;
+		this.uiEBar.classList.add('eBar-red');
+		this.uiEBar.classList.remove('eBar-yellow');
+		this.uiEBar.classList.remove('eBar-blue');
+	}
 
-		if(shipEnergy < 0 ) {shipEnergy = 0;}
+	this.uiEBar.style.width = shipEnergyPC;
+};
 
-		shipEnergyPC = shipEnergy + '%';
-
-		if (shipEnergy >= 66)
-		{
-			uiEBar.classList.remove('eBar-red');
-			uiEBar.classList.remove('eBar-yellow');
-			uiEBar.classList.add('eBar-blue');
-		}
-		else if (shipEnergy >= 33 && shipEnergy < 66  )
-		{
-			uiEBar.classList.remove('eBar-red');
-			uiEBar.classList.add('eBar-yellow');
-			uiEBar.classList.remove('eBar-blue');
-		}
-		else
-		{
-			uiEBar.classList.add('eBar-red');
-			uiEBar.classList.remove('eBar-yellow');
-			uiEBar.classList.remove('eBar-blue');
-		}
-
-		uiEBar.style.width = shipEnergyPC;
-	};
-
-	this.updateHangar = function()
+ui.prototype.updateHangar = function()
+{
+	switch(playerShip.lives)
 	{
-		switch(playerShip.lives)
-		{
-			case 3:
-				uiHangar.getElementsByTagName("li")[0].style.display = 'inline-block';
-				uiHangar.getElementsByTagName("li")[1].style.display = 'inline-block';
-				uiHangar.getElementsByTagName("li")[2].style.display = 'inline-block';
-			break;
-			case 2:
-				uiHangar.getElementsByTagName("li")[0].style.display = 'none';
-			break;
-			case 1:
-				uiHangar.getElementsByTagName("li")[1].style.display = 'none';
-			break;
-			case 0:
-				uiHangar.getElementsByTagName("li")[2].style.display = 'none';
-			break;
-		}
-	};
+		case 3:
+			this.uiHangar.getElementsByTagName("li")[0].style.display = 'inline-block';
+			this.uiHangar.getElementsByTagName("li")[1].style.display = 'inline-block';
+			this.uiHangar.getElementsByTagName("li")[2].style.display = 'inline-block';
+		break;
+		case 2:
+			this.uiHangar.getElementsByTagName("li")[0].style.display = 'none';
+		break;
+		case 1:
+			this.uiHangar.getElementsByTagName("li")[1].style.display = 'none';
+		break;
+		case 0:
+			this.uiHangar.getElementsByTagName("li")[2].style.display = 'none';
+		break;
+	}
+};
 
-	this.fade = function(trigger)
+ui.prototype.fade = function(trigger)
+{
+	switch (trigger)
 	{
-		switch (trigger)
-		{
-			case 'in':
-				uiAll.fadeIn(effectDuration);
-			break;
-			case 'out':
-				uiAll.fadeOut(effectDuration);
-			break;
-		}
-	};
+		case 'in':
+			this.uiAll.fadeIn(this.effectDuration);
+		break;
+		case 'out':
+			this.uiAll.fadeOut(this.effectDuration);
+		break;
+	}
+};
 
-	this.updateAll = function() {
-		this.updateLevel();
-		this.updateScore();
-		this.updateEnergy();
-		this.updateHangar();
-	};
-}
+ui.prototype.updateAll = function()
+{
+	this.updateLevel();
+	this.updateScore();
+	this.updateEnergy();
+	this.updateHangar();
+};
 
 gameUI = new ui();

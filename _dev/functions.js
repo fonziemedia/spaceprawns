@@ -11,9 +11,14 @@ function respondCanvas()
 	game.paused = gameMenu.toggled ? game.paused : false; //prompt to unpause the game if called outside game menu
 }
 
-/////////////////
-// Game controls
-/////////////////
+///////////////////
+// Input/controls
+///////////////////
+//vibration
+function vibrateDevice(ms)
+{
+	if (game.canVibrate) navigator.vibrate(ms);
+}
 //Keyboard
 $(document).keydown(function(e)
 {

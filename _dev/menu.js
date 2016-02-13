@@ -1,283 +1,284 @@
-function menu()
+menu = function()
 {
-	var menuBg = $('#menuBackground');
-	var resumeBtn = $('#resumeGame');
-	var startBtn = $('#startGame');
-	var soundFx = $('#toggleSound');
-	var music = $('#toggleMusic');
-	var fullScreen = $('#toggleFullScreen');
-	var credits = $('#credits');
-	var allButtons = $('.menu-option-btn');
-	var animationSpeed = 800;
-
+	self = this;
+	this.menuBg = $('#menuBackground');
+	this.resumeBtn = $('#resumeGame');
+	this.startBtn = $('#startGame');
+	this.soundFx = $('#toggleSound');
+	this.music = $('#toggleMusic');
+	this.fullScreen = $('#toggleFullScreen');
+	this.credits = $('#credits');
+	this.allButtons = $('.menu-option-btn');
+	this.animationSpeed = 800;
 	this.toggled = false;
 
-	doc.addEventListener("fullscreenchange", FShandler);
-	doc.addEventListener("webkitfullscreenchange", FShandler);
-	doc.addEventListener("mozfullscreenchange", FShandler);
-	doc.addEventListener("MSFullscreenChange", FShandler);
+	doc.addEventListener("fullscreenchange", this.fullScreenHandler);
+	doc.addEventListener("webkitfullscreenchange", this.fullScreenHandler);
+	doc.addEventListener("mozfullscreenchange", this.fullScreenHandler);
+	doc.addEventListener("MSFullscreenChange", this.fullScreenHandler);
+};
 
-	function FShandler()
+menu.prototype.fullScreenHandler = function()
+{
+	game.fullScreen = game.fullScreen ? false : true;
+
+  if (game.fullScreen)
+  {
+		self.fullScreen.addClass('active');
+		self.fullScreen.text('Fullscreen: ON');
+  }
+  else
+  {
+		self.fullScreen.removeClass('active');
+		self.fullScreen.text('Fullscreen: OFF');
+  }
+};
+
+menu.prototype.toggleFullScreen = function(trigger)  //experimental   only works with user input
+{
+	vibrateDevice(15);
+
+	if (!doc.fullscreenElement &&    // alternative standard method
+	!doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement)   // current working methods
 	{
-		game.fullScreen = game.fullScreen ? false : true;
+		if (doc.documentElement.requestFullscreen)
+		{
+			doc.documentElement.requestFullscreen();
+		}
+		else if (doc.documentElement.msRequestFullscreen)
+		{
+			doc.documentElement.msRequestFullscreen();
+		}
+		else if (doc.documentElement.mozRequestFullScreen)
+		{
+			doc.documentElement.mozRequestFullScreen();
+		}
+		else if (doc.documentElement.webkitRequestFullscreen)
+		{
+			doc.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+		}
+	}
+	else
+	{
+		if (doc.exitFullscreen)
+		{
+		  doc.exitFullscreen();
+		}
+		else if (doc.msExitFullscreen)
+		{
+		  doc.msExitFullscreen();
+		}
+		else if (doc.mozCancelFullScreen)
+		{
+		  doc.mozCancelFullScreen();
+		}
+		else if (doc.webkitExitFullscreen)
+		{
+		  doc.webkitExitFullscreen();
+		}
+	}
+};
 
-    if (game.fullScreen)
-    {
-			fullScreen.addClass('active');
-			fullScreen.text('Fullscreen: ON');
-    }
-    else
-    {
-			fullScreen.removeClass('active');
-			fullScreen.text('Fullscreen: OFF');
-    }
+menu.prototype.toggleSound = function()
+{
+	vibrateDevice(15);
+	game.sound = game.sound ? false : true ;
+	localStorage.prawnsSound =  game.sound;
+
+	if (game.sound)
+	{
+		this.soundFx.addClass('active');
+		this.soundFx.text('Sound: ON');
+	}
+	else
+	{
+	this.soundFx.removeClass('active');
+	this.soundFx.text('Sound: OFF');
+	}
+};
+
+menu.prototype.toggleMusic = function()
+{
+	vibrateDevice(15);
+	game.music = game.music ? false : true ;
+	localStorage.prawnsMusic =  game.music;
+
+	if (game.tracks.length > 0)
+	{
+		for(var g in game.tracks)
+		{
+			game.tracks[g].pause();
+		}
+		game.tracks = [];
+	}
+	else if (game.started && game.tracks.length < 1)
+	{
+		game.tracks.push(game.soundTracks['tune1' + fileFormat]);
+
+		for(var w in game.tracks)
+		{
+			game.tracks[w].play();
+			game.tracks[w].loop = true;
+		}
 	}
 
-	this.toggleFullScreen = function(trigger)  //experimental   only works with user input
+	if (game.music)
 	{
-		if (game.canVibrate) navigator.vibrate(15);
-
-		if (!doc.fullscreenElement &&    // alternative standard method
-		!doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement)   // current working methods
-		{
-			if (doc.documentElement.requestFullscreen)
-			{
-				doc.documentElement.requestFullscreen();
-			}
-			else if (doc.documentElement.msRequestFullscreen)
-			{
-				doc.documentElement.msRequestFullscreen();
-			}
-			else if (doc.documentElement.mozRequestFullScreen)
-			{
-				doc.documentElement.mozRequestFullScreen();
-			}
-			else if (doc.documentElement.webkitRequestFullscreen)
-			{
-				doc.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-			}
-		}
-		else
-		{
-			if (doc.exitFullscreen)
-			{
-			  doc.exitFullscreen();
-			}
-			else if (doc.msExitFullscreen)
-			{
-			  doc.msExitFullscreen();
-			}
-			else if (doc.mozCancelFullScreen)
-			{
-			  doc.mozCancelFullScreen();
-			}
-			else if (doc.webkitExitFullscreen)
-			{
-			  doc.webkitExitFullscreen();
-			}
-		}
-	};
-
-	this.toggleSound = function()
+		this.music.addClass('active');
+		this.music.text('Music: ON');
+	}
+	else
 	{
-		if (game.canVibrate) navigator.vibrate(15);
-		game.sound = game.sound ? false : true ;
-		localStorage.prawnsSound =  game.sound;
+		this.music.removeClass('active');
+		this.music.text('Music: OFF');
+	}
+};
 
-		if (game.sound)
-		{
-			soundFx.addClass('active');
-			soundFx.text('Sound: ON');
-		}
-		else
-		{
-		soundFx.removeClass('active');
-		soundFx.text('Sound: OFF');
-		}
-	};
 
-	this.toggleMusic = function()
+menu.prototype.toggle = function()
+{
+	var self = this;
+	document.getElementById("toggle-menu-btn").disabled = true;
+	this.toggled = this.toggled ? false : true;
+
+	// IMPROVE THIS WITH LEFT RIGHT BTN CLASSES
+	if (this.toggled)
 	{
-		if (game.canVibrate) navigator.vibrate(15);
-		game.music = game.music ? false : true ;
-		localStorage.prawnsMusic =  game.music;
+		gameState.pause();
 
-		if (game.started && game.tracks.length > 0)
-		{
-			for(var g in game.tracks)
-			{
-				game.tracks[g].pause();
-			}
-			game.tracks = [];
-		}
-		else if (game.started && game.tracks.length < 1)
-		{
-			game.tracks.push(game.soundTracks['tune1' + fileFormat]);
+		this.allButtons.css({"display": "block"});
 
-			for(var w in game.tracks)
-			{
-				game.tracks[w].play();
-				game.tracks[w].loop = true;
-			}
-		}
-
-		if (game.music)
-		{
-			music.addClass('active');
-			music.text('Music: ON');
-		}
-		else
-		{
-			music.removeClass('active');
-			music.text('Music: OFF');
-		}
-	};
-
-
-	this.toggle = function()
-	{
-		document.getElementById("toggle-menu-btn").disabled = true;
-		this.toggled = this.toggled ? false : true;
-
-		// IMPROVE THIS WITH LEFT RIGHT BTN CLASSES
-		if (this.toggled)
-		{
-			gameState.pause();
-
-			allButtons.css({"display": "block"});
-
-			menuBg.fadeIn(animationSpeed);
-			menuBg.promise().done(function()
-			{
-				if(game.started)
-				{
-					if(startBtn.text !== 'Restart')
-					{
-						startBtn.text('Restart');
-					}
-					resumeBtn.animate({
-						opacity: 1,
-						"right": "-=50%",
-					},800);
-				}
-				else
-				{
-					startBtn.text('Start');
-				}
-
-				startBtn.animate({
-					opacity: 1,
-					"left": "-=50%",
-				},800);
-
-				soundFx.animate({
-					opacity: 1,
-					"right": "-=50%",
-				},800);
-
-				music.animate({
-					opacity: 1,
-					"left": "-=50%",
-				},800);
-
-				fullScreen.animate({
-					opacity: 1,
-					"right": "-=50%",
-				},800);
-
-				credits.animate({
-					opacity: 1,
-					"left": "-=50%",
-				},800);
-
-				document.getElementById("toggle-menu-btn").disabled = false;
-			});
-		}
-		else
+		this.menuBg.fadeIn(this.animationSpeed);
+		this.menuBg.promise().done(function()
 		{
 			if(game.started)
 			{
-				resumeBtn.animate({
-					opacity: 0,
-					"right": "+=50%",
+				if(self.startBtn.text !== 'Restart')
+				{
+					self.startBtn.text('Restart');
+				}
+				self.resumeBtn.animate({
+					opacity: 1,
+					"right": "-=50%",
 				},800);
 			}
-
-			startBtn.animate({
-				opacity: 0,
-				"left": "+=50%",
-			},800);
-
-			soundFx.animate({
-				opacity: 0,
-				"right": "+=50%",
-			},800);
-
-			music.animate({
-				opacity: 0,
-				"left": "+=50%",
-			},800);
-
-			fullScreen.animate({
-				opacity: 0,
-				"right": "+=50%",
-			},800);
-
-			credits.animate({
-				opacity: 0,
-				"left": "+=50%",
-			},800);
-
-			allButtons.promise().done(function()
+			else
 			{
-				allButtons.hide();
-				menuBg.fadeOut(animationSpeed);
-				menuBg.promise().done(function()
-				{
-					if(game.loaded && !game.faded)	gameState.unPause();
-					document.getElementById("toggle-menu-btn").disabled = false;
-				});
-			});
-		}
-	};
+				self.startBtn.text('Start');
+			}
 
-	this.init = function()
+			self.startBtn.animate({
+				opacity: 1,
+				"left": "-=50%",
+			},800);
+
+			self.soundFx.animate({
+				opacity: 1,
+				"right": "-=50%",
+			},800);
+
+			self.music.animate({
+				opacity: 1,
+				"left": "-=50%",
+			},800);
+
+			self.fullScreen.animate({
+				opacity: 1,
+				"right": "-=50%",
+			},800);
+
+			self.credits.animate({
+				opacity: 1,
+				"left": "-=50%",
+			},800);
+
+			document.getElementById("toggle-menu-btn").disabled = false;
+		});
+	}
+	else
 	{
-		if (localStorage.prawnsSound === 'true') //note = localStorage will only process string values
+		if(game.started)
 		{
-			soundFx.addClass('active');
-			soundFx.text('Sound: ON');
-		}
-		else
-		{
-		soundFx.removeClass('active');
-		soundFx.text('Sound: OFF');
+			this.resumeBtn.animate({
+				opacity: 0,
+				"right": "+=50%",
+			},800);
 		}
 
-		if (localStorage.prawnsMusic === 'true') //note = localStorage will only process string values
-		{
-			music.addClass('active');
-			music.text('Music: ON');
-		}
-		else
-		{
-			music.removeClass('active');
-			music.text('Music: OFF');
-		}
+		this.startBtn.animate({
+			opacity: 0,
+			"left": "+=50%",
+		},800);
 
-		if (localStorage.fullScreen === 'true') //note = localStorage will only process string values
-		{
-			fullScreen.addClass('active');
-			fullScreen.text('Fullscreen: ON');
-		}
-		else
-		{
-			fullScreen.removeClass('active');
-			fullScreen.text('Fullscreen: OFF');
-		}
+		this.soundFx.animate({
+			opacity: 0,
+			"right": "+=50%",
+		},800);
 
-		gameMenu.toggle();
-	};
-}
+		this.music.animate({
+			opacity: 0,
+			"left": "+=50%",
+		},800);
+
+		this.fullScreen.animate({
+			opacity: 0,
+			"right": "+=50%",
+		},800);
+
+		this.credits.animate({
+			opacity: 0,
+			"left": "+=50%",
+		},800);
+
+		this.allButtons.promise().done(function()
+		{
+			self.allButtons.hide();
+			self.menuBg.fadeOut(self.animationSpeed);
+			self.menuBg.promise().done(function()
+			{
+				if(game.loaded && !game.faded)	gameState.unPause();
+				document.getElementById("toggle-menu-btn").disabled = false;
+			});
+		});
+	}
+};
+
+menu.prototype.init = function()
+{
+	if (localStorage.prawnsSound === 'true') //note = localStorage will only process string values
+	{
+		this.soundFx.addClass('active');
+		this.soundFx.text('Sound: ON');
+	}
+	else
+	{
+	this.soundFx.removeClass('active');
+	this.soundFx.text('Sound: OFF');
+	}
+
+	if (localStorage.prawnsMusic === 'true') //note = localStorage will only process string values
+	{
+		this.music.addClass('active');
+		this.music.text('Music: ON');
+	}
+	else
+	{
+		this.music.removeClass('active');
+		this.music.text('Music: OFF');
+	}
+
+	if (localStorage.fullScreen === 'true') //note = localStorage will only process string values
+	{
+		this.fullScreen.addClass('active');
+		this.fullScreen.text('Fullscreen: ON');
+	}
+	else
+	{
+		this.fullScreen.removeClass('active');
+		this.fullScreen.text('Fullscreen: OFF');
+	}
+
+	gameMenu.toggle();
+};
 
 gameMenu = new menu();
