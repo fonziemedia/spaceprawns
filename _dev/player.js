@@ -8,6 +8,7 @@ player = function(hull, fireRate)
 	this.sprite_s = new sprite('player_shields', 3, 2, 5);
 	this.width = this.sprite.frameWidth;
 	this.height = this.sprite.frameHeight;
+	this.centerX = Math.round(this.width/2);
 	this.speed = 0;
 	this.maxSpeed = 400;
 	this.speedX = 0;

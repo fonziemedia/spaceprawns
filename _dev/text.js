@@ -41,11 +41,12 @@ text.prototype.fade = function(trigger)
 			});
 		break;
 		case 'out':
+			var self = this;
 			game.textFadingOut = true;
 			this.allText.fadeOut(this.effectDuration, function(){
-				this.h1.text('');
-				this.h2.text('');
-				this.h3.text('');
+				self.h1.text('');
+				self.h2.text('');
+				self.h3.text('');
 				game.textFadingOut = false;
 				game.textFaded = true;
 			});

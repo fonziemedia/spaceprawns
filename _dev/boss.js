@@ -1,12 +1,13 @@
 boss = function(x, y, speed, direction, hull, image)
 {
-	this.speed = speed;
+	this.speed = speed/pixelRatio;
 	this.direction = direction;
 	this.hull = hull;
 	this.image = game.offCtx[image];
 	this.width = game.offCtx[image].width;
 	this.height = game.offCtx[image].height;
-	this.x = (game.width/2) - (this.width/2);
+	this.hCenter = Math.round(this.width/2);
+	this.x = Math.round(game.centerX - this.hCenter);
 	this.y = game.outerTop;
 	this.audioHit1 = 'hit' + fileFormat;
 	this.audioHit2 = 'hit2' + fileFormat;
@@ -50,10 +51,31 @@ boss.prototype.update = function()
 {
 	if (!this.dead)
 	{
-		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
-		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
-		this.x += this.vx;
-		this.y += this.vy;
+		if (this.y >= this.yStop) //boss fight AI
+		{
+			this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
+			if (this.x + this.hCenter < (playerShip.x + playerShip.centerX) - this.vx)
+			{
+				this.direction = 0;
+				this.x += this.vx;
+			}
+			else if (this.x + this.hCenter > (playerShip.x + playerShip.centerX) + this.vx)
+			{
+				this.direction = Math.PI;
+				this.x += this.vx;
+			}
+			else if (this.x + this.hCenter == playerShip.x + playerShip.centerX)
+			{
+				this.x = this.x;
+			}
+		}
+		else //enter boss
+		{
+			this.direction = Math.PI/2;
+			this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
+			this.x = this.x;
+			this.y += this.vy;
+		}
 
 		this.draw(this.x, this.y);
 
@@ -91,22 +113,6 @@ boss.prototype.update = function()
 			this.fireMissiles();
 		}
 
-		if (this.y > this.yStop)
-		{
-			this.speed = 0;
-
-			if (this.x > 0 && this.x <= this.xBondary)
-			{
-				if (this.x < playerShip.x && this.x <= this.xBondary-2)
-				{
-					this.x += 2;
-				}
-				else if (this.x > playerShip.x && this.x > 2)
-				{
-					this.x -= 2;
-				}
-			}
-		}
 	}
 	else
 	{

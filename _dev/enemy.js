@@ -30,9 +30,9 @@ enemy = function(x, y, speed, direction, hull, type, image, fireRate)
 //invariables (note: any other object properties that require these need to be declared in the prototype function)
 enemy.prototype.bulletTimer = 1;
 enemy.prototype.hitTimer = 0;
-enemy.prototype.ctx = game.context;
-enemy.prototype.dead = false;
 enemy.prototype.collided = false;
+enemy.prototype.dead = false;
+enemy.prototype.ctx = game.context;
 
 enemy.prototype.fireMissile = function()
 {
@@ -55,24 +55,22 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fire
 	this.height = game.offCtx[image].height;
 	switch (type)
 	{
-	case 'pawn':
-		this.explosionSize = 'medium';
-	break;
-	case 'miniboss':
-		this.explosionSize = 'large';
-	break;
-	case 'base':
-		this.width = this.sprite.frameWidth;
-		this.height = this.sprite.frameHeight;
-		this.explosionSize = 'xLarge';
-	break;
+		case 'pawn':
+			this.explosionSize = 'medium';
+		break;
+		case 'miniboss':
+			this.explosionSize = 'large';
+		break;
+		case 'base':
+			this.width = this.sprite.frameWidth;
+			this.height = this.sprite.frameHeight;
+			this.explosionSize = 'xLarge';
+		break;
 	}
 	this.bulletTimer = 1;
 	this.hitTimer = 0;
-	this.collided = false;		//do we need this??
+	this.collided = false;
 	this.dead = false;
-	this.vx = Math.cos(this.direction) * ((this.speed)*dt);
-	this.vy = Math.sin(this.direction) * ((this.speed)*dt);
 };
 
 enemy.prototype.update = function()

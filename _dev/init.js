@@ -346,6 +346,10 @@ function setGameDimensions()
 	game.outerTop = -Math.round(game.height*0.1);
 	game.outerBottom = Math.round(game.height + game.height*0.1);
 
+	//center coords
+	game.centerX = Math.round(game.width/2);
+	game.centerY = Math.round(game.height/2);
+
 	if (playerShip && typeof playerShip != 'undefined')
 	{
 		//re-set playerShip's dimensions/boundaries

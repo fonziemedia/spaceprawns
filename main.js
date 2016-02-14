@@ -597,6 +597,10 @@ function setGameDimensions()
 	game.outerTop = -Math.round(game.height*0.1);
 	game.outerBottom = Math.round(game.height + game.height*0.1);
 
+	//center coords
+	game.centerX = Math.round(game.width/2);
+	game.centerY = Math.round(game.height/2);
+
 	if (playerShip && typeof playerShip != 'undefined')
 	{
 		//re-set playerShip's dimensions/boundaries
@@ -953,6 +957,7 @@ player = function(hull, fireRate)
 	this.sprite_s = new sprite('player_shields', 3, 2, 5);
 	this.width = this.sprite.frameWidth;
 	this.height = this.sprite.frameHeight;
+	this.centerX = Math.round(this.width/2);
 	this.speed = 0;
 	this.maxSpeed = 400;
 	this.speedX = 0;
@@ -1527,9 +1532,9 @@ enemy = function(x, y, speed, direction, hull, type, image, fireRate)
 //invariables (note: any other object properties that require these need to be declared in the prototype function)
 enemy.prototype.bulletTimer = 1;
 enemy.prototype.hitTimer = 0;
-enemy.prototype.ctx = game.context;
-enemy.prototype.dead = false;
 enemy.prototype.collided = false;
+enemy.prototype.dead = false;
+enemy.prototype.ctx = game.context;
 
 enemy.prototype.fireMissile = function()
 {
@@ -1552,24 +1557,22 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, type, image, fire
 	this.height = game.offCtx[image].height;
 	switch (type)
 	{
-	case 'pawn':
-		this.explosionSize = 'medium';
-	break;
-	case 'miniboss':
-		this.explosionSize = 'large';
-	break;
-	case 'base':
-		this.width = this.sprite.frameWidth;
-		this.height = this.sprite.frameHeight;
-		this.explosionSize = 'xLarge';
-	break;
+		case 'pawn':
+			this.explosionSize = 'medium';
+		break;
+		case 'miniboss':
+			this.explosionSize = 'large';
+		break;
+		case 'base':
+			this.width = this.sprite.frameWidth;
+			this.height = this.sprite.frameHeight;
+			this.explosionSize = 'xLarge';
+		break;
 	}
 	this.bulletTimer = 1;
 	this.hitTimer = 0;
-	this.collided = false;		//do we need this??
+	this.collided = false;
 	this.dead = false;
-	this.vx = Math.cos(this.direction) * ((this.speed)*dt);
-	this.vy = Math.sin(this.direction) * ((this.speed)*dt);
 };
 
 enemy.prototype.update = function()
@@ -1695,13 +1698,14 @@ function initEnemies()
 
 boss = function(x, y, speed, direction, hull, image)
 {
-	this.speed = speed;
+	this.speed = speed/pixelRatio;
 	this.direction = direction;
 	this.hull = hull;
 	this.image = game.offCtx[image];
 	this.width = game.offCtx[image].width;
 	this.height = game.offCtx[image].height;
-	this.x = (game.width/2) - (this.width/2);
+	this.hCenter = Math.round(this.width/2);
+	this.x = Math.round(game.centerX - this.hCenter);
 	this.y = game.outerTop;
 	this.audioHit1 = 'hit' + fileFormat;
 	this.audioHit2 = 'hit2' + fileFormat;
@@ -1745,10 +1749,31 @@ boss.prototype.update = function()
 {
 	if (!this.dead)
 	{
-		this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
-		this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
-		this.x += this.vx;
-		this.y += this.vy;
+		if (this.y >= this.yStop) //boss fight AI
+		{
+			this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
+			if (this.x + this.hCenter < (playerShip.x + playerShip.centerX) - this.vx)
+			{
+				this.direction = 0;
+				this.x += this.vx;
+			}
+			else if (this.x + this.hCenter > (playerShip.x + playerShip.centerX) + this.vx)
+			{
+				this.direction = Math.PI;
+				this.x += this.vx;
+			}
+			else if (this.x + this.hCenter == playerShip.x + playerShip.centerX)
+			{
+				this.x = this.x;
+			}
+		}
+		else //enter boss
+		{
+			this.direction = Math.PI/2;
+			this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
+			this.x = this.x;
+			this.y += this.vy;
+		}
 
 		this.draw(this.x, this.y);
 
@@ -1786,22 +1811,6 @@ boss.prototype.update = function()
 			this.fireMissiles();
 		}
 
-		if (this.y > this.yStop)
-		{
-			this.speed = 0;
-
-			if (this.x > 0 && this.x <= this.xBondary)
-			{
-				if (this.x < playerShip.x && this.x <= this.xBondary-2)
-				{
-					this.x += 2;
-				}
-				else if (this.x > playerShip.x && this.x > 2)
-				{
-					this.x -= 2;
-				}
-			}
-		}
 	}
 	else
 	{
@@ -2423,11 +2432,12 @@ text.prototype.fade = function(trigger)
 			});
 		break;
 		case 'out':
+			var self = this;
 			game.textFadingOut = true;
 			this.allText.fadeOut(this.effectDuration, function(){
-				this.h1.text('');
-				this.h2.text('');
-				this.h3.text('');
+				self.h1.text('');
+				self.h2.text('');
+				self.h3.text('');
 				game.textFadingOut = false;
 				game.textFaded = true;
 			});
