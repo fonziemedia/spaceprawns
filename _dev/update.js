@@ -52,7 +52,7 @@ function update()
 		}
 	}
 
-	playerShip.load(); //change this, it's fugly
+	playerShip.update();
 
 	if (game.explosions.length > 0);
 	{
