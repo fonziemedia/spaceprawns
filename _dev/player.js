@@ -1,8 +1,10 @@
 player = function(hull, fireRate)
 {
-	this.x = Math.round(game.width*0.46);
-	this.y = Math.round(game.height*0.90);
-	this.ctx = game.context;
+	var self = this;
+
+	this.fireRate = fireRate;
+	this.hull = hull;
+	this.maxHull = hull;
 	this.sprite = new sprite('player_ship', 5, 3, 5);
 	this.sprite_i = new sprite('player_ship_i', 5, 3, 5);
 	this.sprite_s = new sprite('player_shields', 3, 2, 5);
@@ -12,37 +14,90 @@ player = function(hull, fireRate)
 	this.centerRightX = Math.round(this.width*0.75);
 	this.centerLeftX = Math.round(this.width*0.25);
 	this.tipY = Math.round(this.height*0.2);
-	this.speed = 0;
-	this.speedX = 0;
-	this.speedY = 0;
-	this.hull = hull;
-	this.maxHull = hull;
-	this.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
-	this.audioFire1 = 'laser' + fileFormat;
-	this.audioFire2 = 'laser2' + fileFormat;
-	this.audioFire3 = 'laser3' + fileFormat;
-	this.xMoving = false;
-	this.yMoving = false;
-	this.hit = false;
-	this.imune = false;
-	this.imuneTimer = -5;
-	this.imuneTicks = 0;
-	this.dead = false;
-	this.deadTimer = 0;
-	this.lives = X_Lives;
 	this.limitX1 = Math.round(-this.width*0.5);
 	this.limitX2 = Math.round(game.width - this.width*0.5);
 	this.limitY1 = 0;
 	this.limitY2 = Math.round(game.height - this.height);
-	this.accel = game.height*0.0007;
-	this.speedLimit = Math.round(game.height*0.008);
 
-	//====================== Laser bullets =================//
-	this.fireTimer = 1;
-	this.fireRate = fireRate;
-	this.laserLevel = 1;
-	this.missileLevel = 0;
+	this.fireLasers = [
+		function()
+		{
+			this.midLaserX = Math.round(self.x + self.centerX);
+			this.laserY = Math.round(self.y - self.tipY);
+			getNewBullet(this.midLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+		},
+		function()
+		{
+			this.leftLaserX = Math.round(self.x + self.centerLeftX);
+			this.rightLaserX = Math.round(self.x + self.centerRightX);
+			this.laserY = Math.round(self.y - self.tipY);
+			getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+			getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+		},
+		function()
+		{
+			this.midLaserX = Math.round(self.x + self.centerX);
+			this.leftLaserX = Math.round(self.x + self.centerLeftX);
+			this.rightLaserX = Math.round(self.x + self.centerRightX);
+			this.laserY = Math.round(self.y - self.tipY);
+			getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+			getNewBullet(this.midLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+			getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+		}
+	];
+
+	this.fireMissiles = [
+		function()
+		{
+			this.midMissileX = Math.round(self.x + self.centerX);
+			this.missileY = Math.round(self.y + self.height);
+			getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+		},
+		function()
+		{
+			this.leftMissileX = Math.round(self.x);
+			this.rightMissileX = Math.round(self.x + self.width);
+			this.missileY = Math.round(self.y + self.height);
+			getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+			getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+		},
+		function()
+		{
+			this.midMissileX = Math.round(self.x + self.centerX);
+			this.leftMissileX = Math.round(self.x);
+			this.rightMissileX = Math.round(self.x + self.width);
+			this.missileY = Math.round(self.y + self.height);
+			getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+			getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+			getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+		}
+	];
+
 };
+player.prototype.x = Math.round(game.width*0.46);
+player.prototype.y = Math.round(game.height*0.90);
+player.prototype.ctx = game.context;
+player.prototype.speed = 0;
+player.prototype.speedX = 0;
+player.prototype.speedY = 0;
+player.prototype.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
+player.prototype.xMoving = false;
+player.prototype.yMoving = false;
+player.prototype.hit = false;
+player.prototype.imune = false;
+player.prototype.imuneTimer = -5;
+player.prototype.imuneTicks = 0;
+player.prototype.dead = false;
+player.prototype.deadTimer = 0;
+player.prototype.lives = X_Lives;
+player.prototype.accel = game.height*0.0007;
+player.prototype.speedLimit = Math.round(game.height*0.008);
+player.prototype.fireTimer = 1;
+player.prototype.laserLevel = 0;
+player.prototype.missileLevel = -1;
+player.prototype.audioFire1 = 'laser' + fileFormat;
+player.prototype.audioFire2 = 'laser2' + fileFormat;
+player.prototype.audioFire3 = 'laser3' + fileFormat;
 
 player.prototype.fireGuns = function()
 {
@@ -50,107 +105,23 @@ player.prototype.fireGuns = function()
 	this.fireTimer++;
 	if (this.fireTimer % this.fireRate === 0)
 	{
-		// (x, y, speed, direction, power, friction, image)
-		switch(this.laserLevel)
+		this.fireLasers[this.laserLevel]();
+		if (this.missileLevel >= 0) this.fireMissiles[this.missileLevel]();
+
+		if (game.sound)
 		{
-			case 1:
-				this.midLaserX = Math.round(this.x + this.centerX);
-				this.laserY = Math.round(this.y - this.tipY);
-
-				getNewBullet(this.midLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-
-				if (game.sound)
-				{
-					if (game.sfx[this.audioFire1].paused)
-					{
-						game.sounds.push(game.sfx[this.audioFire1]);
-					}
-					else if (game.sfx[this.audioFire2].paused)
-					{
-						game.sounds.push(game.sfx[this.audioFire2]);
-					}
-					else if (game.sfx[this.audioFire3].paused)
-					{
-						game.sounds.push(game.sfx[this.audioFire3]);
-					}
-				}
-			break;
-			case 2:
-				this.leftLaserX = Math.round(this.x + this.centerLeftX);
-				this.rightLaserX = Math.round(this.x + this.centerRightX);
-				this.laserY = Math.round(this.y - this.tipY);
-
-				getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-				getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-
-				if (game.sound)
-				{
-					if (game.sfx[this.audioFire1].paused)
-					{
-						game.sounds.push(game.sfx[this.audioFire1]);
-					}
-					else if (game.sfx[this.audioFire2].paused)
-					{
-						game.sounds.push(game.sfx[this.audioFire2]);
-					}
-					else if (game.sfx[this.audioFire3].paused)
-					{
-						game.sounds.push(game.sfx[this.audioFire3]);
-					}
-				}
-			break;
-			case 3:
-				this.midLaserX = Math.round(this.x + this.centerX);
-				this.leftLaserX = Math.round(this.x + this.centerLeftX);
-				this.rightLaserX = Math.round(this.x + this.centerRightX);
-				this.laserY = Math.round(this.y - this.tipY);
-
-				getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-				getNewBullet(this.midLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-				getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-
-				if (game.sound)
-				{
-					if (game.sfx[this.audioFire1].paused)
-					{
-						game.sounds.push(game.sfx[this.audioFire1]);
-					}
-					else if (game.sfx[this.audioFire2].paused)
-					{
-						game.sounds.push(game.sfx[this.audioFire2]);
-					}
-					else if (game.sfx[this.audioFire3].paused)
-					{
-						game.sounds.push(game.sfx[this.audioFire3]);
-					}
-				}
-			break;
-		}
-		switch(this.missileLevel)
-		{
-			case 0:
-			break;
-			case 1:
-				this.midMissileX = Math.round(this.x + this.centerX);
-				this.missileY = Math.round(this.y + this.height);
-				getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-			break;
-			case 2:
-				this.leftMissileX = Math.round(this.x);
-				this.rightMissileX = Math.round(this.x + this.width);
-				this.missileY = Math.round(this.y + this.height);
-				getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-				getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-			break;
-			case 3:
-				this.midMissileX = Math.round(this.x + this.centerX);
-				this.leftMissileX = Math.round(this.x);
-				this.rightMissileX = Math.round(this.x + this.width);
-				this.missileY = Math.round(this.y + this.height);
-				getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-				getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-				getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-			break;
+			if (game.sfx[this.audioFire1].paused)
+			{
+				game.sounds.push(game.sfx[this.audioFire1]);
+			}
+			else if (game.sfx[this.audioFire2].paused)
+			{
+				game.sounds.push(game.sfx[this.audioFire2]);
+			}
+			else if (game.sfx[this.audioFire3].paused)
+			{
+				game.sounds.push(game.sfx[this.audioFire3]);
+			}
 		}
 	}
 };
@@ -200,12 +171,12 @@ player.prototype.update = function()
 		{
 			if (this.speedX !== 0)
 			{
-				this.speedX = this.speedX > 0 ? Math.round(this.speedX - this.accel) : Math.round(this.speedX + this.accel);
+				this.speedX = this.speedX > 0 ? Math.floor(this.speedX - this.accel) : Math.ceil(this.speedX + this.accel);
 			}
 
 			if (this.speedY !== 0)
 			{
-				this.speedY = this.speedY > 0 ? Math.round(this.speedY - this.accel) : Math.round(this.speedY + this.accel);
+				this.speedY = this.speedY > 0 ? Math.floor(this.speedY - this.accel) : Math.ceil(this.speedY + this.accel);
 			}
 
 			if (!game.isMobile) doc.getElementById('gamearea').style.cursor = 'crosshair';
@@ -380,8 +351,8 @@ player.prototype.reset = function()
 	this.x = Math.round(game.centerX - this.centerX);
 	this.y = Math.round(game.height - this.height);
 	this.friction = 0;
-	this.laserLevel = 1;
-	this.missileLevel = 0;
+	this.laserLevel = 0;
+	this.missileLevel = -1;
 	gameUI.updateEnergy();
 };
 
