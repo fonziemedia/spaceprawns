@@ -1,8 +1,3 @@
-function log(label, variable)
-{
-	var txt = label;
-	console.log(txt + ': ' + variable);
-}
 
 //iOS viewport fix
 if(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream)
@@ -122,6 +117,10 @@ game.windowHeight = doc.documentElement.clientHeight;
 game.fullScreen = false;
 
 //========================== Input ==========================
+
+game.mouseControls = true;
+game.keyboardControls = false;
+
 var inputArea = doc.getElementById("inputarea");
 var inputAreaX, inputAreaY;
 var mouseIsDown = 0;
@@ -165,33 +164,8 @@ else
 	fileFormat = ".mp3";
 }
 
-// Obtaining Audio ON/OFF status from local storage
-if ("localStorage" in win && win.localStorage !== null) //checking browser support for local storage
-{
-	//NOTE: localStorage won't accept boolean values! so we need to 'convert' these
-	if (localStorage.prawnsSound === "true")
-	{
-		game.sound = true;
-	}
-	else
-	{
-		game.sound = false;
-	}
-
-	if (localStorage.prawnsMusic === "true")
-	{
-		game.music = true;
-	}
-	else
-	{
-		game.music = false;
-	}
-}
-else
-{
-	game.sound = false;
-	game.music = false;
-}
+game.sound = false;
+game.music = false;
 
 //Our main SOUND players
 game.sounds = [];
@@ -371,3 +345,26 @@ function setGameDimensions()
 }
 
 setGameDimensions();
+
+//====================== Local Storage ============================
+
+if ("localStorage" in win && win.localStorage !== null) //checking browser support for local storage
+{
+	//NOTE: localStorage won't accept boolean values! so we need to 'convert' these
+
+	//CONTROLS
+	if (localStorage.keyboardControls === "true")
+	{
+		game.mouseControls = false;
+		game.keyboardControls = true;
+	}
+	else
+	{
+		game.mouseControls = true;
+		game.keyboardControls = false;
+	}
+
+	//AUDIO
+	game.sound = localStorage.prawnsSound === "true" ? true : false;
+	game.music = localStorage.prawnsMusic === "true" ? true : false;
+}

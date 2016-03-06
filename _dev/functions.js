@@ -24,6 +24,10 @@ $(document).keydown(function(e)
 {
 	//listen to pressed keys
 	game.keys[e.keyCode ? e.keyCode : e.which] = true;
+
+	if (game.keys[27] && dtTimerSet && !game.gameOver) gameMenu.toggle();
+	if (game.keys[80] && dtTimerSet && !game.paused && !game.gameOver) gameState.pause();
+	else if (game.keys[80] && dtTimerSet && game.paused && !game.gameOver) gameState.unPause();
 });
 
 $(document).keyup(function(e)

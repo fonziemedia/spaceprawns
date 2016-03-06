@@ -436,6 +436,10 @@ canvas {
 }
 
 
+
+
+
+
 @media (max-width: 991px) {
 
   #gamearea {
@@ -533,6 +537,7 @@ canvas {
   }*/
 
 	.menu-option-btn {
+    top: 30%;
 		width: 40%;
     font-size: 12px;
 	}
@@ -585,6 +590,11 @@ canvas {
   }
 
 }
+
+
+
+
+
 
 @media (min-width: 992px) {
 

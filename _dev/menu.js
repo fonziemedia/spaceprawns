@@ -6,6 +6,7 @@ menu = function()
 	this.startBtn = $('#startGame');
 	this.soundFx = $('#toggleSound');
 	this.music = $('#toggleMusic');
+	this.controls = $('#toggleControls');
 	this.fullScreen = $('#toggleFullScreen');
 	this.credits = $('#credits');
 	this.allButtons = $('.menu-option-btn');
@@ -134,6 +135,31 @@ menu.prototype.toggleMusic = function()
 	}
 };
 
+menu.prototype.toggleControls = function()
+{
+	if (game.mouseControls)
+	{
+		game.mouseControls = false;
+		game.keyboardControls = true;
+
+		this.controls.text('Controls: keyboard');
+		player.prototype.setControls = player.prototype.keyboardControls;
+		player.prototype.setGunControls = player.prototype.setKeyboardGuns;
+	}
+	else if (game.keyboardControls)
+	{
+		game.mouseControls = true;
+		game.keyboardControls = false;
+
+		this.controls.text('Controls: mouse');
+		player.prototype.setControls = player.prototype.mouseControls;
+		player.prototype.setGunControls = player.prototype.setMouseGuns;
+	}
+
+	localStorage.mouseControls =  game.mouseControls;
+	localStorage.keyboardControls =  game.keyboardControls;
+
+};
 
 menu.prototype.toggle = function()
 {
@@ -187,6 +213,14 @@ menu.prototype.toggle = function()
 				"right": "-=50%",
 			},800);
 
+			if (!game.isMobile)
+			{
+				self.controls.animate({
+					opacity: 1,
+					"left": "-=50%",
+				},800);
+			}
+
 			self.credits.animate({
 				opacity: 1,
 				"left": "-=50%",
@@ -224,6 +258,14 @@ menu.prototype.toggle = function()
 			opacity: 0,
 			"right": "+=50%",
 		},800);
+
+		if (!game.isMobile)
+		{
+			this.controls.animate({
+			opacity: 0,
+			"left": "+=50%",
+			},800);
+		}
 
 		this.credits.animate({
 			opacity: 0,
@@ -276,6 +318,19 @@ menu.prototype.init = function()
 	{
 		this.fullScreen.removeClass('active');
 		this.fullScreen.text('Fullscreen: OFF');
+	}
+
+	if (!game.isMobile)
+	{
+		if (localStorage.mouseControls === 'true') //note = localStorage will only process string values
+		{
+			this.controls.text('Controls: mouse');
+		}
+
+		if (localStorage.keyboardControls === 'true') //note = localStorage will only process string values
+		{
+			this.controls.text('Controls: keyboard');
+		}
 	}
 
 	gameMenu.toggle();
