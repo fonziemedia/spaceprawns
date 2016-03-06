@@ -1,9 +1,8 @@
-var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate)
+var enemyWave = function(side, pos, race, fleetSize, speed, hull, fireRate)
 {
 	this.side = side;
 	this.spawnedShips = 0;
 	this.race = race;
-	this.type = type;
 	this.fleetSize = fleetSize;
 	this.speed = speed;
 	this.hull = hull;
@@ -39,7 +38,7 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 			if (this.spawnTimer % this.spawnRate === 0)
 			{
 					this.spawnFireRate = Math.round(utils.randomRange(this.fireRate, this.fireRate*2)); //a randomRange so that each ship fires at it's own time
-					getNewEnemy(this.x, this.y, this.speed, this.direction, this.hull, this.type, this.race, this.spawnFireRate);
+					getNewEnemyMinion(this.x, this.y, this.speed, this.direction, this.hull, this.race, this.spawnFireRate);
 					this.spawnedShips++;
 			}
 
@@ -58,7 +57,7 @@ var enemyWave = function(side, pos, race, type, fleetSize, speed, hull, fireRate
 ////////////
 // Factory
 ////////////
-function getNewEnemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate)
+function getNewEnemyWave(side, pos, race, fleetSize, speed, hull, fireRate)
 {
   var ew = null;
   //check to see if there is a spare one
@@ -69,7 +68,6 @@ function getNewEnemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate
     ew.side = side;
 		ew.spawnedShips = 0;
 		ew.race = race;
-		ew.type = type;
 		ew.fleetSize = fleetSize;
 		ew.speed = speed;
 		ew.hull = hull;
@@ -100,7 +98,7 @@ function getNewEnemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate
   else
   {
 		//none available, construct a new one
-		ew = new enemyWave(side, pos, race, type, fleetSize, speed, hull, fireRate);
+		ew = new enemyWave(side, pos, race, fleetSize, speed, hull, fireRate);
 		game.waves.push(ew);
   }
 }

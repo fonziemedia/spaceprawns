@@ -70,7 +70,9 @@ game.bullets = [];
 	game.lootPool = [];
 
 game.enemies = [];
-	game.enemiesPool = [];
+	game.minionsPool = [];
+	game.miniBossPool = [];
+	game.enemyBasePool = [];
 
 game.waves = [];
 	game.wavesPool = [];
@@ -78,8 +80,12 @@ game.waves = [];
 game.explosions = [];
 	game.explosionsPool = [];
 
+//required = number of objects to be preloaded (and maximum that can be 'alive' at a given time)
 game.requiredWaves = 5;
-game.requiredEnemies = 12;
+game.requiredMinions = 25;
+game.requiredMiniBosses = 15;
+game.requiredEnemyBases = 3;
+game.requiredEnemies = game.requiredMinions + game.requiredMiniBosses + game.requiredEnemyBases;
 game.requiredPlayerBullets = 70;
 game.requiredEnemyBullets = 15;
 game.requiredLoot = 5;

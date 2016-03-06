@@ -516,7 +516,9 @@ function checkObjects()
 function initObjects()
 {
 	initWaves();
-	initEnemies();
+	initEnemyMinions();
+	initEnemyMiniBosses();
+	initEnemyBases();
 	initEnemyBullets();
 	initPlayerBullets();
 	initExplosions();
