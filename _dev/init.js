@@ -123,6 +123,7 @@ game.windowHeight = doc.documentElement.clientHeight;
 game.fullScreen = false;
 
 //========================== Input ==========================
+if (!game.isMobile) doc.getElementById('gamearea').style.cursor = 'crosshair';
 
 game.mouseControls = true;
 game.keyboardControls = false;

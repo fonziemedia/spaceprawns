@@ -14,7 +14,7 @@ playerBullet = function(x, y, speed, direction, power, friction, image)
 	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 };
-
+// note: prototype properties are set at run time, the constructor properties/methods are set upon object creation
 playerBullet.prototype.dead = false;
 playerBullet.prototype.ctx = game.context;
 
@@ -88,7 +88,7 @@ getNewBullet = function(x, y, speed, direction, power, friction, image)
 		b = game.playerBulletsPool.pop();
 		//(image, columns, rows, animationSpeed)
 		b.sprite.reset(image, 3, 1, 4);
-    b.reset(x, y, speed, power, friction, image);
+    b.reset(x, y, speed, power, friction);
 		game.bullets.push(b);
 	}
 	else
@@ -110,7 +110,7 @@ freeBullet = function(b)
 ////////////////////////////////
 // Pre-load game player bullets
 ////////////////////////////////
-function initPlayerBullets()
+initPlayerBullets = function ()
 {
 	for (var pb = 1 ; pb <= game.requiredPlayerBullets; pb++)
 	{
@@ -118,4 +118,4 @@ function initPlayerBullets()
 		game.playerBulletsPool.push(b);
 		game.doneObjects++;
 	}
-}
+};

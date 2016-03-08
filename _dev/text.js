@@ -1,17 +1,31 @@
 text = function(header1, header2, inputRequired)
 {
-	this.h1 = $('#h1'); //remove jquery here
-	this.h2 = $('#h2');
-	this.h3 = $('#h3');
 	this.h1Text = header1;
 	this.h2Text = header2;
-	this.h3Text = game.isMobile ? 'Tap screen to continue' : 'Press ENTER or LMB to continue';
-	this.allText = $('.all-text');
 	this.textInput = inputRequired;
-	this.effectDuration = 2000;
 
 	this.init();
 };
+
+text.prototype.h1 = $('#h1'); //remove jquery here
+text.prototype.h2 = $('#h2');
+text.prototype.h3 = $('#h3');
+
+if (game.isMobile)
+{
+	text.prototype.h3Text = 'Tap screen to continue';
+}
+else if (game.mouseControls)
+{
+	text.prototype.h3Text = 'Click to continue';
+}
+else if (game.keyboardControls)
+{
+	text.prototype.h3Text = 'Press any key to continue';	
+}
+
+text.prototype.allText = $('.all-text');
+text.prototype.effectDuration = 2000;
 
 text.prototype.switch = function(trigger)
 {

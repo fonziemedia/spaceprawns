@@ -145,6 +145,7 @@ menu.prototype.toggleControls = function()
 		this.controls.text('Controls: keyboard');
 		player.prototype.setControls = player.prototype.keyboardControls;
 		player.prototype.setGunControls = player.prototype.setKeyboardGuns;
+		text.prototype.h3Text = 'Press any key to continue';
 	}
 	else if (game.keyboardControls)
 	{
@@ -154,6 +155,7 @@ menu.prototype.toggleControls = function()
 		this.controls.text('Controls: mouse');
 		player.prototype.setControls = player.prototype.mouseControls;
 		player.prototype.setGunControls = player.prototype.setMouseGuns;
+		text.prototype.h3Text = game.isMobile ? 'Tap screen to continue' : 'Click to continue';
 	}
 
 	localStorage.mouseControls =  game.mouseControls;
@@ -331,6 +333,10 @@ menu.prototype.init = function()
 		{
 			this.controls.text('Controls: keyboard');
 		}
+	}
+	else
+	{
+		this.controls.disabled = true;
 	}
 
 	gameMenu.toggle();

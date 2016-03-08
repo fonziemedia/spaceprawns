@@ -82,6 +82,7 @@ function mouseUp(e)
 {
 	e.preventDefault();
 	mouseIsDown = 0;
+	if (!game.isMobile) doc.getElementById('gamearea').style.cursor = 'crosshair';
 }
 
 function touchUp(e)
@@ -96,6 +97,7 @@ function mouseDown(e)
 	mouseIsDown = 1;
 	touchInitX = e.pageX - inputArea.offsetLeft;
 	touchInitY = e.pageY - inputArea.offsetTop;
+	if (!game.isMobile) doc.getElementById('gamearea').style.cursor = 'none';
 }
 
 function touchDown(e)

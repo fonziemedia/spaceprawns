@@ -56,10 +56,10 @@ state.prototype.start = function()
 				}
 				else
 				{
-					$('#inputarea').on('mousedown touchstart', function()
+					$(document).on('mousedown touchstart keypress', function(e)
 					{
 						//only trigger this event listner once text animations have ended
-						$('#inputarea').off('mousedown touchstart');
+						$(document).off('mousedown touchstart keypress');
 						introText.fade('out');
 						$('.all-text').promise().done(function()
 						{
@@ -91,9 +91,9 @@ state.prototype.lvlComplete = function() //called at the end of each level
 	levelUpText = new text('Stage Complete!', game.score + ' enemy ships destroyed', true);
 	levelUpText.switch('on');
 
-	$('#inputarea').on('mousedown touchstart', function()
+	$(document).on('mousedown touchstart keypress', function(e)
 	{
-		$('#inputarea').off('mousedown touchstart');
+		$(document).off('mousedown touchstart keypress');
 		levelUpText.fade('out');
 
 		$('.all-text').promise().done(function()
@@ -119,9 +119,9 @@ state.prototype.gameOver = function()
 	gameOverText = new text('Game Over', game.score + ' enemy ships destroyed', true);
 	gameOverText.switch('on');
 
-	$('#inputarea').on('mousedown touchstart', function()
+	$(document).on('mousedown touchstart keypress', function(e)
 	{
-		$('#inputarea').off('mousedown touchstart');
+		$(document).off('mousedown touchstart keypress');
 		gameOverText.fade('out');
 
 		$('.all-text').promise().done(function()

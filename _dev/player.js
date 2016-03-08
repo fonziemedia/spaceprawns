@@ -24,13 +24,12 @@ player.prototype.ctx = game.context;
 player.prototype.speed = 0;
 player.prototype.speedX = 0;
 player.prototype.speedY = 0;
-player.prototype.spriteLeftFrames = [0,0,1,2,3,3,4,4];
-player.prototype.spriteRightFrames = [5,5,6,7,8,8,9,9];
+player.prototype.spriteLeftFrames = [0,0,1,2,2,3,3,4,4,4];
+player.prototype.spriteRightFrames = [5,5,6,7,7,8,8,9,9,9];
 player.prototype.hit = false;
 player.prototype.imune = false;
 player.prototype.imuneTimer = -5;
 player.prototype.imuneTicks = 0;
-player.prototype.dead = false;
 player.prototype.deadTimer = 0;
 player.prototype.lives = X_Lives;
 player.prototype.accel = game.height*0.0007;
@@ -46,7 +45,6 @@ player.prototype.reset = function()
 {
 	this.lives = game.gameOver ? X_Lives : this.lives;
 	game.gameOver = false;
-	this.dead = false;
 	this.imune = true;
 	this.imuneTimer = -5;
 	this.hull = 10;
@@ -60,13 +58,14 @@ player.prototype.reset = function()
 	this.laserLevel = 1;
 	this.missileLevel = 0;
 	gameUI.updateEnergy();
+	player.prototype.update = player.prototype.aliveUpdate;
 };
 
 player.prototype.mouseControls = function()
 {
 	if (mouseIsDown)
 	{
-		if (!game.isMobile) doc.getElementById('gamearea').style.cursor = 'none';
+		this.fireGuns();
 
 		this.speedX = Math.round(((touchInitX - inputAreaX)*0.1)/pixelRatio);
 		this.speedY = Math.round(((touchInitY - inputAreaY)*0.1)/pixelRatio);
@@ -89,12 +88,17 @@ player.prototype.mouseControls = function()
 			this.speedY = this.speedY > 0 ? Math.floor(this.speedY - this.accel) : Math.ceil(this.speedY + this.accel);
 		}
 
-		if (!game.isMobile) doc.getElementById('gamearea').style.cursor = 'crosshair';
+
 	}
 };
 
 player.prototype.keyboardControls = function()
 {
+	if (game.keys[32])
+	{
+		this.fireGuns();
+	}
+
 	if ((game.keys[37] || game.keys[39] || game.keys[38] || game.keys[40]))
 	{
 		if(game.keys[37]) //left
@@ -125,8 +129,6 @@ player.prototype.keyboardControls = function()
 		{
 			this.speedY = this.speedY > 0 ? Math.floor(this.speedY - this.accel) : Math.ceil(this.speedY + this.accel);
 		}
-
-		doc.getElementById('gamearea').style.cursor = 'crosshair';
 	}
 };
 
@@ -254,24 +256,6 @@ player.prototype.fireGuns = function()
 	}
 };
 
-player.prototype.setMouseGuns = function()
-{
-	if (mouseIsDown)
-	{
-		this.fireGuns();
-	}
-};
-
-player.prototype.setKeyboardGuns = function()
-{
-	if (game.keys[32])
-	{
-		this.fireGuns();
-	}
-};
-
-player.prototype.setGunControls = game.mouseControls ? player.prototype.setMouseGuns : player.prototype.setKeyboardGuns;
-
 player.prototype.setImunity = function()
 {
 	this.imuneTimer++;
@@ -318,9 +302,9 @@ player.prototype.checkHull = function()
 {
 	if (this.hull <= 0)
 	{
-		this.dead = true;
 		this.lives -= 1;
 		getNewExplosion(this.x, this.y, 0, 0, 'large', 'player'); //need to obtain player direction if we want dinamic explosions, for now we just blow it still
+		player.prototype.update = player.prototype.die;
 		gameUI.updateHangar();
 	}
 };
@@ -395,36 +379,23 @@ player.prototype.draw = function()
 	}
 };
 
-player.prototype.update = function()
+player.prototype.aliveUpdate = function()
 {
-	if (!this.dead && !game.levelComplete)
-	{
-		this.setControls();
-
-		this.setGunControls();
-
-		this.setThrust();
-
-		this.setBoundaries();
-
-		this.checkImunity();
-
-		this.detectCollision();
-
-		this.checkHull();
-
-		this.draw();
-	}
-	else if (game.levelComplete)
-	{
-		this.levelComplete();
-
-		this.draw();
-	}
-	else
-	{
-		this.die();
-	}
+	this.setControls();
+	this.setThrust();
+	this.setBoundaries();
+	this.checkImunity();
+	this.detectCollision();
+	this.checkHull();
+	this.draw();
 };
+
+player.prototype.levelCompleteUpdate = function()
+{
+	this.levelComplete();
+	this.draw();
+};
+
+player.prototype.update = player.prototype.aliveUpdate;
 
 var playerShip = null;
