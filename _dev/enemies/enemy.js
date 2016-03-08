@@ -15,7 +15,6 @@ enemy = function(x, y, speed, direction, hull, image, fireRate)
 enemy.prototype.bulletTimer = 1;
 enemy.prototype.hitTimer = 0;
 enemy.prototype.collided = false;
-enemy.prototype.dead = false;
 enemy.prototype.ctx = game.context;
 
 enemy.prototype.reset = function(x, y, speed, direction, hull, image, fireRate) //only variable arguments here
@@ -32,7 +31,6 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, image, fireRate) 
 	this.bulletTimer = 1;
 	this.hitTimer = 0;
 	this.collided = false;
-	this.dead = false;
 };
 
 enemy.prototype.setMovement = function()
@@ -50,8 +48,7 @@ enemy.prototype.setMovement = function()
 
 enemy.prototype.die = function()
 {
-	this.dead = true;
-	getNewExplosion(this.x, this.y, this.speed, this.direction, this.explosionSize, 'enemyMinion');
+	getNewExplosion(this.x, this.y, this.speed, this.direction, this.explosionSize, 'enemy');
 
 	lootchance = Math.random();
 	if (lootchance < 0.4)
@@ -65,6 +62,8 @@ enemy.prototype.die = function()
 		game.levelScore++;
 		gameUI.updateScore();
 	}
+
+	this.recycle(this);
 };
 
 enemy.prototype.checkHull = function()
@@ -77,7 +76,7 @@ enemy.prototype.checkHull = function()
 
 enemy.prototype.detectCollision = function()
 {
-	if (Collision(this, playerShip) && !this.dead && !playerShip.imune && !game.gameOver)
+	if (Collision(this, playerShip) && !playerShip.imune && !game.gameOver)
 	{
 		getNewExplosion(playerShip.x, playerShip.y, 0, 1, 'small', 'chasis');	//get new explosion sound for hiting player
 		playerShip.hull -= this.hull;
@@ -91,11 +90,11 @@ enemy.prototype.setBoundaries = function()
 {
 	if (this.x > game.outerRight || this.x < game.outerLeft || this.y > game.outerBottom || this.y < game.outerTop)
 	{
-		this.dead = true;
+		this.recycle(this);
 	}
 };
 
-enemy.prototype.checkFireRate = function()
+enemy.prototype.setGuns = function()
 {
 	if (this.fireRate !== 0)
 	{
@@ -117,4 +116,14 @@ enemy.prototype.fireMissile = function()
 enemy.prototype.draw = function()
 {
 	this.ctx.drawImage(this.image, this.x, this.y);
+};
+
+enemy.prototype.update = function()
+{
+	this.setMovement();
+	this.setBoundaries();
+	this.setGuns();
+	this.checkHull();
+	this.detectCollision();
+	this.draw();
 };

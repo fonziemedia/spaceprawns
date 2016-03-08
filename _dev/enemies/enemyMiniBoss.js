@@ -7,21 +7,9 @@ enemyMiniBoss.prototype.constructor = enemyMiniBoss;
 
 enemyMiniBoss.prototype.explosionSize = 'large';
 
-enemyMiniBoss.prototype.update = function()
+enemyMiniBoss.prototype.recycle = function(en)
 {
-	if (!this.dead)
-	{
-		this.setMovement();
-		this.setBoundaries();
-		this.checkHull();
-		this.detectCollision();
-		this.checkFireRate();
-		this.draw();
-	}
-	else
-	{
-		freeEnemyMiniBoss(this);
-	}
+	freeEnemyMiniBoss(en);
 };
 
 ////////////

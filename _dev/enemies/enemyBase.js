@@ -11,26 +11,14 @@ enemyBase.prototype.constructor = enemyBase;
 
 enemyBase.prototype.explosionSize = 'xLarge';
 
+enemyBase.prototype.recycle = function(en)
+{
+	freeEnemyBase(en);
+};
+
 enemyBase.prototype.draw = function()
 {
 	this.sprite.draw(this.x, this.y);
-};
-
-enemyBase.prototype.update = function()
-{
-	if (!this.dead)
-	{
-		this.setMovement();
-		this.setBoundaries();
-		this.checkHull();
-		this.detectCollision();
-		this.checkFireRate();
-		this.draw();
-	}
-	else
-	{
-		freeEnemyBase(this);
-	}
 };
 
 ////////////
@@ -60,7 +48,7 @@ function freeEnemyBase(en)
 /////////////////////////
 function initEnemyBases()
 {
-	for (var e = 1 ; e <= game.requiredMinions; e++)
+	for (var e = 1 ; e <= game.requiredEnemyBases; e++)
 	{
 		en = new enemyBase(0, 0, 0, 0, 0, 'enemy_sectoid', 0);
 		game.enemyBasePool.push(en);
