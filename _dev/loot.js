@@ -2,31 +2,16 @@ loot = function(x, y)
 {
 	this.x = x;
 	this.y = y;
-	this.dead = false;
 	this.key = Math.floor(Math.random() * this.drops.length);
 	this.type = this.drops[this.key];
-	switch(this.type)
-	{
-		/* jshint ignore:start */
-		case 'health':
-			this.image = game.offCtx['loot_shields'];
-		break;
-		case 'laser':
-			this.image = game.offCtx['loot_lasers'];
-		break;
-		case 'missile':
-			this.image = game.offCtx['loot_missiles'];
-		break;
-		/* jshint ignore:end */
-	}
+	this.image = game.offCtx[this.type];
 	this.width = this.image.width;
 	this.height = this.image.height;
 };
-
+// note: prototype properties are set at run time, the constructor properties/methods are set upon object creation
 loot.prototype.speed = Math.round(250/pixelRatio);
 loot.prototype.direction = Math.PI/2;
-loot.prototype.dead = false;
-loot.prototype.drops = ['health', 'laser', 'missile'];
+loot.prototype.drops = ['loot_shields', 'loot_lasers', 'loot_missiles'];
 loot.prototype.sfx1 = 'loot_powerUp' + fileFormat;
 loot.prototype.sfx2 = 'loot_powerUp2' + fileFormat;
 loot.prototype.sfx3 = 'loot_powerUp3' + fileFormat;
@@ -36,88 +21,85 @@ loot.prototype.reset = function(x, y)
 {
 	this.x = x;
 	this.y = y;
-	this.dead = false;
 	this.key = Math.floor(Math.random() * this.drops.length);
 	this.type = this.drops[this.key];
-	switch(this.type) {
-		/* jshint ignore:start */
-		case 'health':
-			this.image = game.offCtx['loot_shields'];
+	this.image = game.offCtx[this.type];
+};
+
+loot.prototype.reward = function()
+{
+	switch(this.type)
+	{
+		case 'loot_shields':
+			playerShip.hull = playerShip.hull <= 7.5 ? playerShip.hull + 2.5 : playerShip.hull = 10;
+			gameUI.updateEnergy();
 		break;
-		case 'laser':
-			this.image = game.offCtx['loot_lasers'];
+		case 'loot_lasers':
+			playerShip.laserLevel = playerShip.laserLevel < 3 ? playerShip.laserLevel + 1 : playerShip.laserLevel;
 		break;
-		case 'missile':
-			this.image = game.offCtx['loot_missiles'];
+		case 'loot_missiles':
+			playerShip.missileLevel = playerShip.missileLevel < 3 ? playerShip.missileLevel + 1 : playerShip.missileLevel;
 		break;
-		/* jshint ignore:end */
 	}
 };
 
-loot.prototype.update = function()
+loot.prototype.sfxPlay = function()
 {
-	if(!this.dead)
+	if (game.sound)
 	{
-		this.vx = Math.cos(this.direction) * (this.speed*dt);
-		this.vy = Math.sin(this.direction) * (this.speed*dt);
-		this.x += this.vx;
-		this.y += this.vy;
-
-		this.draw(this.x, this.y);
-
-		if (Collision(this, playerShip))
+		if (game.sfx[this.sfx1].paused)
 		{
-			switch(this.type)
-			{
-		    case 'health':
-					if (this.hull <= 7.5)
-					{
-						playerShip.hull += 2.5;
-					}
-					else {
-						playerShip.hull = 10;
-					}
-		      gameUI.updateEnergy();
-		    break;
-		    case 'laser':
-		      playerShip.laserLevel = playerShip.laserLevel < 3 ? playerShip.laserLevel + 1 : playerShip.laserLevel;
-		    break;
-		    case 'missile':
-		      playerShip.missileLevel = playerShip.missileLevel < 3 ? playerShip.missileLevel + 1 : playerShip.missileLevel;
-		    break;
-			}
-			if (game.sound)
-      {
-      	if (game.sfx[this.sfx1].paused)
-      	{
-      		game.sounds.push(game.sfx[this.sfx1]);
-      	}
-      	else if (game.sfx[this.sfx2].paused)
-      	{
-      		game.sounds.push(game.sfx[this.sfx2]);
-      	}
-      	else if (game.sfx[this.sfx3].paused)
-      	{
-      		game.sounds.push(game.sfx[this.sfx3]);
-      	}
-      }
-			this.dead = true;
+			game.sounds.push(game.sfx[this.sfx1]);
 		}
-
-		if (this.y > game.outerBottom) //always goes down
+		else if (game.sfx[this.sfx2].paused)
 		{
-			this.dead = true;
+			game.sounds.push(game.sfx[this.sfx2]);
+		}
+		else if (game.sfx[this.sfx3].paused)
+		{
+			game.sounds.push(game.sfx[this.sfx3]);
 		}
 	}
-	else
+};
+
+loot.prototype.setMovement = function()
+{
+	this.vx = Math.cos(this.direction) * (this.speed*dt);
+	this.vy = Math.sin(this.direction) * (this.speed*dt);
+	this.x += this.vx;
+	this.y += this.vy;
+};
+
+loot.prototype.setBoundaries = function()
+{
+	if (this.y > game.outerBottom) //always goes down
 	{
 		freeLoot(this);
 	}
 };
 
-loot.prototype.draw = function(x, y)
+loot.prototype.checkCollision = function()
 {
-	this.ctx.drawImage(this.image, x, y);
+	if (Collision(this, playerShip))
+	{
+		this.reward();
+		this.sfxPlay();
+
+		freeLoot(this);
+	}
+};
+
+loot.prototype.draw = function()
+{
+	this.ctx.drawImage(this.image, this.x, this.y);
+};
+
+loot.prototype.update = function()
+{
+	this.setMovement();
+	this.setBoundaries();
+	this.checkCollision();
+	this.draw();
 };
 
 ////////////
