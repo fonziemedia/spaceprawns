@@ -21,6 +21,7 @@ module.exports = function(grunt) {
                 '_dev/enemies/enemyBase.js',
                 '_dev/enemies/wave.js',
                 '_dev/boss.js',
+                '_dev/bossSectoid.js',
                 '_dev/enemyBullet.js',
                 '_dev/loot.js',
                 '_dev/ui.js',
