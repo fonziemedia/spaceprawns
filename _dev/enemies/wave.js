@@ -1,4 +1,4 @@
-var enemyWave = function(side, pos, race, fleetSize, speed, hull, fireRate)
+enemyWave = function(side, pos, race, fleetSize, speed, hull, fireRate)
 {
 	this.side = side;
 	this.spawnedShips = 0;
@@ -27,31 +27,36 @@ var enemyWave = function(side, pos, race, fleetSize, speed, hull, fireRate)
 			this.direction = Math.PI;
 			break;
 	}
-	this.over = false;
+};
+enemyWave.prototype.over = false;
 
-	this.update = function()
+enemyWave.prototype.recycle = function()
+{
+	freeEnemyWave(this);
+};
+
+enemyWave.prototype.update = function()
+{
+	if(!this.over)
 	{
-		if(!this.over)
-		{
-			this.spawnTimer++;
+		this.spawnTimer++;
 
-			if (this.spawnTimer % this.spawnRate === 0)
-			{
-					this.spawnFireRate = Math.round(utils.randomRange(this.fireRate, this.fireRate*2)); //a randomRange so that each ship fires at it's own time
-					getNewEnemyMinion(this.x, this.y, this.speed, this.direction, this.hull, this.race, this.spawnFireRate);
-					this.spawnedShips++;
-			}
-
-			if (this.spawnedShips == this.fleetSize)
-			{
-				this.over = true;
-			}
-		}
-		else
+		if (this.spawnTimer % this.spawnRate === 0)
 		{
-			freeEnemyWave(this);
+				this.spawnFireRate = Math.round(utils.randomRange(this.fireRate, this.fireRate*2)); //a randomRange so that each ship fires at it's own time
+				getNewEnemyMinion(this.x, this.y, this.speed, this.direction, this.hull, this.race, this.spawnFireRate);
+				this.spawnedShips++;
 		}
-	};
+
+		if (this.spawnedShips == this.fleetSize)
+		{
+			this.over = true;
+		}
+	}
+	else
+	{
+		this.recycle();
+	}
 };
 
 ////////////
@@ -60,53 +65,44 @@ var enemyWave = function(side, pos, race, fleetSize, speed, hull, fireRate)
 function getNewEnemyWave(side, pos, race, fleetSize, speed, hull, fireRate)
 {
   var ew = null;
-  //check to see if there is a spare one
-  if (game.wavesPool.length > 0)
-  {
-  	//recycle
-    ew = game.wavesPool.pop();
-    ew.side = side;
-		ew.spawnedShips = 0;
-		ew.race = race;
-		ew.fleetSize = fleetSize;
-		ew.speed = speed;
-		ew.hull = hull;
-		ew.fireRate = fireRate;
-		ew.spawnTimer = 1;
-		ew.spawnRate = Math.round(1500 * dt);
-		switch (ew.side)
-		{
-			case 'top':
-				ew.x = pos;
-				ew.y = game.outerTop;
-				ew.direction = Math.PI/2;
-			break;
-			case 'left':
-				ew.x = game.outerLeft;
-				ew.y = pos;
-				ew.direction = 0;
-			break;
-			case 'right':
-				ew.x = game.outerRight;
-				ew.y = pos;
-				ew.direction = Math.PI;
-			break;
-		}
-		ew.over = false;
-  	game.waves.push(ew);
-  }
-  else
-  {
-		//none available, construct a new one
-		ew = new enemyWave(side, pos, race, fleetSize, speed, hull, fireRate);
-		game.waves.push(ew);
-  }
+
+	//recycle
+  ew = game.wavesPool.pop();
+  ew.side = side;
+	ew.spawnedShips = 0;
+	ew.race = race;
+	ew.fleetSize = fleetSize;
+	ew.speed = speed;
+	ew.hull = hull;
+	ew.fireRate = fireRate;
+	ew.spawnTimer = 1;
+	ew.spawnRate = Math.round(1500 * dt);
+	switch (ew.side)
+	{
+		case 'top':
+			ew.x = pos;
+			ew.y = game.outerTop;
+			ew.direction = Math.PI/2;
+		break;
+		case 'left':
+			ew.x = game.outerLeft;
+			ew.y = pos;
+			ew.direction = 0;
+		break;
+		case 'right':
+			ew.x = game.outerRight;
+			ew.y = pos;
+			ew.direction = Math.PI;
+		break;
+	}
+	ew.over = false;
+	game.objects.push(ew);
 }
 
 function freeEnemyWave(ew)
 {
 	// find the active bullet and remove it
-	game.waves.splice(game.waves.indexOf(ew),1);
+	game.objects.splice(game.objects.indexOf(ew),1);
 	// return the bullet back into the pool
 	game.wavesPool.push(ew);
 }

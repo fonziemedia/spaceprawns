@@ -205,6 +205,7 @@ function resetGame() //called on level start
 	clrCanvas();
 
 	//Game state
+	game.gameOver = true;
 	game.bossDead = false;
 	game.levelComplete = false;
 
@@ -212,13 +213,21 @@ function resetGame() //called on level start
 	game.timer = 0;
 	game.levelUpTimer = 0;
 
-	//Objects
+	// Back to the pool dudes
+	var en = game.enemies.length;
+	while (en--)
+	{
+		game.enemies[en].recycle();
+	}
+
+	var obj = game.objects.length;
+	while (obj-- && obj > 0) // > 0 excludes playerShip
+	{
+		game.objects[obj].recycle();
+	}
+
 	playerShip.reset();
-	game.bullets = [];
-	game.explosions = [];
-	game.enemies = [];
-	game.waves = [];
-	game.loot = [];
+
 	gameUI.updateAll();
 
 	//Sounds
@@ -266,9 +275,10 @@ function startGame()
 {
 	game.loaded = true;
 
-	if (typeof win[playerShip] === "undefined")
+	if (!(game.objects[0] instanceof player))
 	{
-		playerShip = new player(10, 15);
+		game.objects.unshift(new player(10, 15));
+		playerShip = game.objects[0];
 	}
 
 	//preparing sound tracks (chromium fix)
@@ -353,6 +363,7 @@ function initImages(ipaths) { //our images engine: passing the array 'ipaths' to
 
 		img.src = ipaths[i];
 		var imgIndex = img.src.split("/").pop(); //obtaining file name from path
+		imgIndex = imgIndex.substr(0, imgIndex.indexOf('.')) || imgIndex;
 
 		//!check if you should change this to object notation! you can't access array functions like this anyway
 		game.images[imgIndex] = img; //defining game.image[index] as a new image (with ipaths)
@@ -521,6 +532,7 @@ function initObjects()
 	initEnemyMinions();
 	initEnemyMiniBosses();
 	initEnemyBases();
+	initBosses();
 	initEnemyBullets();
 	initPlayerBullets();
 	initExplosions();
@@ -568,12 +580,35 @@ function windowLoadEvent()
 	win.removeEventListener("load", windowLoadEvent, false);
 	//Run function whenever browser resizes
 	window.onresize = respondCanvas;
+	//listen to fullscreen changes
+	doc.addEventListener("fullscreenchange", fullScreenHandler);
+	doc.addEventListener("webkitfullscreenchange", fullScreenHandler);
+	doc.addEventListener("mozfullscreenchange", fullScreenHandler);
+	doc.addEventListener("MSFullscreenChange", fullScreenHandler);
 	//check for updates appcache
 	win.applicationCache.addEventListener("updateready", appCacheEvent, false);
 	//load images
 	initImages(game.imagePaths);
 	//start checking loaded game assets
 	checkImages();
+}
+
+function fullScreenHandler()
+{
+	var fullScreen = $('#toggleFullScreen');
+
+	game.fullScreen = game.fullScreen ? false : true;
+
+  if (game.fullScreen)
+  {
+		fullScreen.addClass('active');
+		fullScreen.text('Fullscreen: ON');
+  }
+  else
+  {
+		fullScreen.removeClass('active');
+		fullScreen.text('Fullscreen: OFF');
+  }
 }
 
 function appCacheEvent()
@@ -591,8 +626,7 @@ function appCacheEvent()
 }
 
 //run on window load functions
-win.addEventListener("load", windowLoadEvent,false);
-
+win.addEventListener("load", windowLoadEvent, false);
 
 //Audio pre-load test
 var audiopreload = false;

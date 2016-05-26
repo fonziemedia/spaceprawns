@@ -1,12 +1,12 @@
 CACHE MANIFEST
-# 2015-12-15 ver 0.11.6
+# 2016-05-26 ver 0.17.0
 
 # Explicitly cached entries
 index.html
 _css/style.css
 _css/_src/game.css
 _css/_src/reset.css
-_api/jquery-2.1.4.min.js
+_api/jquery-2.2.4.min.js
 main.js
 main.min.js
 game.xml

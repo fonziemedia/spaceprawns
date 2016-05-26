@@ -7,9 +7,9 @@ enemyMinion.prototype.constructor = enemyMinion;
 
 enemyMinion.prototype.explosionSize = 'medium';
 
-enemyMinion.prototype.recycle = function(en)
+enemyMinion.prototype.recycle = function()
 {
-	freeEnemyMinion(en);
+	freeEnemyMinion(this);
 };
 
 ////////////

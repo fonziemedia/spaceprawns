@@ -1,5 +1,6 @@
 player = function(hull, fireRate)
 {
+	self = this;
 	this.fireRate = fireRate;
 	this.hull = hull;
 	this.maxHull = hull;
@@ -87,8 +88,6 @@ player.prototype.mouseControls = function()
 		{
 			this.speedY = this.speedY > 0 ? Math.floor(this.speedY - this.accel) : Math.ceil(this.speedY + this.accel);
 		}
-
-
 	}
 };
 
@@ -300,12 +299,13 @@ player.prototype.detectCollision = function()
 
 player.prototype.checkHull = function()
 {
-	if (this.hull <= 0)
+	if (this.hull <= 0 && !this.imune)
 	{
 		this.lives -= 1;
-		getNewExplosion(this.x, this.y, 0, 0, 'large', 'player'); //need to obtain player direction if we want dinamic explosions, for now we just blow it still
+		getNewExplosion(this.x, this.y, 0, 0, 'xLarge'); //need to obtain player direction if we want dinamic explosions, for now we just blow it still
 		player.prototype.update = player.prototype.die;
 		gameUI.updateHangar();
+		this.imune = true; //avoids collision while dead
 	}
 };
 
@@ -337,11 +337,31 @@ player.prototype.die = function()
 
 player.prototype.levelComplete = function()
 {
-	this.spriteFrame = 10;
-	this.speedX = 0;
-	this.speedY = 0;
-	this.speed = Math.round(this.speedLimit*2);
-	this.y -= this.speed;
+	game.levelUpTimer++;
+
+	if (game.levelUpTimer < 100) //waiting a few ms before engaging warp speed
+	{
+		this.setControls();
+		this.setThrust();
+		this.setBoundaries();
+		this.checkImunity();
+		this.detectCollision();
+		this.checkHull();
+	}
+	else if (game.levelUpTimer > 100)
+	{
+		this.spriteFrame = 10;
+		this.speedX = 0;
+		this.speedY = 0;
+		this.speed = Math.round(this.speedLimit*2);
+		this.y -= this.speed;
+	}
+	else // game.levelUpTimer === 100
+	{
+		game.levelComplete = true;
+		gameState.lvlComplete();
+		mouseIsDown = 0;
+	}
 };
 
 player.prototype.getSpriteFrame = function()

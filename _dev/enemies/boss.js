@@ -6,6 +6,8 @@ boss = function(x, y, speed, direction, hull, image)
 	this.image = game.offCtx[image];
 	this.width = game.offCtx[image].width;
 	this.height = game.offCtx[image].height;
+	this.centerX = Math.round(this.width*0.5);	//these are for explosions, see playerBullet's checkCollision()
+	this.centerY = Math.round(this.height*0.5);
 	this.hCenter = Math.round(this.width/2);
 	this.x = Math.round(game.centerX - this.hCenter);
 
@@ -17,17 +19,23 @@ boss.prototype.yStop = Math.round(game.height*0.05);
 boss.prototype.audioHit1 = 'hit' + fileFormat;
 boss.prototype.audioHit2 = 'hit2' + fileFormat;
 boss.prototype.audioHit3 = 'hit3' + fileFormat;
-boss.prototype.dead = false;
 boss.prototype.deadTimer = 0;
 boss.prototype.lasersTimer = 1;
 boss.prototype.missilesTimer = 1;
 boss.prototype.lasersFireRate = null;
 boss.prototype.missilesFireRate = null;
 
+boss.prototype.reset = function(x, y, hull) //only variable arguments here
+{
+	this.x = x;
+	this.y = y;
+	this.hull = hull;
+};
+
 boss.prototype.detectCollision = function()
 {
 	// player-boss collision
-	if (Collision(playerShip, this) && !this.dead && !playerShip.imune && !game.gameOver)
+	if (Collision(playerShip, this) && !playerShip.imune && !game.gameOver)
 	{
 		playerShip.hull -= this.hull;
 		playerShip.hit = true;
@@ -37,17 +45,18 @@ boss.prototype.detectCollision = function()
 
 boss.prototype.die = function()
 {
-	getNewExplosion(this.x, this.y, this.speed, this.direction, 'xLarge', 'boss');
+	getNewExplosion(this.x, this.y, this.speed, this.direction, 'xLarge');
 	if (!playerShip.crashed)
 	{
 		game.score++;
 		game.levelScore++;
 		gameUI.updateScore();
 		game.bossDead = true;
-		this.dead = true;
 	}
 
-	boss.prototype.update = boss.prototype.downedUpdate;
+	player.prototype.update = player.prototype.levelCompleteUpdate;
+
+	this.recycle();
 };
 
 boss.prototype.checkHull = function()
@@ -79,19 +88,6 @@ boss.prototype.draw = function()
 	this.ctx.drawImage(this.image, this.x, this.y);
 };
 
-boss.prototype.downedUpdate = function()
-{
-	game.levelUpTimer++; //waiting a few secs before engaging warp speed
-
-	if (game.levelUpTimer == 100)
-	{
-		game.levelComplete = true;
-		player.prototype.update = player.prototype.levelCompleteUpdate;
-		gameState.lvlComplete();
-		mouseIsDown = 0;
-	}
-};
-
 boss.prototype.aliveUpdate = function()
 {
 	this.setMovement();
@@ -102,3 +98,17 @@ boss.prototype.aliveUpdate = function()
 };
 
 boss.prototype.update = boss.prototype.aliveUpdate;
+
+
+/////////////////////////
+// Pre-load game bosses
+/////////////////////////
+function initBosses()
+{
+	for (var b = 1 ; b <= game.requiredBosses; b++)
+	{
+		var firstBoss = new sectoidBoss(game.width*0.40, game.outerTop, 150, Math.PI/2, 100, 'boss_sectoid');
+		game.bossesPool.push(firstBoss);
+		game.doneObjects++;
+	}
+}

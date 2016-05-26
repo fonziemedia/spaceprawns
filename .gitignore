@@ -44,6 +44,7 @@ Temporary Items
 .apdisk
 
 # Custom
+_dev/_graveyard/
 _img/_src/
 _sounds/_src/
 node_modules/

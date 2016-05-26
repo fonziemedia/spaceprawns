@@ -20,10 +20,11 @@ state.prototype.start = function()
 
 	if(!game.started) //checking if we're starting a new game or restarting
 	{
-		game.started = true; //this needs to be set after gameMenu.toggle() or will break resume button
+		game.started = true; // set after gameMenu.toggle() to prevent breaking resume button
 	}
 	else
 	{
+		// this shouldn't be here!
 		game.score = 0;
 		game.level = 1;
 	}

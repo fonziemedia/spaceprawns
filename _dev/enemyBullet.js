@@ -12,16 +12,13 @@ enemyBullet = function(x, y, speed, direction, power, image)
 	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 
-	this.spriteX = -Math.round(this.width*0.5);  //-this.size/2 because we're rotating ctx
-	this.spriteY = -Math.round(this.height*0.5);  //-this.size/2 because we're rotating ctx
+	this.spriteX = -Math.round(this.width*0.5);  //-this.width/2 because we're rotating ctx
+	this.spriteY = -Math.round(this.height*0.5);  //-this.height/2 because we're rotating ctx
 };
-
-//invariables (note: any other object properties that require these need to be declared in the prototype function)
-enemyBullet.prototype.dead = false;
 enemyBullet.prototype.friction = 1.02;
 enemyBullet.prototype.ctx = game.context;
 
-enemyBullet.prototype.reset = function(x, y, speed, direction, power)	//only variable arguments here
+enemyBullet.prototype.reset = function(x, y, speed, direction, power)
 {
 	this.x = x;
 	this.y = y;
@@ -30,46 +27,51 @@ enemyBullet.prototype.reset = function(x, y, speed, direction, power)	//only var
 	this.speed = speed;
 	this.direction = direction;
 	this.power = power;
-	this.dead = false;
 	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 };
 
-enemyBullet.prototype.update = function()
+enemyBullet.prototype.recycle = function()
 {
-	if (!this.dead)
+	freeEnemyBullet(this);
+};
+
+enemyBullet.prototype.checkCollision = function()
+{
+	if (Collision(this, playerShip) && !playerShip.imune && !game.gameOver)
 	{
-		this.vx *= this.friction;
-		this.vy *= this.friction;
-		this.x += this.vx;
-		this.y += this.vy;
+		getNewExplosion(this.x, this.y, 0, 1, 'xSmall');
+		playerShip.hull -= this.power;
+		gameUI.updateEnergy();
+		playerShip.hit = true;
 
-		this.draw(this.x, this.y);
-
-		if (Collision(this, playerShip) && !playerShip.imune && !game.gameOver)
-		{
-			getNewExplosion(this.x, this.y, 0, 1, 'xSmall', 'chasis');
-			playerShip.hull -= this.power;
-			gameUI.updateEnergy();
-			playerShip.hit = true;
-			this.dead = true;
-		}
-
-		if(this.x > game.outerRight || this.x < game.outerLeft || this.y > game.outerBottom || this.y < game.outerTop)
-		{
-			this.dead = true;
-		}
-	}
-	else
-	{
-		freeEnemyBullet(this);
+		this.recycle();
 	}
 };
 
-enemyBullet.prototype.draw = function(x, y)	//fix this with sprites with diferent angles
+enemyBullet.prototype.setBoundaries = function()
+{
+	if (this.x > game.outerRight ||
+		 this.x < game.outerLeft ||
+		 this.y > game.outerBottom ||
+		 this.y < game.outerTop)
+	{
+		this.recycle();
+	}
+};
+
+enemyBullet.prototype.setMovement = function()
+{
+	this.vx *= this.friction;
+	this.vy *= this.friction;
+	this.x += this.vx;
+	this.y += this.vy;
+};
+
+enemyBullet.prototype.draw = function()	//fix this with sprites with diferent angles
 {
 	this.ctx.save();
-	this.ctx.translate(x, y);
+	this.ctx.translate(this.x, this.y);
 	this.ctx.rotate(this.direction - Math.PI/2);
 
 	this.sprite.draw(this.spriteX, this.spriteY);
@@ -77,33 +79,32 @@ enemyBullet.prototype.draw = function(x, y)	//fix this with sprites with diferen
 	this.ctx.restore();
 };
 
+enemyBullet.prototype.update = function()
+{
+	this.checkCollision();
+	this.setBoundaries();
+	this.setMovement();
+	this.draw();
+};
+
 ////////////
 // Factory
 ////////////
 getNewEnemyBullet = function(x, y, speed, direction, power, image)
 {
-    var eb = null;
-    // check to see if there is a spare one
-    if (game.enemyBulletsPool.length > 0)
-    {
-			//recycle
-			eb = game.enemyBulletsPool.pop();
-			eb.sprite.reset(image, 3, 1, 4);
-			eb.reset(x, y, speed, direction, power);
-			game.bullets.push(eb);
-    }
-    else
-    {
-    	// none available, construct a new one
-    	eb = new enemyBullet(x, y, speed, direction, power, image);
-    	game.bullets.push(eb);
-    }
+  var eb = null;
+	//recycle
+	eb = game.enemyBulletsPool.pop();
+	eb.sprite.reset(image, 3, 1, 4);
+	eb.reset(x, y, speed, direction, power);
+
+	game.objects.push(eb);
 };
 
 freeEnemyBullet = function(eb)
 {
 	// find the active bullet and remove it
-	game.bullets.splice(game.bullets.indexOf(eb),1);
+	game.objects.splice(game.objects.indexOf(eb),1);
 	// return the bullet back into the pool
 	game.enemyBulletsPool.push(eb);
 };

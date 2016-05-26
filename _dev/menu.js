@@ -13,26 +13,9 @@ menu = function()
 	this.animationSpeed = 800;
 	this.toggled = false;
 
-	doc.addEventListener("fullscreenchange", this.fullScreenHandler);
-	doc.addEventListener("webkitfullscreenchange", this.fullScreenHandler);
-	doc.addEventListener("mozfullscreenchange", this.fullScreenHandler);
-	doc.addEventListener("MSFullscreenChange", this.fullScreenHandler);
-};
-
-menu.prototype.fullScreenHandler = function()
-{
-	game.fullScreen = game.fullScreen ? false : true;
-
-  if (game.fullScreen)
-  {
-		self.fullScreen.addClass('active');
-		self.fullScreen.text('Fullscreen: ON');
-  }
-  else
-  {
-		self.fullScreen.removeClass('active');
-		self.fullScreen.text('Fullscreen: OFF');
-  }
+	//enabling buttons (firefox caching disabled)
+	document.getElementById("resumeGame").disabled = false;
+	document.getElementById("startGame").disabled = false;
 };
 
 menu.prototype.toggleFullScreen = function(trigger)  //experimental   only works with user input

@@ -11,9 +11,9 @@ enemyBase.prototype.constructor = enemyBase;
 
 enemyBase.prototype.explosionSize = 'xLarge';
 
-enemyBase.prototype.recycle = function(en)
+enemyBase.prototype.recycle = function()
 {
-	freeEnemyBase(en);
+	freeEnemyBase(this);
 };
 
 enemyBase.prototype.draw = function()

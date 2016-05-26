@@ -168,7 +168,7 @@ level1.update = function ()
 			game.tracks[2].play();
 			game.tracks[2].loop = true;
 		}
-		game.enemies.push(new sectoidBoss(game.width*0.3, game.outerTop, 150, Math.PI/2, 100, 'boss_sectoid'));
+		getNewSectoidBoss();
 	}
 
 	if (game.seconds > 55 && game.enemies.length === 0 && game.bossDead && game.tracks.length == 3)

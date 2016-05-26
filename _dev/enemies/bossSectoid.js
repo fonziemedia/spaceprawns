@@ -68,3 +68,31 @@ sectoidBoss.prototype.fightMovement = function()
 		this.x = this.x;
 	}
 };
+
+sectoidBoss.prototype.recycle = function()
+{
+	sectoidBoss.prototype.setMovement = sectoidBoss.prototype.introMovement;
+	freeSectoidBoss(this);
+};
+
+////////////
+// Factory
+////////////
+function getNewSectoidBoss()
+{
+	var boss = null;
+
+	boss = game.bossesPool[0]; //get the specific boss
+	boss.reset(game.width*0.40, game.outerTop, 100);
+	game.enemies.push(boss);
+
+	game.bossesPool.splice(0, 1); //remove it from the pool while it's active
+}
+
+function freeSectoidBoss(boss)
+{
+	//find the active boss and remove it
+	game.enemies.splice(game.enemies.indexOf(boss), 1);
+	//return the boss back into the pool
+	game.bossesPool.splice(0, 0, boss); //return at specific index (0)
+}

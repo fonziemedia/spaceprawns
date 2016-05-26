@@ -26,42 +26,25 @@ function update()
 	/* jshint ignore:end */
 
 	/////////////////////////////////////////////////////////////////////
-	// Game objects	**!Load in order of appearance (bottom layer 1st)!**
+	// Game objects	**!Load in order of appearance (bottom layer = 1st)!**
 	/////////////////////////////////////////////////////////////////////
-	if (game.enemies.length > 0);
-	{
-		var ew = game.waves.length;
-		while (ew--)
-		{
-		    game.waves[ew].update();
-		}
 
-		var en = game.enemies.length;
-		while (en--)
-		{
-		    game.enemies[en].update();
-		}
+	// enemies on separate loop
+	// to optimise complex collision detection
+	// (see playerBullet collision)
+	var en = game.enemies.length;
+	while (en--)
+	{
+			game.enemies[en].update();
 	}
 
-	if (game.bullets.length > 0);
+	var obj = game.objects.length;
+	while (obj--)
 	{
-		var b = game.bullets.length;
-		while (b--)
-		{
-		    game.bullets[b].update();
-		}
+			game.objects[obj].update();
 	}
 
-	playerShip.update();
-
-	if (game.explosions.length > 0);
-	{
-		var e = game.explosions.length;
-		while (e--)
-		{
-		    game.explosions[e].update();
-		}
-	}
+	// playerShip.update();
 
 	///////////////////////////////////
 	// Game Sounds
@@ -71,13 +54,13 @@ function update()
 		for(var s in game.sounds)
 		{
 			game.sounds[s].play();
-			game.sounds[s].addEventListener("paused", game.sounds.splice(s,1));
+			game.sounds[s].addEventListener("paused", game.sounds.splice(s,1)); //needs recyling!
 		}
 	}
 
-	// ///////////////////////////////////
-	// // D3BUG3R!
-	// ///////////////////////////////////
+	///////////////////////////////////
+	// D3BUG3R!
+	///////////////////////////////////
 	// console.log (dt);
 	// console.log(fileFormat);
 	//
@@ -88,13 +71,18 @@ function update()
 	// console.log(win.outerHeight);
 	// console.log(win.outerWidth);
 
-	// ///////////////////////////////////
-	// // GAME ARRAYS
-	// ///////////////////////////////////
+	///////////////////////////////////
+	// GAME ARRAYS
+	///////////////////////////////////
 	// console.log('keys: '+ game.keys.length);
+	// console.log('objects: ' + game.objects.length);
 	// console.log('playerBulletsPool: '+ game.playerBulletsPool.length);
+	// console.log('playerBulletsPool: '+ game.enemyBulletsPool.length);
   // console.log('bulletsActive: ' + game.bullets.length);
 	// console.log('enemies: '+ game.enemies.length);
+	// console.log('game.minionsPool: ' + game.minionsPool.length);
+	// console.log('game.bossesPool: ' + game.bossesPool.length);
+	// console.log('game.explosionsPool: ' + game.explosionsPool.length);
 	// console.log('Waves pool: ' + game.wavesPool.length);
 	// console.log('Waves active: ' + game.waves.length);
   // console.log('pool: ' + game.lootPool.length);
@@ -113,11 +101,24 @@ function update()
 	// console.log('reqImages: ' + game.requiredImages);
 	// console.log('doneImages: ' + game.doneImages);
 
-	// ///////////////////////////////////
-	// // TOUCH INPUT
-	// ///////////////////////////////////
+	///////////////////////////////////
+	// TOUCH INPUT
+	///////////////////////////////////
 	// console.log('touchInitX:' + touchInitX);
 	// console.log('touchInitY:' + touchInitY);
 	// console.log('inputAreaX:' + inputAreaX);
 	// console.log('inputAreaY:' + inputAreaY);
+
+	///////////////////////////////////
+	// PLAYER MOVEMENT
+	///////////////////////////////////
+	// console.log ('speedX: ' + playerShip.speedX);
+	// console.log ('spriteFrame: ' + playerShip.spriteFrame);
+	// console.log ('speedY: ' + playerShip.speedY);
+	// console.log ('accel: ' + playerShip.accel);
+	// console.log ('speedLimit: ' + playerShip.speedLimit);
+
+	// console.log('playerShip.hull: ' + playerShip.hull);
+
+
 }

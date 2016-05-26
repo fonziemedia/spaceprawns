@@ -26,6 +26,11 @@ loot.prototype.reset = function(x, y)
 	this.image = game.offCtx[this.type];
 };
 
+loot.prototype.recycle = function()
+{
+	freeLoot(this);
+};
+
 loot.prototype.reward = function()
 {
 	switch(this.type)
@@ -74,7 +79,7 @@ loot.prototype.setBoundaries = function()
 {
 	if (this.y > game.outerBottom) //always goes down
 	{
-		freeLoot(this);
+		this.recycle();
 	}
 };
 
@@ -85,7 +90,7 @@ loot.prototype.checkCollision = function()
 		this.reward();
 		this.sfxPlay();
 
-		freeLoot(this);
+		this.recycle();
 	}
 };
 
@@ -96,9 +101,9 @@ loot.prototype.draw = function()
 
 loot.prototype.update = function()
 {
+	this.checkCollision();
 	this.setMovement();
 	this.setBoundaries();
-	this.checkCollision();
 	this.draw();
 };
 
@@ -108,26 +113,17 @@ loot.prototype.update = function()
 function getNewLoot(x, y)
 {
 	var l = null;
-	// check to see if there is a spare one
-	if (game.lootPool.length > 0)
-	{
-		//recycle
-		l = game.lootPool.pop();
-		l.reset(x, y);
-		game.bullets.push(l);
-	}
-	else
-	{
-		// none available, construct a new one
-		l = new loot(x, y);
-		game.bullets.push(l);
-	}
+
+	//recycle
+	l = game.lootPool.pop();
+	l.reset(x, y);
+	game.objects.push(l);
 }
 
 function freeLoot(l)
 {
 	// find the active bullet and remove it
-	game.bullets.splice(game.bullets.indexOf(l),1);
+	game.objects.splice(game.objects.indexOf(l),1);
 	// return the bullet back into the pool
 	game.lootPool.push(l);
 }

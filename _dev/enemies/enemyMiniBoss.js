@@ -7,9 +7,9 @@ enemyMiniBoss.prototype.constructor = enemyMiniBoss;
 
 enemyMiniBoss.prototype.explosionSize = 'large';
 
-enemyMiniBoss.prototype.recycle = function(en)
+enemyMiniBoss.prototype.recycle = function()
 {
-	freeEnemyMiniBoss(en);
+	freeEnemyMiniBoss(this);
 };
 
 ////////////

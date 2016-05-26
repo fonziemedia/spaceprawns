@@ -14,8 +14,7 @@ playerBullet = function(x, y, speed, direction, power, friction, image)
 	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 };
-// note: prototype properties are set at run time, the constructor properties/methods are set upon object creation
-playerBullet.prototype.dead = false;
+
 playerBullet.prototype.ctx = game.context;
 
 playerBullet.prototype.reset = function(x, y, speed, power, friction)  //only variable arguments here
@@ -28,52 +27,63 @@ playerBullet.prototype.reset = function(x, y, speed, power, friction)  //only va
 	this.speed = speed;
 	this.power = power;
 	this.friction = friction;
-	this.dead = false;
 	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
 	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
 };
 
+playerBullet.prototype.recycle = function()
+{
+	freeBullet(this);
+};
+
+playerBullet.prototype.checkCollision = function()
+{
+	var en = game.enemies.length;
+	while (en--)
+	{
+		if (Collision(game.enemies[en], this))
+		{
+			game.enemies[en].hull -= this.power;
+			if(game.enemies[en].hull > 0)
+			{
+				getNewExplosion(game.enemies[en].x + game.enemies[en].centerX, game.enemies[en].y + game.enemies[en].centerY, 0, 1, 'xSmall');
+			}
+
+			this.recycle();
+		}
+	}
+};
+
+playerBullet.prototype.setBoundaries = function()
+{
+	if (this.y < game.outerTop) //always goes up
+	{
+		this.recycle();
+	}
+};
+
+playerBullet.prototype.setMovement = function()
+{
+	this.vx *= this.friction;
+	this.vy *= this.friction;
+	this.x += this.vx;
+	this.y += this.vy;
+};
+
+
+playerBullet.prototype.draw = function()
+{
+	this.sprite.draw(this.x, this.y);
+};
+
 playerBullet.prototype.update = function()
 {
-	// Replacing the default 'update' method
-	if (!this.dead)
-	{
-		this.vx *= this.friction;
-		this.vy *= this.friction;
-		this.x += this.vx;
-		this.y += this.vy;
-
-		this.draw(this.x, this.y);
-
-		//projectiles collision
-		for (var e in game.enemies)
-		{
-			if (Collision(game.enemies[e], this))
-			{ //dead check avoids ghost scoring
-				game.enemies[e].hull -= this.power;
-				if(game.enemies[e].hull > 0)
-				{
-					getNewExplosion(game.enemies[e].x + game.enemies[e].width*0.5, game.enemies[e].y + game.enemies[e].height*0.5, 0, 1, 'xSmall', 'chasis');
-				}
-				this.dead = true;
-			}
-		}
-
-		if (this.y < game.outerTop) //always goes up
-		{
-			this.dead = true;
-		}
-	}
-	else
-	{
-		freeBullet(this);
-	}
+	this.checkCollision();
+	this.setBoundaries();
+	this.setMovement();
+	this.draw();
 };
 
-playerBullet.prototype.draw = function(x, y)
-{
-	this.sprite.draw(x, y);
-};
 
 ////////////
 // Factory
@@ -81,28 +91,18 @@ playerBullet.prototype.draw = function(x, y)
 getNewBullet = function(x, y, speed, direction, power, friction, image)
 {
 	var b = null;
-	//check to see if there is a spare one
-	if (game.playerBulletsPool.length > 0)
-	{
-		//recycle
-		b = game.playerBulletsPool.pop();
-		//(image, columns, rows, animationSpeed)
-		b.sprite.reset(image, 3, 1, 4);
-    b.reset(x, y, speed, power, friction);
-		game.bullets.push(b);
-	}
-	else
-	{
-		// none available, construct a new one
-		b = new playerBullet(x, y, speed, direction, power, friction, image);
-		game.bullets.push(b);
-	}
+	//recycle
+	b = game.playerBulletsPool.pop();
+	//(image, columns, rows, animationSpeed)
+	b.sprite.reset(image, 3, 1, 4);
+  b.reset(x, y, speed, power, friction);
+	game.objects.push(b);
 };
 
 freeBullet = function(b)
 {
 	//find the active bullet and remove it
-	game.bullets.splice(game.bullets.indexOf(b),1);
+	game.objects.splice(game.objects.indexOf(b),1);
 	//return the bullet back into the pool
 	game.playerBulletsPool.push(b);
 };

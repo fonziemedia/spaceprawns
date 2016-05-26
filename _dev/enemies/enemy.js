@@ -5,6 +5,8 @@ enemy = function(x, y, speed, direction, hull, image, fireRate)
 	this.image = game.offCtx[image];
 	this.width = game.offCtx[image].width;
 	this.height = game.offCtx[image].height;
+	this.centerX = Math.round(this.width*0.5);	//these are for explosions, see playerBullet's checkCollision()
+	this.centerY = Math.round(this.height*0.5);
 	this.speed = speed/pixelRatio;
 	this.direction = direction;
 	this.hull = hull;
@@ -24,6 +26,8 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, image, fireRate) 
 	this.image = game.offCtx[image];
 	this.width = this instanceof enemyBase ? this.sprite.frameWidth : game.offCtx[image].width;
 	this.height = this instanceof enemyBase ? this.sprite.frameHeight : game.offCtx[image].height;
+	this.centerX = Math.round(this.width*0.5);
+	this.centerY = Math.round(this.height*0.5);
 	this.speed = speed;
 	this.direction = direction;
 	this.hull = hull;
@@ -48,7 +52,7 @@ enemy.prototype.setMovement = function()
 
 enemy.prototype.die = function()
 {
-	getNewExplosion(this.x, this.y, this.speed, this.direction, this.explosionSize, 'enemy');
+	getNewExplosion(this.x, this.y, this.speed, this.direction, this.explosionSize);
 
 	lootchance = Math.random();
 	if (lootchance < 0.4)
@@ -63,7 +67,7 @@ enemy.prototype.die = function()
 		gameUI.updateScore();
 	}
 
-	this.recycle(this);
+	this.recycle();
 };
 
 enemy.prototype.checkHull = function()
@@ -74,7 +78,7 @@ enemy.prototype.checkHull = function()
 	}
 };
 
-enemy.prototype.detectCollision = function()
+enemy.prototype.checkCollision = function()
 {
 	if (Collision(this, playerShip) && !playerShip.imune && !game.gameOver)
 	{
@@ -90,7 +94,7 @@ enemy.prototype.setBoundaries = function()
 {
 	if (this.x > game.outerRight || this.x < game.outerLeft || this.y > game.outerBottom || this.y < game.outerTop)
 	{
-		this.recycle(this);
+		this.recycle();
 	}
 };
 
@@ -120,10 +124,10 @@ enemy.prototype.draw = function()
 
 enemy.prototype.update = function()
 {
+	this.checkCollision();
 	this.setMovement();
 	this.setBoundaries();
 	this.setGuns();
 	this.checkHull();
-	this.detectCollision();
 	this.draw();
 };
