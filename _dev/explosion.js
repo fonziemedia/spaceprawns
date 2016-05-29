@@ -1,21 +1,27 @@
 explosion = function (x, y, speed, direction, size)
 {
+	var explosionXSmall = 'explosion_s0',
+			explosionSmall = 'explosion_s1',
+			explosionMedium = 'explosion_s2',
+			explosionLarge = 'explosion_s3',
+			explosionXLarge = 'explosion_s4';
+
 	switch(size)
 	{
-		case 'xSmall':
-			this.image = 'explosion_s0';
+		case 0:
+			this.image = explosionXSmall;
 		break;
-		case 'small':
-			this.image = 'explosion_s1';
+		case 1:
+			this.image = explosionSmall;
 		break;
-		case 'medium':
-			this.image = 'explosion_s2';
+		case 2:
+			this.image = explosionMedium;
 		break;
-		case 'large':
-			this.image = 'explosion_s3';
+		case 3:
+			this.image = explosionLarge;
 		break;
-		case 'xLarge':
-			this.image = 'explosion_s4';
+		case 4:
+			this.image = explosionXLarge;
 		break;
 	}
 	this.sprite = new sprite(this.image, 5, 4, 2);
@@ -24,7 +30,6 @@ explosion = function (x, y, speed, direction, size)
 	this.speed = speed;
 	this.direction = direction;
 };
-
 explosion.prototype.audioHit1 = 'hit' + fileFormat;
 explosion.prototype.audioHit2 = 'hit2' + fileFormat;
 explosion.prototype.audioHit3 = 'hit3' + fileFormat;
@@ -37,23 +42,23 @@ explosion.prototype.reset = function(x, y, speed, direction, size)
 {
 	switch(size)
 	{
-		case 'xSmall':
+		case 0:
 			this.image = 'explosion_s0';
 			explosion.prototype.playSfx = explosion.prototype.sfxChasis;
 		break;
-		case 'small':
+		case 1:
 			this.image = 'explosion_s1';
 			explosion.prototype.playSfx = explosion.prototype.sfxDefault;
 		break;
-		case 'medium':
+		case 2:
 			this.image = 'explosion_s2';
 			explosion.prototype.playSfx = explosion.prototype.sfxDefault;
 		break;
-		case 'large':
+		case 3:
 			this.image = 'explosion_s3';
 			explosion.prototype.playSfx = explosion.prototype.sfxDefault;
 		break;
-		case 'xLarge':
+		case 4:
 			this.image = 'explosion_s4';
 			explosion.prototype.playSfx = explosion.prototype.sfxBlast;
 		break;
@@ -179,7 +184,7 @@ function initExplosions()
 {
 	for (var ex = 1 ; ex <= game.requiredExplosions; ex++)
 	{
-		e = new explosion(null, null, null, null, 'small', null);
+		e = new explosion(null, null, null, null, 1, null);
 		game.explosionsPool.push(e);
 		game.doneObjects++;
 	}

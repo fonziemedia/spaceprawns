@@ -40,7 +40,7 @@ enemyBullet.prototype.checkCollision = function()
 {
 	if (Collision(this, playerShip) && !playerShip.imune && !game.gameOver)
 	{
-		getNewExplosion(this.x, this.y, 0, 1, 'xSmall');
+		getNewExplosion(this.x, this.y, 0, 1, 0);
 		playerShip.hull -= this.power;
 		gameUI.updateEnergy();
 		playerShip.hit = true;

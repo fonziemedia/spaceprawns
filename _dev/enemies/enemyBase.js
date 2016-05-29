@@ -9,7 +9,7 @@ enemyBase = function(x, y, speed, direction, hull, image, fireRate)
 enemyBase.prototype = Object.create(enemy.prototype);
 enemyBase.prototype.constructor = enemyBase;
 
-enemyBase.prototype.explosionSize = 'xLarge';
+enemyBase.prototype.explosionSize = 4;
 
 enemyBase.prototype.recycle = function()
 {

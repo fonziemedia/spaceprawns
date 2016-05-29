@@ -1,8 +1,14 @@
+/////////////////////
+// GLOBAL VARS
+/////////////////////
+var doc = document,
+win = window,
+game = {};
 
 //iOS viewport fix
-if(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream)
+if(/iPad|iPhone|iPod/.test(navigator.userAgent) && !win.MSStream)
 {
-  document.querySelector('meta[name=viewport]')
+  doc.querySelector('meta[name=viewport]')
     .setAttribute(
       'content',
       'initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no'
@@ -40,14 +46,6 @@ error: function() {
 	alert("The XML File could not be processed correctly.");
 }
 });
-
-
-/////////////////////
-// GLOBAL VARS
-/////////////////////
-var doc = document,
-win = window,
-game = {};
 
 game.isMobile = false;
 // mobile device detection

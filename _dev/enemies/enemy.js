@@ -82,7 +82,7 @@ enemy.prototype.checkCollision = function()
 {
 	if (Collision(this, playerShip) && !playerShip.imune && !game.gameOver)
 	{
-		getNewExplosion(playerShip.x, playerShip.y, 0, 1, 'small', 'chasis');	//get new explosion sound for hiting player
+		getNewExplosion(playerShip.x, playerShip.y, 0, 1, 1, 'chasis');	//get new explosion sound for hiting player
 		playerShip.hull -= this.hull;
 		gameUI.updateEnergy();
 		playerShip.hit = true;

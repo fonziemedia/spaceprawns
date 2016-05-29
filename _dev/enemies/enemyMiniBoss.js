@@ -5,7 +5,7 @@ enemyMiniBoss = function(x, y, speed, direction, hull, image, fireRate)
 enemyMiniBoss.prototype = Object.create(enemy.prototype);
 enemyMiniBoss.prototype.constructor = enemyMiniBoss;
 
-enemyMiniBoss.prototype.explosionSize = 'large';
+enemyMiniBoss.prototype.explosionSize = 3;
 
 enemyMiniBoss.prototype.recycle = function()
 {

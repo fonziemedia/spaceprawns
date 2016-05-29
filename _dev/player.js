@@ -302,7 +302,7 @@ player.prototype.checkHull = function()
 	if (this.hull <= 0 && !this.imune)
 	{
 		this.lives -= 1;
-		getNewExplosion(this.x, this.y, 0, 0, 'xLarge'); //need to obtain player direction if we want dinamic explosions, for now we just blow it still
+		getNewExplosion(this.x, this.y, 0, 0, 4); //need to obtain player direction if we want dinamic explosions, for now we just blow it still
 		player.prototype.update = player.prototype.die;
 		gameUI.updateHangar();
 		this.imune = true; //avoids collision while dead

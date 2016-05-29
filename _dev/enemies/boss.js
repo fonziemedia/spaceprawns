@@ -45,7 +45,7 @@ boss.prototype.detectCollision = function()
 
 boss.prototype.die = function()
 {
-	getNewExplosion(this.x, this.y, this.speed, this.direction, 'xLarge');
+	getNewExplosion(this.x, this.y, this.speed, this.direction, 4);
 	if (!playerShip.crashed)
 	{
 		game.score++;

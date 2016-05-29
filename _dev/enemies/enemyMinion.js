@@ -5,7 +5,7 @@ enemyMinion = function(x, y, speed, direction, hull, image, fireRate)
 enemyMinion.prototype = Object.create(enemy.prototype);
 enemyMinion.prototype.constructor = enemyMinion;
 
-enemyMinion.prototype.explosionSize = 'medium';
+enemyMinion.prototype.explosionSize = 2;
 
 enemyMinion.prototype.recycle = function()
 {

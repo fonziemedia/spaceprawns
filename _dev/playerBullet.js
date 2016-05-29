@@ -46,7 +46,7 @@ playerBullet.prototype.checkCollision = function()
 			game.enemies[en].hull -= this.power;
 			if(game.enemies[en].hull > 0)
 			{
-				getNewExplosion(game.enemies[en].x + game.enemies[en].centerX, game.enemies[en].y + game.enemies[en].centerY, 0, 1, 'xSmall');
+				getNewExplosion(game.enemies[en].x + game.enemies[en].centerX, game.enemies[en].y + game.enemies[en].centerY, 0, 1, 0);
 			}
 
 			this.recycle();
