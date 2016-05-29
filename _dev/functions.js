@@ -230,19 +230,14 @@ function resetGame() //called on level start
 
 	gameUI.updateAll();
 
-	//Sounds
-	game.sounds = [];
-	for(var g in game.tracks)
-	{
-		game.tracks[g].pause();
-	}
-	game.tracks = [];
-
-	if (game.music && game.tracks.length < 1)
+	if(game.music)
 	{
 		game.tracks.push(game.soundTracks['tune1' + fileFormat]);
-		game.tracks[0].play();
-		game.tracks[0].loop = true;
+		for (var v in game.tracks)
+		{
+			game.tracks[v].play();
+			game.tracks[v].loop = true;
+		}
 	}
 }
 
@@ -294,6 +289,17 @@ function startGame()
 	}
 
 	game.tracks = [];
+	//end of chromium fix
+
+	if(game.music)
+	{
+		game.tracks.push(game.soundTracks['tune1' + fileFormat]);
+		for (var u in game.tracks)
+		{
+			game.tracks[u].play();
+			game.tracks[u].loop = true;
+		}
+	}
 
 	//preparing soundfx (chromium fix)
 	game.sounds.push(game.sfx['laser' + fileFormat]);
@@ -383,7 +389,8 @@ function stEventHandler()
 	game.doneSoundTracks++;
 }
 
-function initSfx(sfxPaths) { //our Sfx engine: passing the array 'sfxPaths' to the function
+function initSfx(sfxPaths)
+{ //our Sfx engine: passing the array 'sfxPaths' to the function
 	game.requiredSfx = sfxPaths.length; //the number of required Sfx will be equal to the length of the sfxPaths array
 
 	for(var i in sfxPaths)

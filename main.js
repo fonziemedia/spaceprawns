@@ -249,11 +249,17 @@ var utils = {
 	}
 };
 
+/////////////////////
+// GLOBAL VARS
+/////////////////////
+var doc = document,
+win = window,
+game = {};
 
 //iOS viewport fix
-if(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream)
+if(/iPad|iPhone|iPod/.test(navigator.userAgent) && !win.MSStream)
 {
-  document.querySelector('meta[name=viewport]')
+  doc.querySelector('meta[name=viewport]')
     .setAttribute(
       'content',
       'initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no'
@@ -291,14 +297,6 @@ error: function() {
 	alert("The XML File could not be processed correctly.");
 }
 });
-
-
-/////////////////////
-// GLOBAL VARS
-/////////////////////
-var doc = document,
-win = window,
-game = {};
 
 game.isMobile = false;
 // mobile device detection
@@ -793,22 +791,28 @@ background.prototype.update = function()
 
 explosion = function (x, y, speed, direction, size)
 {
+	var explosionXSmall = 'explosion_s0',
+			explosionSmall = 'explosion_s1',
+			explosionMedium = 'explosion_s2',
+			explosionLarge = 'explosion_s3',
+			explosionXLarge = 'explosion_s4';
+
 	switch(size)
 	{
-		case 'xSmall':
-			this.image = 'explosion_s0';
+		case 0:
+			this.image = explosionXSmall;
 		break;
-		case 'small':
-			this.image = 'explosion_s1';
+		case 1:
+			this.image = explosionSmall;
 		break;
-		case 'medium':
-			this.image = 'explosion_s2';
+		case 2:
+			this.image = explosionMedium;
 		break;
-		case 'large':
-			this.image = 'explosion_s3';
+		case 3:
+			this.image = explosionLarge;
 		break;
-		case 'xLarge':
-			this.image = 'explosion_s4';
+		case 4:
+			this.image = explosionXLarge;
 		break;
 	}
 	this.sprite = new sprite(this.image, 5, 4, 2);
@@ -817,7 +821,6 @@ explosion = function (x, y, speed, direction, size)
 	this.speed = speed;
 	this.direction = direction;
 };
-
 explosion.prototype.audioHit1 = 'hit' + fileFormat;
 explosion.prototype.audioHit2 = 'hit2' + fileFormat;
 explosion.prototype.audioHit3 = 'hit3' + fileFormat;
@@ -830,23 +833,23 @@ explosion.prototype.reset = function(x, y, speed, direction, size)
 {
 	switch(size)
 	{
-		case 'xSmall':
+		case 0:
 			this.image = 'explosion_s0';
 			explosion.prototype.playSfx = explosion.prototype.sfxChasis;
 		break;
-		case 'small':
+		case 1:
 			this.image = 'explosion_s1';
 			explosion.prototype.playSfx = explosion.prototype.sfxDefault;
 		break;
-		case 'medium':
+		case 2:
 			this.image = 'explosion_s2';
 			explosion.prototype.playSfx = explosion.prototype.sfxDefault;
 		break;
-		case 'large':
+		case 3:
 			this.image = 'explosion_s3';
 			explosion.prototype.playSfx = explosion.prototype.sfxDefault;
 		break;
-		case 'xLarge':
+		case 4:
 			this.image = 'explosion_s4';
 			explosion.prototype.playSfx = explosion.prototype.sfxBlast;
 		break;
@@ -972,7 +975,7 @@ function initExplosions()
 {
 	for (var ex = 1 ; ex <= game.requiredExplosions; ex++)
 	{
-		e = new explosion(null, null, null, null, 'small', null);
+		e = new explosion(null, null, null, null, 1, null);
 		game.explosionsPool.push(e);
 		game.doneObjects++;
 	}
@@ -1282,7 +1285,7 @@ player.prototype.checkHull = function()
 	if (this.hull <= 0 && !this.imune)
 	{
 		this.lives -= 1;
-		getNewExplosion(this.x, this.y, 0, 0, 'xLarge'); //need to obtain player direction if we want dinamic explosions, for now we just blow it still
+		getNewExplosion(this.x, this.y, 0, 0, 4); //need to obtain player direction if we want dinamic explosions, for now we just blow it still
 		player.prototype.update = player.prototype.die;
 		gameUI.updateHangar();
 		this.imune = true; //avoids collision while dead
@@ -1448,7 +1451,7 @@ playerBullet.prototype.checkCollision = function()
 			game.enemies[en].hull -= this.power;
 			if(game.enemies[en].hull > 0)
 			{
-				getNewExplosion(game.enemies[en].x + game.enemies[en].centerX, game.enemies[en].y + game.enemies[en].centerY, 0, 1, 'xSmall');
+				getNewExplosion(game.enemies[en].x + game.enemies[en].centerX, game.enemies[en].y + game.enemies[en].centerY, 0, 1, 0);
 			}
 
 			this.recycle();
@@ -1606,7 +1609,7 @@ enemy.prototype.checkCollision = function()
 {
 	if (Collision(this, playerShip) && !playerShip.imune && !game.gameOver)
 	{
-		getNewExplosion(playerShip.x, playerShip.y, 0, 1, 'small', 'chasis');	//get new explosion sound for hiting player
+		getNewExplosion(playerShip.x, playerShip.y, 0, 1, 1, 'chasis');	//get new explosion sound for hiting player
 		playerShip.hull -= this.hull;
 		gameUI.updateEnergy();
 		playerShip.hit = true;
@@ -1663,7 +1666,7 @@ enemyMinion = function(x, y, speed, direction, hull, image, fireRate)
 enemyMinion.prototype = Object.create(enemy.prototype);
 enemyMinion.prototype.constructor = enemyMinion;
 
-enemyMinion.prototype.explosionSize = 'medium';
+enemyMinion.prototype.explosionSize = 2;
 
 enemyMinion.prototype.recycle = function()
 {
@@ -1711,7 +1714,7 @@ enemyMiniBoss = function(x, y, speed, direction, hull, image, fireRate)
 enemyMiniBoss.prototype = Object.create(enemy.prototype);
 enemyMiniBoss.prototype.constructor = enemyMiniBoss;
 
-enemyMiniBoss.prototype.explosionSize = 'large';
+enemyMiniBoss.prototype.explosionSize = 3;
 
 enemyMiniBoss.prototype.recycle = function()
 {
@@ -1763,7 +1766,7 @@ enemyBase = function(x, y, speed, direction, hull, image, fireRate)
 enemyBase.prototype = Object.create(enemy.prototype);
 enemyBase.prototype.constructor = enemyBase;
 
-enemyBase.prototype.explosionSize = 'xLarge';
+enemyBase.prototype.explosionSize = 4;
 
 enemyBase.prototype.recycle = function()
 {
@@ -1979,7 +1982,7 @@ boss.prototype.detectCollision = function()
 
 boss.prototype.die = function()
 {
-	getNewExplosion(this.x, this.y, this.speed, this.direction, 'xLarge');
+	getNewExplosion(this.x, this.y, this.speed, this.direction, 4);
 	if (!playerShip.crashed)
 	{
 		game.score++;
@@ -2188,7 +2191,7 @@ enemyBullet.prototype.checkCollision = function()
 {
 	if (Collision(this, playerShip) && !playerShip.imune && !game.gameOver)
 	{
-		getNewExplosion(this.x, this.y, 0, 1, 'xSmall');
+		getNewExplosion(this.x, this.y, 0, 1, 0);
 		playerShip.hull -= this.power;
 		gameUI.updateEnergy();
 		playerShip.hit = true;
@@ -2650,6 +2653,13 @@ state.prototype.start = function()
 	removeGamePlayInput();
 	addStandByInput();
 
+	for (var u in game.tracks)
+	{
+		game.tracks[u].pause();
+	}
+
+	game.tracks = [];
+
 	if (gameMenu.toggled) //if the game menu is up toggle it off
 	{
 		gameMenu.toggle();
@@ -2882,25 +2892,6 @@ menu.prototype.toggleMusic = function()
 	game.music = game.music ? false : true ;
 	localStorage.prawnsMusic =  game.music;
 
-	if (game.tracks.length > 0)
-	{
-		for(var g in game.tracks)
-		{
-			game.tracks[g].pause();
-		}
-		game.tracks = [];
-	}
-	else if (game.started && game.tracks.length < 1)
-	{
-		game.tracks.push(game.soundTracks['tune1' + fileFormat]);
-
-		for(var w in game.tracks)
-		{
-			game.tracks[w].play();
-			game.tracks[w].loop = true;
-		}
-	}
-
 	if (game.music)
 	{
 		this.music.addClass('active');
@@ -2951,6 +2942,14 @@ menu.prototype.toggle = function()
 	if (this.toggled)
 	{
 		gameState.pause();
+
+		if (game.music)
+		{
+			for (var g in game.tracks)
+			{
+				game.tracks[g].pause();
+			}
+		}
 
 		this.allButtons.css({"display": "block"});
 
@@ -3059,6 +3058,22 @@ menu.prototype.toggle = function()
 			self.menuBg.promise().done(function()
 			{
 				if(game.loaded && !game.faded)	gameState.unPause();
+				if (game.music)
+				{
+					if (game.started && game.tracks.length < 1)
+					{
+						game.tracks.push(game.soundTracks['tune1' + fileFormat]);
+					}
+
+					if (game.loaded)
+					{
+						for(var w in game.tracks)
+						{
+							game.tracks[w].play();
+							game.tracks[w].loop = true;
+						}
+					}
+				}
 				document.getElementById("toggle-menu-btn").disabled = false;
 			});
 		});
@@ -3669,19 +3684,14 @@ function resetGame() //called on level start
 
 	gameUI.updateAll();
 
-	//Sounds
-	game.sounds = [];
-	for(var g in game.tracks)
-	{
-		game.tracks[g].pause();
-	}
-	game.tracks = [];
-
-	if (game.music && game.tracks.length < 1)
+	if(game.music)
 	{
 		game.tracks.push(game.soundTracks['tune1' + fileFormat]);
-		game.tracks[0].play();
-		game.tracks[0].loop = true;
+		for (var v in game.tracks)
+		{
+			game.tracks[v].play();
+			game.tracks[v].loop = true;
+		}
 	}
 }
 
@@ -3733,6 +3743,17 @@ function startGame()
 	}
 
 	game.tracks = [];
+	//end of chromium fix
+
+	if(game.music)
+	{
+		game.tracks.push(game.soundTracks['tune1' + fileFormat]);
+		for (var u in game.tracks)
+		{
+			game.tracks[u].play();
+			game.tracks[u].loop = true;
+		}
+	}
 
 	//preparing soundfx (chromium fix)
 	game.sounds.push(game.sfx['laser' + fileFormat]);
@@ -3822,7 +3843,8 @@ function stEventHandler()
 	game.doneSoundTracks++;
 }
 
-function initSfx(sfxPaths) { //our Sfx engine: passing the array 'sfxPaths' to the function
+function initSfx(sfxPaths)
+{ //our Sfx engine: passing the array 'sfxPaths' to the function
 	game.requiredSfx = sfxPaths.length; //the number of required Sfx will be equal to the length of the sfxPaths array
 
 	for(var i in sfxPaths)

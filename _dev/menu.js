@@ -87,25 +87,6 @@ menu.prototype.toggleMusic = function()
 	game.music = game.music ? false : true ;
 	localStorage.prawnsMusic =  game.music;
 
-	if (game.tracks.length > 0)
-	{
-		for(var g in game.tracks)
-		{
-			game.tracks[g].pause();
-		}
-		game.tracks = [];
-	}
-	else if (game.started && game.tracks.length < 1)
-	{
-		game.tracks.push(game.soundTracks['tune1' + fileFormat]);
-
-		for(var w in game.tracks)
-		{
-			game.tracks[w].play();
-			game.tracks[w].loop = true;
-		}
-	}
-
 	if (game.music)
 	{
 		this.music.addClass('active');
@@ -156,6 +137,14 @@ menu.prototype.toggle = function()
 	if (this.toggled)
 	{
 		gameState.pause();
+
+		if (game.music)
+		{
+			for (var g in game.tracks)
+			{
+				game.tracks[g].pause();
+			}
+		}
 
 		this.allButtons.css({"display": "block"});
 
@@ -264,6 +253,22 @@ menu.prototype.toggle = function()
 			self.menuBg.promise().done(function()
 			{
 				if(game.loaded && !game.faded)	gameState.unPause();
+				if (game.music)
+				{
+					if (game.started && game.tracks.length < 1)
+					{
+						game.tracks.push(game.soundTracks['tune1' + fileFormat]);
+					}
+
+					if (game.loaded)
+					{
+						for(var w in game.tracks)
+						{
+							game.tracks[w].play();
+							game.tracks[w].loop = true;
+						}
+					}
+				}
 				document.getElementById("toggle-menu-btn").disabled = false;
 			});
 		});

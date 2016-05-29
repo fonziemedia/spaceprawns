@@ -13,6 +13,13 @@ state.prototype.start = function()
 	removeGamePlayInput();
 	addStandByInput();
 
+	for (var u in game.tracks)
+	{
+		game.tracks[u].pause();
+	}
+
+	game.tracks = [];
+
 	if (gameMenu.toggled) //if the game menu is up toggle it off
 	{
 		gameMenu.toggle();
