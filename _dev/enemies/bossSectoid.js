@@ -23,22 +23,22 @@ sectoidBoss.prototype.fireLasers = function()
 {
 	this.laser1.x = Math.round(this.x + this.laser1.offSetX);
 	this.laser2.x = Math.round(this.x + this.laser2.offSetX);
-	getNewEnemyBullet(this.laser1.x, this.laser1.y, 250, Math.PI/2, 1.5, 'bullet_p_laser');
-	getNewEnemyBullet(this.laser2.x, this.laser2.y, 250, Math.PI/2, 1.5, 'bullet_p_laser');
+	getNewEnemyBullet(this.laser1.x, this.laser1.y, 4, Math.PI/2, 1.5, 'bullet_p_laser');
+	getNewEnemyBullet(this.laser2.x, this.laser2.y, 4, Math.PI/2, 1.5, 'bullet_p_laser');
 };
 
 sectoidBoss.prototype.fireMissiles = function()
 {
 	this.missile1.x = Math.round(this.x);
 	this.missile2.x = Math.round(this.x + this.width);
-	getNewEnemyBullet(this.missile1.x, this.missile1.y, 50, utils.angleTo(this.missile1, playerShip), 1, 'bullet_e_missile');
-	getNewEnemyBullet(this.missile2.x, this.missile1.y, 50, utils.angleTo(this.missile2, playerShip), 1, 'bullet_e_missile');
+	getNewEnemyBullet(this.missile1.x, this.missile1.y, 1, utils.angleTo(this.missile1, playerShip), 1, 'bullet_e_missile');
+	getNewEnemyBullet(this.missile2.x, this.missile1.y, 1, utils.angleTo(this.missile2, playerShip), 1, 'bullet_e_missile');
 };
 
 sectoidBoss.prototype.introMovement = function()
 {
 	this.direction = Math.PI/2;
-	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
+	this.vy = Math.sin(this.direction) * this.speed;
 	this.x = this.x;
 	this.y += Math.round(this.vy);
 
@@ -52,7 +52,7 @@ sectoidBoss.prototype.setMovement = sectoidBoss.prototype.introMovement;
 
 sectoidBoss.prototype.fightMovement = function()
 {
-	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
+	this.vx = Math.cos(this.direction) * this.speed;
 	if (this.x + this.hCenter < (playerShip.x + playerShip.centerX) - this.vx)
 	{
 		this.direction = 0;

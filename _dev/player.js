@@ -12,6 +12,7 @@ player = function(hull, fireRate)
 	this.centerX = Math.round(this.width*0.5);
 	this.centerRightX = Math.round(this.width*0.75);
 	this.centerLeftX = Math.round(this.width*0.25);
+	this.centerY = Math.round(this.height*0.5);
 	this.tipY = Math.round(this.height*0.2);
 	this.limitX1 = Math.round(-this.width*0.5);
 	this.limitX2 = Math.round(game.width - this.width*0.5);
@@ -68,8 +69,8 @@ player.prototype.mouseControls = function()
 	{
 		this.fireGuns();
 
-		this.speedX = Math.round(((touchInitX - inputAreaX)*0.1)/pixelRatio);
-		this.speedY = Math.round(((touchInitY - inputAreaY)*0.1)/pixelRatio);
+		this.speedX = Math.round(((touchInitX - inputAreaX)*0.1)*game.deltaSpeed);
+		this.speedY = Math.round(((touchInitY - inputAreaY)*0.1)*game.deltaSpeed);
 
 		//this needs to come after movement vars above because we redefine this.speedX here
 		this.speedX = this.speedX < this.speedLimit ? this.speedX : this.speedLimit;
@@ -81,17 +82,17 @@ player.prototype.mouseControls = function()
 	{
 		if (this.speedX !== 0)
 		{
-			this.speedX = this.speedX > 0 ? Math.floor(this.speedX - this.accel) : Math.ceil(this.speedX + this.accel);
+			this.speedX = this.speedX > 0 ? Math.floor(this.speedX - this.accel) : Math.ceil(this.speedX + this.accel);		// !Should be decel!*
 		}
 
 		if (this.speedY !== 0)
 		{
-			this.speedY = this.speedY > 0 ? Math.floor(this.speedY - this.accel) : Math.ceil(this.speedY + this.accel);
+			this.speedY = this.speedY > 0 ? Math.floor(this.speedY - this.accel) : Math.ceil(this.speedY + this.accel);		// !Should be decel!*
 		}
 	}
 };
 
-player.prototype.keyboardControls = function()
+player.prototype.keyboardControls = function()	// !accel/speedLimit needs tweaking!*
 {
 	if (game.keys[32])
 	{
@@ -135,15 +136,8 @@ player.prototype.setControls = game.mouseControls ? player.prototype.mouseContro
 
 player.prototype.setThrust = function()
 {
-	if (this.speedX !== 0)
-	{
-		this.x = this.x - this.speedX;
-	}
-
-	if (this.speedY !== 0)
-	{
-		this.y = this.y - this.speedY;
-	}
+	this.x -= this.speedX;
+	this.y -= this.speedY;
 };
 
 player.prototype.setBoundaries = function()
@@ -176,21 +170,21 @@ player.prototype.fireLasers = function(level)
 			this.leftLaserX = Math.round(this.x + this.centerLeftX);
 			this.rightLaserX = Math.round(this.x + this.centerRightX);
 			this.laserY = Math.round(this.y - this.tipY);
-			getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			getNewBullet(this.midLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+			getNewBullet(this.leftLaserX, this.laserY, 4, 1, 1, 'bullet_p_laser');
+			getNewBullet(this.midLaserX, this.laserY, 4, 1, 1, 'bullet_p_laser');
+			getNewBullet(this.rightLaserX, this.laserY, 4, 1, 1, 'bullet_p_laser');
 			break;
 		case 2:
 			this.leftLaserX = Math.round(this.x + this.centerLeftX);
 			this.rightLaserX = Math.round(this.x + this.centerRightX);
 			this.laserY = Math.round(this.y - this.tipY);
-			getNewBullet(this.leftLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
-			getNewBullet(this.rightLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+			getNewBullet(this.leftLaserX, this.laserY, 4, 1, 1, 'bullet_p_laser');
+			getNewBullet(this.rightLaserX, this.laserY, 4, 1, 1, 'bullet_p_laser');
 			break;
 		default:
 			this.midLaserX = Math.round(this.x + this.centerX);
 			this.laserY = Math.round(this.y - this.tipY);
-			getNewBullet(this.midLaserX, this.laserY, 600, -Math.PI/2, 1, 1, 'bullet_p_laser');
+			getNewBullet(this.midLaserX, this.laserY, 4, 1, 1, 'bullet_p_laser');
 	}
 };
 
@@ -203,21 +197,21 @@ player.prototype.fireMissiles = function(level)
 			this.leftMissileX = Math.round(this.x);
 			this.rightMissileX = Math.round(this.x + this.width);
 			this.missileY = Math.round(this.y + this.height);
-			getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-			getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-			getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+			getNewBullet(this.leftMissileX, this.missileY, 1, 2, 1.03, 'bullet_p_missile');
+			getNewBullet(this.midMissileX, this.missileY, 1, 2, 1.03, 'bullet_p_missile');
+			getNewBullet(this.rightMissileX, this.missileY, 1, 2, 1.03, 'bullet_p_missile');
 			break;
 		case 2:
 			this.leftMissileX = Math.round(this.x);
 			this.rightMissileX = Math.round(this.x + this.width);
 			this.missileY = Math.round(this.y + this.height);
-			getNewBullet(this.leftMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
-			getNewBullet(this.rightMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+			getNewBullet(this.leftMissileX, this.missileY, 1, 2, 1.03, 'bullet_p_missile');
+			getNewBullet(this.rightMissileX, this.missileY, 1, 2, 1.03, 'bullet_p_missile');
 			break;
 		case 1:
 			this.midMissileX = Math.round(this.x + this.centerX);
 			this.missileY = Math.round(this.y + this.height);
-			getNewBullet(this.midMissileX, this.missileY, 100, -Math.PI/2, 2, 1.03, 'bullet_p_missile');
+			getNewBullet(this.midMissileX, this.missileY, 1, 2, 1.03, 'bullet_p_missile');
 			break;
 		default:
 	}
@@ -302,7 +296,7 @@ player.prototype.checkHull = function()
 	if (this.hull <= 0 && !this.imune)
 	{
 		this.lives -= 1;
-		getNewExplosion(this.x, this.y, 0, 0, 4); //need to obtain player direction if we want dinamic explosions, for now we just blow it still
+		getNewExplosion(this.x-this.width, this.y-this.centerY, 0, 0, 4); //need to obtain player direction if we want dinamic explosions, for now we just blow it still
 		player.prototype.update = player.prototype.die;
 		gameUI.updateHangar();
 		this.imune = true; //avoids collision while dead

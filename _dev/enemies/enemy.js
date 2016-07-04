@@ -7,10 +7,15 @@ enemy = function(x, y, speed, direction, hull, image, fireRate)
 	this.height = game.offCtx[image].height;
 	this.centerX = Math.round(this.width*0.5);	//these are for explosions, see playerBullet's checkCollision()
 	this.centerY = Math.round(this.height*0.5);
-	this.speed = speed/pixelRatio;
+	this.speed = Math.round(speed*game.dt*game.deltaSpeed);
 	this.direction = direction;
 	this.hull = hull;
 	this.fireRate = fireRate * 60; //fireRate = delay in seconds
+
+	// this.vx = Math.cos(this.direction) * (this.speed);
+	// this.xThrust = Math.round(this.vx); // always goes left/right at the same speed
+	this.vy = Math.sin(this.direction) * (this.speed);
+	this.yThrust = Math.round(this.vy); // always goes down at the same speed
 };
 
 // note: properties/objects declared as prototype won't have access to private data added in the main prototype function i.e. this.hull)
@@ -28,31 +33,29 @@ enemy.prototype.reset = function(x, y, speed, direction, hull, image, fireRate) 
 	this.height = this instanceof enemyBase ? this.sprite.frameHeight : game.offCtx[image].height;
 	this.centerX = Math.round(this.width*0.5);
 	this.centerY = Math.round(this.height*0.5);
-	this.speed = speed;
+	this.speed = Math.round(speed*game.dt*game.deltaSpeed);
 	this.direction = direction;
 	this.hull = hull;
 	this.fireRate = fireRate * 60;
 	this.bulletTimer = 1;
 	this.hitTimer = 0;
 	this.collided = false;
+
+	// this.vx = Math.cos(this.direction) * (this.speed);
+	// this.xThrust = Math.round(this.vx); // always goes left/right at the same speed
+	this.vy = Math.sin(this.direction) * (this.speed);
+	this.yThrust = Math.round(this.vy); // always goes down at the same speed
 };
 
 enemy.prototype.setMovement = function()
 {
-	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
-	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
-	this.x += this.vx;
-	this.y += this.vy;
-
-	if (!(this instanceof enemyBase))
-	{
-		this.direction -= utils.randomRange(-0.05, 0.05);
-	}
+	// this.x += this.xThrust;
+	this.y += this.yThrust;
 };
 
 enemy.prototype.die = function()
 {
-	getNewExplosion(this.x, this.y, this.speed, this.direction, this.explosionSize);
+	getNewExplosion(this.x, this.y, this.speed/2, this.direction, this.explosionSize);
 
 	lootchance = Math.random();
 	if (lootchance < 0.4)
@@ -114,7 +117,7 @@ enemy.prototype.fireMissile = function()
 {
 		bulletX = Math.round(this.x + this.width*0.42);
 		bulletY = Math.round(this.y + this.height);
-		getNewEnemyBullet(bulletX, bulletY, 50, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
+		getNewEnemyBullet(bulletX, bulletY, 1, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
 };
 
 enemy.prototype.draw = function()

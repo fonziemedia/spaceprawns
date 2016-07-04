@@ -96,12 +96,12 @@ game.requiredExplosions = 30;
 game.requiredObjects = game.requiredWaves + game.requiredEnemies + game.requiredPlayerBullets + game.requiredEnemyBullets + game.requiredLoot + game.requiredExplosions;
 game.doneObjects = 0;
 
-//====================== Delta Time ========================
-var dt = 0.017,
-dtTimer = 0,
-dtArray = [],
-timeThen = new Date().getTime();
-dtTimerSet = false;
+//====================== Delta Time ======================== (!Needs Work! Move calculation outside loop)
+game.dt = 1;
+game.dtTimer = 0;
+game.dtArray = [];
+game.timeThen = new Date().getTime();
+game.dtTimerSet = false;
 
 //====================== Game state ========================
 game.loaded = false;
@@ -118,9 +118,10 @@ game.textFadingIn = false;
 game.textFadingOut = false;
 game.textFaded = true;
 
-//========================== Display ==========================
-game.windowWidth = doc.documentElement.clientWidth;
+//========================== Display ==========================   ! Add below to setGameDimensions() (!Needs Work!)
+game.windowWidth = game.isMobile ? doc.documentElement.clientWidth : parseInt($('#gamearea').css("width")); //using parseInt here to remove 'px'
 game.windowHeight = doc.documentElement.clientHeight;
+game.deltaSpeed = null; // game speed normalizer (mobile first / iPhone 4)
 
 game.fullScreen = false;
 
@@ -216,9 +217,8 @@ game.images = [];
 game.doneImages  = 0; // will contain how many images have been loaded
 game.requiredImages = 0; // will contain how many images should be loaded
 game.offCtx = [];
-game.font = game.isMobile ? "Helvetica" : "Monaco";
 
-if (!game.isMobile || win.innerHeight >= 900)
+if (!game.isMobile || game.windowHeight > 640)
 {
 	//Note: UI images are powered by CSS (see CSS assets folder)
 	game.imagePaths = [
@@ -226,6 +226,21 @@ if (!game.isMobile || win.innerHeight >= 900)
 		"_img/bg_level1_a.dkt.jpg",
 		"_img/bg_level1_b.dkt.jpg",
 		"_img/bg_level1_c.dkt.jpg",
+  ];
+}
+else
+{
+  game.imagePaths = [
+    //backgrounds
+    "_img/bg_level1_a.mob.jpg",
+    "_img/bg_level1_b.mob.jpg",
+    "_img/bg_level1_c.mob.jpg",
+  ];
+}
+if (!game.isMobile || game.windowHeight > 900)
+{
+	//Note: UI images are powered by CSS (see CSS assets folder)
+	game.imagePaths.push(
 		//Player
 		"_img/player_ship.dkt.png",
 		"_img/player_ship_i.dkt.png",
@@ -253,15 +268,12 @@ if (!game.isMobile || win.innerHeight >= 900)
 		"_img/loot_lasers.dkt.png",
 		"_img/loot_missiles.dkt.png",
 		"_img/loot_shields.dkt.png"
-	];
+	);
 }
-else
+
+else if (game.isMobile || game.windowHeight <= 900)
 {
-	game.imagePaths = [
-		//backgrounds
-		"_img/bg_level1_a.mob.jpg",
-		"_img/bg_level1_b.mob.jpg",
-		"_img/bg_level1_c.mob.jpg",
+	game.imagePaths.push(
 		//Player
 		"_img/player_ship.mob.png",
 		"_img/player_ship_i.mob.png",
@@ -289,16 +301,12 @@ else
 		"_img/loot_lasers.mob.png",
 		"_img/loot_missiles.mob.png",
 		"_img/loot_shields.mob.png"
-	];
+	);
 }
 
 //====================== Canvases + Responsiveness  ============================
 game.canvas = doc.getElementById("gameCanvas");
 game.context = game.canvas.getContext("2d");
-
-var pixelRatio = win.devicePixelRatio > 1.5 ? 2 : 1; // This is our game size delta to keep the size of our game + objects proportional to the display
-pixelRatio = game.isMobile && pixelRatio < 1.5 ? 2 : pixelRatio; //adjustment for mobile devices with low pixel ratio
-pixelRatio = game.isMobile && win.innerHeight >= 900 ? 1 : pixelRatio; //adjusment for tablets
 
 function setGameDimensions()
 {
@@ -309,15 +317,12 @@ function setGameDimensions()
 	var gameArea = $('#gamearea');
 	var allCanvas = $('canvas');
 
-	if (!game.isMobile)
-	{
-		game.windowWidth = parseInt(gameArea.css("width"))*pixelRatio;  //using parseInt here to remove 'px'
-	}
+  game.windowWidth = game.isMobile ? doc.documentElement.clientWidth : parseInt($('#gamearea').css("width")); //using parseInt here to remove 'px'
+  game.windowHeight = doc.documentElement.clientHeight;
+  game.deltaSpeed = game.windowHeight >= 480 ? game.windowHeight/480 : 1; // game speed normalizer (mobile first / iPhone 4)
 
-	allCanvas.attr('width', game.windowWidth*pixelRatio);
-	allCanvas.attr('height', game.windowHeight*pixelRatio);
-
-	game.context.scale(pixelRatio,pixelRatio);
+	allCanvas.attr('width', game.windowWidth);
+	allCanvas.attr('height', game.windowHeight);
 
 	//SETTING GAME DIMENSIONS
 	game.width = Math.round(game.windowWidth);
@@ -336,21 +341,17 @@ function setGameDimensions()
 	if (playerShip && typeof playerShip != 'undefined')
 	{
 		//re-set playerShip's dimensions/boundaries
-		playerShip.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
+		// playerShip.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
 		playerShip.limitX2 = Math.round(game.width - (playerShip.width*0.5));
 		playerShip.limitY2 = Math.round(game.height - (playerShip.height*0.5));
-		playerShip.movement = Math.round(game.height*0.007);
-	}
+    playerShip.accel = game.height*0.0007;
+    playerShip.speedLimit = Math.round(game.height*0.008);
+	}  
+  // !Add any vars defined on runtime dependant of game dimensions!
 
 	//set game bosses' boundaries  !Need to give this enemy a name in the array
 	// this.yStop = Math.round(game.height*0.1);
 	// this.xBondary = Math.round(game.width - this.size/4);
-
-	if(!game.started && playerShip && typeof playerShip != 'undefined')
-	{
-		playerShip.x = Math.round(game.width*0.46);
-		playerShip.y = Math.round(game.height*0.90);
-	}
 }
 
 setGameDimensions();

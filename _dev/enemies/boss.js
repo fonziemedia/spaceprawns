@@ -1,6 +1,6 @@
 boss = function(x, y, speed, direction, hull, image)
 {
-	this.speed = speed/pixelRatio;
+	this.speed = Math.round(speed*game.dt*game.deltaSpeed);
 	this.direction = direction;
 	this.hull = hull;
 	this.image = game.offCtx[image];
@@ -45,7 +45,7 @@ boss.prototype.detectCollision = function()
 
 boss.prototype.die = function()
 {
-	getNewExplosion(this.x, this.y, this.speed, this.direction, 4);
+	getNewExplosion(this.x, this.y, this.speed/2, this.direction, 4);
 	if (!playerShip.crashed)
 	{
 		game.score++;
@@ -107,7 +107,7 @@ function initBosses()
 {
 	for (var b = 1 ; b <= game.requiredBosses; b++)
 	{
-		var firstBoss = new sectoidBoss(game.width*0.40, game.outerTop, 150, Math.PI/2, 100, 'boss_sectoid');
+		var firstBoss = new sectoidBoss(game.width*0.40, game.outerTop, 1, Math.PI/2, 100, 'boss_sectoid');
 		game.bossesPool.push(firstBoss);
 		game.doneObjects++;
 	}

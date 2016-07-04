@@ -25,9 +25,9 @@ $(document).keydown(function(e)
 	//listen to pressed keys
 	game.keys[e.keyCode ? e.keyCode : e.which] = true;
 
-	if (game.keys[27] && dtTimerSet && !game.gameOver) gameMenu.toggle();
-	if (game.keys[80] && dtTimerSet && !game.paused && !game.gameOver) gameState.pause();
-	else if (game.keys[80] && dtTimerSet && game.paused && !game.gameOver) gameState.unPause();
+	if (game.keys[27] && game.dtTimerSet && !game.gameOver) gameMenu.toggle();
+	if (game.keys[80] && game.dtTimerSet && !game.paused && !game.gameOver) gameState.pause();
+	else if (game.keys[80] && game.dtTimerSet && game.paused && !game.gameOver) gameState.unPause();
 });
 
 $(document).keyup(function(e)
@@ -157,31 +157,32 @@ function standByInput(e)
 }
 
 ////////////////////////
-// Performance checking
+// Performance checking        !NEEDS WORK!
 ////////////////////////
 function getDeltaTime()
 {
-	//disabling UI menu button so dt calculation doesn't get interrupted
+	//disabling UI menu button so game.dt calculation doesn't get interrupted
 	document.getElementById("toggle-menu-btn").disabled = true;
 	//obtaining an average deltaTime
-	if(dtTimer <= 200)
+	if(game.dtTimer <= 200)
 	{
 		var timeNow = new Date().getTime();
-		var timeDiff = timeNow - (timeThen);
-		dtArray.push(timeDiff); // seconds since last frame
-		timeThen = timeNow;
-		dtTimer++;
+		var timeDiff = timeNow - (game.timeThen);
+		game.dtArray.push(timeDiff); // seconds since last frame
+		game.timeThen = timeNow;
+		game.dtTimer++;
 
-		if(dtTimer == 200)
+		if(game.dtTimer == 200)
 		{
 			var dtSum = 0;
-			for( var i = 0; i < dtArray.length-10; i++)
+			var msPerFrame = 0;
+			for( var i = 0; i < game.dtArray.length-10; i++)
 			{
-			dtSum += dtArray[i+10]; //+10 skips first values which might be deviant
-			// console.log (dtSum);
+			dtSum += game.dtArray[i+10]; //+10 skips first values which might be deviant
 			}
-			dt = Math.ceil(dtSum / dtArray.length)/1000;
-			dtTimerSet = true;
+			msPerFrame = dtSum / game.dtArray.length;
+			game.dt = msPerFrame < 16.6 ? 16.6/msPerFrame : 1; //ratio 60fps ~ 16.66ms/frame; game.dt; compensates lower frame rates by making the game run faster;
+			game.dtTimerSet = true;
 			document.getElementById("toggle-menu-btn").disabled = false;
 		}
 	}

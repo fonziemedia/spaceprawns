@@ -4,13 +4,13 @@ enemyBullet = function(x, y, speed, direction, power, image)
 	this.x = x;
 	this.y = y;
 	this.power = power;
-	this.speed = speed;
+	this.speed = Math.round(speed*game.dt*game.deltaSpeed);
 	this.direction = direction;
 	this.width = this.sprite.frameWidth;
 	this.height = this.sprite.frameHeight;
 
-	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
-	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
+	this.vx = Math.cos(this.direction) * this.speed;
+	this.vy = Math.sin(this.direction) * this.speed;
 
 	this.spriteX = -Math.round(this.width*0.5);  //-this.width/2 because we're rotating ctx
 	this.spriteY = -Math.round(this.height*0.5);  //-this.height/2 because we're rotating ctx
@@ -24,11 +24,11 @@ enemyBullet.prototype.reset = function(x, y, speed, direction, power)
 	this.y = y;
 	this.width = this.sprite.frameWidth;
 	this.height = this.sprite.frameHeight;
-	this.speed = speed;
+	this.speed = Math.round(speed*game.dt*game.deltaSpeed);
 	this.direction = direction;
 	this.power = power;
-	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
-	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
+	this.vx = Math.cos(this.direction) * this.speed;
+	this.vy = Math.sin(this.direction) * this.speed;
 };
 
 enemyBullet.prototype.recycle = function()
@@ -62,10 +62,8 @@ enemyBullet.prototype.setBoundaries = function()
 
 enemyBullet.prototype.setMovement = function()
 {
-	this.vx *= this.friction;
-	this.vy *= this.friction;
-	this.x += this.vx;
-	this.y += this.vy;
+	this.x += this.vx *= this.friction;
+	this.y += this.vy *= this.friction;
 };
 
 enemyBullet.prototype.draw = function()	//fix this with sprites with diferent angles

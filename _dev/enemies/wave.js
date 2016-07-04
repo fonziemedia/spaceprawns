@@ -8,27 +8,26 @@ enemyWave = function(side, pos, race, fleetSize, speed, hull, fireRate)
 	this.hull = hull;
 	this.fireRate = fireRate;
 	this.spawnTimer = 1;
-	this.spawnRate = Math.round((1500 * dt)/pixelRatio);
+	this.spawnRate = 6*this.speed; // distance between spawns (px);
 	switch (this.side)
 	{
 		case 'top':
-			this.x = pos;
+			this.x = Math.round(pos);
 			this.y = game.outerTop;
 			this.direction = Math.PI/2;
 			break;
 		case 'left':
 			this.x = game.outerLeft;
-			this.y = pos;
+			this.y = Math.round(pos);
 			this.direction = 0;
 			break;
 		case 'right':
 			this.x = game.outerRight;
-			this.y = pos;
+			this.y = Math.round(pos);
 			this.direction = Math.PI;
 			break;
 	}
 };
-enemyWave.prototype.over = false;
 
 enemyWave.prototype.recycle = function()
 {
@@ -37,26 +36,19 @@ enemyWave.prototype.recycle = function()
 
 enemyWave.prototype.update = function()
 {
-	if(!this.over)
-	{
 		this.spawnTimer++;
 
 		if (this.spawnTimer % this.spawnRate === 0)
 		{
-				this.spawnFireRate = Math.round(utils.randomRange(this.fireRate, this.fireRate*2)); //a randomRange so that each ship fires at it's own time
+				this.spawnFireRate = Math.round(utils.randomRange(this.fireRate, this.fireRate*2)); //a randomRange so that each ship has it's own fireRate
 				getNewEnemyMinion(this.x, this.y, this.speed, this.direction, this.hull, this.race, this.spawnFireRate);
 				this.spawnedShips++;
 		}
 
 		if (this.spawnedShips == this.fleetSize)
 		{
-			this.over = true;
+			this.recycle();
 		}
-	}
-	else
-	{
-		this.recycle();
-	}
 };
 
 ////////////
@@ -76,26 +68,25 @@ function getNewEnemyWave(side, pos, race, fleetSize, speed, hull, fireRate)
 	ew.hull = hull;
 	ew.fireRate = fireRate;
 	ew.spawnTimer = 1;
-	ew.spawnRate = Math.round(1500 * dt);
+	ew.spawnRate = 6*ew.speed;
 	switch (ew.side)
 	{
 		case 'top':
-			ew.x = pos;
+			ew.x = Math.round(pos);
 			ew.y = game.outerTop;
 			ew.direction = Math.PI/2;
 		break;
 		case 'left':
 			ew.x = game.outerLeft;
-			ew.y = pos;
+			ew.y = Math.round(pos);
 			ew.direction = 0;
 		break;
 		case 'right':
 			ew.x = game.outerRight;
-			ew.y = pos;
+			ew.y = Math.round(pos);
 			ew.direction = Math.PI;
 		break;
 	}
-	ew.over = false;
 	game.objects.push(ew);
 }
 

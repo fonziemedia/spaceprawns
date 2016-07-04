@@ -140,7 +140,7 @@ module.exports = function(grunt) {
                 livereload: true,
             },
             scripts: {
-                files: ['_dev/*.js'],
+                files: ['_dev/**/*.js'],
                 tasks: ['jshint', 'concat', 'uglify'],
                 options: {
                     spawn: false,
@@ -156,6 +156,9 @@ module.exports = function(grunt) {
         }
     });
 
+    // 4. Where we tell Grunt what to do when we type "grunt" into the terminal.
+    grunt.registerTask('default', ['concat', 'jshint', 'uglify', 'imagemin', 'tinypng', 'watch']); //moved here cus of atom's grunt-runner (so default is the top option)
+
     // 3. Where we tell Grunt we plan to use this plug-in.
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -163,7 +166,4 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-imagemin');
     grunt.loadNpmTasks('grunt-tinypng');
     grunt.loadNpmTasks('grunt-contrib-watch');
-
-    // 4. Where we tell Grunt what to do when we type "grunt" into the terminal.
-    grunt.registerTask('default', ['concat', 'jshint', 'uglify', 'imagemin', 'tinypng', 'watch']);
 };

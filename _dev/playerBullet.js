@@ -1,18 +1,17 @@
-playerBullet = function(x, y, speed, direction, power, friction, image)
+playerBullet = function(x, y, speed, power, friction, image)
 {
-	// this.size = Math.round(bulletSize/pixelRatio);
 	this.sprite = new sprite(image, 3, 1, 4);
 	this.width = this.sprite.frameWidth;
 	this.height = this.sprite.frameHeight;
 	this.x = Math.round(x - this.width*0.5);
 	this.y = Math.round(y - this.height*0.5);
-	this.speed = speed;
-	this.direction = direction;
+	this.speed = Math.round(speed*game.dt*game.deltaSpeed);
+	this.direction = -Math.PI/2;
 	this.power = power;
 	this.friction = friction;
 	//setting these to make friction work with deltaTime (dt), check particle.js
-	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
-	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
+	this.vy = Math.sin(this.direction) * this.speed;
+	this.yThrust = Math.round(this.vy *= this.friction);
 };
 
 playerBullet.prototype.ctx = game.context;
@@ -24,11 +23,11 @@ playerBullet.prototype.reset = function(x, y, speed, power, friction)  //only va
 	this.height = this.sprite.frameHeight;
 	this.x = Math.round(x - this.width*0.5);
 	this.y = Math.round(y - this.height*0.5);
-	this.speed = speed;
+	this.speed = Math.round(speed*game.dt*game.deltaSpeed);
 	this.power = power;
 	this.friction = friction;
-	this.vx = Math.cos(this.direction) * ((this.speed/pixelRatio)*dt);
-	this.vy = Math.sin(this.direction) * ((this.speed/pixelRatio)*dt);
+	this.vy = Math.sin(this.direction) * this.speed;
+	this.yThrust = Math.round(this.vy *= this.friction);
 };
 
 playerBullet.prototype.recycle = function()
@@ -64,10 +63,8 @@ playerBullet.prototype.setBoundaries = function()
 
 playerBullet.prototype.setMovement = function()
 {
-	this.vx *= this.friction;
-	this.vy *= this.friction;
-	this.x += this.vx;
-	this.y += this.vy;
+	// just goes up
+	this.y += Math.round(this.vy *= this.friction);
 };
 
 
@@ -88,7 +85,7 @@ playerBullet.prototype.update = function()
 ////////////
 // Factory
 ////////////
-getNewBullet = function(x, y, speed, direction, power, friction, image)
+getNewBullet = function(x, y, speed, power, friction, image)
 {
 	var b = null;
 	//recycle
@@ -114,7 +111,7 @@ initPlayerBullets = function ()
 {
 	for (var pb = 1 ; pb <= game.requiredPlayerBullets; pb++)
 	{
-		b = new playerBullet(null, null, null, -Math.PI/2, null, null, 'bullet_p_laser');
+		b = new playerBullet(null, null, null, null, null, 'bullet_p_laser');
 		game.playerBulletsPool.push(b);
 		game.doneObjects++;
 	}

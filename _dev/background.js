@@ -6,7 +6,7 @@ background = function()
 	this.height = Math.round(this.imageA.height);
 	this.width = Math.round(this.imageA.width);
 	this.x = this.width <= game.windowWidth ? 0 : Math.round(0 - (this.width-game.windowWidth)/2);
-	this.speed = Math.round(200*dt);
+	this.speed = Math.floor(2*game.dt*game.deltaSpeed);
 	this.yDrawLimit = -this.height;
 	this.imageA_y = 0;
 	this.imageB_y = this.imageA_y - this.height;

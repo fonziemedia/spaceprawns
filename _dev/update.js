@@ -6,13 +6,13 @@ function update()
 	clrCanvas();
 	gameBackground.update();
 
-	if(!dtTimerSet)
+	if(!game.dtTimerSet)
 	{
 		getDeltaTime();
 	}
 
 	updateGameTime();
-
+	
 	/////////////////////////////////////////////////////////////////////////////////
 	// LEVELS
 	////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ function update()
   // console.log('pool: ' + game.lootPool.length);
   // console.log('active: ' + game.bullets.length);
 	// console.log('explosions: '+ game.explosions.length);
-	// console.log(dtArray.length);
+	// console.log(game.dtArray.length);
 	// console.log(audiopreload);
 	// console.log('required soundSfx:' + game.requiredSfx);
 	// console.log('sfx: '+ game.sfx.length);

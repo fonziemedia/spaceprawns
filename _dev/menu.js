@@ -16,6 +16,9 @@ menu = function()
 	//enabling buttons (firefox caching disabled)
 	document.getElementById("resumeGame").disabled = false;
 	document.getElementById("startGame").disabled = false;
+
+	//disabling UI menu button so game.dt calculation doesn't get interrupted
+	document.getElementById("toggle-menu-btn").disabled = true;
 };
 
 menu.prototype.toggleFullScreen = function(trigger)  //experimental   only works with user input

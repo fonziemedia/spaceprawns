@@ -7,9 +7,14 @@ loot = function(x, y)
 	this.image = game.offCtx[this.type];
 	this.width = this.image.width;
 	this.height = this.image.height;
+
+	this.vx = Math.cos(this.direction) * (this.speed);
+	this.xThrust = Math.round(this.vx); // always goes left/right at the same speed
+	this.vy = Math.sin(this.direction) * (this.speed);
+	this.yThrust = Math.round(this.vy); // always goes down at the same speed
 };
 // note: prototype properties are set at run time, the constructor properties/methods are set upon object creation
-loot.prototype.speed = Math.round(250/pixelRatio);
+loot.prototype.speed = Math.round(1*game.dt*game.deltaSpeed);
 loot.prototype.direction = Math.PI/2;
 loot.prototype.drops = ['loot_shields', 'loot_lasers', 'loot_missiles'];
 loot.prototype.sfx1 = 'loot_powerUp' + fileFormat;
@@ -24,6 +29,11 @@ loot.prototype.reset = function(x, y)
 	this.key = Math.floor(Math.random() * this.drops.length);
 	this.type = this.drops[this.key];
 	this.image = game.offCtx[this.type];
+
+	this.vx = Math.cos(this.direction) * (this.speed);
+	this.xThrust = Math.round(this.vx); // always goes left/right at the same speed
+	this.vy = Math.sin(this.direction) * (this.speed);
+	this.yThrust = Math.round(this.vy); // always goes down at the same speed
 };
 
 loot.prototype.recycle = function()
@@ -69,10 +79,8 @@ loot.prototype.sfxPlay = function()
 
 loot.prototype.setMovement = function()
 {
-	this.vx = Math.cos(this.direction) * (this.speed*dt);
-	this.vy = Math.sin(this.direction) * (this.speed*dt);
-	this.x += this.vx;
-	this.y += this.vy;
+	this.x += this.xThrust;
+	this.y += this.yThrust;
 };
 
 loot.prototype.setBoundaries = function()
