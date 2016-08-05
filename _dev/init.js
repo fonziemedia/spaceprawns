@@ -343,10 +343,10 @@ function setGameDimensions()
 		//re-set playerShip's dimensions/boundaries
 		// playerShip.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
 		playerShip.limitX2 = Math.round(game.width - (playerShip.width*0.5));
-		playerShip.limitY2 = Math.round(game.height - (playerShip.height*0.5));
+		playerShip.limitY2 = Math.round(game.height - playerShip.height);
     playerShip.accel = game.height*0.0007;
-    playerShip.speedLimit = Math.round(game.height*0.008);
-	}  
+    playerShip.speedLimit = Math.round(3*game.dt*game.deltaSpeed);
+	}
   // !Add any vars defined on runtime dependant of game dimensions!
 
 	//set game bosses' boundaries  !Need to give this enemy a name in the array
