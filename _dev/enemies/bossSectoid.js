@@ -29,8 +29,8 @@ sectoidBoss.prototype.fireLasers = function()
 
 sectoidBoss.prototype.fireMissiles = function()
 {
-	this.missile1.x = Math.round(this.x);
-	this.missile2.x = Math.round(this.x + this.width);
+	this.missile1.x = this.x;
+	this.missile2.x = this.x + this.width;
 	getNewEnemyBullet(this.missile1.x, this.missile1.y, 1, utils.angleTo(this.missile1, playerShip), 1, 'bullet_e_missile');
 	getNewEnemyBullet(this.missile2.x, this.missile1.y, 1, utils.angleTo(this.missile2, playerShip), 1, 'bullet_e_missile');
 };

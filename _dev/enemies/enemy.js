@@ -10,6 +10,9 @@ enemy = function(x, y, speed, direction, hull, image, fireRate)
 	this.speed = Math.round(speed*game.dt*game.deltaSpeed);
 	this.direction = direction;
 	this.hull = hull;
+	this.bullet = {};
+	this.bullet.x = null;
+	this.bullet.y = null;
 	this.fireRate = fireRate * 60; //fireRate = delay in seconds
 
 	// this.vx = Math.cos(this.direction) * (this.speed);
@@ -115,9 +118,9 @@ enemy.prototype.setGuns = function()
 
 enemy.prototype.fireMissile = function()
 {
-		bulletX = Math.round(this.x + this.width*0.42);
-		bulletY = Math.round(this.y + this.height);
-		getNewEnemyBullet(bulletX, bulletY, 1, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
+	this.bullet.x = this.x + this.centerX;
+	this.bullet.y = this.y + this.height;
+	getNewEnemyBullet(this.bullet.x, this.bullet.y, 1, utils.angleTo(this.bullet, playerShip), 1, 'bullet_e_missile');
 };
 
 enemy.prototype.draw = function()

@@ -21,7 +21,7 @@ var utils = {
 
 	angleTo: function(p1, p2)
 	{
-		return Math.atan2(p2.y - p1.y, p2.x - p1.x);
+		return Math.atan2((p2.y + p2.centerY) - p1.y, (p2.x + p2.centerX) - p1.x);
 	},
 
 	distance: function(p0, p1)
