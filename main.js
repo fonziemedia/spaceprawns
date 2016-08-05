@@ -122,7 +122,7 @@ var utils = {
 
 	angleTo: function(p1, p2)
 	{
-		return Math.atan2(p2.y - p1.y, p2.x - p1.x);
+		return Math.atan2((p2.y + p2.centerY) - p1.y, (p2.x + p2.centerX) - p1.x);
 	},
 
 	distance: function(p0, p1)
@@ -594,10 +594,10 @@ function setGameDimensions()
 		//re-set playerShip's dimensions/boundaries
 		// playerShip.bulletspeed = Math.round(X_BulletSpeed*game.height/1000);
 		playerShip.limitX2 = Math.round(game.width - (playerShip.width*0.5));
-		playerShip.limitY2 = Math.round(game.height - (playerShip.height*0.5));
+		playerShip.limitY2 = Math.round(game.height - playerShip.height);
     playerShip.accel = game.height*0.0007;
-    playerShip.speedLimit = Math.round(game.height*0.008);
-	}  
+    playerShip.speedLimit = Math.round(3*game.dt*game.deltaSpeed);
+	}
   // !Add any vars defined on runtime dependant of game dimensions!
 
 	//set game bosses' boundaries  !Need to give this enemy a name in the array
@@ -722,72 +722,151 @@ background = function()
 	this.imageA = game.offCtx['bg_level' + game.level + '_a'];
 	this.imageB = game.offCtx['bg_level' + game.level + '_b'];
 	this.imageC = game.offCtx['bg_level' + game.level + '_c'];
-	this.height = Math.round(this.imageA.height);
-	this.width = Math.round(this.imageA.width);
-	this.x = this.width <= game.windowWidth ? 0 : Math.round(0 - (this.width-game.windowWidth)/2);
+	this.x = this.imageA.width <= game.windowWidth ? 0 : Math.round(0 - (this.imageA.width - game.windowWidth)/2);
 	this.speed = Math.floor(2*game.dt*game.deltaSpeed);
-	this.yDrawLimit = -this.height;
-	this.imageA_y = 0;
-	this.imageB_y = this.imageA_y - this.height;
-	this.imageC_y = this.yDrawLimit - 1;
+	this.imageA.isOn = true;
+	this.imageA.sY = 0;
+	this.imageA.sH = this.imageA.height;
+	this.imageA.dY = 0;
+	this.imageA.dH = this.imageA.height;
+	this.imageB.isOn = true;
+	this.imageB.sY = this.imageB.height;
+	this.imageB.sH = 1;
+	this.imageB.dY = 0;
+	this.imageB.dH = 0;
+	this.imageC.isOn = false;
+	this.imageC.sY = this.imageC.height;
+	this.imageC.sH = 1;
+	this.imageC.dY = 0;
+	this.imageC.dH = 0;
 	this.ctx = game.context;
 };
 
-background.prototype.draw = function(image, x, y)
+background.prototype.drawSlice = function(image)
 {
-	this.ctx.drawImage(image, x, y);
+	this.ctx.drawImage(image, 0, image.sY, image.width, image.sH, this.x, image.dY, image.width, image.dH);
 };
 
-background.prototype.updateA = function()
+background.prototype.retractReset = function(image)
 {
-	if (this.imageA_y >= this.yDrawLimit)
-	{
-		this.draw(this.imageA, this.x, this.imageA_y);
-		this.imageA_y += this.speed;
+	image.sY = 0;
+	image.sH = image.height;
+	image.dH = image.height;
+};
 
-		if (this.imageB_y > 0)
-		{
-			this.imageA_y = this.yDrawLimit - 1;
-			this.imageC_y = this.imageB_y - this.height;
-		}
+background.prototype.expandReset = function(image)
+{
+	 image.sY = image.height;
+	 image.sH = 1;
+	 image.dY = 0;
+	 image.dH = 0;
+};
+
+background.prototype.expandA = function()
+{
+	this.imageA.sY -= this.speed;
+	this.imageA.sH += this.speed;
+	this.imageA.dH += this.speed;
+
+	if (this.imageA.sH > this.imageA.height)
+	{
+		this.retractReset(this.imageA);
+		background.prototype.updateSliceA = background.prototype.retractA;
 	}
 };
 
-background.prototype.updateB = function()
+background.prototype.retractA = function()
 {
-	if (this.imageB_y >= this.yDrawLimit)
-	{
-		this.draw(this.imageB, this.x, this.imageB_y);
-		this.imageB_y += this.speed;
+	this.imageA.sH -= this.speed;
+	this.imageA.dY += this.speed;
+	this.imageA.dH -= this.speed;
 
-		if (this.imageC_y > 0)
-		{
-			this.imageB_y = this.yDrawLimit - 1;
-			this.imageA_y = this.imageC_y - this.height + this.speed; //+ this.speed to compensate loop position
-		}
+	if (this.imageA.sH < this.speed)
+	{
+		this.imageA.isOn = false;
+		this.imageC.isOn = true;
+		this.expandReset(this.imageA);
+		background.prototype.updateSliceA = background.prototype.expandA;
 	}
 };
 
-background.prototype.updateC = function()
+background.prototype.expandB = function()
 {
-	if (this.imageC_y >= this.yDrawLimit)
-	{
-		this.draw(this.imageC, this.x, this.imageC_y);
-		this.imageC_y += this.speed;
+	this.imageB.sY -= this.speed;
+	this.imageB.sH += this.speed;
+	this.imageB.dH += this.speed;
 
-		if (this.imageA_y > 0)
-		{
-			this.imageC_y = this.yDrawLimit - 1;
-			this.imageB_y = this.imageA_y - this.height + this.speed; //+ this.speed to compensate loop position
-		}
+	if (this.imageB.sH > this.imageB.height)
+	{
+		this.retractReset(this.imageB);
+		background.prototype.updateSliceB = background.prototype.retractB;
 	}
 };
+
+background.prototype.retractB = function()
+{
+	this.imageB.sH -= this.speed;
+	this.imageB.dY += this.speed;
+	this.imageB.dH -= this.speed;
+
+	if (this.imageB.sH < this.speed)
+	{
+		this.imageB.isOn = false;
+		this.imageA.isOn = true;
+		this.expandReset(this.imageB);
+		background.prototype.updateSliceB = background.prototype.expandB;
+	}
+};
+
+background.prototype.expandC = function()
+{
+	this.imageC.sY -= this.speed;
+	this.imageC.sH += this.speed;
+	this.imageC.dH += this.speed;
+
+	if (this.imageC.sH > this.imageC.height)
+	{
+		this.retractReset(this.imageC);
+		background.prototype.updateSliceC = background.prototype.retractC;
+	}
+};
+
+background.prototype.retractC = function()
+{
+	this.imageC.sH -= this.speed;
+	this.imageC.dY += this.speed;
+	this.imageC.dH -= this.speed;
+
+	if (this.imageC.sH < this.speed)
+	{
+		this.imageC.isOn = false;
+		this.imageB.isOn = true;
+		this.expandReset(this.imageC);
+		background.prototype.updateSliceC = background.prototype.expandC;
+	}
+};
+
+background.prototype.updateSliceA = background.prototype.retractA;
+background.prototype.updateSliceB = background.prototype.expandB;
+background.prototype.updateSliceC = background.prototype.expandC;
 
 background.prototype.update = function()
 {
-	this.updateA();
-	this.updateB();
-	this.updateC();
+	if (this.imageA.isOn)
+	{
+		this.updateSliceA();
+		this.drawSlice(this.imageA);
+	}
+	if (this.imageB.isOn)
+	{
+		this.updateSliceB();
+		this.drawSlice(this.imageB);
+	}
+	if (this.imageC.isOn)
+	{
+		this.updateSliceC();
+		this.drawSlice(this.imageC);
+	}
 };
 
 explosion = function (x, y, speed, direction, size)
@@ -1014,8 +1093,8 @@ player.prototype.ctx = game.context;
 player.prototype.speed = 0;
 player.prototype.speedX = 0;
 player.prototype.speedY = 0;
-player.prototype.spriteLeftFrames = [0,0,1,2,2,3,3,4,4,4];
-player.prototype.spriteRightFrames = [5,5,6,7,7,8,8,9,9,9];
+player.prototype.spriteLeftFrames = [0,0,1,2,3,4,4,4,4];
+player.prototype.spriteRightFrames = [5,5,6,7,8,9,9,9,9];
 player.prototype.hit = false;
 player.prototype.imune = false;
 player.prototype.imuneTimer = -5;
@@ -1023,7 +1102,7 @@ player.prototype.imuneTicks = 0;
 player.prototype.deadTimer = 0;
 player.prototype.lives = X_Lives;
 player.prototype.accel = game.height*0.0007;
-player.prototype.speedLimit = Math.round(game.height*0.008);
+player.prototype.speedLimit = Math.round(3*game.dt*game.deltaSpeed);
 player.prototype.fireTimer = 1;
 player.prototype.laserLevel = 1;
 player.prototype.missileLevel = 0;
@@ -1533,6 +1612,9 @@ enemy = function(x, y, speed, direction, hull, image, fireRate)
 	this.speed = Math.round(speed*game.dt*game.deltaSpeed);
 	this.direction = direction;
 	this.hull = hull;
+	this.bullet = {};
+	this.bullet.x = null;
+	this.bullet.y = null;
 	this.fireRate = fireRate * 60; //fireRate = delay in seconds
 
 	// this.vx = Math.cos(this.direction) * (this.speed);
@@ -1638,9 +1720,9 @@ enemy.prototype.setGuns = function()
 
 enemy.prototype.fireMissile = function()
 {
-		bulletX = Math.round(this.x + this.width*0.42);
-		bulletY = Math.round(this.y + this.height);
-		getNewEnemyBullet(bulletX, bulletY, 1, utils.angleTo(this, playerShip), 1, 'bullet_e_missile');
+	this.bullet.x = this.x + this.centerX;
+	this.bullet.y = this.y + this.height;
+	getNewEnemyBullet(this.bullet.x, this.bullet.y, 1, utils.angleTo(this.bullet, playerShip), 1, 'bullet_e_missile');
 };
 
 enemy.prototype.draw = function()
@@ -2144,8 +2226,8 @@ sectoidBoss.prototype.fireLasers = function()
 
 sectoidBoss.prototype.fireMissiles = function()
 {
-	this.missile1.x = Math.round(this.x);
-	this.missile2.x = Math.round(this.x + this.width);
+	this.missile1.x = this.x;
+	this.missile2.x = this.x + this.width;
 	getNewEnemyBullet(this.missile1.x, this.missile1.y, 1, utils.angleTo(this.missile1, playerShip), 1, 'bullet_e_missile');
 	getNewEnemyBullet(this.missile2.x, this.missile1.y, 1, utils.angleTo(this.missile2, playerShip), 1, 'bullet_e_missile');
 };
@@ -3214,7 +3296,6 @@ function update()
 	////////////////////////
 	// Init
 	///////////////////////
-	clrCanvas();
 	gameBackground.update();
 
 	if(!game.dtTimerSet)
@@ -3223,7 +3304,7 @@ function update()
 	}
 
 	updateGameTime();
-	
+
 	/////////////////////////////////////////////////////////////////////////////////
 	// LEVELS
 	////////////////////////////////////////////////////////////////////////////////
@@ -3720,16 +3801,10 @@ function updateGameTime()
 	game.seconds = game.timer/60 || 0;
 }
 
-function clrCanvas()
-{
-	game.context.clearRect(0, 0, game.width, game.height);
-}
-
 function resetGame() //called on level start
 {
 	mouseIsDown = 0;
 	gameLights.switch('off');
-	clrCanvas();
 
 	//Game state
 	game.gameOver = true;

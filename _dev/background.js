@@ -3,70 +3,149 @@ background = function()
 	this.imageA = game.offCtx['bg_level' + game.level + '_a'];
 	this.imageB = game.offCtx['bg_level' + game.level + '_b'];
 	this.imageC = game.offCtx['bg_level' + game.level + '_c'];
-	this.height = Math.round(this.imageA.height);
-	this.width = Math.round(this.imageA.width);
-	this.x = this.width <= game.windowWidth ? 0 : Math.round(0 - (this.width-game.windowWidth)/2);
+	this.x = this.imageA.width <= game.windowWidth ? 0 : Math.round(0 - (this.imageA.width - game.windowWidth)/2);
 	this.speed = Math.floor(2*game.dt*game.deltaSpeed);
-	this.yDrawLimit = -this.height;
-	this.imageA_y = 0;
-	this.imageB_y = this.imageA_y - this.height;
-	this.imageC_y = this.yDrawLimit - 1;
+	this.imageA.isOn = true;
+	this.imageA.sY = 0;
+	this.imageA.sH = this.imageA.height;
+	this.imageA.dY = 0;
+	this.imageA.dH = this.imageA.height;
+	this.imageB.isOn = true;
+	this.imageB.sY = this.imageB.height;
+	this.imageB.sH = 1;
+	this.imageB.dY = 0;
+	this.imageB.dH = 0;
+	this.imageC.isOn = false;
+	this.imageC.sY = this.imageC.height;
+	this.imageC.sH = 1;
+	this.imageC.dY = 0;
+	this.imageC.dH = 0;
 	this.ctx = game.context;
 };
 
-background.prototype.draw = function(image, x, y)
+background.prototype.drawSlice = function(image)
 {
-	this.ctx.drawImage(image, x, y);
+	this.ctx.drawImage(image, 0, image.sY, image.width, image.sH, this.x, image.dY, image.width, image.dH);
 };
 
-background.prototype.updateA = function()
+background.prototype.retractReset = function(image)
 {
-	if (this.imageA_y >= this.yDrawLimit)
-	{
-		this.draw(this.imageA, this.x, this.imageA_y);
-		this.imageA_y += this.speed;
+	image.sY = 0;
+	image.sH = image.height;
+	image.dH = image.height;
+};
 
-		if (this.imageB_y > 0)
-		{
-			this.imageA_y = this.yDrawLimit - 1;
-			this.imageC_y = this.imageB_y - this.height;
-		}
+background.prototype.expandReset = function(image)
+{
+	 image.sY = image.height;
+	 image.sH = 1;
+	 image.dY = 0;
+	 image.dH = 0;
+};
+
+background.prototype.expandA = function()
+{
+	this.imageA.sY -= this.speed;
+	this.imageA.sH += this.speed;
+	this.imageA.dH += this.speed;
+
+	if (this.imageA.sH > this.imageA.height)
+	{
+		this.retractReset(this.imageA);
+		background.prototype.updateSliceA = background.prototype.retractA;
 	}
 };
 
-background.prototype.updateB = function()
+background.prototype.retractA = function()
 {
-	if (this.imageB_y >= this.yDrawLimit)
-	{
-		this.draw(this.imageB, this.x, this.imageB_y);
-		this.imageB_y += this.speed;
+	this.imageA.sH -= this.speed;
+	this.imageA.dY += this.speed;
+	this.imageA.dH -= this.speed;
 
-		if (this.imageC_y > 0)
-		{
-			this.imageB_y = this.yDrawLimit - 1;
-			this.imageA_y = this.imageC_y - this.height + this.speed; //+ this.speed to compensate loop position
-		}
+	if (this.imageA.sH < this.speed)
+	{
+		this.imageA.isOn = false;
+		this.imageC.isOn = true;
+		this.expandReset(this.imageA);
+		background.prototype.updateSliceA = background.prototype.expandA;
 	}
 };
 
-background.prototype.updateC = function()
+background.prototype.expandB = function()
 {
-	if (this.imageC_y >= this.yDrawLimit)
-	{
-		this.draw(this.imageC, this.x, this.imageC_y);
-		this.imageC_y += this.speed;
+	this.imageB.sY -= this.speed;
+	this.imageB.sH += this.speed;
+	this.imageB.dH += this.speed;
 
-		if (this.imageA_y > 0)
-		{
-			this.imageC_y = this.yDrawLimit - 1;
-			this.imageB_y = this.imageA_y - this.height + this.speed; //+ this.speed to compensate loop position
-		}
+	if (this.imageB.sH > this.imageB.height)
+	{
+		this.retractReset(this.imageB);
+		background.prototype.updateSliceB = background.prototype.retractB;
 	}
 };
+
+background.prototype.retractB = function()
+{
+	this.imageB.sH -= this.speed;
+	this.imageB.dY += this.speed;
+	this.imageB.dH -= this.speed;
+
+	if (this.imageB.sH < this.speed)
+	{
+		this.imageB.isOn = false;
+		this.imageA.isOn = true;
+		this.expandReset(this.imageB);
+		background.prototype.updateSliceB = background.prototype.expandB;
+	}
+};
+
+background.prototype.expandC = function()
+{
+	this.imageC.sY -= this.speed;
+	this.imageC.sH += this.speed;
+	this.imageC.dH += this.speed;
+
+	if (this.imageC.sH > this.imageC.height)
+	{
+		this.retractReset(this.imageC);
+		background.prototype.updateSliceC = background.prototype.retractC;
+	}
+};
+
+background.prototype.retractC = function()
+{
+	this.imageC.sH -= this.speed;
+	this.imageC.dY += this.speed;
+	this.imageC.dH -= this.speed;
+
+	if (this.imageC.sH < this.speed)
+	{
+		this.imageC.isOn = false;
+		this.imageB.isOn = true;
+		this.expandReset(this.imageC);
+		background.prototype.updateSliceC = background.prototype.expandC;
+	}
+};
+
+background.prototype.updateSliceA = background.prototype.retractA;
+background.prototype.updateSliceB = background.prototype.expandB;
+background.prototype.updateSliceC = background.prototype.expandC;
 
 background.prototype.update = function()
 {
-	this.updateA();
-	this.updateB();
-	this.updateC();
+	if (this.imageA.isOn)
+	{
+		this.updateSliceA();
+		this.drawSlice(this.imageA);
+	}
+	if (this.imageB.isOn)
+	{
+		this.updateSliceB();
+		this.drawSlice(this.imageB);
+	}
+	if (this.imageC.isOn)
+	{
+		this.updateSliceC();
+		this.drawSlice(this.imageC);
+	}
 };

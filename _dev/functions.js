@@ -194,16 +194,10 @@ function updateGameTime()
 	game.seconds = game.timer/60 || 0;
 }
 
-function clrCanvas()
-{
-	game.context.clearRect(0, 0, game.width, game.height);
-}
-
 function resetGame() //called on level start
 {
 	mouseIsDown = 0;
 	gameLights.switch('off');
-	clrCanvas();
 
 	//Game state
 	game.gameOver = true;
