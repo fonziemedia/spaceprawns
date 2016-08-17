@@ -223,18 +223,14 @@ if (!game.isMobile || game.windowHeight > 640)
 	//Note: UI images are powered by CSS (see CSS assets folder)
 	game.imagePaths = [
 		//backgrounds
-		"_img/bg_level1_a.dkt.jpg",
-		"_img/bg_level1_b.dkt.jpg",
-		"_img/bg_level1_c.dkt.jpg",
+		"_img/bg_level1.dkt.jpg",
   ];
 }
 else
 {
   game.imagePaths = [
     //backgrounds
-    "_img/bg_level1_a.mob.jpg",
-    "_img/bg_level1_b.mob.jpg",
-    "_img/bg_level1_c.mob.jpg",
+    "_img/bg_level1.mob.jpg",
   ];
 }
 if (!game.isMobile || game.windowHeight > 900)
@@ -320,12 +316,14 @@ function setGameDimensions()
   game.windowWidth = game.isMobile ? doc.documentElement.clientWidth : parseInt($('#gamearea').css("width")); //using parseInt here to remove 'px'
   game.windowHeight = doc.documentElement.clientHeight;
   game.deltaSpeed = game.windowHeight >= 480 ? game.windowHeight/480 : 1; // game speed normalizer (mobile first / iPhone 4)
+  game.deltaSpeed = game.windowHeight >= 720 ? 1.5 : game.deltaSpeed; // game speed limiter (high res devices)
 
 	allCanvas.attr('width', game.windowWidth);
 	allCanvas.attr('height', game.windowHeight);
 
 	//SETTING GAME DIMENSIONS
-	game.width = Math.round(game.windowWidth);
+  // game.isHighRes = game.height > 1080 ? true : false;
+	game.width = Math.round(game.windowWidth); //needs high res limiter to avoid black game regions on high res devices
 	game.height = Math.round(game.windowHeight);
 
 	//outer borders
@@ -347,6 +345,11 @@ function setGameDimensions()
     playerShip.accel = game.height*0.0007;
     playerShip.speedLimit = Math.round(3*game.dt*game.deltaSpeed);
 	}
+
+  if (typeof gameBackground != 'undefined')
+  {
+    gameBackground.resize();
+  }
   // !Add any vars defined on runtime dependant of game dimensions!
 
 	//set game bosses' boundaries  !Need to give this enemy a name in the array

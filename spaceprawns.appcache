@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 2016-05-26 ver 0.19.1
+# 2016-05-26 ver 0.20.0
 
 # Explicitly cached entries
 index.html
@@ -34,9 +34,7 @@ _css/_src/assets/fonts/icons/icons.woff2
 
 #backgrounds
 _img/bg_intro.dkt.jpg
-_img/bg_level1_a.dkt.jpg
-_img/bg_level1_b.dkt.jpg
-_img/bg_level1_c.dkt.jpg
+_img/bg_level1.dkt.jpg
 
 #player
 _img/player_ship.dkt.png
@@ -70,9 +68,7 @@ _img/loot_shields.dkt.png
 
 #backgrounds
 _img/bg_intro.mob.jpg
-_img/bg_level1_a.mob.jpg
-_img/bg_level1_b.mob.jpg
-_img/bg_level1_c.mob.jpg
+_img/bg_level1.mob.jpg
 
 #player
 _img/player_ship.mob.png

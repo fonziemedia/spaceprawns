@@ -474,18 +474,14 @@ if (!game.isMobile || game.windowHeight > 640)
 	//Note: UI images are powered by CSS (see CSS assets folder)
 	game.imagePaths = [
 		//backgrounds
-		"_img/bg_level1_a.dkt.jpg",
-		"_img/bg_level1_b.dkt.jpg",
-		"_img/bg_level1_c.dkt.jpg",
+		"_img/bg_level1.dkt.jpg",
   ];
 }
 else
 {
   game.imagePaths = [
     //backgrounds
-    "_img/bg_level1_a.mob.jpg",
-    "_img/bg_level1_b.mob.jpg",
-    "_img/bg_level1_c.mob.jpg",
+    "_img/bg_level1.mob.jpg",
   ];
 }
 if (!game.isMobile || game.windowHeight > 900)
@@ -571,12 +567,14 @@ function setGameDimensions()
   game.windowWidth = game.isMobile ? doc.documentElement.clientWidth : parseInt($('#gamearea').css("width")); //using parseInt here to remove 'px'
   game.windowHeight = doc.documentElement.clientHeight;
   game.deltaSpeed = game.windowHeight >= 480 ? game.windowHeight/480 : 1; // game speed normalizer (mobile first / iPhone 4)
+  game.deltaSpeed = game.windowHeight >= 720 ? 1.5 : game.deltaSpeed; // game speed limiter (high res devices)
 
 	allCanvas.attr('width', game.windowWidth);
 	allCanvas.attr('height', game.windowHeight);
 
 	//SETTING GAME DIMENSIONS
-	game.width = Math.round(game.windowWidth);
+  // game.isHighRes = game.height > 1080 ? true : false;
+	game.width = Math.round(game.windowWidth); //needs high res limiter to avoid black game regions on high res devices
 	game.height = Math.round(game.windowHeight);
 
 	//outer borders
@@ -598,6 +596,11 @@ function setGameDimensions()
     playerShip.accel = game.height*0.0007;
     playerShip.speedLimit = Math.round(3*game.dt*game.deltaSpeed);
 	}
+
+  if (typeof gameBackground != 'undefined')
+  {
+    gameBackground.resize();
+  }
   // !Add any vars defined on runtime dependant of game dimensions!
 
 	//set game bosses' boundaries  !Need to give this enemy a name in the array
@@ -719,155 +722,115 @@ sprite.prototype.drawFrame = function(x, y, frame)
 
 background = function()
 {
-	this.imageA = game.offCtx['bg_level' + game.level + '_a'];
-	this.imageB = game.offCtx['bg_level' + game.level + '_b'];
-	this.imageC = game.offCtx['bg_level' + game.level + '_c'];
-	this.x = this.imageA.width <= game.windowWidth ? 0 : Math.round(0 - (this.imageA.width - game.windowWidth)/2);
+	this.image = game.offCtx['bg_level' + game.level];
+	//main image properties
+	this.image.sX = this.image.width <= game.width ? 0 : Math.ceil((this.image.width - game.width)/2);
+	this.image.sY = this.image.height - game.height;
+	this.image.sH = game.height;
+	this.image.sW = game.width;
+	this.image.dX = 0;
+	this.image.dY = 0;
+	this.image.dW = game.width;
+	this.image.dH = game.height;
+	//clone image properties
+	this.image.TsX = this.image.sX;
+	this.image.TsY = 1;
+	this.image.TsW = this.image.sW;
+	this.image.TsH = game.height;
+	this.image.TdX = 0;
+	this.image.TdY = 0;
+	this.image.TdW = this.image.dW;
+	this.image.TdH = game.height;
+
 	this.speed = Math.floor(2*game.dt*game.deltaSpeed);
-	this.imageA.isOn = true;
-	this.imageA.sY = 0;
-	this.imageA.sH = this.imageA.height;
-	this.imageA.dY = 0;
-	this.imageA.dH = this.imageA.height;
-	this.imageB.isOn = true;
-	this.imageB.sY = this.imageB.height;
-	this.imageB.sH = 1;
-	this.imageB.dY = 0;
-	this.imageB.dH = 0;
-	this.imageC.isOn = false;
-	this.imageC.sY = this.imageC.height;
-	this.imageC.sH = 1;
-	this.imageC.dY = 0;
-	this.imageC.dH = 0;
 	this.ctx = game.context;
 };
 
-background.prototype.drawSlice = function(image)
+background.prototype.resize = function()
 {
-	this.ctx.drawImage(image, 0, image.sY, image.width, image.sH, this.x, image.dY, image.width, image.dH);
-};
+	this.image.sX = this.image.width <= game.width ? 0 : Math.ceil((this.image.width - game.width)/2);
+	this.image.sW = game.width;
+	this.image.dW = game.width;
 
-background.prototype.retractReset = function(image)
-{
-	image.sY = 0;
-	image.sH = image.height;
-	image.dH = image.height;
-};
-
-background.prototype.expandReset = function(image)
-{
-	 image.sY = image.height;
-	 image.sH = 1;
-	 image.dY = 0;
-	 image.dH = 0;
-};
-
-background.prototype.expandA = function()
-{
-	this.imageA.sY -= this.speed;
-	this.imageA.sH += this.speed;
-	this.imageA.dH += this.speed;
-
-	if (this.imageA.sH > this.imageA.height)
+	if (background.prototype.update == background.prototype.roll)
 	{
-		this.retractReset(this.imageA);
-		background.prototype.updateSliceA = background.prototype.retractA;
+		this.image.sH = game.height;
+		this.image.dH = game.height;
+	}
+	else
+	{
+		// rescale trans image properties
+		this.image.TsH = game.height;
+		this.image.TdH = game.height;
 	}
 };
 
-background.prototype.retractA = function()
+background.prototype.drawImage = function()
 {
-	this.imageA.sH -= this.speed;
-	this.imageA.dY += this.speed;
-	this.imageA.dH -= this.speed;
-
-	if (this.imageA.sH < this.speed)
-	{
-		this.imageA.isOn = false;
-		this.imageC.isOn = true;
-		this.expandReset(this.imageA);
-		background.prototype.updateSliceA = background.prototype.expandA;
-	}
+	this.ctx.drawImage(this.image, this.image.sX, this.image.sY, this.image.sW, this.image.sH, this.image.dX, this.image.dY, this.image.dW, this.image.dH);
 };
 
-background.prototype.expandB = function()
+background.prototype.drawTransImage = function()
 {
-	this.imageB.sY -= this.speed;
-	this.imageB.sH += this.speed;
-	this.imageB.dH += this.speed;
-
-	if (this.imageB.sH > this.imageB.height)
-	{
-		this.retractReset(this.imageB);
-		background.prototype.updateSliceB = background.prototype.retractB;
-	}
+	this.ctx.drawImage(this.image, this.image.TsX, this.image.TsY, this.image.TsW, this.image.TsH, this.image.TdX, this.image.TdY, this.image.TdW, this.image.TdH);
 };
 
-background.prototype.retractB = function()
+background.prototype.transitionReset = function()
 {
-	this.imageB.sH -= this.speed;
-	this.imageB.dY += this.speed;
-	this.imageB.dH -= this.speed;
+	this.image.TsY = this.image.sY;
+	this.image.TsH = this.image.sH;
+	this.image.TdY = this.image.dY;
+	this.image.TdH = this.image.dH;
+	
+	this.image.sY = this.image.height;
+	this.image.sH = 1;
+	this.image.dY = 0;
+	this.image.dH = 1;
 
-	if (this.imageB.sH < this.speed)
-	{
-		this.imageB.isOn = false;
-		this.imageA.isOn = true;
-		this.expandReset(this.imageB);
-		background.prototype.updateSliceB = background.prototype.expandB;
-	}
+	background.prototype.update = background.prototype.transition;
 };
 
-background.prototype.expandC = function()
+background.prototype.rollReset = function()
 {
-	this.imageC.sY -= this.speed;
-	this.imageC.sH += this.speed;
-	this.imageC.dH += this.speed;
-
-	if (this.imageC.sH > this.imageC.height)
-	{
-		this.retractReset(this.imageC);
-		background.prototype.updateSliceC = background.prototype.retractC;
-	}
+	this.image.dH = this.image.TdY;
+	background.prototype.update = background.prototype.roll;
 };
 
-background.prototype.retractC = function()
+background.prototype.roll = function()
 {
-	this.imageC.sH -= this.speed;
-	this.imageC.dY += this.speed;
-	this.imageC.dH -= this.speed;
+	this.image.sY -= this.speed;
+	// this.image.sH -= this.speed; //cool light speed effect
 
-	if (this.imageC.sH < this.speed)
+	if (this.image.sY <= 1)
 	{
-		this.imageC.isOn = false;
-		this.imageB.isOn = true;
-		this.expandReset(this.imageC);
-		background.prototype.updateSliceC = background.prototype.expandC;
+		this.transitionReset();
+		return;
 	}
+
+	this.drawImage();
 };
 
-background.prototype.updateSliceA = background.prototype.retractA;
-background.prototype.updateSliceB = background.prototype.expandB;
-background.prototype.updateSliceC = background.prototype.expandC;
-
-background.prototype.update = function()
+background.prototype.transition = function()
 {
-	if (this.imageA.isOn)
+	this.image.TsH -= this.speed;
+	this.image.TdY += this.speed;
+	this.image.TdH -= this.speed;
+
+	this.image.sY -= this.speed;
+	this.image.sH += this.speed;
+	this.image.dH += this.speed;
+
+	if (this.image.TsH <= 0)
 	{
-		this.updateSliceA();
-		this.drawSlice(this.imageA);
+		this.rollReset();
+		return;
 	}
-	if (this.imageB.isOn)
-	{
-		this.updateSliceB();
-		this.drawSlice(this.imageB);
-	}
-	if (this.imageC.isOn)
-	{
-		this.updateSliceC();
-		this.drawSlice(this.imageC);
-	}
+
+	this.drawTransImage();
+	this.drawImage();
 };
+
+background.prototype.update = background.prototype.roll;
 
 explosion = function (x, y, speed, direction, size)
 {
@@ -1093,8 +1056,8 @@ player.prototype.ctx = game.context;
 player.prototype.speed = 0;
 player.prototype.speedX = 0;
 player.prototype.speedY = 0;
-player.prototype.spriteLeftFrames = [0,0,1,2,3,4,4,4,4];
-player.prototype.spriteRightFrames = [5,5,6,7,8,9,9,9,9];
+player.prototype.spriteLeftFrames = [0,0,1,2,3,4,4,4,4,4,4]; // the 1st array item is dummy(never called) array size needs to equal max possible speed + 1 (dummy)
+player.prototype.spriteRightFrames = [5,5,6,7,8,9,9,9,9,9,9]; // the 1st array item is dummy(never called) array size needs to equal max possible speed + 1 (dummy)
 player.prototype.hit = false;
 player.prototype.imune = false;
 player.prototype.imuneTimer = -5;
@@ -1102,7 +1065,7 @@ player.prototype.imuneTicks = 0;
 player.prototype.deadTimer = 0;
 player.prototype.lives = X_Lives;
 player.prototype.accel = game.height*0.0007;
-player.prototype.speedLimit = Math.round(3*game.dt*game.deltaSpeed);
+player.prototype.speedLimit = Math.round(5*game.dt*game.deltaSpeed);
 player.prototype.fireTimer = 1;
 player.prototype.laserLevel = 1;
 player.prototype.missileLevel = 0;
