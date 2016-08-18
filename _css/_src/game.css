@@ -4,7 +4,13 @@
 
 @font-face {
   font-family: 'Furore';
-  src: url("assets/fonts/furore/furore.otf");
+  src: url('assets/fonts/furore/furore.otf');
+  src: url('assets/fonts/furore/Furore.eot'),
+       url('assets/fonts/furore/Furore.woff2') format('woff2'),
+       url('assets/fonts/furore/Furore.woff') format('woff'),
+       url('assets/fonts/furore/Furore.ttf') format('truetype'),
+       url('assets/fonts/furore/Furore.svg#Furore') format('svg'),
+       url('assets/fonts/furore/Furore.eot?#iefix') format('embedded-opentype');
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
@@ -710,13 +716,6 @@ canvas {
   }
 }
 
-.hvr-pulse {
-  vertical-align: middle;
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -moz-osx-font-smoothing: grayscale;
-}
 .hvr-pulse:hover, .hvr-pulse:active {
   -webkit-animation-name: hvr-pulse;
   animation-name: hvr-pulse;
