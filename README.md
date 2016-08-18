@@ -1,4 +1,4 @@
-invaders
+spaceprawns
 ========
 
-an html 5 game exercise
+an html 5 game engine
