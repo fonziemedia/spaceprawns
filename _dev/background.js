@@ -29,6 +29,9 @@ background.prototype.resize = function()
 	this.image.sX = this.image.width <= game.width ? 0 : Math.ceil((this.image.width - game.width)/2);
 	this.image.sW = game.width;
 	this.image.dW = game.width;
+	this.image.TsX = this.image.sX;
+	this.image.TsW = this.image.sW;
+	this.image.TdW = this.image.dW;
 
 	if (background.prototype.update == background.prototype.roll)
 	{
@@ -55,12 +58,12 @@ background.prototype.drawTransImage = function()
 
 background.prototype.transitionReset = function()
 {
-	this.image.TsY = this.image.sY;
+	this.image.TsY = this.image.sY + 1;
 	this.image.TsH = this.image.sH;
 	this.image.TdY = this.image.dY;
 	this.image.TdH = this.image.dH;
-	
-	this.image.sY = this.image.height;
+
+	this.image.sY = this.image.height - 1;
 	this.image.sH = 1;
 	this.image.dY = 0;
 	this.image.dH = 1;
