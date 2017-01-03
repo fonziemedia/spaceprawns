@@ -1,33 +1,14 @@
 explosion = function (x, y, speed, direction, size)
 {
-	this.explosions = ['explosion_s0',
-										 'explosion_s1',
-										 'explosion_s2',
-										 'explosion_s3',
-										 'explosion_s4'];
+	this.size = size;
+	this.image = 'explosion_s' + this.size;
 
-	switch(size)
-	{
-		case 0:
-			this.image = this.explosions[0];
-		break;
-		case 1:
-			this.image = this.explosions[1];
-		break;
-		case 2:
-			this.image = this.explosions[2];
-		break;
-		case 3:
-			this.image = this.explosions[3];
-		break;
-		case 4:
-			this.image = this.explosions[4];
-		break;
-	}
+	this.x = Math.round(x - (this.width*0.2));
+	this.y = Math.round(y - (this.height*0.2));
 	this.sprite = new sprite(this.image, 5, 4, 2);
 	this.width = this.sprite.frameWidth;
 	this.height = this.sprite.frameHeight;
-	this.speed = Math.round(speed);
+	this.speed = speed;
 	this.direction = direction;
 
 	this.vx = Math.cos(this.direction) * (this.speed);
@@ -35,37 +16,11 @@ explosion = function (x, y, speed, direction, size)
 	this.vy = Math.sin(this.direction) * (this.speed);
 	this.yThrust = Math.round(this.vy); // always goes down at the same speed
 };
-explosion.prototype.audioHit1 = 'hit' + fileFormat;
-explosion.prototype.audioHit2 = 'hit2' + fileFormat;
-explosion.prototype.audioHit3 = 'hit3' + fileFormat;
-explosion.prototype.audioDead1 = 'explosion' + fileFormat;
-explosion.prototype.audioDead2 = 'explosion2' + fileFormat;
-explosion.prototype.audioDead3 = 'explosion3' + fileFormat;
-explosion.prototype.audioExplode = 'blast' + fileFormat;
 
 explosion.prototype.reset = function(x, y, speed, direction, size)
 {
-	switch(size)
-	{
-		case 0:
-			this.image = this.explosions[0];
-			explosion.prototype.playSfx = explosion.prototype.sfxChasis;
-		break;
-		case 1:
-			this.image = this.explosions[1];			explosion.prototype.playSfx = explosion.prototype.sfxDefault;
-		break;
-		case 2:
-			this.image = this.explosions[2];
-			explosion.prototype.playSfx = explosion.prototype.sfxDefault;
-		break;
-		case 3:
-			this.image = this.explosions[3];			explosion.prototype.playSfx = explosion.prototype.sfxDefault;
-		break;
-		case 4:
-			this.image = this.explosions[4];
-			explosion.prototype.playSfx = explosion.prototype.sfxBlast;
-		break;
-	}
+	this.size = size;
+	this.image = 'explosion_s' + this.size;
 	this.x = Math.round(x - (this.width*0.2));
 	this.y = Math.round(y - (this.height*0.2));
 	this.speed = speed;
@@ -77,53 +32,20 @@ explosion.prototype.reset = function(x, y, speed, direction, size)
 	this.yThrust = Math.round(this.vy); // always goes down at the same speed
 };
 
-explosion.prototype.sfxDefault = function()
+explosion.prototype.playSfx = function()
 {
-	if (game.sound)
+	switch(this.size)
 	{
-		if (game.sfx[this.audioDead1].paused)
-		{
-			game.sounds.push(game.sfx[this.audioDead1]);
-		}
-		else if (game.sfx[this.audioDead2].paused)
-		{
-			game.sounds.push(game.sfx[this.audioDead2]);
-		}
-		else if (game.sfx[this.audioDead3].paused)
-		{
-			game.sounds.push(game.sfx[this.audioDead3]);
-		}
+		case 0:
+			gameSfx.play('hit');
+		break;
+		case 4:
+			gameSfx.play('blast');
+		break;
+		default:
+			gameSfx.play('explosion');
 	}
 };
-
-explosion.prototype.sfxChasis = function()
-{
-	if (game.sound)
-  {
-		if (game.sfx[this.audioHit1].paused)
-		{
-			game.sounds.push(game.sfx[this.audioHit1]);
-		}
-		else if (game.sfx[this.audioHit2].paused)
-		{
-			game.sounds.push(game.sfx[this.audioHit2]);
-		}
-		else if (game.sfx[this.audioHit3].paused)
-		{
-			game.sounds.push(game.sfx[this.audioHit3]);
-		}
-  }
-};
-
-explosion.prototype.sfxBlast = function()
-{
-	if (game.sound)
-  {
-		game.sounds.push(game.sfx[this.audioExplode]);
-	}
-};
-
-explosion.prototype.playSfx = explosion.prototype.sfxDefault;
 
 explosion.prototype.recycle = function()
 {
@@ -132,7 +54,7 @@ explosion.prototype.recycle = function()
 
 explosion.prototype.checkStatus = function()
 {
-	if (this.sprite.currentFrame === this.sprite.startFrame)
+	if (gameSfx.on && this.sprite.currentFrame === this.sprite.startFrame)
 	{
 		this.playSfx();
 	}

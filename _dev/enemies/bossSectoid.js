@@ -85,6 +85,7 @@ function getNewSectoidBoss()
 	boss = game.bossesPool[0]; //get the specific boss
 	boss.reset(game.width*0.40, game.outerTop, 100);
 	game.enemies.push(boss);
+	game.bossUp = true;
 
 	game.bossesPool.splice(0, 1); //remove it from the pool while it's active
 }
@@ -95,4 +96,6 @@ function freeSectoidBoss(boss)
 	game.enemies.splice(game.enemies.indexOf(boss), 1);
 	//return the boss back into the pool
 	game.bossesPool.splice(0, 0, boss); //return at specific index (0)
+	game.bossDead = true;
+	game.bossUp = false;
 }

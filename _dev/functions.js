@@ -206,6 +206,7 @@ function resetGame() //called on level start
 
 	//Timers
 	game.timer = 0;
+	game.seconds = 0;
 	game.levelUpTimer = 0;
 
 	// Back to the pool dudes
@@ -224,15 +225,11 @@ function resetGame() //called on level start
 	playerShip.reset();
 
 	gameUI.updateAll();
+	gameMusic.pauseAll();
 
-	if(game.music)
+	if(gameMusic.on)
 	{
-		game.tracks.push(game.soundTracks['tune1' + fileFormat]);
-		for (var v in game.tracks)
-		{
-			game.tracks[v].play();
-			game.tracks[v].loop = true;
-		}
+		gameMusic.playTrack('tune1', true);
 	}
 }
 
@@ -271,54 +268,11 @@ function startGame()
 		playerShip = game.objects[0];
 	}
 
-	//preparing sound tracks (chromium fix)
-	game.tracks.push(game.soundTracks['tune1' + fileFormat]);
-	game.tracks.push(game.soundTracks['tune2' + fileFormat]);
-	game.tracks.push(game.soundTracks['boss' + fileFormat]);
-	game.tracks.push(game.soundTracks['victory' + fileFormat]);
+	gameMusic.chromiumFix();
+	gameSfx.chromiumFix();
 
-	for (var t in game.tracks)
-	{
-		game.tracks[t].play();
-		game.tracks[t].pause();
-	}
-
-	game.tracks = [];
-	//end of chromium fix
-
-	if(game.music)
-	{
-		game.tracks.push(game.soundTracks['tune1' + fileFormat]);
-		for (var u in game.tracks)
-		{
-			game.tracks[u].play();
-			game.tracks[u].loop = true;
-		}
-	}
-
-	//preparing soundfx (chromium fix)
-	game.sounds.push(game.sfx['laser' + fileFormat]);
-	game.sounds.push(game.sfx['laser2' + fileFormat]);
-	game.sounds.push(game.sfx['laser3' + fileFormat]);
-	game.sounds.push(game.sfx['hit' + fileFormat]);
-	game.sounds.push(game.sfx['hit2' + fileFormat]);
-	game.sounds.push(game.sfx['hit3' + fileFormat]);
-	game.sounds.push(game.sfx['loot_powerUp' + fileFormat]);
-	game.sounds.push(game.sfx['loot_powerUp2' + fileFormat]);
-	game.sounds.push(game.sfx['loot_powerUp3' + fileFormat]);
-	game.sounds.push(game.sfx['explosion' + fileFormat]);
-	game.sounds.push(game.sfx['explosion2' + fileFormat]);
-	game.sounds.push(game.sfx['explosion3' + fileFormat]);
-	game.sounds.push(game.sfx['blast' + fileFormat]);
-
-	for (var s in game.sounds)
-	{
-		game.sounds[s].play();
-		game.sounds[s].pause();
-	}
-
-	game.sounds = [];
-
+	if(gameMusic.on) gameMusic.playTrack('tune1', true);
+	
 	loop();
 }
 
@@ -326,202 +280,18 @@ function startGame()
 // Game Loaders
 ////////////////////////
 
-//====================== Loading bars =================//
-var loadingBar = $('#loadingBar');
-var loadingBarFiller = $('#loadingBarFiller');
-var loadingText = new text('Loading Images.. ', '', false);
-loadingText.switch('on');
-loadingBar.show();
-
-//====================== Images engine =================//
-function imgEventHandler ()
-{
-	this.removeEventListener("load", imgEventHandler, false);
-
-	var indexName, ctxName, offCanvas, offCtx;
-
-	indexName = this.src.split("/").pop();
-	indexName = indexName.substr(0, indexName.indexOf('.')) || indexName;
-
-	offCanvas = doc.createElement('canvas');
-	offCanvas.width = Math.round(this.width);
-	offCanvas.height = Math.round(this.height);
-
-	offCtx = offCanvas.getContext('2d');
-	offCtx.drawImage(this, 0, 0, offCanvas.width, offCanvas.height);
-	game.offCtx[indexName] = offCanvas;
-
-	game.doneImages++;
-}
-
-function initImages(ipaths) { //our images engine: passing the array 'ipaths' to the function
-	game.requiredImages = ipaths.length; //the number of required images will be equal to the length of the ipaths array
-	for(var i in ipaths)
-	{
-		var img = new Image(); //defining img as a new image
-
-		img.addEventListener("load", imgEventHandler, false); // !event listner needs to be set before loading the image (defining .src)
-
-		img.src = ipaths[i];
-		var imgIndex = img.src.split("/").pop(); //obtaining file name from path
-		imgIndex = imgIndex.substr(0, imgIndex.indexOf('.')) || imgIndex;
-
-		//!check if you should change this to object notation! you can't access array functions like this anyway
-		game.images[imgIndex] = img; //defining game.image[index] as a new image (with ipaths)
-	}
-}
-
-//====================== Audio engine =================//
-function sfxEventHandler()
-{
-	this.removeEventListener("canplaythrough", sfxEventHandler, false);
-	game.doneSfx++;
-}
-
-function stEventHandler()
-{
-	this.removeEventListener("canplaythrough", stEventHandler, false);
-	game.doneSoundTracks++;
-}
-
-function initSfx(sfxPaths)
-{ //our Sfx engine: passing the array 'sfxPaths' to the function
-	game.requiredSfx = sfxPaths.length; //the number of required Sfx will be equal to the length of the sfxPaths array
-
-	for(var i in sfxPaths)
-	{
-		var sfx = new Audio(); //defining sfx as a new Audio
-		sfx.src = sfxPaths[i]; //defining new Audio src as stPaths[i]
-
-		var sfxIndex = sfx.src.split("/").pop(); //obtaining file name from path and setting our sfxIndex as such
-
-		var sfxIndexInstance; //to keep track of sounds which use the same audio source and avoding duplicate indexes
-
-		if (!(sfxIndex in game.sfx)) //if index is unique
-		{
-			sfxIndexInstance = 1;
-			game.sfx[sfxIndex] = sfx;
-		}
-		else //if not increase our index instance and add it to its label
-		{
-			sfxIndexInstance++;
-			sfxIndex = sfx.src.match(/([^\/]+)(?=\.\w+$)/)[0] + sfxIndexInstance + fileFormat;
-			game.sfx[sfxIndex] = sfx;
-		}
-
-		if(audiopreload)
-		{
-			game.sfx[sfxIndex].preload = "auto";
-			//checking if sfx have loaded
-			game.sfx[sfxIndex].addEventListener("canplaythrough", sfxEventHandler, false);
-		}
-		else
-		{
-			game.doneSfx++;
-		}
-	}
-}
-
-function initSoundTracks(stPaths)
-{ //our Sfx engine: passing the array 'stPaths' to the function
-	game.requiredSoundTracks = stPaths.length; //the number of required SoundTracks will be equal to the length of the stPaths array
-
-	for(var i in stPaths)
-	{
-		var soundTracks = new Audio(); //defining soundTracks as a new Audio
-		soundTracks.src = stPaths[i];
-
-		var soundTracksIndex = soundTracks.src.split("/").pop(); //obtaining file name from path
-
-		game.soundTracks[soundTracksIndex] = soundTracks; //defining game.soundTracks[soundTracksIndex] as a new Audio (with stPaths)
-
-		if(audiopreload)
-		{
-			game.soundTracks[soundTracksIndex].preload = "auto";
-			//checking if st's have loaded
-			game.soundTracks[soundTracksIndex].addEventListener("canplaythrough", stEventHandler, false);
-		}
-		else
-		{
-			game.doneSoundTracks++;
-		}
-	}
-}
-
-function checkImages(){	//checking if all images have been loaded. Once all loaded run initSfx
-	if(game.doneImages >= game.requiredImages){
-		loadingText = new text('Loading Sfx.. ', '', false);
-		loadingBarFiller.css({"width": "0"});
-		initSfx(game.sfxPaths);
-		checkSfx();
-	}
-	else
-	{
-		loadingBarWidth = (game.doneImages / game.requiredImages) * 100 + '%';
-		loadingBarFiller.css({"width": loadingBarWidth});
-		setTimeout(function(){
-			checkImages();
-		}, 1);
-	}
-}
-
-function checkSfx()
-{
-	//checking if all Sfx have been loaded. Once all loaded run init
-	if(game.doneSfx >= game.requiredSfx){
-		loadingText = new text('Loading Sound Tracks.. ', '', false);
-		loadingBarFiller.css({"width": "0"});
-
-		//start loading sound tracks
-		initSoundTracks(game.soundTrackPaths);
-		checkSoundTracks();
-	}
-	else
-	{
-		loadingBarWidth = (game.doneSfx / game.requiredSfx) * 100 + '%';
-		loadingBarFiller.css({"width": loadingBarWidth});
-		setTimeout(function(){
-			checkSfx();
-		}, 1);
-	}
-}
-
-function checkSoundTracks()
-{
-	//checking if all Sfx have been loaded. Once all loaded run init
-	if(game.doneSoundTracks >= game.requiredSoundTracks)
-	{
-		loadingText = new text('Loading Assets.. ', '', false);
-		loadingBarFiller.css({"width": "0"});
-		//starting game menu
-		initObjects();
-		checkObjects();
-	}
-	else
-	{
-		loadingBarWidth = (game.doneSoundTracks / game.requiredSoundTracks) * 100 + '%';
-		loadingBarFiller.css({"width": loadingBarWidth});
-		setTimeout(function()
-		{
-			checkSoundTracks();
-		}, 1);
-	}
-}
-
 function checkObjects()
 {
 	//checking if all objects have been loaded. Once all loaded run init
 	if(game.doneObjects >= game.requiredObjects){
-		loadingText.switch('off');
-		loadingBar.hide();
+		gameUI.loadingBarClose();
 		//starting game menu
 		gameMenu.init();
 		gameBackground = new background();
 	}
 	else
 	{
-		loadingBarWidth = (game.doneObjects / game.requiredObjects) * 100 + '%';
-		loadingBarFiller.css({"width": loadingBarWidth});
+		gameUI.loadingBarUpdate(game.doneObjects, game.requiredObjects);
 		setTimeout(function(){
 			checkObjects();
 		}, 1);
@@ -539,37 +309,6 @@ function initObjects()
 	initPlayerBullets();
 	initExplosions();
 	initLoot();
-}
-
-function toggleSound()
-{
-	game.sound = game.sound ? false : true ;
-	localStorage.prawnsSound =  game.sound;
-}
-
-function toggleMusic()
-{
-	game.music = game.music ? false : true ;
-	localStorage.prawnsMusic =  game.music;
-
-	if (game.tracks.length > 0)
-	{
-		for(var g in game.tracks)
-		{
-			game.tracks[g].pause();
-		}
-		game.tracks = [];
-	}
-	else if (game.tracks.length < 1)
-	{
-		game.tracks.push(game.soundTracks['tune1' + fileFormat]);
-
-		for(var w in game.tracks)
-		{
-			game.tracks[w].play();
-			game.tracks[w].loop = true;
-		}
-	}
 }
 
 ////////////////////////////
@@ -590,9 +329,7 @@ function windowLoadEvent()
 	//check for updates appcache
 	win.applicationCache.addEventListener("updateready", appCacheEvent, false);
 	//load images
-	initImages(game.imagePaths);
-	//start checking loaded game assets
-	checkImages();
+	gameGfx.init();
 }
 
 function fullScreenHandler()

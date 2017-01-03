@@ -4,7 +4,7 @@ loot = function(x, y)
 	this.y = y;
 	this.key = Math.floor(Math.random() * this.drops.length);
 	this.type = this.drops[this.key];
-	this.image = game.offCtx[this.type];
+	this.image = gameGfx.offCtx[this.type];
 	this.width = this.image.width;
 	this.height = this.image.height;
 
@@ -17,9 +17,6 @@ loot = function(x, y)
 loot.prototype.speed = Math.round(1*game.dt*game.deltaSpeed);
 loot.prototype.direction = Math.PI/2;
 loot.prototype.drops = ['loot_shields', 'loot_lasers', 'loot_missiles'];
-loot.prototype.sfx1 = 'loot_powerUp' + fileFormat;
-loot.prototype.sfx2 = 'loot_powerUp2' + fileFormat;
-loot.prototype.sfx3 = 'loot_powerUp3' + fileFormat;
 loot.prototype.ctx = game.context;
 
 loot.prototype.reset = function(x, y)
@@ -28,7 +25,7 @@ loot.prototype.reset = function(x, y)
 	this.y = y;
 	this.key = Math.floor(Math.random() * this.drops.length);
 	this.type = this.drops[this.key];
-	this.image = game.offCtx[this.type];
+	this.image = gameGfx.offCtx[this.type];
 
 	this.vx = Math.cos(this.direction) * (this.speed);
 	this.xThrust = Math.round(this.vx); // always goes left/right at the same speed
@@ -58,25 +55,6 @@ loot.prototype.reward = function()
 	}
 };
 
-loot.prototype.sfxPlay = function()
-{
-	if (game.sound)
-	{
-		if (game.sfx[this.sfx1].paused)
-		{
-			game.sounds.push(game.sfx[this.sfx1]);
-		}
-		else if (game.sfx[this.sfx2].paused)
-		{
-			game.sounds.push(game.sfx[this.sfx2]);
-		}
-		else if (game.sfx[this.sfx3].paused)
-		{
-			game.sounds.push(game.sfx[this.sfx3]);
-		}
-	}
-};
-
 loot.prototype.setMovement = function()
 {
 	this.x += this.xThrust;
@@ -96,9 +74,9 @@ loot.prototype.checkCollision = function()
 	if (Collision(this, playerShip))
 	{
 		this.reward();
-		this.sfxPlay();
-
 		this.recycle();
+		
+		if(gameSfx.on) gameSfx.play('loot_powerUp');
 	}
 };
 

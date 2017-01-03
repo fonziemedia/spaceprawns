@@ -1,6 +1,6 @@
 sprite = function(image, columns, rows, animationSpeed)
 {
-	this.image = game.offCtx[image];
+	this.image = gameGfx.offCtx[image];
 	this.width = this.image.width;
 	this.height = this.image.height;
 	this.totalFrames = columns * rows;
@@ -24,7 +24,7 @@ sprite.prototype.counter = 0;
 
 sprite.prototype.reset = function(image, columns, rows, animationSpeed)
 {
-	this.image = game.offCtx[image];
+	this.image = gameGfx.offCtx[image];
 	this.width = this.image.width;
 	this.height = this.image.height;
 	this.totalFrames = columns * rows;

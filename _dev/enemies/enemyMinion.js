@@ -28,9 +28,9 @@ enemyMinion.prototype.reset = function(x, y, speed, direction, hull, image, fire
 {
 	this.x = x;
 	this.y = y;
-	this.image = game.offCtx[image];
-	this.width = game.offCtx[image].width;
-	this.height = game.offCtx[image].height;
+	this.image = gameGfx.offCtx[image];
+	this.width = gameGfx.offCtx[image].width;
+	this.height = gameGfx.offCtx[image].height;
 	this.centerX = Math.round(this.width*0.5);
 	this.centerY = Math.round(this.height*0.5);
 	this.speed = Math.round(speed*game.dt*game.deltaSpeed);

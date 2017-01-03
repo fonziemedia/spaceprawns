@@ -1,11 +1,42 @@
 ui = function()
 {
+	this.loadingBar = $('#loadingBar');
+	this.loadingBarWidth = 0;
+	this.loadingBarFiller = $('#loadingBarFiller');
+	this.loadingText = new text('Loading Images.. ', '', false);
+	
 	this.uiAll = $('#ui');
 	this.uiLevel = doc.getElementById("uiLevel");
 	this.uiScore = doc.getElementById("uiScore");
 	this.uiEBar = doc.getElementById("uiEBar");
 	this.uiHangar = doc.getElementById("uiHangarList");
 	this.effectDuration = 800;
+	
+	this.loadingBarInit();
+};
+
+ui.prototype.loadingBarInit = function()
+{
+	this.loadingText.switch('on');
+	this.loadingBar.show();
+};
+
+ui.prototype.loadingBarClose = function()
+{
+	this.loadingText.switch('off');
+	this.loadingBar.hide();
+};
+
+ui.prototype.loadingBarReset = function(loadingTxt)
+{
+	this.loadingText.h1.text(loadingTxt);
+	this.loadingBarFiller.css({"width": "0"});
+};
+
+ui.prototype.loadingBarUpdate = function(assetsDone, assetsRequired)
+{
+	this.loadingBarWidth = (assetsDone / assetsRequired) * 100 + '%';
+	this.loadingBarFiller.css({"width": this.loadingBarWidth});
 };
 
 ui.prototype.updateLevel = function()
@@ -90,4 +121,4 @@ ui.prototype.updateAll = function()
 	this.updateHangar();
 };
 
-gameUI = new ui();
+var gameUI = new ui();

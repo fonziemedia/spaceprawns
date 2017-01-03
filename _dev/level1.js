@@ -56,6 +56,7 @@ level1.second13 = function ()
 
 level1.second15 = function ()
 {
+	if (gameMusic.on) gameMusic.playTrack('tune2', true);
   getNewEnemyWave('top', game.width*0.2, 'enemy_sectoid', 2, 2, 1, 3);
 };
 
@@ -151,38 +152,15 @@ level1.second45 = function ()
 
 level1.update = function ()
 {
-	if (game.seconds > 13 && game.tracks.length < 2 && game.enemies.length > 0 && !game.bossDead) //NEEDS WORK
-	{
-		if(game.music)
-		{
-			game.tracks.push(game.soundTracks['tune2' + fileFormat]);
-			game.tracks[1].play();
-			game.tracks[1].loop = true;
-		}
-	}
 	if (game.seconds > 50 && game.enemies.length === 0 && !game.bossDead)
 	{
-		if (game.music)
+		if (gameMusic.on)
 		{
-			game.tracks.push(game.soundTracks['boss' + fileFormat]);
-			game.tracks[2].play();
-			game.tracks[2].loop = true;
+			gameMusic.pauseAll();
+			gameMusic.playTrack('boss', true);
 		}
+		
 		getNewSectoidBoss();
-	}
-
-	if (game.seconds > 55 && game.enemies.length === 0 && game.bossDead && game.tracks.length == 3)
-	{
-		game.tracks[0].pause();
-		game.tracks[1].pause();
-		game.tracks[2].pause();
-		game.tracks=[];
-		if (game.music && game.tracks.length === 0)
-		{
-			game.tracks.push(game.soundTracks['victory' + fileFormat]);
-		}
-
-		game.tracks[0].play();
 	}
 };
 //boss(x, y, speed, direction, hull, image)

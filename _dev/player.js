@@ -39,9 +39,6 @@ player.prototype.speedLimit = Math.round(5*game.dt*game.deltaSpeed);
 player.prototype.fireTimer = 1;
 player.prototype.laserLevel = 1;
 player.prototype.missileLevel = 0;
-player.prototype.audioFire1 = 'laser' + fileFormat;
-player.prototype.audioFire2 = 'laser2' + fileFormat;
-player.prototype.audioFire3 = 'laser3' + fileFormat;
 
 player.prototype.reset = function()
 {
@@ -186,6 +183,7 @@ player.prototype.fireLasers = function(level)
 			this.laserY = Math.round(this.y - this.tipY);
 			getNewBullet(this.midLaserX, this.laserY, 4, 1, 1, 'bullet_p_laser');
 	}
+	if(gameSfx.on) gameSfx.play('laser');
 };
 
 player.prototype.fireMissiles = function(level)
@@ -217,25 +215,6 @@ player.prototype.fireMissiles = function(level)
 	}
 };
 
-player.prototype.fireSfx = function()
-{
-	if (game.sound)
-	{
-		if (game.sfx[this.audioFire1].paused)
-		{
-			game.sounds.push(game.sfx[this.audioFire1]);
-		}
-		else if (game.sfx[this.audioFire2].paused)
-		{
-			game.sounds.push(game.sfx[this.audioFire2]);
-		}
-		else if (game.sfx[this.audioFire3].paused)
-		{
-			game.sounds.push(game.sfx[this.audioFire3]);
-		}
-	}
-};
-
 player.prototype.fireGuns = function()
 {
 	//only add a bullet if enough time has passed i.e. our timer has reached 0
@@ -245,7 +224,6 @@ player.prototype.fireGuns = function()
 	{
 		this.fireLasers(this.laserLevel);
 		this.fireMissiles(this.missileLevel);
-		this.fireSfx();
 	}
 };
 

@@ -1,6 +1,6 @@
 background = function()
 {
-	this.image = game.offCtx['bg_level' + game.level];
+	this.image = gameGfx.offCtx['bg_level' + game.level];
 	//main image properties
 	this.image.sX = this.image.width <= game.width ? 0 : Math.ceil((this.image.width - game.width)/2);
 	this.image.sY = this.image.height - game.height;

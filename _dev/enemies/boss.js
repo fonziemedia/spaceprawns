@@ -3,9 +3,9 @@ boss = function(x, y, speed, direction, hull, image)
 	this.speed = Math.round(speed*game.dt*game.deltaSpeed);
 	this.direction = direction;
 	this.hull = hull;
-	this.image = game.offCtx[image];
-	this.width = game.offCtx[image].width;
-	this.height = game.offCtx[image].height;
+	this.image = gameGfx.offCtx[image];
+	this.width = gameGfx.offCtx[image].width;
+	this.height = gameGfx.offCtx[image].height;
 	this.centerX = Math.round(this.width*0.5);	//these are for explosions, see playerBullet's checkCollision()
 	this.centerY = Math.round(this.height*0.5);
 	this.hCenter = Math.round(this.width/2);
@@ -46,12 +46,14 @@ boss.prototype.detectCollision = function()
 boss.prototype.die = function()
 {
 	getNewExplosion(this.x, this.y, this.speed/2, this.direction, 4);
+
 	if (!playerShip.crashed)
 	{
 		game.score++;
 		game.levelScore++;
 		gameUI.updateScore();
-		game.bossDead = true;
+		gameMusic.pauseAll();
+		gameMusic.playTrack('victory', false);
 	}
 
 	player.prototype.update = player.prototype.levelCompleteUpdate;

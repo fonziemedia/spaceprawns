@@ -46,18 +46,6 @@ function update()
 	// playerShip.update();
 
 	///////////////////////////////////
-	// Game Sounds
-	///////////////////////////////////
-	if (game.sounds.length > 0)
-	{
-		for(var s in game.sounds)
-		{
-			game.sounds[s].play();
-			game.sounds[s].addEventListener("paused", game.sounds.splice(s,1)); //needs recyling!
-		}
-	}
-
-	///////////////////////////////////
 	// D3BUG3R!
 	///////////////////////////////////
 	// console.log (dt);
@@ -90,12 +78,12 @@ function update()
 	// console.log(game.dtArray.length);
 	// console.log(audiopreload);
 	// console.log('required soundSfx:' + game.requiredSfx);
-	// console.log('sfx: '+ game.sfx.length);
+	// console.log('sfx: '+ gameSfx.sfx.length);
 	// console.log('required soundTracks:' + game.requiredSoundTracks);
-	// console.log('soundtracks: '+ game.soundTracks.length);
-	// console.log('sounds: '+ game.sounds.length);
-	// console.log ('game tracks: ' + game.tracks);
-	// console.log('tracks: '+ game.tracks.length);
+	// console.log('soundtracks: '+ gameMusic.soundTracks.length);
+	// console.log('sounds: '+ gameSfx.playQueue.length);
+	// console.log ('game tracks: ' + gameMusic.playQueue);
+	// console.log('tracks: '+ gameMusic.playQueue.length);
 	// console.log('images: '+ game.images.length);
 	// console.log('reqImages: ' + game.requiredImages);
 	// console.log('doneImages: ' + game.doneImages);

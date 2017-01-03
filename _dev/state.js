@@ -9,16 +9,10 @@ state.prototype.start = function()
 
 	gameState.pause();
 	gameLights.switch('off');
+	gameMusic.pauseAll();
 
 	removeGamePlayInput();
 	addStandByInput();
-
-	for (var u in game.tracks)
-	{
-		game.tracks[u].pause();
-	}
-
-	game.tracks = [];
 
 	if (gameMenu.toggled) //if the game menu is up toggle it off
 	{
@@ -157,6 +151,7 @@ state.prototype.pause = function()
 state.prototype.unPause = function()
 {
 	game.paused = false;
+	if (gameMusic.on) gameMusic.resumeGame();
 	gameUI.updateAll();
 	gameUI.fade('in');
 };
