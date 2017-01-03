@@ -60,6 +60,12 @@ music.prototype.pauseAll = function ()
 	}
 };
 
+music.prototype.lvlComplete = function ()
+{ 
+	this.pauseAll();
+	this.playTrack('victory', false);
+};
+
 music.prototype.resumeGame = function ()
 { 
 	if (game.seconds <= 14)

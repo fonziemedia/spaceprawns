@@ -52,8 +52,7 @@ boss.prototype.die = function()
 		game.score++;
 		game.levelScore++;
 		gameUI.updateScore();
-		gameMusic.pauseAll();
-		gameMusic.playTrack('victory', false);
+		if (gameMusic.on) gameMusic.lvlComplete();
 	}
 
 	player.prototype.update = player.prototype.levelCompleteUpdate;
