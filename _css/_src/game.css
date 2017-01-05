@@ -171,6 +171,33 @@ input, button {
   border-style: solid;
 }
 
+#modalBody .modal-btn {
+  position: relative;
+  display: none;
+  height: 40px;
+  width: 260px;
+  margin: auto;
+  margin-bottom: 5px;
+  line-height: 0;
+  color: white;
+  background-color: #264d93;
+  border: #FFFFFF 2px;
+  border-style: solid;
+}
+
+#modalBody .active {
+  background-color: #21ba45 !important;
+  box-shadow: none;
+  text-shadow: none;
+  color: #ffffff;
+}
+
+#modalBody .active:hover {
+  background-color: #16ab39 !important;
+  text-shadow: none;
+  color: #ffffff;
+}
+
 #closeModal:hover {
   /*color: grey;*/
   background-color: #dfac10;
@@ -185,6 +212,44 @@ input, button {
     background-repeat: no-repeat;
     opacity: 1;
     display: none;
+}
+
+#gameTitle {
+  position: relative;
+  width: auto;
+  height: 30%;
+  color: #FFC619;
+  text-align: center;
+  text-shadow: 3px 3px 2px black;
+  margin: 15px;
+  margin-top: 30px;
+  margin-bottom: 45px;
+  z-index: 2147483646;
+  display: none;
+}
+
+#gameTitle h1 {
+  font-size: 4.5rem;
+}
+
+#gameTitle h2 {
+  font-size: 3.5rem;
+}
+
+
+@media (min-width: 480px) {
+  #gameTitle {
+    margin-top: 15%;
+    margin-bottom: 20%;
+  }
+  
+  #gameTitle h1 {
+    font-size: 6rem;
+  }
+
+  #gameTitle h2 {
+    font-size: 5rem;
+  }
 }
 
 /* -- Touch input area -- */
@@ -506,26 +571,13 @@ canvas {
 /* MENU OPTION BUTTONS */
 .menu-option-btn {
 	position: relative;
-	top: 40%;
-	margin-bottom: 2%;
+  width: 30%;
+	margin-top: 10px;
 	border: #FFFFFF 1px;
 	border-style: solid;
 	background-color: #264d92;
 	color: #FFFFFF;
   opacity: 0;
-}
-
-.menu-option-btn.active {
-  background-color: #21ba45;
-  box-shadow: none;
-  text-shadow: none;
-  color: #ffffff;
-}
-
-.menu-option-btn.active:hover {
-  background-color: #16ab39;
-  text-shadow: none;
-  color: #ffffff;
 }
 
 .menu-option-btn[pos="left"] {
@@ -638,7 +690,6 @@ canvas {
   }*/
 
 	.menu-option-btn {
-    top: 30%;
 		width: 40%;
     font-size: 12px;
 	}

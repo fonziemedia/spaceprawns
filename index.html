@@ -22,7 +22,12 @@
 				<div id="modal">
 					<div id="modalBox">
 						<div id="modalTitle"></div>
-						<div id="modalBody"></div>
+						<div id="modalBody">
+							<button type='button' id='toggleSound' class='btn modal-btn no-select' onclick='gameMenu.toggleSound()'>Sound: OFF</button>
+							<button type='button' id='toggleMusic' class='btn modal-btn no-select' onclick='gameMenu.toggleMusic()'>Music: OFF</button>
+							<button type='button' id='toggleFullScreen' class='btn modal-btn no-select no-select' onclick='gameMenu.toggleFullScreen()'>Fullscreen: OFF</button>
+							<button type='button' id='toggleControls' class='btn modal-btn no-select' onclick='gameMenu.toggleControls()'>Controls: Mouse</button>
+						</div>
 						<div id="modalBtnContainer">
 							<button type="button" id="closeModal" class="btn no-select" onclick="gameMenu.closeModal()">Close</button>
 						</div>
@@ -72,17 +77,17 @@
 
 
 				<!-- HOME SCREEN -->
-				<div id="homeTop no-select"></div>
-				<div id="homeBottom no-select"></div>
+				<div id="gameTitle">
+					<h2>SPACE</h2>
+					<h2>PRAWNS</h2>
+					<h1>2037</h1>
+				</div>
 
 				<!-- MENU BUTTONS -->
 				<!-- <div class="btn"> -->
 				<button type="button" id="resumeGame" class="btn menu-option-btn hvr-pulse gpu no-select" pos="left" onclick="gameMenu.toggle()">Resume</button>
 				<button type="button" id="startGame" class="btn menu-option-btn hvr-pulse gpu no-select" pos="right" onclick="gameState.start()">Start</button>
-				<button type="button" id="toggleSound" class="btn menu-option-btn toggle hvr-pulse gpu no-select" pos="left" onclick="gameMenu.toggleSound()">Sound: OFF</button>
-				<button type="button" id="toggleMusic" class="btn menu-option-btn toggle hvr-pulse gpu no-select" pos="right" onclick="gameMenu.toggleMusic()">Music: OFF</button>
-				<button type="button" id="toggleFullScreen" class="btn menu-option-btn hvr-pulse gpu no-select" pos="left" onclick="gameMenu.toggleFullScreen()">Fullscreen: OFF</button>
-				<button type="button" id="toggleControls" class="btn menu-option-btn toggle hvr-pulse gpu no-select" pos="right" onclick="gameMenu.toggleControls()">Controls: Mouse</button>
+				<button type="button" id="toggleOptions" class="btn menu-option-btn hvr-pulse gpu no-select" pos="left" onclick="gameMenu.toggleOptions()">Options</button>
 				<button type="button" id="toggleCredits" class="btn menu-option-btn hvr-pulse gpu no-select" pos="right" onclick="gameMenu.toggleCredits()">Credits</button>
 			</div>
 		</section>

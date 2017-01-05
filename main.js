@@ -2706,9 +2706,12 @@ menu = function()
 	this.modal = $('#modal');
 	this.modalTitle = $('#modalTitle');
 	this.modalBody = $('#modalBody');
+	this.modalBtns = $('.modal-btn');
 	this.menuBg = $('#menuBackground');
+	this.gameTitle = $('#gameTitle');
 	this.resumeBtn = $('#resumeGame');
 	this.startBtn = $('#startGame');
+	this.optionsBtn = $('#toggleOptions');
 	this.sfxBtn = $('#toggleSound');
 	this.musicBtn = $('#toggleMusic');
 	this.ctrlsBtn = $('#toggleControls');
@@ -2728,13 +2731,25 @@ menu = function()
 
 menu.prototype.closeModal = function()
 {
-	this.modal.fadeOut(400);
+	var self = this;
+	
+	this.modal.fadeOut(400, function () {
+		self.modalBtns.hide();
+		self.modalBody.children("credits").remove();
+	});
+};
+
+menu.prototype.toggleOptions = function()
+{
+	this.modalTitle.html('<h1>OPTIONS</h1>');
+	this.modalBtns.show();
+	this.modal.fadeIn(400);
 };
 
 menu.prototype.toggleCredits = function()
 {
 	this.modalTitle.html('<h1>CREDITS</h1>');
-	this.modalBody.html("<h3><u>Programming:</u></h3><p>Carlos Fonseca<br><a href='http://fonziemedia.com' target='_blank'>(fonziemedia.com)</a></p><br><h3><u>Game Design & UI:</u></h3><p>Carlos Fonseca</p><br><h3><u>Graphics:</u></h3><p><a href='http://millionthvector.blogspot.pt' target='_blank'>Millionthvector</a><br>Carlos Fonseca</p><p><br>Copyright &copy; <a href='http://fonziemedia.com' target='_blank'>fonziemedia.com</a></p>");
+	this.modalBody.append("<credits><h3><u>Programming:</u></h3><p>Carlos Fonseca<br><a href='http://fonziemedia.com' target='_blank'>(fonziemedia.com)</a></p><br><h3><u>Game Design & UI:</u></h3><p>Carlos Fonseca</p><br><h3><u>Graphics:</u></h3><p><a href='http://millionthvector.blogspot.pt' target='_blank'>Millionthvector</a><br>Carlos Fonseca</p><p><br>Copyright &copy; <a href='http://fonziemedia.com' target='_blank'>fonziemedia.com</a></p></credits>");
 	this.modal.fadeIn(400);
 };
 
@@ -2868,6 +2883,8 @@ menu.prototype.toggle = function()
 		this.menuBg.fadeIn(this.animationSpeed);
 		this.menuBg.promise().done(function()
 		{
+			self.gameTitle.fadeIn(this.animationSpeed);
+			
 			if(game.started)
 			{
 				if(self.startBtn.text !== 'Restart')
@@ -2888,29 +2905,11 @@ menu.prototype.toggle = function()
 				opacity: 1,
 				"left": "-=50%",
 			},800);
-
-			self.sfxBtn.animate({
+			
+			self.optionsBtn.animate({
 				opacity: 1,
 				"right": "-=50%",
 			},800);
-
-			self.musicBtn.animate({
-				opacity: 1,
-				"left": "-=50%",
-			},800);
-
-			self.fullScrnBtn.animate({
-				opacity: 1,
-				"right": "-=50%",
-			},800);
-
-			if (!game.isMobile)
-			{
-				self.ctrlsBtn.animate({
-					opacity: 1,
-					"left": "-=50%",
-				},800);
-			}
 
 			self.creditsBtn.animate({
 				opacity: 1,
@@ -2935,28 +2934,10 @@ menu.prototype.toggle = function()
 			"left": "+=50%",
 		},800);
 
-		this.sfxBtn.animate({
+		this.optionsBtn.animate({
 			opacity: 0,
 			"right": "+=50%",
 		},800);
-
-		this.musicBtn.animate({
-			opacity: 0,
-			"left": "+=50%",
-		},800);
-
-		this.fullScrnBtn.animate({
-			opacity: 0,
-			"right": "+=50%",
-		},800);
-
-		if (!game.isMobile)
-		{
-			this.ctrlsBtn.animate({
-			opacity: 0,
-			"left": "+=50%",
-			},800);
-		}
 
 		this.creditsBtn.animate({
 			opacity: 0,
@@ -2966,6 +2947,7 @@ menu.prototype.toggle = function()
 		this.allButtons.promise().done(function()
 		{
 			self.allButtons.hide();
+			self.gameTitle.fadeOut(this.animationSpeed);
 			self.menuBg.fadeOut(self.animationSpeed);
 			self.menuBg.promise().done(function()
 			{
