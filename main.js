@@ -1872,8 +1872,7 @@ boss.prototype.die = function()
 		game.score++;
 		game.levelScore++;
 		gameUI.updateScore();
-		gameMusic.pauseAll();
-		gameMusic.playTrack('victory', false);
+		if (gameMusic.on) gameMusic.lvlComplete();
 	}
 
 	player.prototype.update = player.prototype.levelCompleteUpdate;
@@ -2704,6 +2703,9 @@ gameState = new state();
 menu = function()
 {
 	self = this;
+	this.modal = $('#modal');
+	this.modalTitle = $('#modalTitle');
+	this.modalBody = $('#modalBody');
 	this.menuBg = $('#menuBackground');
 	this.resumeBtn = $('#resumeGame');
 	this.startBtn = $('#startGame');
@@ -2711,7 +2713,7 @@ menu = function()
 	this.musicBtn = $('#toggleMusic');
 	this.ctrlsBtn = $('#toggleControls');
 	this.fullScrnBtn = $('#toggleFullScreen');
-	this.creditsBtn = $('#creditsBtn');
+	this.creditsBtn = $('#toggleCredits');
 	this.allButtons = $('.menu-option-btn');
 	this.animationSpeed = 800;
 	this.toggled = false;
@@ -2722,6 +2724,18 @@ menu = function()
 
 	//disabling UI menu button so game.dt calculation doesn't get interrupted
 	document.getElementById("toggle-menu-btn").disabled = true;
+};
+
+menu.prototype.closeModal = function()
+{
+	this.modal.fadeOut(400);
+};
+
+menu.prototype.toggleCredits = function()
+{
+	this.modalTitle.html('<h1>CREDITS</h1>');
+	this.modalBody.html("<h3><u>Programming:</u></h3><p>Carlos Fonseca<br><a href='http://fonziemedia.com' target='_blank'>(fonziemedia.com)</a></p><br><h3><u>Game Design & UI:</u></h3><p>Carlos Fonseca</p><br><h3><u>Graphics:</u></h3><p><a href='http://millionthvector.blogspot.pt' target='_blank'>Millionthvector</a><br>Carlos Fonseca</p><p><br>Copyright &copy; <a href='http://fonziemedia.com' target='_blank'>fonziemedia.com</a></p>");
+	this.modal.fadeIn(400);
 };
 
 menu.prototype.toggleFullScreen = function(trigger)  //experimental   only works with user input
@@ -3574,6 +3588,12 @@ music.prototype.pauseAll = function ()
 	{
 		this.soundTracks[t].pause();
 	}
+};
+
+music.prototype.lvlComplete = function ()
+{ 
+	this.pauseAll();
+	this.playTrack('victory', false);
 };
 
 music.prototype.resumeGame = function ()

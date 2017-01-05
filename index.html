@@ -13,23 +13,24 @@
 		<!-- <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" /> -->
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="mobile-web-app-capable" content="yes">
-		<!-- <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" media="all and (max-width: 767px)"/>	 -->
 		<script src="_api/jquery-2.2.4.min.js"></script>
-		<!-- <script src="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script> -->
-		<!-- <script src="_api/jquery.vibrate.min.js"></script> -->
 		<link rel="stylesheet" href="_css/style.css" type="text/css" media="screen"/>
 	</head>
 	<body>
 		<section id="container">
 			<div id="gamearea" class="gpu no-select">
-				<!-- MAIN MENU BACKGROUND -->
+				<div id="modal">
+					<div id="modalBox">
+						<div id="modalTitle"></div>
+						<div id="modalBody"></div>
+						<div id="modalBtnContainer">
+							<button type="button" id="closeModal" class="btn no-select" onclick="gameMenu.closeModal()">Close</button>
+						</div>
+					</div>
+				</div>
 				<div id="menuBackground"></div>
-				<!-- INPUT AREA -->
 				<div id="inputarea"></div>
-				<!-- CANVAS -->
-				<!-- <canvas id = "backgroundCanvas" moz-opaque>Sorry, your browser doesn't support canvas technology.</canvas> -->
 				<canvas id="gameCanvas" class="gpu no-select"></canvas>
-
 				<!-- UI -->
 				<div id="ui">
 					<div id="uiLevel" class="ui-item no-select"></div>
@@ -82,7 +83,7 @@
 				<button type="button" id="toggleMusic" class="btn menu-option-btn toggle hvr-pulse gpu no-select" pos="right" onclick="gameMenu.toggleMusic()">Music: OFF</button>
 				<button type="button" id="toggleFullScreen" class="btn menu-option-btn hvr-pulse gpu no-select" pos="left" onclick="gameMenu.toggleFullScreen()">Fullscreen: OFF</button>
 				<button type="button" id="toggleControls" class="btn menu-option-btn toggle hvr-pulse gpu no-select" pos="right" onclick="gameMenu.toggleControls()">Controls: Mouse</button>
-				<button type="button" id="credits" class="btn menu-option-btn hvr-pulse gpu no-select" pos="right" onclick="">Credits</button>
+				<button type="button" id="toggleCredits" class="btn menu-option-btn hvr-pulse gpu no-select" pos="right" onclick="gameMenu.toggleCredits()">Credits</button>
 			</div>
 		</section>
 	</body>

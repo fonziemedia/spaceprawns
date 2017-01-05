@@ -80,12 +80,107 @@ input, button {
   height: 100%;
 }
 
-/* -- Menu Background -- */
+#modal {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 2147483647;
+  background-color: rgba(9, 9, 9, .7);
+  display: none;
+}
+
+#modalBox {
+  position: relative;
+  max-width: 300px;
+  max-height: 400px;
+  background-color: rgba(38, 77, 147, .7);
+
+  margin: 0 auto;
+  margin-top: 80px;
+  
+  color: white;
+  text-align: center;
+  
+  border: #FFFFFF 2px;
+  border-style: solid;
+  border-radius: 25px;
+}
+
+@media (min-width: 480px) {
+  #modalBox {
+    margin-top: 200px;
+  }
+}
+
+#modalTitle {
+  position: relative;
+  height: 25px;
+  font-weight: bold;
+  margin: 15px;
+}
+
+#modalTitle h1 {
+  font-size: 1.4rem;
+}
+
+#modalBody {
+  position: relative;
+  min-height: 150px;
+  margin: 10px;
+}
+
+#modalBody h3 {
+  font-size: 1rem;
+}
+
+#modalBody p {
+  margin: 10px 0;
+  font-size: .8rem;
+  line-height: 1.4;
+}
+
+#modalBody a {
+  color: #FFC619;
+}
+
+#modalBody a:hover {
+  color: #dfac10;
+}
+
+#modalBtnContainer {
+  position: relative;
+  height: 70px;
+  font-size: 1rem;
+  margin: 0;
+}
+
+#closeModal {
+  position: absolute;
+  display: block;
+  top:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  width: 120px;
+  margin: auto;
+  line-height: 0;
+  color: white;
+  background-color: transparent;
+  border: #FFFFFF 2px;
+  border-style: solid;
+}
+
+#closeModal:hover {
+  /*color: grey;*/
+  background-color: #dfac10;
+} 
+
 #menuBackground {
     position: absolute;
     height: 100%;
     width: 100%;
-    z-index: 2147483646;
+    z-index: 2147483645;
     background-size: 100%;
     background-repeat: no-repeat;
     opacity: 1;
@@ -396,7 +491,7 @@ canvas {
   text-decoration: none;
   border-radius: 0.28571429rem;
   box-shadow: 0px 0px 0px 1px transparent inset, 0px 0em 0px 0px rgba(34, 36, 38, 0.15) inset;
-  z-index: 2147483647;
+  z-index: 2147483646;
   /*-webkit-transition: opacity 0.1s ease, background-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
           transition: opacity 0.1s ease, background-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;*/
   will-change: '';
